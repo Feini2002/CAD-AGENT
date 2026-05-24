@@ -1,0 +1,11 @@
+{
+  "domain": "generic",
+  "name": "通用 CAD 测试",
+  "common_objects": ["cabinet"],
+  "default_layer_roles": {
+    "preview": "CODEX_PREVIEW",
+    "furniture": "A-FURN",
+    "annotation": "A-ANNO"
+  }
+}
+

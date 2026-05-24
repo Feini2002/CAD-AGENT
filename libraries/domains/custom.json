@@ -1,0 +1,12 @@
+{
+  "domain": "custom",
+  "name": "自定义场景",
+  "common_spaces": [],
+  "common_objects": [],
+  "default_layer_roles": {
+    "preview": "CODEX_PREVIEW",
+    "furniture": "A-FURN",
+    "annotation": "A-ANNO"
+  }
+}
+

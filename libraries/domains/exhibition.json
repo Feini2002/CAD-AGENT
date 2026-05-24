@@ -1,0 +1,12 @@
+{
+  "domain": "exhibition",
+  "name": "展厅展陈",
+  "common_spaces": ["入口区", "展示区", "互动区", "洽谈区", "储物区", "设备区"],
+  "common_objects": ["展柜", "展台", "展墙", "导视牌", "互动桌", "洽谈桌"],
+  "default_layer_roles": {
+    "preview": "CODEX_PREVIEW",
+    "furniture": "A-FURN",
+    "annotation": "A-ANNO"
+  }
+}
+

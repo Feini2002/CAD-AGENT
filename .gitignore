@@ -1,0 +1,22 @@
+# Local CAD/project history that should not ship with the portable kit
+docs/archive/
+
+# Generated preview/output artifacts
+output/previews/*
+!output/previews/README.md
+
+# Python/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environment files
+.env
+.venv/
+venv/
+
+# CAD lock/temp files
+*.dwl
+*.dwl2
+*.bak
+

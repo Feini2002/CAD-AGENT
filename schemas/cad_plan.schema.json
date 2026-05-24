@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad_plan.schema.json",
+  "title": "CAD_PLAN",
+  "type": "object",
+  "required": [
+    "version",
+    "domain",
+    "intent",
+    "object",
+    "placement",
+    "drawing",
+    "confidence",
+    "needs_confirmation"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "enum": ["0.1"]
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["generic", "residential", "retail", "office", "restaurant", "exhibition", "hotel", "education", "healthcare", "industrial", "custom"]
+    },
+    "intent": {
+      "type": "string",
+      "enum": ["draw_object", "draw_annotation", "modify_object", "delete_object"]
+    },
+    "object": {
+      "type": "object",
+      "required": ["type", "name"],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "depth": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "placement": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["absolute", "space_reference", "relative_to_object"]
+        },
+        "base_point": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        },
+        "space": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "drawing": {
+      "type": "object",
+      "required": ["layer"],
+      "properties": {
+        "layer": {
+          "type": "string"
+        },
+        "include_label": {
+          "type": "boolean"
+        },
+        "include_dimensions": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "needs_confirmation": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

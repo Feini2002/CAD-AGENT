@@ -1,0 +1,12 @@
+{
+  "domain": "office",
+  "name": "办公空间",
+  "common_spaces": ["前台区", "开放办公区", "会议室", "经理室", "洽谈区", "茶水间", "设备间"],
+  "common_objects": ["工位", "会议桌", "前台", "文件柜", "洽谈桌", "储物柜"],
+  "default_layer_roles": {
+    "preview": "CODEX_PREVIEW",
+    "furniture": "A-FURN",
+    "annotation": "A-ANNO"
+  }
+}
+

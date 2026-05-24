@@ -1,0 +1,9 @@
+{
+  "type": "cabinet",
+  "name": "柜体",
+  "default_width": 1800,
+  "default_depth": 600,
+  "draw_method": "rectangle_with_label_and_dimensions",
+  "default_layer_role": "furniture"
+}
+
