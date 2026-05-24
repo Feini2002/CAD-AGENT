@@ -55,7 +55,7 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 
 **第 0 步：确认环境（约 30 分钟）**
 
-按下文 **「换机清单（与本机同等级，全量配置）」** 完成全量安装，并跑通 **全部** 验收命令（含 AutoCAD 已开、COM、`execute_plan`、截图、CAD-MCP 对话画图）。任一项未通过则不算环境就绪。
+按下文 **「换机清单」**：**先排查 → 按需增量（已有 CAD/CAD-MCP 不重复装）→ 全量验收全过**。任一项验收未通过则不算环境就绪。
 
 **第 1 步：恢复上下文（约 5 分钟阅读）**
 
@@ -173,7 +173,9 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 
 本文只描述 **与本机开发环境同等、百分百对齐** 的换机方式：不接受「最低配置」「仅逻辑开发」「暂不装 CAD」等缩水方案。少装任何一项，都不算换机完成。
 
-本仓库 clone 下来 **只有代码和规则**；下列组件必须在新电脑上 **全部** 自备并验收通过。
+**不重复安装原则：** 新电脑若 **已有** AutoCAD、CAD-MCP、Cursor 等，**不要无脑重装一遍**。应先 **排查现状**，只对 **缺失或验收失败** 的项做增量安装/配置；最终仍须达到下文全量标准，并通过全部验收命令。
+
+本仓库 clone 下来 **只有代码和规则**；下列组件必须在新电脑上 **全部就绪**（可以是原有 + 补齐，不必全是新装的）。
 
 ### 仓库里有什么 / 没有什么
 
@@ -222,31 +224,91 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 | AutoCAD | COM 已连上活动图纸 |
 | 单元测试 | `unittest discover -s tests` → 13 passed |
 
-### 全量安装顺序（按序执行，不可跳步）
+### 换机流程总览
 
-1. **Windows** 电脑就绪。  
-2. 安装 **Git**，clone 本仓库：
+```text
+先排查（已有啥） → 按需增量（只补缺的） → clone 本仓库 → 全量验收（必须全过）
+```
 
-   ```powershell
-   git clone https://github.com/Feini2002/CAD-AGENT.git
-   cd CAD-AGENT
-   ```
+验收标准不变：**终点必须与本机同级**；路径可以是「新机本来就有一半，只补另一半」。
 
-3. 安装 **AutoCAD**（与开发机同系列版本更稳，至少能 COM 连接）。  
-4. 安装 **CAD-MCP** 到 `%USERPROFILE%\.codex\mcp\CAD-MCP\`，创建/修复其 `.venv`，并安装依赖（含 `pywin32`；另需 **Pillow**，开发机 venv 中已存在，新机若缺则 `pip install Pillow`）。  
-5. 安装 **Codex** 或 **Cursor**，在 MCP 设置中 **启用 CAD-MCP**（与开发机相同配置）。  
-6. **工作区规则（与「新家改造」整仓一致时）：**  
-   - 要么：把本仓库放在有根目录 `AGENTS.md` 的父工作区下（父 `AGENTS.md` 会指向 `CAD测试相关文件/` 或 clone 后的本目录）；  
-   - 要么：在 Cursor/Codex 工作区根单独放置等效的 CAD 触发 `AGENTS.md` + 本仓库内 `AGENTS.md` 均可被读到。  
-7. 设置 `$py`（**只**用 CAD-MCP 的 venv，不要用系统 Python 或其它 venv 凑合）：
+### 第一步：先排查（在新电脑上执行）
 
-   ```powershell
-   $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
-   ```
+在 PowerShell 里跑下面命令，对照「结果」列打勾，记下 **缺什么**（不要跳过这一步直接装）。
 
-8. **打开 AutoCAD** 并加载一张测试用 DWG（保持为活动文档）。  
-9. 在仓库根目录执行下文 **全量验收命令**，**每一项都必须通过**。  
-10. 在 Codex/Cursor 里用 **CAD-MCP** 画一次简单图（矩形/直线即可），确认 MCP 链路与脚本链都可用。
+```powershell
+# --- 基础环境 ---
+Write-Host "OS:" (Get-CimInstance Win32_OperatingSystem).Caption
+git --version 2>$null; if (-not $?) { Write-Host "[缺] Git" }
+
+# --- CAD-MCP 目录与 Python ---
+$mcpRoot = "$env:USERPROFILE\.codex\mcp\CAD-MCP"
+$py = "$mcpRoot\.venv\Scripts\python.exe"
+Write-Host "CAD-MCP 目录:" (Test-Path $mcpRoot)
+Write-Host "CAD-MCP venv:" (Test-Path $py)
+if (Test-Path $py) {
+  & $py -c "import sys; print('Python', sys.version.split()[0])"
+  & $py -c "import PIL; print('Pillow', PIL.__version__)" 2>$null; if (-not $?) { Write-Host "[缺] Pillow" }
+  & $py -c "import win32com.client; print('pywin32 OK')" 2>$null; if (-not $?) { Write-Host "[缺] pywin32" }
+  & $py -c "import win32gui; print('win32gui OK')" 2>$null; if (-not $?) { Write-Host "[缺] win32gui" }
+} else {
+  Write-Host "[缺] 整个 CAD-MCP .venv 或路径不同"
+}
+
+# --- AutoCAD 是否在跑（粗查；细查靠后面 COM 命令）---
+$acad = Get-Process acad -ErrorAction SilentlyContinue
+Write-Host "AutoCAD 进程:" ($null -ne $acad)
+```
+
+**需人工确认（脚本查不准）：**
+
+| 项 | 怎么查 | 已有则 |
+| --- | --- | --- |
+| AutoCAD 已授权安装 | 开始菜单 / `acad.exe` 能启动 | 跳过装 CAD，只做 COM 验收 |
+| Cursor / Codex | 能否打开 IDE | 跳过装 IDE |
+| CAD-MCP 已在 MCP 里启用 | IDE → MCP 列表里有 CAD-MCP 且为开启 | 跳过配 MCP，只做画线测试 |
+| 工作区 `AGENTS.md` | 工作区根是否有 CAD 触发规则 | 已有则不必复制父仓规则 |
+
+### 第二步：按需增量（只补排查里「缺」的）
+
+| 排查结果 | 要不要重装 | 建议动作 |
+| --- | --- | --- |
+| 已有 **AutoCAD**，能打开 DWG | **不要** 重装 CAD | 保持安装；验收时打开 DWG 即可。版本与开发机差太多时，只关注 COM 能否连通 |
+| 已有 **CAD-MCP 目录** + `.venv` | **不要** 整包重装 | 用现有路径作 `$py`；缺包则 **只** `pip install` 缺的（如 `Pillow`、`pywin32`） |
+| 有 CAD-MCP 但 **没有 `.venv`** 或 venv 坏了 | 不必重装 MCP 源码 | 在 `CAD-MCP` 目录内 **重建 venv** 并 `pip install -r requirements.txt`，再补 `pip install Pillow` |
+| **没有** CAD-MCP | 需要新装 | 按你平时的方式装到 `%USERPROFILE%\.codex\mcp\CAD-MCP\`（与开发机同来源/commit 更稳） |
+| 已有 **Cursor**，MCP 未配 | **不要** 重装 Cursor | 只在 MCP 设置里 **添加/启用** CAD-MCP |
+| 没有 IDE | 需要装 | 安装 Cursor 或 Codex，并启用 CAD-MCP |
+| **Git** 已有 | 不要重装 | 直接 `git clone` 本仓库 |
+| 父工作区 **没有** `AGENTS.md` | — | 把本仓库放进有规则的父仓，或在工作区根补一份 CAD 触发 `AGENTS.md` |
+
+**常见误区：**
+
+- 新机 **已经装过 AutoCAD** → 不会也不能被本仓库「再装一遍」；重复的是 **验收**，不是安装程序。  
+- 新机 **已经有 CAD-MCP** → 通常 **不用** 再下载一份；缺的是 **venv 依赖** 或 **MCP 开关**，用 `pip` / IDE 设置补齐即可。  
+- `$py` **必须固定用 CAD-MCP 的 venv**；若你已有 MCP 但 Python 在别的路径，以 **能 import pywin32 + Pillow 且能 COM** 为准，路径写在个人笔记里，不要混用系统 Python。
+
+### 第三步：clone 本仓库
+
+Git 已有则直接：
+
+```powershell
+git clone https://github.com/Feini2002/CAD-AGENT.git
+cd CAD-AGENT
+```
+
+### 第四步：统一 `$py` 并做全量验收
+
+```powershell
+$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
+# 若你排查时 MCP 不在默认路径，改成实测通过的那个 python.exe，但仍是 CAD-MCP 的 venv
+```
+
+1. **打开 AutoCAD** 并加载一张测试 DWG（活动文档）。  
+2. 执行下文 **全量验收命令**（**每一项都必须通过**）。  
+3. 在 Cursor/Codex 里用 **CAD-MCP** 手动画一次简单图（矩形/直线），确认 MCP 链路与脚本链都可用。
+
+只有 **第四步全部通过**，才算换机完成；前面三步允许「已有则跳过安装」。
 
 ### 全量验收命令（全部必跑，全部必须通过）
 
