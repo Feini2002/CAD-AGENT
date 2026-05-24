@@ -24,6 +24,134 @@
 
 ## 已知问题
 
+### 问题：`unittest discover -s tests` 会把 `tests/core` 当成 `core` 包
+
+日期：2026-05-25
+
+现象：
+
+第一轮仓库重装后运行：
+
+```powershell
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' -m unittest discover -s tests
+```
+
+出现 `ModuleNotFoundError: No module named 'core.execution'`、`No module named 'core.verification'` 等错误。
+
+影响：
+
+真实 `core/` 包已经存在，但测试发现从 `tests/` 作为起点时，会把 `tests/core` 导入成名为 `core` 的测试包，遮住项目根目录下的真实 `core/`。
+
+原因：
+
+`tests/core/__init__.py` 让测试目录成为 `core` 包，而测试命令的 top-level 默认是 `tests`。
+
+修复：
+
+在 `tests/core/__init__.py` 中扩展包搜索路径，把项目根目录下的真实 `core/` 加入 `__path__`，从而保留 `tests/core` 目录结构和旧 `unittest discover -s tests` 命令兼容。
+
+以后规则：
+
+如果继续使用 `tests/core` 目录名，要保留该兼容处理，或改用显式 top-level 的测试命令。迁移测试结构时必须跑完整 `unittest discover -s tests`。
+
+### 问题：Core 迁移后 `self_check.py` 容易误判项目根目录
+
+日期：2026-05-25
+
+现象：
+
+`self_check.py` 从 `scripts/` 迁到 `core/verification/` 后，如果继续使用 `Path(__file__).resolve().parents[1]` 推断项目根，会把 `core/` 当成根目录。
+
+影响：
+
+自检会错误判断必需文件缺失，或者把输出路径、示例计划路径解析到错误位置。
+
+原因：
+
+文件所在目录层级从 `scripts/self_check.py` 变为 `core/verification/self_check.py`，父级数量变化。
+
+修复：
+
+Core 实现中改为 `Path(__file__).resolve().parents[2]`，旧 `scripts/self_check.py` 只保留薄包装器。
+
+以后规则：
+
+迁移 CLI 脚本到 Core 后，必须重新检查所有基于 `__file__` 的根目录推断。
+
+### 问题：卡壳时缺少统一自查和截图证据入口
+
+日期：2026-05-25
+
+现象：
+
+目录里已有 `output/previews/` 和 `scripts/render_preview.py`，但 `render_preview.py` 只是脚手架；`inspect_dwg.py` 也只是回读验证脚手架。遇到“画不准、画不出来”时，缺少统一方法告诉 Codex 先查什么、如何留证据、何时修工具。
+
+影响：
+
+后续阶段 4 预览绘制和阶段 5 回读验证容易反复盲试；视觉问题也可能因为没有截图而无法复盘。
+
+原因：
+
+早期重点是搭建 CAD_PLAN、validate 和 dry-run 最小闭环，截图、自检、卡壳恢复还没有实现。
+
+修复：
+
+- 新增 `CAD_AGENT_BLOCKER_PLAYBOOK.md`。
+- 新增 `scripts/self_check.py`。
+- 扩展 `scripts/render_preview.py --check` 和 `--capture-screen`。
+- 新增相关单测。
+
+以后规则：
+
+遇到卡壳先运行自检，视觉问题先确认截图能力；如果截图或自检能力不存在，先补工具入口，再继续绘图修复。
+
+相关文件：
+
+- `CAD_AGENT_BLOCKER_PLAYBOOK.md`
+- `CAD_AGENT_RULES.md`
+- `scripts/self_check.py`
+- `scripts/render_preview.py`
+- `tests/test_render_preview.py`
+- `tests/test_self_check.py`
+
+### 问题：早期测试目录未包化导致模块名运行失败
+
+日期：2026-05-25
+
+现象：
+
+使用下面命令运行新增测试时失败：
+
+```powershell
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' -m unittest tests.test_execute_plan
+```
+
+影响：
+
+测试文件本身可用，但当时 `tests/` 目录还不是 Python package，模块名方式发现测试会失败。
+
+原因：
+
+当时还没有创建 `tests/__init__.py`，项目测试规模也很小。
+
+修复：
+
+早期临时修复是直接按文件路径运行：
+
+```powershell
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'CAD测试相关文件\tests\test_execute_plan.py'
+```
+
+后续仓库重装时已创建 `tests/__init__.py`、`tests/core/__init__.py`，并迁移到：
+
+```powershell
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' -m unittest discover -s 'CAD测试相关文件\tests'
+```
+
+以后规则：
+
+当前优先使用 `unittest discover -s tests`。如果使用 `tests/core` 目录名，必须保留 `tests/core/__init__.py` 中对真实 `core/` 包路径的兼容处理。
+
 ### 问题：中文 Markdown 在 PowerShell 默认输出中可能显示乱码
 
 日期：2026-05-24

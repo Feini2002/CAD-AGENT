@@ -1,11 +1,10 @@
-"""DXF writer placeholder.
-
-This can be used later when we want a CAD-software-independent output path.
-"""
+"""Compatibility wrapper for core.cad_io.dxf_writer."""
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 
-def driver_status() -> str:
-    return "dxf_writer driver scaffold"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from core.cad_io.dxf_writer import *  # noqa: F401,F403

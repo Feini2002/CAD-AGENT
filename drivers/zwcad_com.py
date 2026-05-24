@@ -1,8 +1,10 @@
-"""ZWCAD COM driver placeholder."""
+"""Compatibility wrapper for core.cad_io.zwcad_com."""
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 
-def driver_status() -> str:
-    return "zwcad_com driver scaffold"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from core.cad_io.zwcad_com import *  # noqa: F401,F403

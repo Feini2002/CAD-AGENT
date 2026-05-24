@@ -1,84 +1,108 @@
-# 通用 CAD Agent 开发包
+# CAD Agent Core Lab
 
-这里是一个可迁移的“Codex 控制 CAD / CAD Agent”通用开发包。它不绑定当前家装图纸，也不绑定当前电脑；当前目录只是第一个测试现场。
+**English:** A portable, scenario-agnostic CAD Agent lab for Codex. It turns natural-language design intent into validated `CAD_PLAN` files, dry-runs them, and draws only to `CODEX_PREVIEW` until a human approves formal layers.
 
-## 仓库简介
+**中文：** 可迁移的通用 CAD Agent 实验仓库，面向 Codex + CAD-MCP / AutoCAD / ZWCAD。用结构化 `CAD_PLAN` 连接白话需求与可验证的预览落图，不绑定某一张家装图、某台电脑或某一个工装/家装/店铺 Agent。
 
-CAD-AGENT 是一个面向 Codex 的通用 CAD Agent 开发包，用结构化 `CAD_PLAN` 把自然语言 CAD 需求转换成可校验、可预演、可执行的绘图流程。目标是在安装好 Codex、CAD 软件、CAD-MCP/Python 环境的电脑上，复用同一套规则、Schema、脚本和行业对象库，支持住宅、工装、店铺、办公、餐饮、展陈等多场景 CAD 自动化开发。
+Repository: [github.com/Feini2002/CAD-AGENT](https://github.com/Feini2002/CAD-AGENT)
 
-这个文件夹应该可以复制到任何新的 CAD 项目目录中继续使用。新电脑只要准备好 Codex、CAD 软件、CAD-MCP 或 AutoCAD COM、Python 运行环境，就可以读取这套规则、Schema、示例和脚本，恢复同一套开发状态。
-
-```text
-本文件夹 = CAD Agent 的方法、规则、Schema、脚本和开发记录
-运行环境 = Codex、CAD、CAD-MCP、Python、依赖和权限
-项目图纸 = 当前要处理的 DWG/PDF/现场 CAD 文件
-```
-
-三者配合起来，才是完整的 CAD Agent 能力。
-
-## 每次回来怎么恢复
-
-先看本 `README.md`，再看这 4 个项目管理文件：
-
-1. `CAD_AGENT_STATUS.md`：当前开发到哪一步。
-2. `CAD_AGENT_RULES.md`：长期规则，约束 Codex 后续行为。
-3. `CAD_AGENT_CHANGELOG.md`：每次改了什么，为什么改。
-4. `CAD_AGENT_ISSUES.md`：测试失败、错误、修复经验。
-
-## 当前核心路线
+## 设计主线
 
 ```text
-白话或语音
--> Codex 生成 CAD_PLAN
--> validate_plan.py 校验
--> dry_run_plan.py 预演
--> execute_plan.py 调用 CAD 绘制
--> 先画到 CODEX_PREVIEW
--> 回读验证
--> 用户确认后再正式落图
+大通用 CAD 底座优先
+场景 Agent 轻量化
+真实项目作为验证样本
 ```
 
-这条路线适用于住宅家装、商业工装、零售店铺、办公空间、餐饮空间、展厅展陈，以及其他可用 CAD 平面表达的场景。
+CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。仓库要沉淀的是：白话理解、图纸理解、项目模型、对象与风格、图库块、布局、方案、执行、安全和验证。
 
-## 文件夹说明
+## 恢复上下文
+
+每次回来先读：
+
+1. `CORE_STATUS.md` — 通用底座开发进度
+2. `CORE_ROADMAP.md` — Core 阶段路线
+3. `CORE_RESTRUCTURE_PLAN.md` — 大重装架构与剩余工作
+4. `CAD_AGENT_STATUS.md` — 历史进展与迁移状态
+5. `CAD_AGENT_RULES.md` 和 `AGENTS.md` — 长期规则与绘图自检门槛
+6. `CAD_AGENT_CHANGELOG.md`、`CAD_AGENT_ISSUES.md` — 变更与问题记录
+
+## 目录结构
 
 ```text
-cad_agent/       通用 CAD Agent 设计说明，不绑定具体项目
-docs/            路线图、历史文档、开发说明
-skills/          将来给 Codex 使用的 CAD Skill 草稿
-schemas/         CAD_PLAN、CAD_CONTEXT 等 JSON Schema
-examples/        通用示例 CAD_PLAN 和示例上下文
-scripts/         校验、预演、执行、回读脚本
-drivers/         AutoCAD / ZWCAD / DXF 等底层驱动
-libraries/       通用对象库和行业包
-tests/           测试计划和测试样例
-output/          预览、截图、临时输出
+core/       通用 CAD Agent 底座：读图、模型、对象、风格、布局、计划、执行、验证、安全
+agents/     轻量场景 Agent：场景词汇、默认偏好、专用 workflow，不复制 Core
+libraries/  跨场景资源：块、对象、风格、材料、尺寸、人体工学、图层标准
+projects/   真实或样例项目输入输出，不污染通用规则
+scripts/    兼容旧命令的薄包装器，实现已迁入 core/
+drivers/    兼容旧导入的薄包装器，驱动已迁入 core/cad_io/
+schemas/    过渡期 schema 兼容副本，正式 schema 进入 core/schemas/
+tests/      Core 与 Agent 测试
+docs/       架构、决策、路线与历史文档
+skills/     Codex CAD skill 草稿，逐步对齐 Core 架构
 ```
 
-## 防跑偏原则
+## 当前能力（prototype / scaffold）
 
-任何新能力都必须能回答：
+| 能力 | 状态 | 入口 |
+| --- | --- | --- |
+| CAD_PLAN 校验 | prototype | `scripts/validate_plan.py` / `core.plan_engine.validate_plan` |
+| CAD_PLAN 预演 | prototype | `scripts/dry_run_plan.py` / `core.plan_engine.dry_run_plan` |
+| 预览落图 | prototype | `scripts/execute_plan.py` → `CODEX_PREVIEW` |
+| 环境自检 | prototype | `scripts/self_check.py` |
+| 截图能力检查 | prototype | `scripts/render_preview.py --check` |
+| 场景 Agent | scaffold | `agents/*`（工装、家装、办公、餐饮、展陈、自定义） |
+| 设计大脑（读图/对象/布局/方案） | not_started | 见 `CORE_STATUS.md` |
+
+## 快速开始
+
+前置：本机已安装 Codex、CAD 软件、CAD-MCP 虚拟环境 Python，且 AutoCAD COM 可用（当前验证环境）。
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
+
+& $py 'scripts\validate_plan.py' 'examples\plans\draw_test_cabinet.json'
+& $py 'scripts\dry_run_plan.py' 'examples\plans\draw_test_cabinet.json'
+& $py 'scripts\self_check.py'
+& $py 'scripts\render_preview.py' --check
+& $py -m unittest discover -s tests
+```
+
+新 Core 入口示例：
+
+```powershell
+& $py -m core.plan_engine.validate_plan 'examples\plans\draw_test_cabinet.json'
+```
+
+## 安全原则
+
+- 默认只画到 `CODEX_PREVIEW`
+- 不默认保存当前 DWG，不覆盖原始 DWG，不删除已有实体
+- 不修改正式图层，除非用户明确批准
+- 白话需求必须先变成 `CAD_PLAN` 或更高层结构化意图，再校验、dry-run、执行
+- 声称“画准了”之前必须有截图或实体回读证据（见 `AGENTS.md`、`CAD_AGENT_BLOCKER_PLAYBOOK.md`）
+
+## 防跑偏规则
+
+新增能力前先判断：
 
 ```text
-1. 用户会怎么用白话说？
-2. 对应的 CAD_PLAN 是什么？
-3. 哪个脚本负责校验？
-4. 哪个脚本负责执行？
-5. 画完后怎么验证？
+两个以上场景会复用  -> core/
+只有一个场景会用      -> agents/<scenario>/
+跨场景资源            -> libraries/
+真实项目资料          -> projects/
+架构/路线/决策        -> docs/
 ```
 
-如果回答不了，就先不要进入 CAD 绘制。
+不要把仓库改成工装专用 Agent，也不要把通用能力写死到某个场景 Agent。
 
-## 迁移到新电脑时
+## 迁移到新电脑
 
-复制本文件夹后，先检查：
+复制本仓库后检查：
 
-```text
-1. 新电脑是否已安装 CAD 软件。
-2. Codex 是否能读取本文件夹。
-3. CAD-MCP 或 AutoCAD COM 是否可用。
-4. Python 运行环境是否可用。
-5. 是否能运行 examples/plans/draw_test_cabinet.json 的 validate 和 dry-run。
-```
-
-通过这些检查后，再接入具体项目图纸。
+1. CAD 软件与 Codex 可读本目录
+2. CAD-MCP / AutoCAD COM / Python 可用
+3. `draw_test_cabinet.json` 能通过 validate 与 dry-run
+4. 需要真实落图时再接入具体项目 DWG，并创建项目级 `cad_context.json`

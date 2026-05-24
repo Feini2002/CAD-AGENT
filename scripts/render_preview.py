@@ -1,29 +1,16 @@
 #!/usr/bin/env python
-"""Render or capture a preview after CAD execution.
-
-Future responsibilities:
-- capture CAD window or exported preview
-- save image into output/previews
-- optionally compare with expected screenshots
-"""
+"""Compatibility wrapper for core.verification.render_preview."""
 
 from __future__ import annotations
 
-import argparse
+import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Render a CAD preview.")
-    parser.add_argument("--output", type=Path, default=Path("output/previews/preview.png"))
-    args = parser.parse_args()
-
-    print("render_preview.py scaffold")
-    print(f"- output: {args.output}")
-    print("- status: rendering is not implemented yet.")
-    return 0
+from core.verification.render_preview import *  # noqa: F401,F403
+from core.verification.render_preview import main
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

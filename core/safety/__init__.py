@@ -1,0 +1,1 @@
+"""Core safety rule assets."""

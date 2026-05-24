@@ -1,0 +1,36 @@
+{
+  "id": "commercial_fitout",
+  "name": "Commercial Fitout Agent",
+  "type": "scene_agent",
+  "status": "scaffold",
+  "coreReuseRequired": true,
+  "scope": [
+    "retail_store",
+    "commercial_fitout",
+    "store_layout",
+    "store_elevation"
+  ],
+  "workflows": [
+    "existing_plan_to_elevation",
+    "blank_store_to_layout"
+  ],
+  "defaultPreferences": {
+    "primaryLayer": "CODEX_PREVIEW",
+    "entrancePriority": "display_first",
+    "cashierPlacement": "near_exit_without_blocking_flow",
+    "circulation": {
+      "mainAisleWidthMm": 1200,
+      "secondaryAisleWidthMm": 900
+    }
+  },
+  "usesCore": [
+    "drawing_analysis",
+    "project_model",
+    "layout_engine",
+    "proposal_engine",
+    "plan_engine",
+    "execution",
+    "verification",
+    "safety"
+  ]
+}

@@ -73,23 +73,42 @@
 
 ## 6. 文件职责要清楚
 
-- `cad_agent/` 放通用设计说明。
-- `skills/` 放给 Codex 自动触发的工作流。
-- `schemas/` 放机器校验用 JSON Schema。
-- `examples/` 放测试输入样例。
-- `scripts/` 放可执行脚本。
-- `libraries/` 放对象库和行业包。
-- `drivers/` 放 CAD 软件连接层。
-- `docs/archive/` 放历史文档，不作为当前规则直接执行。
+- `core/` 放通用 CAD Agent 底座能力，是后续主要开发区域。
+- `agents/` 放轻量场景 Agent，只写场景差异、默认偏好和专用 workflow。
+- `libraries/` 放跨场景资源，例如块、对象、风格、材料、尺寸、人体工学和图层标准。
+- `projects/` 放真实或样例项目资料，不污染通用规则。
+- `scripts/` 放兼容旧命令的薄包装器，真实实现逐步迁入 `core/`。
+- `drivers/` 放兼容旧导入的薄包装器，真实驱动逐步迁入 `core/cad_io/`。
+- `schemas/` 放过渡期 schema 兼容副本，正式 schema 逐步迁入 `core/schemas/`。
+- `docs/` 放架构、路线、决策和历史文档。
+- `skills/` 放给 Codex 使用的 CAD Skill 草稿，后续逐步对齐 Core 架构。
 
 ## 7. 跑偏检查
 
 如果某个功能不能回答下面问题，就暂停开发：
 
 ```text
-1. 用户白话例子是什么？
-2. 对应 CAD_PLAN 是什么？
-3. 校验规则在哪里？
-4. 执行脚本在哪里？
-5. 验证结果怎么看？
+1. 它是否是两个以上场景会复用的通用能力？
+2. 如果是，为什么不放在 core？
+3. 如果不是，它属于哪个 agents/<scenario>？
+4. 它需要的共享资源是否应该进入 libraries？
+5. 它的项目资料是否应该进入 projects？
+6. 它最终如何转成 CAD_PLAN 或明确结构化绘图意图？
+7. 校验、dry-run、执行和验证结果怎么看？
 ```
+
+## 8. 卡壳时先自查，不盲目重试
+
+当用户说“画不准”“画不出来”，或当前阶段出现执行失败、预览不对、截图缺失、回读验证缺失时，Codex 必须先进入 `CAD_AGENT_BLOCKER_PLAYBOOK.md` 的自查闭环。
+
+最小要求：
+
+- 先确认当前阶段和最近变更。
+- 运行或说明为什么不能运行 `scripts/self_check.py`。
+- 对视觉问题先确认 `scripts/render_preview.py --check` 的截图能力。
+- 如果已经绘制到 CAD，优先留下截图或回读证据。
+- 定位问题属于白话理解、`CAD_PLAN`、Schema、dry-run、执行脚本、驱动、CAD 环境还是验证工具。
+- 先做最小复现和最小修复，再扩大到复杂图纸。
+- 修复后更新 `CAD_AGENT_STATUS.md`、`CAD_AGENT_CHANGELOG.md`，失败或踩坑还要更新 `CAD_AGENT_ISSUES.md`。
+
+如果当前没有自检或截图能力，先补自检或截图入口，再继续推进依赖它们的绘图修复。

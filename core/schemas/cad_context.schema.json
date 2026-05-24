@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad_context.schema.json",
+  "title": "CAD_CONTEXT",
+  "type": "object",
+  "required": ["unit", "domain", "layers"],
+  "properties": {
+    "unit": {
+      "type": "string",
+      "enum": ["mm"]
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["generic", "residential", "retail", "office", "restaurant", "exhibition", "hotel", "education", "healthcare", "industrial", "custom"]
+    },
+    "spaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "boundary": {
+            "type": "array"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "layers": {
+      "type": "object",
+      "required": ["preview"],
+      "properties": {
+        "preview": {
+          "type": "string"
+        },
+        "furniture": {
+          "type": "string"
+        },
+        "annotation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

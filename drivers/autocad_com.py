@@ -1,12 +1,10 @@
-"""AutoCAD COM driver placeholder.
-
-This module will eventually contain the low-level AutoCAD calls used by
-execute_plan.py. Keep natural-language understanding out of this layer.
-"""
+"""Compatibility wrapper for core.cad_io.autocad_com."""
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 
-def driver_status() -> str:
-    return "autocad_com driver scaffold"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from core.cad_io.autocad_com import *  # noqa: F401,F403

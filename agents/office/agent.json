@@ -1,0 +1,27 @@
+{
+  "id": "office",
+  "name": "Office Agent",
+  "type": "scene_agent",
+  "status": "scaffold",
+  "coreReuseRequired": true,
+  "scope": [
+    "office_layout",
+    "workplace_planning"
+  ],
+  "workflows": [],
+  "defaultPreferences": {
+    "primaryLayer": "CODEX_PREVIEW",
+    "circulationReadable": true,
+    "meetingRoomsNearSharedZones": "preferred"
+  },
+  "usesCore": [
+    "drawing_analysis",
+    "project_model",
+    "layout_engine",
+    "proposal_engine",
+    "plan_engine",
+    "execution",
+    "verification",
+    "safety"
+  ]
+}

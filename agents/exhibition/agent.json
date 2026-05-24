@@ -1,0 +1,27 @@
+{
+  "id": "exhibition",
+  "name": "Exhibition Agent",
+  "type": "scene_agent",
+  "status": "scaffold",
+  "coreReuseRequired": true,
+  "scope": [
+    "exhibition_layout",
+    "display_space"
+  ],
+  "workflows": [],
+  "defaultPreferences": {
+    "primaryLayer": "CODEX_PREVIEW",
+    "visitorFlowReadable": true,
+    "displayWallPriority": "high"
+  },
+  "usesCore": [
+    "drawing_analysis",
+    "project_model",
+    "layout_engine",
+    "proposal_engine",
+    "plan_engine",
+    "execution",
+    "verification",
+    "safety"
+  ]
+}

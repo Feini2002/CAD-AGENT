@@ -17,6 +17,19 @@
 10. 用户确认后再正式落图或保存
 ```
 
+## 卡壳分支
+
+如果预览绘制失败、画不准、缺少截图或无法验证，不继续盲目重试。先进入：
+
+```text
+CAD_AGENT_BLOCKER_PLAYBOOK.md
+-> scripts/self_check.py
+-> scripts/render_preview.py --check
+-> 最小复现
+-> 最小修复
+-> 重新验证并记录
+```
+
 ## 什么情况下要问用户
 
 - 没有明确位置。

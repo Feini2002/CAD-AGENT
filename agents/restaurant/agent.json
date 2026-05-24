@@ -1,0 +1,27 @@
+{
+  "id": "restaurant",
+  "name": "Restaurant Agent",
+  "type": "scene_agent",
+  "status": "scaffold",
+  "coreReuseRequired": true,
+  "scope": [
+    "restaurant_layout",
+    "dining_space"
+  ],
+  "workflows": [],
+  "defaultPreferences": {
+    "primaryLayer": "CODEX_PREVIEW",
+    "diningCirculationReadable": true,
+    "servicePathClear": true
+  },
+  "usesCore": [
+    "drawing_analysis",
+    "project_model",
+    "layout_engine",
+    "proposal_engine",
+    "plan_engine",
+    "execution",
+    "verification",
+    "safety"
+  ]
+}

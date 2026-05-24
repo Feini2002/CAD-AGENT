@@ -1,0 +1,33 @@
+{
+  "id": "residential",
+  "name": "Residential Agent",
+  "type": "scene_agent",
+  "status": "scaffold",
+  "coreReuseRequired": true,
+  "scope": [
+    "home_interior",
+    "residential_layout",
+    "residential_elevation"
+  ],
+  "workflows": [],
+  "defaultPreferences": {
+    "primaryLayer": "CODEX_PREVIEW",
+    "bedroom": {
+      "bedAgainstSolidWall": true,
+      "wardrobeAccessClearanceMm": 600
+    },
+    "kitchen": {
+      "workTrianglePreferred": true
+    }
+  },
+  "usesCore": [
+    "drawing_analysis",
+    "project_model",
+    "layout_engine",
+    "proposal_engine",
+    "plan_engine",
+    "execution",
+    "verification",
+    "safety"
+  ]
+}
