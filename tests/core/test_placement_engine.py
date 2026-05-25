@@ -1,13 +1,10 @@
 from __future__ import annotations
 
 import json
-import sys
 import unittest
-from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+from tests.bootstrap import PROJECT_ROOT
 
 from core.block_engine.block_library import load_block_library
 from core.layout_engine.placement import create_zone_placements

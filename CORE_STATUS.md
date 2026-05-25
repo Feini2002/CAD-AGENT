@@ -54,7 +54,7 @@
 
 `CORE_RESTRUCTURE_PLAN.md` 已从第一轮重装设计草案修剪为剩余工作计划。后续读取它时，应把它当作“还没做什么”的清单，而不是已完成迁移的待办。
 
-最近复验：2026-05-25 15:17 已跑通非 CAD 基线，`unittest discover -s tests` 为 165 tests OK，`self_check.py` 为 pass，`render_preview.py --check` 为 ready，`scripts/run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json` 为 ok，`scripts/run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json` 为 4/4 pass，`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\docs-sync-no-cad` 为 pass。该复验只证明非 CAD 链路和无 CAD 验证总控可用，不证明真实 CAD 几何准确。
+最近复验：2026-05-25 17:19 已跑通非 CAD 基线，`unittest discover -s tests` 为 196 tests OK，`self_check.py` 为 pass，`render_preview.py --check` 为 ready，`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-findings` 为 pass 且 0 findings，`scripts/run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\hardening-polish` 为 ok，`scripts/run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\hardening-polish` 为 4/4 pass，`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\hardening-polish-no-cad` 为 pass。真实 CAD 验证本轮未运行；该复验只证明非 CAD 链路和无 CAD 验证总控可用，不证明真实 CAD 几何准确。
 
 ## 遗留目录
 

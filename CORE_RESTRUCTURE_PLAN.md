@@ -9,7 +9,7 @@
 
 本轮纳入 `SHELL_LAYOUT_FOUNDATION_DESIGN.md` 的设计思路，但不修改该文档。空壳布局底座不再作为旁支蓝图，而是下一轮让 Core 变得可用的主线。
 
-最近同步检查：2026-05-25 15:17 已完成一轮非 CAD 基线复验，`unittest discover -s tests` 为 165 tests OK，`self_check.py` 为 pass，`render_preview.py --check` 为 ready，blank-shell pipeline 为 ok，4 场景 blank-shell benchmark 为 pass，`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\docs-sync-no-cad` 为 pass。真实 CAD 落图、截图与实体回读仍未补验，不能据此声称几何准确。
+最近同步检查：2026-05-25 17:19 已完成一轮系统层收尾复验，`unittest discover -s tests` 为 196 tests OK，`self_check.py` 为 pass，`render_preview.py --check` 为 ready，`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-findings` 为 pass 且 0 findings，blank-shell pipeline 为 ok，4 场景 blank-shell benchmark 为 pass，`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\hardening-polish-no-cad` 为 pass。真实 CAD 验证本轮未运行；落图、截图与实体回读仍归 Phase W 补验，不能据此声称几何准确。
 
 ---
 
@@ -159,8 +159,8 @@
 - 高层 schema 已覆盖 `DESIGN_BRIEF`、`DRAWING_MODEL`、`PROJECT_MODEL`、`OBJECT_SPEC`、`STYLE_PROFILE`、`BLOCK_LIBRARY`、`LAYOUT_PROPOSAL`、`DESIGN_PROPOSAL`、`VERIFICATION_REPORT`、`SHELL_MODEL`、`CIRCULATION_MODEL`、`FUNCTION_ZONE`。
 - 已有第一批 Core 原型：object/style/block/layout/proposal/plan/verification/safety/capability/benchmark/non-CAD pipeline。
 - `projects/sample_blank_shell/input/shell.manual.json` 已成为空壳布局样例输入之一，Phase V 另补 retail / office / residential / restaurant workflow benchmark。
-- 最近基线记录为 165 项单元测试通过，`self_check.py` pass，`render_preview.py --check` ready，blank-shell pipeline ok，4 场景 blank-shell benchmark pass，`run_cad_validation.py --no-cad` pass。
-- 最近同步证据路径：`output\test_artifacts\blank_shell_pipeline\docs-sync\`、`output\test_artifacts\benchmarks\docs-sync\`、`output\validation_runs\docs-sync-no-cad\report.json`。
+- 最近基线记录为 196 项单元测试通过，`self_check.py` pass，`render_preview.py --check` ready，repo audit 0 findings，blank-shell pipeline ok，4 场景 blank-shell benchmark pass，`run_cad_validation.py --no-cad` pass。
+- 最近同步证据路径：`output\test_artifacts\blank_shell_pipeline\hardening-polish\`、`output\test_artifacts\benchmarks\hardening-polish\`、`output\validation_runs\hardening-polish-no-cad\report.json`。
 
 后续开发必须保护这些入口，不随手破坏兼容命令：
 
@@ -175,6 +175,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 & $py scripts\dry_run_plan.py examples\plans\draw_test_cabinet.json
 & $py scripts\render_preview.py --check
 & $py scripts\inspect_dwg.py --plan examples\plans\draw_test_cabinet.json --format json --no-cad
+& $py scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
 & $py scripts\run_benchmark_suite.py examples\benchmarks\non_cad_core_benchmark.json --output-root output\test_artifacts\benchmarks\manual
 & $py scripts\run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\manual
 & $py scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\blank_shell_manual

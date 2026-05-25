@@ -258,6 +258,30 @@ def run_cad_validation(
     return report
 
 
+def run_validation(
+    *,
+    output_dir: Path,
+    include_cad: bool,
+    runner: Callable[[list[str], Path], CommandResult] | None = None,
+    root: Path | None = None,
+) -> dict[str, Any]:
+    """Compatibility wrapper for validation callers that do not need timeouts."""
+
+    project_root = (root or Path(__file__).resolve().parents[2]).resolve()
+    resolved_output_dir = output_dir if output_dir.is_absolute() else project_root / output_dir
+    command_runner: CommandRunner
+    if runner is None:
+        command_runner = default_command_runner
+    else:
+        command_runner = lambda command, cwd, timeout_seconds: runner(command, cwd)
+    return run_cad_validation(
+        root=project_root,
+        output_dir=resolved_output_dir,
+        include_cad=include_cad,
+        command_runner=command_runner,
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run autonomous CAD Agent validation.")
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])

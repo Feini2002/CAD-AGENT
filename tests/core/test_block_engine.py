@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-import sys
 import unittest
-from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+from tests.bootstrap import PROJECT_ROOT
 
 from core.block_engine.block_library import load_block_library
 from core.block_engine.block_placement import create_block_insertion_intent

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-import sys
 import unittest
-from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+from tests.bootstrap import PROJECT_ROOT
 
 from core.object_engine.object_to_plan import object_to_plan
 from core.object_engine.parametric_objects import apply_style_to_object_spec, create_object_spec

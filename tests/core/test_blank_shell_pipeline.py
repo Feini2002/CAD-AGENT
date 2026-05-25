@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import json
-import sys
 import unittest
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+from tests.bootstrap import PROJECT_ROOT
 
 from core.workflows.blank_shell_pipeline import run_blank_shell_pipeline
 from tests.helpers import artifact_path

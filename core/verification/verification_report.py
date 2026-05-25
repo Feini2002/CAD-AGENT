@@ -245,7 +245,7 @@ def build_verification_report(
     *,
     plan_path: Path,
     entities: list[dict[str, Any]] | None = None,
-    screenshot_path: Path | None = None,
+    screenshot_path: Path | str | None = None,
     execution_summary: dict[str, Any] | None = None,
     before_entities: list[dict[str, Any]] | None = None,
     entities_are_scoped: bool = False,
@@ -253,6 +253,7 @@ def build_verification_report(
 ) -> dict[str, Any]:
     expected = expected_from_plan(plan_path)
     entities = entities or []
+    screenshot = Path(screenshot_path) if screenshot_path is not None else None
     scope_checks: list[dict[str, str]] = []
     scoped_entities = entities
     if created_handles is not None:
@@ -293,13 +294,13 @@ def build_verification_report(
     ]
     checks.extend(scope_checks)
 
-    screenshot_valid = screenshot_path is not None and screenshot_path.exists()
-    if screenshot_path is not None and not screenshot_valid:
+    screenshot_valid = screenshot is not None and screenshot.exists()
+    if screenshot is not None and not screenshot_valid:
         checks.append(
             {
                 "name": "screenshot_evidence",
                 "status": "warning",
-                "message": f"Screenshot file does not exist: {screenshot_path}",
+                "message": f"Screenshot file does not exist: {screenshot}",
             }
         )
 
@@ -346,7 +347,7 @@ def build_verification_report(
         "checks": checks,
         "evidence": {
             "execution_summary": execution_summary or {},
-            "screenshot": str(screenshot_path) if screenshot_valid else "",
+            "screenshot": str(screenshot) if screenshot_valid else "",
             "readback_source": "provided_entities" if entities else "none",
         },
         "limitations": [] if geometry_verified else ["Geometry has not been fully verified from CAD readback."],

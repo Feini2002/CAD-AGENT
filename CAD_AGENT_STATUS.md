@@ -12,9 +12,9 @@
 
 新增架构方向：已按 `CORE_RESTRUCTURE_PLAN.md` 执行第一轮大规模仓库重装，并在第二轮继续推进非 CAD 全量底座：通用底座优先，场景 Agent 轻量化。
 
-本轮已形成一条不依赖真实 CAD 的最小闭环：`DESIGN_BRIEF + DRAWING_MODEL + preferences -> PROJECT_MODEL -> OBJECT_SPEC -> LAYOUT_PROPOSAL -> DESIGN_PROPOSAL -> CAD_PLAN -> dry-run report -> VERIFICATION_REPORT(unverified)`。真实 CAD 落图、截图和实体回读仍登记为延后补验，当前不声称几何准确。
+本轮已形成一条不依赖真实 CAD 的最小闭环：`DESIGN_BRIEF + DRAWING_MODEL + preferences -> PROJECT_MODEL -> OBJECT_SPEC -> LAYOUT_PROPOSAL -> DESIGN_PROPOSAL -> CAD_PLAN -> dry-run report -> VERIFICATION_REPORT(unverified)`。真实 CAD 验证本轮未运行，真实 CAD 落图、截图和实体回读仍登记为延后补验，当前不声称几何准确。
 
-本次状态同步复验（2026-05-25 15:17）：全量 `unittest discover -s tests` 仍为 165 tests OK；`self_check.py` pass；`render_preview.py --check` ready；blank-shell pipeline status ok；blank-shell 4 场景 benchmark status pass；`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\docs-sync-no-cad` status pass。
+本次状态同步复验（2026-05-25 17:19）：全量 `unittest discover -s tests` 为 196 tests OK；`self_check.py` pass；`render_preview.py --check` ready；`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-findings` pass，0 findings；blank-shell pipeline status ok；blank-shell 4 场景 benchmark status pass；`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\hardening-polish-no-cad` status pass。
 
 这个开发包不绑定当前家装图纸。当前电脑和当前 DWG 只作为第一套验证环境。后续应能迁移到任意安装好 Codex、CAD、CAD-MCP/Python 的电脑，并适配住宅、工装、店铺、办公、餐饮、展陈等项目。
 
@@ -91,8 +91,9 @@
 - 已完成 Phase V：新增 `core/workflows/blank_shell_pipeline.py` 与 `scripts/run_blank_shell_pipeline.py`，可串联 `SHELL_MODEL -> PROJECT_MODEL -> CIRCULATION_MODEL -> FUNCTION_ZONE -> placements -> LAYOUT_PROPOSAL -> DESIGN_PROPOSAL -> CAD_PLAN -> dry-run -> VERIFICATION_REPORT(unverified)`。
 - Phase V benchmark 已从“同一 workflow 重复 4 次”补强为 retail / office / residential / restaurant 四个不同 workflow case；新增 office、residential、restaurant shell examples 和 restaurant preferences。
 - 本轮大范围审计已修复三类隐蔽问题：block 尺寸与 CAD_PLAN 默认对象尺寸不一致、`path_to_rect_strips()` 不处理重复连续点、zone 剩余空间为负时 placement fallback 抛异常。
+- 系统层安全重构已完成：新增 repo audit、测试/脚本/legacy driver bootstrap、capability registry facade 拆分、blank-shell pipeline malformed workflow 分类、路径边界检查、verification edge tests 和长期审计报告；最终无 CAD 验证为 196 tests OK、repo audit 0 findings、blank-shell 4/4 benchmark pass、`run_cad_validation.py --no-cad` pass。真实 CAD 几何补验仍归 Phase W。
 
-## 正在做
+## 近期已完成
 
 - 本轮已完成开发状态检查与文档同步：`CORE_RESTRUCTURE_PLAN.md`（用户提到 `plan.md` 时默认指该主计划）、`CORE_STATUS.md`、`CAD_AGENT_STATUS.md`、`README.md`、`CORE_CONTEXT_BRIEF.md` 和 `CAD_AGENT_CHANGELOG.md` 已对齐当前“Phase O-V 非 CAD 已通过、Phase W/X 待推进”的口径。
 - 已补充 `README.md` 的 Git 提交/推送说明，并收紧 `.gitignore`，避免本机日志和生成输出进入可迁移开发包。
@@ -147,13 +148,14 @@ $env:PYTHONIOENCODING='utf-8'
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\self_check.py
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\render_preview.py --check
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' -m unittest discover -s tests
+& 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' -m core.schemas.validator core\schemas\design_brief.schema.json examples\design_briefs\minimal_cabinet_brief.json
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\inspect_dwg.py --plan examples\plans\draw_test_cabinet.json --format json --no-cad
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_non_cad_pipeline.py examples\workflows\full_non_cad_core_loop.json --output-dir output\test_artifacts\non_cad_pipeline\manual
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\manual
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_benchmark_suite.py examples\benchmarks\non_cad_core_benchmark.json --output-root output\test_artifacts\benchmarks\manual
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\blank_shell_manual
-& 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\docs-sync-no-cad
+& 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\hardening-polish-no-cad
 ```
 
 结果：
@@ -162,7 +164,8 @@ $env:PYTHONIOENCODING='utf-8'
 VALID CAD_PLAN
 CAD_PLAN DRY RUN
 core test_execute_plan: OK
-unit test discover: 165 tests OK
+unit test discover: 196 tests OK
+repo audit: pass, 0 findings
 self_check.py: status pass
 render_preview.py --check: status ready
 core.plan_engine.validate_plan: VALID CAD_PLAN
@@ -172,7 +175,7 @@ run_non_cad_pipeline: status ok, output project/object/layout/proposal/CAD_PLAN/
 run_blank_shell_pipeline: status ok, output shell/project/circulation/zones/placements/layout/proposal/CAD_PLAN/dry-run/verification artifacts
 run_benchmark_suite: status pass, minimal-cabinet-non-cad passed
 blank_shell_core_benchmark: status pass, 4 scenario workflow cases passed
-run_cad_validation --no-cad: status pass, report at output\validation_runs\docs-sync-no-cad\report.json
+run_cad_validation --no-cad: status pass, report at output\validation_runs\hardening-polish-no-cad\report.json
 ```
 
 ## 暂不做

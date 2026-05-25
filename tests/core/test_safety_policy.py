@@ -1,13 +1,10 @@
 from __future__ import annotations
 
 import json
-import sys
 import unittest
-from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+from tests.bootstrap import PROJECT_ROOT
 
 from core.safety.policy import assert_plan_is_safe, evaluate_plan_safety
 

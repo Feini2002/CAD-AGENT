@@ -143,3 +143,28 @@
 不得遇到第一个失败就停止。仓库内可修问题应由 Codex 自己最小复现、最小修复并重新运行验证；只有依赖安装、AutoCAD 授权/窗口/活动 DWG、正式图层/保存/删除/覆盖、或真实项目语义缺失时，才停下来问用户。
 
 验证结果必须以 `output/validation_runs/<timestamp>/report.json` 和 `report.md` 为证据。没有通过真实 CAD 落图、截图和实体回读时，不得声称几何准确。
+
+## 10. 系统维护与安全重构门禁
+
+执行大型系统维护、代码债排查、BUG 寻找或安全重构时，Codex 必须先冻结当前 dirty tree 与 baseline，再按小任务推进。每个任务要有明确允许文件、禁止范围、红/绿测试或审计断言、验证命令和停止条件。
+
+默认边界：
+
+- 不连接真实 CAD，不保存 DWG，不覆盖原图，不删除实体，不修改正式图层。
+- 不把无 CAD 验证写成真实 CAD 几何准确。
+- 不回滚未理解的用户或其他 Agent 改动。
+- 不把“文件存在”当作任务完成；必须有红/绿测试、审计报告或验证命令证据。
+- 多 Agent 并行时必须分配互不重叠的写入范围；Review Agent 默认只读，除非用户明确要求它转为实现任务。
+- 临时执行计划完成后，必须把长期规则迁移到 `CAD_AGENT_RULES.md`、把审计事实迁移到 `docs/verification/`，再删除临时计划文件。
+
+系统维护完成前至少运行：
+
+```powershell
+& $py -m unittest discover -s tests
+& $py scripts\self_check.py
+& $py scripts\render_preview.py --check
+& $py scripts\run_repo_audit.py --max-python-lines 500
+& $py scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\<name>-no-cad
+```
+
+如果 `scripts\run_repo_audit.py --fail-on-findings` 失败，应把 findings 分为“本轮必须修复”和“已登记剩余风险”。剩余风险必须写入 `docs/verification/` 或 `CAD_AGENT_ISSUES.md`，不能静默忽略。

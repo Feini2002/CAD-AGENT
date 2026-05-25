@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import sys
 import unittest
 import json
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+from tests.bootstrap import PROJECT_ROOT
 
 from core.workflows.non_cad_pipeline import run_non_cad_pipeline
 from core.model_loop.reference_checker import load_workflow_index, validate_references, validate_workflow_schemas

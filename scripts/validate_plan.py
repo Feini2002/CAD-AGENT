@@ -3,10 +3,12 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+try:
+    from _bootstrap import PROJECT_ROOT  # noqa: F401
+except ModuleNotFoundError as exc:
+    if exc.name != "_bootstrap":
+        raise
+    from scripts._bootstrap import PROJECT_ROOT  # noqa: F401
 
 from core.plan_engine.validate_plan import *  # noqa: F401,F403
 from core.plan_engine.validate_plan import main

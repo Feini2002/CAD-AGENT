@@ -24,6 +24,173 @@
 
 ## 已知问题
 
+### 问题：legacy driver wrapper 保留本地 `sys.path.insert` 会漏过共享 bootstrap 收敛
+
+日期：2026-05-25
+
+现象：
+系统层 repo audit 首轮通过代码迁移后，`drivers/autocad_com.py`、`drivers/dxf_writer.py`、`drivers/zwcad_com.py` 仍各自保留 `sys.path.insert(0, ...)`。
+
+影响：
+长期兼容入口和脚本入口的导入策略不一致；后续如果继续复制这种 wrapper 写法，会让路径污染重新扩散，repo audit 也会留下可修复 findings。
+
+原因：
+上一轮先收敛了 `scripts/*.py` 和 `tests/core/*.py`，但 legacy driver wrapper 被当作低风险兼容层，没有同步迁移到共享 bootstrap。
+
+修复：
+三个 driver wrapper 已改为复用 `scripts._bootstrap.PROJECT_ROOT`，删除本地 `sys` / `Path` / `sys.path.insert`；`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-findings` 现在为 0 findings。
+
+以后规则：
+兼容 wrapper 也必须复用共享 bootstrap；除 `scripts/_bootstrap.py`、`tests/bootstrap.py` 和测试 fixture 外，不新增直接 `sys.path.insert(...)`。
+
+相关文件：
+- `drivers/autocad_com.py`
+- `drivers/dxf_writer.py`
+- `drivers/zwcad_com.py`
+- `scripts/_bootstrap.py`
+- `scripts/run_repo_audit.py`
+- `core/maintenance/repo_audit.py`
+- `tests/core/test_repo_audit.py`
+
+### 问题：repo audit 只抓 `sys.path.insert` 会漏掉其他路径污染形态
+
+日期：2026-05-25
+
+现象：
+初版 repo audit 只识别直接 `sys.path.insert(...)`，会漏掉 `sys.path.append/extend`、`import sys as system`、`from sys import path as sys_path` 和 `__path__.append(...)`。
+
+影响：
+代码可以绕过审计继续修改 Python 搜索路径，长期会削弱脚本 bootstrap 收敛效果，也容易让兼容入口再次复制本地路径注入。
+
+原因：
+首轮实现只针对已发现的 `insert` 残留，AST 规则没有覆盖同类 path mutation 变体。
+
+修复：
+`core/maintenance/repo_audit.py` 已扩展 AST 检测，覆盖常见 sys path mutation 和 package `__path__` mutation；`tests/core/test_repo_audit.py` 增加别名、from-import 和 `__path__` 回归测试。
+
+以后规则：
+repo audit 类门禁不能只覆盖当前已见症状；同一风险族的常见写法要一起进测试。
+
+相关文件：
+- `core/maintenance/repo_audit.py`
+- `tests/core/test_repo_audit.py`
+
+### 问题：pipeline 和 capability 路径未收紧会允许读写仓库外路径
+
+日期：2026-05-25
+
+现象：
+`blank_shell_pipeline` 和部分 capability runner 会把 payload 中的绝对路径或 `..` 相对路径直接拼接或解析；缺 workflow 文件、坏 JSON 或越界 output_dir 时可能 traceback，甚至尝试写到 repo 外目录。
+
+影响：
+无 CAD pipeline 是长期可复用入口，如果路径边界不硬，后续 Agent 或 benchmark payload 可能误读本机文件、把 artifacts 写出仓库，或把环境权限错误误判为业务失败。
+
+原因：
+早期 pipeline 假定 workflow 都来自仓库内 examples，先关注链路可跑通，未把路径归属和文件级异常作为安全合约。
+
+修复：
+`core/workflows/blank_shell_pipeline.py` 在读取 workflow、解析输入文件和写 output artifacts 前检查 project root / `output/` 边界；缺文件、坏 JSON、越界输入和越界输出都返回结构化 `invalid`。`core/capabilities/runners.py` 的路径型入口也统一限制在 project root 与 `output/` 下。
+
+以后规则：
+所有可由 payload 指定的路径都要先解析边界再读写；输入读路径默认必须在 project root 内，输出写路径默认必须在 `output/` 下。
+
+相关文件：
+- `core/workflows/blank_shell_pipeline.py`
+- `core/capabilities/runners.py`
+- `tests/core/test_blank_shell_pipeline_failures.py`
+- `tests/core/test_capability_registry_split.py`
+
+### 问题：Windows 非 UTF-8 stdout 下 JSON CLI 可能因中文路径崩溃
+
+日期：2026-05-25
+
+现象：
+
+在未设置 `PYTHONIOENCODING=utf-8` 的 PowerShell 环境中运行 `scripts/run_cad_validation.py --no-cad`，报告生成已完成，但最后向 stdout 打印 `json.dumps(..., ensure_ascii=False)` 时触发 `UnicodeEncodeError: 'gbk' codec can't encode character ...`。
+
+影响：
+
+`report.json` 等 UTF-8 文件证据可能已经落盘，但 CLI 进程以失败状态退出，容易把已完成的无 CAD 验证误判为整体失败；中文工作区路径会放大这个问题。
+
+原因：
+
+脚本入口没有统一配置 stdout/stderr 编码，核心模块直接打印包含中文路径和中文内容的 JSON。Windows 控制台使用 GBK/CP936 时，部分 Unicode 字符无法编码。
+
+修复：
+
+本轮系统层安全重构已执行修复：新增 `scripts/_bootstrap.py` 的 `configure_utf8_stdio()`，让脚本入口统一 `stdout/stderr` 为 UTF-8 with replacement，并在 `tests/core/test_script_bootstrap.py` 增加非 UTF-8 stdout 回归测试。脚本入口同时兼容直接执行和包导入。
+
+以后规则：
+
+所有会向 stdout 打印 JSON 的脚本入口必须先导入共享 bootstrap；报告文件继续使用 UTF-8 写入，stdout 不能因为控制台编码导致命令失败。
+
+相关文件：
+
+- `scripts/run_cad_validation.py`
+- `core/verification/cad_validation_runner.py`
+- `scripts/_bootstrap.py`
+- `tests/core/test_script_bootstrap.py`
+- `docs/verification/system_hardening_audit.md`
+
+### 问题：blank-shell workflow 坏输入会抛未分类异常或静默回退
+
+日期：2026-05-25
+
+现象：
+
+缺少 `inputs.shell_model` 时，`blank_shell_pipeline` 会在读取输入时抛 `KeyError`；显式传入 `object_types: []` 时，pipeline 会静默回退到默认对象列表。
+
+影响：
+
+坏 workflow 可能被误当成正常流程继续生成默认布置，或者以未分类异常中断，后续 Agent 难以判断是输入错误、算法失败还是系统回归。
+
+原因：
+
+`run_blank_shell_pipeline()` 在读取 workflow 后缺少前置输入合约校验，只在后续执行路径里隐式依赖字段存在和类型正确。
+
+修复：
+
+新增 `_validate_workflow_inputs()`，对必填输入、可选路径字段和 `object_types` 做结构化校验；缺字段、路径类型错误或显式空对象列表时返回 `status: invalid`、空 artifacts 和明确 errors。新增 `tests/core/test_blank_shell_pipeline_failures.py` 覆盖缺字段、空对象列表和非字符串路径。
+
+以后规则：
+
+workflow 入口必须先分类坏输入，再运行 pipeline；缺失输入、类型错误和确认门阻塞都要返回结构化状态，不得静默回退或抛未分类异常。
+
+相关文件：
+
+- `core/workflows/blank_shell_pipeline.py`
+- `tests/core/test_blank_shell_pipeline_failures.py`
+
+### 问题：verification 边界入口对字符串截图路径和兼容调用不稳
+
+日期：2026-05-25
+
+现象：
+
+`build_verification_report(..., screenshot_path="missing-screen.png")` 会把字符串当 Path 调用 `.exists()`；同时部分调用方需要不关心 timeout 参数的 `run_validation()` 兼容入口。
+
+影响：
+
+缺失截图路径本应只保留 `unverified` 并写入 warning，却可能触发类型错误；验证 runner 的兼容调用也不够稳定，容易让报告落盘行为缺少测试保护。
+
+原因：
+
+`screenshot_path` 类型过窄，未在函数入口统一规范化；`cad_validation_runner` 只有底层 `run_cad_validation()`，没有简化的兼容 wrapper。
+
+修复：
+
+`build_verification_report()` 支持 `Path | str | None` 并统一转成 `Path` 后判断存在性；新增 `run_validation()` wrapper，并保证相对 `output_dir` 按 root 解析。新增 `tests/core/test_validation_edges.py` 覆盖 required step 失败仍写 `report.json`、字符串截图缺失不升级 verified、相对输出路径归属。
+
+以后规则：
+
+验证报告入口必须先规范化路径类型；缺截图、无 readback、无 scoped handles 时只能保持 `unverified`，不能升级为真实几何验证。
+
+相关文件：
+
+- `core/verification/cad_validation_runner.py`
+- `core/verification/verification_report.py`
+- `tests/core/test_validation_edges.py`
+
 ### 问题：blank-shell placement bbox 与 CAD_PLAN 对象尺寸不一致
 
 日期：2026-05-25

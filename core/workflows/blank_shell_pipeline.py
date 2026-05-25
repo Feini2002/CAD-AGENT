@@ -20,16 +20,90 @@ from core.schemas.validator import load_json
 from core.verification.verification_report import build_verification_report
 
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
 def _find_project_root(path: Path) -> Path:
     for parent in [path.parent, *path.parents]:
         if (parent / "CORE_RESTRUCTURE_PLAN.md").exists():
             return parent
-    return path.parent
+    return PROJECT_ROOT
+
+
+def _is_relative_to(path: Path, root: Path) -> bool:
+    try:
+        path.relative_to(root)
+    except ValueError:
+        return False
+    return True
+
+
+def _resolve_under_root(root: Path, value: str, label: str) -> Path:
+    candidate = Path(value)
+    if not candidate.is_absolute():
+        candidate = root / candidate
+    resolved = candidate.resolve()
+    if not _is_relative_to(resolved, root.resolve()):
+        raise ValueError(f"{label} must stay under project root")
+    return resolved
+
+
+def _resolve_output_dir(root: Path, output_dir: Path) -> Path:
+    candidate = output_dir if output_dir.is_absolute() else root / output_dir
+    resolved = candidate.resolve()
+    if not _is_relative_to(resolved, (root / "output").resolve()):
+        raise ValueError("output_dir must stay under project output directory")
+    return resolved
 
 
 def _write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _validate_workflow_inputs(workflow: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    inputs = workflow.get("inputs")
+    if not isinstance(inputs, dict):
+        return ["inputs must be an object"]
+    for key in ["design_brief", "drawing_model", "shell_model"]:
+        value = inputs.get(key)
+        if value is None or value == "":
+            errors.append(f"inputs.{key} is required")
+        elif not isinstance(value, str):
+            errors.append(f"inputs.{key} must be a non-empty string path")
+    for key in ["preferences", "block_library"]:
+        if key in inputs:
+            value = inputs[key]
+            if not isinstance(value, str) or not value:
+                errors.append(f"inputs.{key} must be a non-empty string path when provided")
+    object_types = workflow.get("object_types", ["display_unit", "counter", "shelf", "desk", "chair"])
+    if (
+        not isinstance(object_types, list)
+        or not object_types
+        or not all(isinstance(item, str) and item for item in object_types)
+    ):
+        errors.append("object_types must be a non-empty list")
+    return errors
+
+
+def _resolve_workflow_input_paths(root: Path, inputs: dict[str, Any]) -> tuple[dict[str, Path], list[str]]:
+    paths: dict[str, Path] = {}
+    errors: list[str] = []
+    for key in ["design_brief", "drawing_model", "shell_model", "preferences", "block_library"]:
+        value = inputs.get(key)
+        if not isinstance(value, str) or not value:
+            continue
+        try:
+            path = _resolve_under_root(root, value, f"inputs.{key}")
+        except ValueError as exc:
+            errors.append(str(exc))
+            continue
+        if not path.exists():
+            errors.append(f"inputs.{key} file does not exist")
+            continue
+        paths[key] = path
+    return paths, errors
 
 
 def _object_spec_from_placement(placement: dict[str, Any]) -> dict[str, Any]:
@@ -130,16 +204,39 @@ def _choose_zone_placements(
 
 
 def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[str, Any]:
-    root = _find_project_root(workflow_path.resolve())
-    workflow = load_json(workflow_path)
-    inputs = workflow.get("inputs", {})
-    brief = load_json(root / inputs["design_brief"])
-    drawing = load_json(root / inputs["drawing_model"])
-    shell = load_manual_shell(root / inputs["shell_model"])
-    preferences = load_json(root / inputs["preferences"]) if inputs.get("preferences") else {}
+    workflow_path = workflow_path.resolve()
+    root = _find_project_root(workflow_path)
+    try:
+        output_dir = _resolve_output_dir(root, output_dir)
+    except ValueError as exc:
+        return {"status": "invalid", "errors": [str(exc)], "artifacts": {}, "metrics": {}}
+    if not _is_relative_to(workflow_path, root.resolve()):
+        return {"status": "invalid", "errors": ["workflow_path must stay under project root"], "artifacts": {}, "metrics": {}}
+    if not workflow_path.exists():
+        return {"status": "invalid", "errors": ["workflow file does not exist"], "artifacts": {}, "metrics": {}}
+    try:
+        workflow = load_json(workflow_path)
+    except json.JSONDecodeError as exc:
+        return {"status": "invalid", "errors": [f"workflow JSON is invalid: {exc}"], "artifacts": {}, "metrics": {}}
+    except OSError as exc:
+        return {"status": "invalid", "errors": [f"workflow file cannot be read: {exc}"], "artifacts": {}, "metrics": {}}
+    if not isinstance(workflow, dict):
+        return {"status": "invalid", "errors": ["workflow must be a JSON object"], "artifacts": {}, "metrics": {}}
+    validation_errors = _validate_workflow_inputs(workflow)
+    raw_inputs = workflow.get("inputs", {})
+    resolved_inputs, path_errors = _resolve_workflow_input_paths(root, raw_inputs) if isinstance(raw_inputs, dict) else ({}, [])
+    validation_errors.extend(path_errors)
+    if validation_errors:
+        return {"status": "invalid", "errors": validation_errors, "artifacts": {}, "metrics": {}}
+    inputs = raw_inputs
+    try:
+        brief = load_json(resolved_inputs["design_brief"])
+        drawing = load_json(resolved_inputs["drawing_model"])
+        shell = load_manual_shell(resolved_inputs["shell_model"])
+        preferences = load_json(resolved_inputs["preferences"]) if inputs.get("preferences") else {}
+    except (OSError, json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
+        return {"status": "invalid", "errors": [f"workflow input is invalid: {type(exc).__name__}: {exc}"], "artifacts": {}, "metrics": {}}
     object_types = workflow.get("object_types", ["display_unit", "counter", "shelf", "desk", "chair"])
-    if not isinstance(object_types, list) or not object_types:
-        object_types = ["display_unit", "counter", "shelf", "desk", "chair"]
 
     project_model = build_project_model(brief, drawing, shell_model=shell).project_model
     circulation_candidates = generate_circulation_candidates(project_model, preferences.get("circulation", preferences))
@@ -148,7 +245,10 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
         circulation_candidates[0],
     )
     zones = split_zones(shell, circulation_for_zones, constraints={})
-    block_library = load_block_library(root / inputs["block_library"]) if inputs.get("block_library") else load_block_library()
+    try:
+        block_library = load_block_library(resolved_inputs["block_library"]) if inputs.get("block_library") else load_block_library()
+    except (OSError, json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
+        return {"status": "invalid", "errors": [f"block library is invalid: {type(exc).__name__}: {exc}"], "artifacts": {}, "metrics": {}}
     target_zone, placements = _choose_zone_placements(
         zones=zones,
         shell=shell,

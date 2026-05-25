@@ -44,7 +44,7 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 
 **阶段 2 已深度推进**：仓库已从「零散脚本包」重装成「Core Lab」目录结构；非 CAD 底座已有一条可运行闭环（brief / drawing / preferences → project → object / layout / proposal → CAD_PLAN → dry-run report → unverified verification report）。本轮新增 safety policy、project builder、model loop 引用检查、手工 drawing model、block selector/placement、多对象 layout、model_to_plan、created handles 证据门、场景 preferences，以及能力目录/runtime、artifact graph、geometry backend 抽象、benchmark runner、对象解释和候选比较。真实 CAD 落图、截图和实体回读仍需等 CAD 环境恢复后统一补验。
 
-最近复验（2026-05-25 15:17）：165 tests OK，`self_check.py` pass，`render_preview.py --check` ready，blank-shell pipeline ok，4 场景 blank-shell benchmark pass，`run_cad_validation.py --no-cad` pass。该结果只证明非 CAD 链路和无 CAD 验证总控可用，不证明真实 CAD 几何准确。
+最近复验（2026-05-25 17:19）：196 tests OK，`self_check.py` pass，`render_preview.py --check` ready，repo audit 0 findings，blank-shell pipeline ok，4 场景 blank-shell benchmark pass，`run_cad_validation.py --no-cad` pass。真实 CAD 验证本轮未运行；该结果只证明非 CAD 链路和无 CAD 验证总控可用，不证明真实 CAD 几何准确。
 
 ### 已完成（能直接用）
 
@@ -58,7 +58,7 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 | 规则固化 | `AGENTS.md`、`CAD_AGENT_RULES.md`、`CAD_AGENT_BLOCKER_PLAYBOOK.md` |
 | 场景 Agent 脚手架 | 工装/家装/办公/餐饮/展陈/自定义 六个目录，已补商业/住宅/办公/餐饮 preferences；仍只做轻量差异 |
 | 兼容层 | 旧 `scripts/`、`drivers/` 仍可用，真实实现已在 `core/` |
-| 测试 | `python -m unittest discover -s tests` 当前 165 项通过 |
+| 测试 | `python -m unittest discover -s tests` 当前 196 项通过 |
 | 高层 schema | `DESIGN_BRIEF`、`DRAWING_MODEL`、`PROJECT_MODEL`、`OBJECT_SPEC`、`STYLE_PROFILE`、`BLOCK_LIBRARY`、`LAYOUT_PROPOSAL`、`DESIGN_PROPOSAL`、`VERIFICATION_REPORT` 已有最小 schema 与 example |
 | 验证报告 | `core/verification/verification_report.py` 能区分已执行、已截图、几何验证、失败和未验证；缺 created handles 或截图文件不存在时不升级证据状态 |
 | 非 CAD pipeline | `scripts/run_non_cad_pipeline.py` 可生成 project/object/layout/proposal/CAD_PLAN/dry-run/verification artifacts |
@@ -174,9 +174,11 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 & $py scripts\self_check.py
 & $py scripts\render_preview.py --check
 & $py scripts\inspect_dwg.py --plan examples\plans\draw_test_cabinet.json --format json --no-cad
+& $py scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
 & $py scripts\run_non_cad_pipeline.py examples\workflows\full_non_cad_core_loop.json --output-dir output\test_artifacts\non_cad_pipeline\manual
-& $py scripts\run_benchmark_suite.py examples\benchmarks\non_cad_core_benchmark.json --output-root output\test_artifacts\benchmarks\manual
-& $py scripts\run_cad_validation.py --no-cad
+& $py scripts\run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\manual
+& $py scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\blank_shell_manual
+& $py scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\manual-no-cad
 & $py -m unittest discover -s tests
 
 # 新 Core 入口
@@ -260,7 +262,7 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 | Pillow | 12.2.0 |
 | pywin32 / win32gui | 正常 import |
 | AutoCAD | COM 已连上活动图纸 |
-| 单元测试 | `unittest discover -s tests` → 165 passed |
+| 单元测试 | `unittest discover -s tests` → 196 passed |
 
 ### 换机流程总览
 
@@ -369,7 +371,9 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 & $py scripts\dry_run_plan.py examples\plans\draw_test_cabinet.json
 & $py scripts\render_preview.py --check
 & $py -m unittest discover -s tests
+& $py scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
 & $py scripts\run_benchmark_suite.py examples\benchmarks\non_cad_core_benchmark.json --output-root output\test_artifacts\benchmarks\manual
+& $py scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\blank_shell_manual
 
 # 3) AutoCAD COM（必须先打开 DWG）
 & $py -c "from core.cad_io.autocad_com import AutoCADComDriver; d=AutoCADComDriver(); print('COM OK:', d.doc.Name)"
@@ -393,7 +397,8 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `validate_plan` | 输出 `VALID CAD_PLAN` |
 | `dry_run_plan` | 正常预演输出 |
 | `render_preview --check` | `"status": "ready"`，且 `pillow_imagegrab: true` |
-| `unittest` | `OK`，165 tests |
+| `unittest` | `OK`，196 tests |
+| repo audit | `0 findings` |
 | COM 探测 | 打印当前活动 DWG 文件名 |
 | `execute_plan` | 图上出现 `CODEX_PREVIEW` 测试柜 |
 | `--capture-screen` | 生成 `output\previews\migration-check.png` |

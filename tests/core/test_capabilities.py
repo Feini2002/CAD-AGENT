@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import json
-import sys
 import unittest
-from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+from tests.bootstrap import PROJECT_ROOT
 
 from core.capabilities.registry import get_capability, list_capabilities, run_capability, validate_capability_registry
+from core.capabilities.specs import ALLOWED_MATURITY
 from core.schemas.validator import validate_value
 
 
@@ -46,7 +44,7 @@ class CapabilityRuntimeTests(unittest.TestCase):
 
         self.assertTrue(catalog)
         for item in catalog:
-            self.assertIn(item["maturity"], {"prototype", "alpha_ready", "blocked_by_cad", "not_started"})
+            self.assertIn(item["maturity"], ALLOWED_MATURITY)
             self.assertIsInstance(item["known_limits"], list)
             self.assertTrue(item["known_limits"])
 

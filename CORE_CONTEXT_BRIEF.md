@@ -28,8 +28,8 @@
 当前状态：
 
 - Phase O 到 Phase V 的非 CAD 主线已完成到原型闭环。
-- 当前单元测试基线记录为 `165 tests OK`。
-- 最近复验时间为 2026-05-25 15:17：`self_check.py` pass，`render_preview.py --check` ready，blank-shell pipeline ok，4 场景 blank-shell benchmark pass，`run_cad_validation.py --no-cad` pass。
+- 当前单元测试基线记录为 `196 tests OK`。
+- 最近复验时间为 2026-05-25 17:19：`self_check.py` pass，`render_preview.py --check` ready，repo audit 0 findings，blank-shell pipeline ok，4 场景 blank-shell benchmark pass，`run_cad_validation.py --no-cad` pass。真实 CAD 验证本轮未运行。
 - `workflow.blank_shell_pipeline` 已登记到 capability registry。
 - 非 CAD blank-shell pipeline 已能串联：
 
@@ -139,9 +139,10 @@ rg -n "TB[D]|TO[D]O|以后再[说]|随[便]|先占[位]" CORE_CONTEXT_BRIEF.md A
 & $py -m unittest discover -s tests
 & $py scripts\self_check.py
 & $py scripts\render_preview.py --check
-& $py scripts\run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\manual
-& $py scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\blank_shell_manual
-& $py scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\phase-manual-no-cad
+& $py scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
+& $py scripts\run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\hardening-polish
+& $py scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\hardening-polish
+& $py scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\hardening-polish-no-cad
 ```
 
 真实 CAD 验证：

@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 import unittest
-from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+from tests.bootstrap import PROJECT_ROOT
 
-import sys
 
-sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.verification.render_preview import capture_screen, get_preview_capabilities
 from tests.helpers import artifact_path
