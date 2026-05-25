@@ -11,6 +11,28 @@
     "units": { "type": "string", "enum": ["mm", "cm", "m"] },
     "brief_id": { "type": "string" },
     "drawing_model_id": { "type": "string" },
+    "shell_id": { "type": "string" },
+    "source": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string" },
+        "shell_id": { "type": "string" },
+        "drawing_model_id": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "shell_context": {
+      "type": "object",
+      "properties": {
+        "openings": { "type": "array", "items": { "type": "object" } },
+        "fixed_obstacles": { "type": "array", "items": { "type": "object" } },
+        "no_place_zones": { "type": "array", "items": { "type": "object" } },
+        "required_connections": { "type": "array", "items": { "type": "object" } },
+        "building_elements": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": false
+    },
     "spaces": {
       "type": "array",
       "items": {
@@ -19,6 +41,8 @@
         "properties": {
           "space_id": { "type": "string" },
           "name": { "type": "string" },
+          "shell_id": { "type": "string" },
+          "source": { "type": "string" },
           "boundary": {
             "type": "object",
             "required": ["min", "max"],
@@ -34,6 +58,7 @@
     },
     "requirements": { "type": "array", "items": { "type": "string" } },
     "constraints": { "type": "array", "items": { "type": "string" } },
+    "uncertainties": { "type": "array", "items": { "type": "string" } },
     "pending_questions": { "type": "array", "items": { "type": "string" } }
   },
   "additionalProperties": false

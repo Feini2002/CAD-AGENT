@@ -44,6 +44,8 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 
 **阶段 2 已深度推进**：仓库已从「零散脚本包」重装成「Core Lab」目录结构；非 CAD 底座已有一条可运行闭环（brief / drawing / preferences → project → object / layout / proposal → CAD_PLAN → dry-run report → unverified verification report）。本轮新增 safety policy、project builder、model loop 引用检查、手工 drawing model、block selector/placement、多对象 layout、model_to_plan、created handles 证据门、场景 preferences，以及能力目录/runtime、artifact graph、geometry backend 抽象、benchmark runner、对象解释和候选比较。真实 CAD 落图、截图和实体回读仍需等 CAD 环境恢复后统一补验。
 
+最近复验（2026-05-25 15:17）：165 tests OK，`self_check.py` pass，`render_preview.py --check` ready，blank-shell pipeline ok，4 场景 blank-shell benchmark pass，`run_cad_validation.py --no-cad` pass。该结果只证明非 CAD 链路和无 CAD 验证总控可用，不证明真实 CAD 几何准确。
+
 ### 已完成（能直接用）
 
 | 项目 | 说明 |
@@ -54,13 +56,14 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 | 环境自检 | `self_check.py` 不碰 DWG 即可检查文件、示例计划、工具链 |
 | 截图检查 | `render_preview.py --check` 可检查截图能力 |
 | 规则固化 | `AGENTS.md`、`CAD_AGENT_RULES.md`、`CAD_AGENT_BLOCKER_PLAYBOOK.md` |
-| 场景 Agent 脚手架 | 工装/家装/办公/餐饮/展陈/自定义 六个目录，已补商业/住宅/办公 preferences；仍只做轻量差异 |
+| 场景 Agent 脚手架 | 工装/家装/办公/餐饮/展陈/自定义 六个目录，已补商业/住宅/办公/餐饮 preferences；仍只做轻量差异 |
 | 兼容层 | 旧 `scripts/`、`drivers/` 仍可用，真实实现已在 `core/` |
-| 测试 | `python -m unittest discover -s tests` 当前 109 项通过 |
+| 测试 | `python -m unittest discover -s tests` 当前 165 项通过 |
 | 高层 schema | `DESIGN_BRIEF`、`DRAWING_MODEL`、`PROJECT_MODEL`、`OBJECT_SPEC`、`STYLE_PROFILE`、`BLOCK_LIBRARY`、`LAYOUT_PROPOSAL`、`DESIGN_PROPOSAL`、`VERIFICATION_REPORT` 已有最小 schema 与 example |
 | 验证报告 | `core/verification/verification_report.py` 能区分已执行、已截图、几何验证、失败和未验证；缺 created handles 或截图文件不存在时不升级证据状态 |
 | 非 CAD pipeline | `scripts/run_non_cad_pipeline.py` 可生成 project/object/layout/proposal/CAD_PLAN/dry-run/verification artifacts |
-| 非 CAD benchmark | `scripts/run_benchmark_suite.py` 可重复运行 minimal benchmark 并输出 pass/fail 汇总 |
+| 非 CAD benchmark | `scripts/run_benchmark_suite.py` 可重复运行 minimal benchmark 与 4 case blank-shell benchmark 并输出 pass/fail 汇总 |
+| 状态短入口 | `CORE_CONTEXT_BRIEF.md` 作为日常恢复入口，主计划仍为 `CORE_RESTRUCTURE_PLAN.md`（用户说 `plan.md` 时默认指它） |
 | 设计引擎原型 | object/style/block/layout/proposal/plan 第一批 Core 原型已建立 |
 
 ### 未完成（别误以为已经有了）
@@ -82,13 +85,13 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 
 **第 1 步：恢复上下文（约 5 分钟阅读）**
 
-按顺序扫一遍：
+后续日常开发优先走短入口：
 
-1. 本文「Clone 后先看这里」
-2. `CORE_STATUS.md` — 能力矩阵（最细）
-3. `CAD_AGENT_STATUS.md` — 变更历史与已验证命令
-4. `CORE_RESTRUCTURE_PLAN.md` — **还没做什么**（剩余工作清单）
-5. `AGENTS.md` — Codex 绘图时必须遵守的规则
+1. `AGENTS.md` — Codex 必须遵守的规则入口
+2. `CORE_CONTEXT_BRIEF.md` — 稳定短上下文入口，先看当前状态和按需展开表
+3. 只读取当前任务需要的详细文件，例如 `CORE_STATUS.md`、目标 Phase、相关测试或问题条目
+
+首次 clone、换机、交接或完整审计时，再按 `CORE_CONTEXT_BRIEF.md` 的“按需展开”表读取详细文件。
 
 **第 2 步：选一条开发主线（三选一，不要并行铺太开）**
 
@@ -120,21 +123,28 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 ### 问 Codex 恢复进度时可以这样说
 
 ```text
-读取本仓库 README 和 CORE_STATUS.md，告诉我 CAD Agent 开发到哪一步了，下一步建议做什么。
+读取本仓库 AGENTS.md 和 CORE_CONTEXT_BRIEF.md，告诉我 CAD Agent 当前开发状态和下一步建议。
 ```
 
 ---
 
 ## 恢复上下文（日常开发）
 
-每次回来先读：
+每次回来默认先读：
 
-1. `CORE_STATUS.md` — 通用底座开发进度
-2. `CORE_ROADMAP.md` — Core 阶段路线
-3. `CORE_RESTRUCTURE_PLAN.md` — 剩余工作（不是已完成清单）
-4. `CAD_AGENT_STATUS.md` — 历史进展与迁移状态
-5. `CAD_AGENT_RULES.md`、`AGENTS.md` — 长期规则与绘图自检门槛
-6. `CAD_AGENT_CHANGELOG.md`、`CAD_AGENT_ISSUES.md` — 变更与问题记录
+1. `AGENTS.md` — 根规则
+2. `CORE_CONTEXT_BRIEF.md` — 稳定短入口
+
+然后按任务展开：
+
+| 场景 | 再读 |
+| --- | --- |
+| 看能力状态 | `CORE_STATUS.md` |
+| 执行或调整 Phase | `CORE_RESTRUCTURE_PLAN.md` 的目标 Phase |
+| 汇报当前进度 | `CAD_AGENT_STATUS.md` |
+| 改规则或安全边界 | `CAD_AGENT_RULES.md` |
+| 排查卡壳或回归 | `CAD_AGENT_BLOCKER_PLAYBOOK.md`、`CAD_AGENT_ISSUES.md` 相关条目 |
+| 追溯最近改动 | `CAD_AGENT_CHANGELOG.md` 最近小节 |
 
 ## 目录结构
 
@@ -250,7 +260,7 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 | Pillow | 12.2.0 |
 | pywin32 / win32gui | 正常 import |
 | AutoCAD | COM 已连上活动图纸 |
-| 单元测试 | `unittest discover -s tests` → 109 passed |
+| 单元测试 | `unittest discover -s tests` → 165 passed |
 
 ### 换机流程总览
 
@@ -383,7 +393,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `validate_plan` | 输出 `VALID CAD_PLAN` |
 | `dry_run_plan` | 正常预演输出 |
 | `render_preview --check` | `"status": "ready"`，且 `pillow_imagegrab: true` |
-| `unittest` | `OK`，109 tests |
+| `unittest` | `OK`，165 tests |
 | COM 探测 | 打印当前活动 DWG 文件名 |
 | `execute_plan` | 图上出现 `CODEX_PREVIEW` 测试柜 |
 | `--capture-screen` | 生成 `output\previews\migration-check.png` |

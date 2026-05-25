@@ -41,6 +41,24 @@ class ObjectEngineTests(unittest.TestCase):
         self.assertTrue({"upright", "storage_level", "back_panel"}.issubset(shelf_roles))
         self.assertTrue({"top", "support", "clearance_zone"}.issubset(table_roles))
 
+    def test_expanded_object_types_have_plan_ready_specs(self) -> None:
+        expected_roles = {
+            "desk": {"worktop", "support", "clearance_zone"},
+            "chair": {"seat", "back", "support"},
+            "bed": {"sleep_surface", "base"},
+            "sofa": {"seat", "back", "arm"},
+            "counter": {"worktop", "front_panel", "base"},
+            "display_unit": {"display_surface", "storage_level", "base"},
+        }
+
+        for object_type, roles in expected_roles.items():
+            with self.subTest(object_type=object_type):
+                spec = create_object_spec(object_type)
+                self.assertEqual(spec["type"], object_type)
+                self.assertTrue(roles.issubset({component["role"] for component in spec["components"]}))
+                self.assertGreater(spec["size"]["width"], 0)
+                self.assertGreater(spec["size"]["depth"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,62 @@
+{
+  "version": "0.1",
+  "shell_id": "shell-restaurant-small-front",
+  "units": "mm",
+  "boundary": {
+    "type": "bbox",
+    "min": [0, 0],
+    "max": [10000, 6000]
+  },
+  "openings": [
+    {
+      "opening_id": "entry-main",
+      "type": "entry",
+      "center": [0, 3000],
+      "width": 1200
+    },
+    {
+      "opening_id": "service-door",
+      "type": "service",
+      "center": [10000, 3000],
+      "width": 900
+    }
+  ],
+  "fixed_obstacles": [
+    {
+      "obstacle_id": "kitchen-shaft",
+      "bbox": {
+        "min": [7600, 4200],
+        "max": [8400, 5600]
+      }
+    }
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "service-door-clearance",
+      "bbox": {
+        "min": [9200, 2400],
+        "max": [10000, 3600]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "entry-to-service-door",
+      "target": "service-door",
+      "point": [10000, 3000]
+    }
+  ],
+  "building_elements": [
+    {
+      "element_id": "front-window",
+      "type": "storefront"
+    }
+  ],
+  "uncertainties": [
+    "Restaurant shell is hand-authored and not verified from CAD readback."
+  ],
+  "source": {
+    "type": "manual_annotation",
+    "path": "examples/shell_models/restaurant_small_front_shell.json"
+  }
+}

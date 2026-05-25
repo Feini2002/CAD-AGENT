@@ -8,6 +8,17 @@
     "min": [0, 800],
     "max": [3500, 5000]
   },
+  "geometry": {
+    "min": [0, 800],
+    "max": [3500, 5000]
+  },
+  "area": 14700000,
+  "depth": 4200,
+  "frontage": 3500,
+  "side_of_path": "left",
+  "candidate_functions": ["display", "storage"],
   "preferred_objects": ["shelf", "cabinet"],
-  "constraints": ["Keep clear of the main circulation path."]
+  "constraints": ["Keep clear of the main circulation path."],
+  "score": 0.86,
+  "uncertainties": []
 }

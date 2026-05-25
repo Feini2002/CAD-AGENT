@@ -141,6 +141,48 @@ class SchemaValidationTests(unittest.TestCase):
         self.assertIn("$.drawing is not allowed.", brief_errors)
         self.assertIn("$.evidence is not allowed.", plan_errors)
 
+    def test_blank_shell_examples_validate_against_shell_model_schema(self) -> None:
+        schema = json.loads((PROJECT_ROOT / "core/schemas/shell_model.schema.json").read_text(encoding="utf-8"))
+
+        for example in [
+            "examples/shell_models/retail_blank_shell.json",
+            "examples/shell_models/office_blank_shell.json",
+            "examples/shell_models/office_small_suite_shell.json",
+            "examples/shell_models/residential_living_room_shell.json",
+            "examples/shell_models/restaurant_small_front_shell.json",
+        ]:
+            with self.subTest(example=example):
+                shell = json.loads((PROJECT_ROOT / example).read_text(encoding="utf-8"))
+                self.assertEqual(validate_value(shell, schema), [])
+
+    def test_function_zone_examples_validate_against_schema(self) -> None:
+        schema = json.loads((PROJECT_ROOT / "core/schemas/function_zone.schema.json").read_text(encoding="utf-8"))
+
+        for example in [
+            "examples/function_zones/retail_zone_left.json",
+            "examples/function_zones/office_zone_desk_band.json",
+        ]:
+            with self.subTest(example=example):
+                zone = json.loads((PROJECT_ROOT / example).read_text(encoding="utf-8"))
+                self.assertEqual(validate_value(zone, schema), [])
+
+    def test_expanded_object_spec_examples_validate_against_schema(self) -> None:
+        schema = json.loads((PROJECT_ROOT / "core/schemas/object_spec.schema.json").read_text(encoding="utf-8"))
+
+        for example in [
+            "examples/object_specs/desk_1400x700.json",
+            "examples/object_specs/sofa_2200x900.json",
+        ]:
+            with self.subTest(example=example):
+                spec = json.loads((PROJECT_ROOT / example).read_text(encoding="utf-8"))
+                self.assertEqual(validate_value(spec, schema), [])
+
+    def test_blank_shell_design_proposal_example_validates(self) -> None:
+        schema = json.loads((PROJECT_ROOT / "core/schemas/design_proposal.schema.json").read_text(encoding="utf-8"))
+        proposal = json.loads((PROJECT_ROOT / "examples/design_proposals/blank_shell_retail_options.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(validate_value(proposal, schema), [])
+
 
 if __name__ == "__main__":
     unittest.main()

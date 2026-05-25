@@ -71,6 +71,48 @@
       "rotation_allowed": true,
       "clearance_mm": 600,
       "tags": ["preview", "retail", "service"]
+    },
+    {
+      "block_id": "block-desk-1400",
+      "name": "Desk 1400",
+      "category": "desk",
+      "domain": "generic",
+      "size": {
+        "width": 1400,
+        "depth": 700
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "tags": ["preview", "work"]
+    },
+    {
+      "block_id": "block-sofa-2200",
+      "name": "Sofa 2200",
+      "category": "sofa",
+      "domain": "generic",
+      "size": {
+        "width": 2200,
+        "depth": 900
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "tags": ["preview", "seating"]
+    },
+    {
+      "block_id": "block-display-unit-1200",
+      "name": "Display Unit 1200",
+      "category": "display_unit",
+      "domain": "generic",
+      "size": {
+        "width": 1200,
+        "depth": 500
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 150,
+      "tags": ["preview", "display"]
     }
   ]
 }

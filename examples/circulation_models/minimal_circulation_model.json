@@ -2,13 +2,26 @@
   "version": "0.1",
   "circulation_id": "circulation-minimal-retail",
   "shell_id": "shell-minimal-retail",
+  "strategy": "straight_spine",
+  "status": "pass",
+  "score": 0.8,
   "paths": [
     {
       "path_id": "path-main-entry",
       "type": "main",
       "width_mm": 1200,
       "start": [4000, 0],
-      "end": [4000, 5000]
+      "end": [4000, 5000],
+      "polyline": [[4000, 0], [4000, 5000]],
+      "connects": ["entry-main", "deep-shell"],
+      "path_surface": [
+        {
+          "min": [3400, 0],
+          "max": [4600, 5000]
+        }
+      ],
+      "blocked_reasons": [],
+      "score": 0.8
     }
   ]
 }

@@ -4,15 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from core.geometry_backends.rect2d import rect_gap
+
 
 def _gap(first: dict[str, list[float | int]], second: dict[str, list[float | int]]) -> float:
-    x_gap = max(0, max(second["min"][0] - first["max"][0], first["min"][0] - second["max"][0]))
-    y_gap = max(0, max(second["min"][1] - first["max"][1], first["min"][1] - second["max"][1]))
-    if x_gap == 0:
-        return float(y_gap)
-    if y_gap == 0:
-        return float(x_gap)
-    return float((x_gap**2 + y_gap**2) ** 0.5)
+    return rect_gap(first, second)
 
 
 def check_clearance(placements: list[dict[str, Any]], *, minimum_clearance: float | int) -> list[dict[str, Any]]:

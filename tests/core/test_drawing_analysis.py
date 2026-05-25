@@ -11,6 +11,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.drawing_analysis.manual_model import build_manual_drawing_model
 from core.drawing_analysis.entity_summary import summarize_entities
+from core.drawing_analysis.shell_loader import load_manual_shell
 from core.schemas.validator import validate_value
 
 
@@ -34,15 +35,11 @@ class DrawingAnalysisTests(unittest.TestCase):
         self.assertEqual(drawing["entities_summary"]["line_count"], 0)
 
     def test_sample_blank_shell_manual_input_validates(self) -> None:
-        schema = json.loads((PROJECT_ROOT / "core" / "schemas" / "drawing_model.schema.json").read_text(encoding="utf-8"))
-        shell = json.loads(
-            (PROJECT_ROOT / "projects" / "sample_blank_shell" / "input" / "shell.manual.json").read_text(
-                encoding="utf-8"
-            )
-        )
+        schema = json.loads((PROJECT_ROOT / "core" / "schemas" / "shell_model.schema.json").read_text(encoding="utf-8"))
+        shell = load_manual_shell(PROJECT_ROOT / "projects" / "sample_blank_shell" / "input" / "shell.manual.json")
 
         self.assertEqual(validate_value(shell, schema), [])
-        self.assertTrue(shell["spaces"][0]["avoid_zones"])
+        self.assertTrue(shell["no_place_zones"])
 
     def test_summarize_entities_counts_layers_and_types(self) -> None:
         summary = summarize_entities(

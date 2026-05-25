@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from core.geometry_backends.rect2d import rect_contains, rect_intersects
+
 
 def bbox_from_base(base_point: list[float | int], width: float | int, depth: float | int) -> dict[str, list[float | int]]:
     return {
@@ -13,21 +15,11 @@ def bbox_from_base(base_point: list[float | int], width: float | int, depth: flo
 
 
 def bbox_inside(inner: dict[str, list[float | int]], outer: dict[str, list[float | int]]) -> bool:
-    return (
-        inner["min"][0] >= outer["min"][0]
-        and inner["min"][1] >= outer["min"][1]
-        and inner["max"][0] <= outer["max"][0]
-        and inner["max"][1] <= outer["max"][1]
-    )
+    return rect_contains(outer, inner)
 
 
 def bboxes_overlap(first: dict[str, list[float | int]], second: dict[str, list[float | int]]) -> bool:
-    return not (
-        first["max"][0] <= second["min"][0]
-        or second["max"][0] <= first["min"][0]
-        or first["max"][1] <= second["min"][1]
-        or second["max"][1] <= first["min"][1]
-    )
+    return rect_intersects(first, second)
 
 
 def create_single_object_layout(

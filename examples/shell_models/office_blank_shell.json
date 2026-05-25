@@ -1,0 +1,65 @@
+{
+  "version": "0.1",
+  "shell_id": "shell-office-blank",
+  "units": "mm",
+  "boundary": {
+    "type": "orthogonal_polygon",
+    "min": [0, 0],
+    "max": [11000, 7200],
+    "points": [
+      [0, 0],
+      [11000, 0],
+      [11000, 5200],
+      [8200, 5200],
+      [8200, 7200],
+      [0, 7200],
+      [0, 0]
+    ]
+  },
+  "openings": [
+    {
+      "opening_id": "entry-main",
+      "type": "entry",
+      "center": [0, 1800],
+      "width": 1000
+    }
+  ],
+  "fixed_obstacles": [
+    {
+      "obstacle_id": "core-riser",
+      "bbox": {
+        "min": [5200, 3000],
+        "max": [6000, 3900]
+      }
+    }
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "riser-service-clearance",
+      "bbox": {
+        "min": [5000, 2800],
+        "max": [6200, 4100]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "entry-to-open-office",
+      "target": "open-office-zone",
+      "point": [7000, 3600]
+    }
+  ],
+  "building_elements": [
+    {
+      "element_id": "window-wall-north",
+      "type": "window_wall"
+    }
+  ],
+  "uncertainties": [
+    "Orthogonal shell support is limited to declared bbox until Phase Q geometry checks are implemented."
+  ],
+  "source": {
+    "type": "manual_annotation",
+    "path": "examples/shell_models/office_blank_shell.json"
+  }
+}

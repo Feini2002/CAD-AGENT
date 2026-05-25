@@ -3,17 +3,39 @@
   "$id": "shell_model.schema.json",
   "title": "SHELL_MODEL",
   "type": "object",
-  "required": ["version", "shell_id", "units", "boundary", "openings", "fixed_obstacles"],
+  "required": [
+    "version",
+    "shell_id",
+    "units",
+    "boundary",
+    "openings",
+    "fixed_obstacles",
+    "no_place_zones",
+    "required_connections",
+    "building_elements",
+    "uncertainties",
+    "source"
+  ],
   "properties": {
     "version": { "type": "string", "enum": ["0.1"] },
     "shell_id": { "type": "string" },
     "units": { "type": "string", "enum": ["mm", "cm", "m"] },
     "boundary": {
       "type": "object",
-      "required": ["min", "max"],
+      "required": ["type", "min", "max"],
       "properties": {
+        "type": { "type": "string", "enum": ["bbox", "polygon", "orthogonal_polygon"] },
         "min": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
-        "max": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+        "max": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "number" }
+          }
+        }
       },
       "additionalProperties": false
     },
@@ -50,6 +72,70 @@
         },
         "additionalProperties": false
       }
+    },
+    "no_place_zones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["zone_id", "bbox"],
+        "properties": {
+          "zone_id": { "type": "string" },
+          "bbox": {
+            "type": "object",
+            "required": ["min", "max"],
+            "properties": {
+              "min": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+              "max": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["connection_id", "target"],
+        "properties": {
+          "connection_id": { "type": "string" },
+          "target": { "type": "string" },
+          "point": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "building_elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["element_id", "type"],
+        "properties": {
+          "element_id": { "type": "string" },
+          "type": { "type": "string" },
+          "bbox": {
+            "type": "object",
+            "required": ["min", "max"],
+            "properties": {
+              "min": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+              "max": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "uncertainties": { "type": "array", "items": { "type": "string" } },
+    "source": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string" },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

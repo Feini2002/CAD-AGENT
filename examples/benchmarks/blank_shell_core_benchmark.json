@@ -1,0 +1,47 @@
+{
+  "version": "0.1",
+  "suite_id": "blank-shell-core-benchmark",
+  "description": "Repeatable non-CAD benchmark for blank-shell layout pipeline.",
+  "cases": [
+    {
+      "case_id": "retail_blank_shell",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "case_id": "office_small_suite",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "case_id": "residential_living_room",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_residential_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified"
+      }
+    },
+    {
+      "case_id": "restaurant_small_front",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_restaurant_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified"
+      }
+    }
+  ]
+}

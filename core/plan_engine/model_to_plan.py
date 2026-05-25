@@ -41,17 +41,33 @@ def model_to_plans(
     if not specs:
         return {"status": "blocked", "errors": ["At least one OBJECT_SPEC is required."], "plans": []}
 
+    selected_candidate = None
     if layout_proposal:
-        checks = layout_proposal["candidates"][0].get("checks", [])
+        layout_candidates = layout_proposal["candidates"]
+        requested_candidate_id = (design_proposal or {}).get("confirmed_candidate_id")
+        if requested_candidate_id:
+            selected_candidate = next(
+                (candidate for candidate in layout_candidates if candidate.get("candidate_id") == requested_candidate_id),
+                None,
+            )
+            if selected_candidate is None:
+                return {
+                    "status": "blocked",
+                    "errors": [f"No layout candidate found for confirmed_candidate_id: {requested_candidate_id}"],
+                    "plans": [],
+                }
+        else:
+            selected_candidate = layout_candidates[0]
+        checks = selected_candidate.get("checks", [])
         failed = [check.get("name", "unknown") for check in checks if check.get("status") == "fail"]
         if failed and not confirmed:
             return {"status": "blocked", "errors": [f"Layout checks failed: {failed}"], "plans": []}
 
     placements_by_object: dict[str, dict[str, Any]] = {}
-    if layout_proposal:
+    if selected_candidate is not None:
         placements_by_object = {
             placement["object_id"]: placement
-            for placement in layout_proposal["candidates"][0].get("placements", [])
+            for placement in selected_candidate.get("placements", [])
         }
 
     envelopes: list[dict[str, Any]] = []

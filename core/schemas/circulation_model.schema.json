@@ -3,22 +3,50 @@
   "$id": "circulation_model.schema.json",
   "title": "CIRCULATION_MODEL",
   "type": "object",
-  "required": ["version", "circulation_id", "shell_id", "paths"],
+  "required": ["version", "circulation_id", "shell_id", "strategy", "status", "score", "paths"],
   "properties": {
     "version": { "type": "string", "enum": ["0.1"] },
     "circulation_id": { "type": "string" },
     "shell_id": { "type": "string" },
+    "strategy": { "type": "string" },
+    "status": { "type": "string", "enum": ["pass", "blocked"] },
+    "score": { "type": "number", "minimum": 0 },
     "paths": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["path_id", "type", "width_mm", "start", "end"],
+        "required": ["path_id", "type", "width_mm", "start", "end", "polyline", "connects", "path_surface", "blocked_reasons", "score"],
         "properties": {
           "path_id": { "type": "string" },
           "type": { "type": "string", "enum": ["main", "secondary"] },
           "width_mm": { "type": "number", "exclusiveMinimum": 0 },
           "start": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
-          "end": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+          "end": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+          "polyline": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "type": "number" }
+            }
+          },
+          "connects": { "type": "array", "items": { "type": "string" } },
+          "path_surface": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+                "max": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+              },
+              "additionalProperties": false
+            }
+          },
+          "blocked_reasons": { "type": "array", "items": { "type": "string" } },
+          "score": { "type": "number", "minimum": 0 }
         },
         "additionalProperties": false
       }

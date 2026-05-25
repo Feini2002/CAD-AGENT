@@ -2,16 +2,27 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 from core.object_engine.object_to_plan import object_to_plan
 
 
-DEFAULT_OBJECTS = {
-    "cabinet": {"name": "Cabinet", "width": 1800, "depth": 600, "height": 2400},
-    "shelf": {"name": "Shelf", "width": 1200, "depth": 400, "height": 2000},
-    "table": {"name": "Table", "width": 1200, "depth": 700, "height": 750},
-}
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_OBJECTS_PATH = PROJECT_ROOT / "libraries" / "objects" / "object_defaults.json"
+
+
+def load_object_defaults(path: Path = DEFAULT_OBJECTS_PATH) -> dict[str, Any]:
+    with path.open("r", encoding="utf-8") as file:
+        data = json.load(file)
+    objects = data.get("objects") if isinstance(data, dict) else None
+    if not isinstance(objects, dict):
+        raise ValueError("object_defaults.json must contain an objects map.")
+    return objects
+
+
+DEFAULT_OBJECTS = load_object_defaults()
 
 
 def create_object_spec(
@@ -34,32 +45,9 @@ def create_object_spec(
         if not isinstance(value, (int, float)) or value <= 0:
             raise ValueError(f"{key} must be a positive number.")
 
-    components = [{"component_id": f"{object_type}-body", "role": "body", "count": 1}]
-    if object_type == "cabinet":
-        components.extend(
-            [
-                {"component_id": "cabinet-front-panels", "role": "front_panel", "count": 4},
-                {"component_id": "cabinet-adjustable-shelves", "role": "shelf", "count": 3},
-                {"component_id": "cabinet-kickboard", "role": "kickboard", "count": 1},
-                {"component_id": "cabinet-top-rail", "role": "top_rail", "count": 1},
-            ]
-        )
-    elif object_type == "shelf":
-        components.extend(
-            [
-                {"component_id": "shelf-uprights", "role": "upright", "count": 2},
-                {"component_id": "shelf-levels", "role": "storage_level", "count": 5},
-                {"component_id": "shelf-back-panel", "role": "back_panel", "count": 1},
-            ]
-        )
-    elif object_type == "table":
-        components.extend(
-            [
-                {"component_id": "table-top", "role": "top", "count": 1},
-                {"component_id": "table-legs", "role": "support", "count": 4},
-                {"component_id": "table-knee-clearance", "role": "clearance_zone", "count": 1},
-            ]
-        )
+    components = [dict(component) for component in defaults.get("components", [])]
+    if not components:
+        components = [{"component_id": f"{object_type}-body", "role": "body", "count": 1}]
 
     return {
         "version": "0.1",

@@ -7,7 +7,7 @@
   "properties": {
     "version": { "type": "string", "enum": ["0.1"] },
     "object_id": { "type": "string" },
-    "type": { "type": "string", "enum": ["cabinet", "shelf", "table"] },
+    "type": { "type": "string", "enum": ["cabinet", "shelf", "table", "desk", "chair", "bed", "sofa", "counter", "display_unit"] },
     "name": { "type": "string" },
     "style_profile_id": { "type": "string" },
     "size": {

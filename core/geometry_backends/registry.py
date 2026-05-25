@@ -54,6 +54,30 @@ class CadPlanRect2DBackend(GeometryBackend):
 
 
 _BACKENDS: dict[str, GeometryBackend] = {
+    "rect2d": GeometryBackend(
+        backend_id="rect2d",
+        title="Built-in 2D rectangle helpers",
+        available=True,
+        requires_dependency=False,
+        requires_cad=False,
+        supported_models=["rect", "bbox_shell", "path_strip", "no_place_zone"],
+        notes=(
+            "Default no-dependency helper set for bbox area, containment, intersection, "
+            "path strips and conservative no-place-zone subtraction."
+        ),
+    ),
+    "orthogonal_polygon": GeometryBackend(
+        backend_id="orthogonal_polygon",
+        title="Built-in orthogonal polygon checks",
+        available=True,
+        requires_dependency=False,
+        requires_cad=False,
+        supported_models=["shell_model.boundary", "orthogonal_polygon"],
+        notes=(
+            "Validates closed orthogonal polygons, bbox, area and simple self-intersection; "
+            "not a replacement for a full computational geometry kernel."
+        ),
+    ),
     "cad_plan_rect2d": CadPlanRect2DBackend(
         backend_id="cad_plan_rect2d",
         title="CAD_PLAN 2D rectangle checks",

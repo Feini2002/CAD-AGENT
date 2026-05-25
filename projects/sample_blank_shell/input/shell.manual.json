@@ -1,49 +1,57 @@
 {
   "version": "0.1",
-  "drawing_id": "drawing-sample-blank-shell",
-  "source": "manual_annotation",
+  "shell_id": "shell-sample-blank-shell",
   "units": "mm",
-  "layers": [
+  "boundary": {
+    "type": "bbox",
+    "min": [0, 0],
+    "max": [9000, 5200]
+  },
+  "openings": [
     {
-      "name": "MANUAL_SHELL",
-      "role": "manual_boundary",
-      "entity_count": 0
+      "opening_id": "entrance-main",
+      "type": "entry",
+      "center": [0, 2600],
+      "width": 1200
     }
   ],
-  "entities_summary": {
-    "line_count": 0,
-    "text_count": 0,
-    "dimension_count": 0,
-    "block_count": 0
-  },
-  "spaces": [
+  "fixed_obstacles": [
     {
-      "space_id": "space-main",
-      "name": "Main shell",
-      "boundary": {
-        "min": [0, 0],
-        "max": [9000, 5200]
-      },
-      "entrances": [
-        {
-          "id": "entrance-main",
-          "point": [0, 2600],
-          "width": 1200
-        }
-      ],
-      "avoid_zones": [
-        {
-          "id": "column-01",
-          "bbox": {
-            "min": [4200, 2200],
-            "max": [4600, 2600]
-          }
-        }
-      ]
+      "obstacle_id": "column-01",
+      "bbox": {
+        "min": [4200, 2200],
+        "max": [4600, 2600]
+      }
+    }
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "column-01-clearance",
+      "bbox": {
+        "min": [4000, 2000],
+        "max": [4800, 2800]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "entry-to-back",
+      "target": "back-of-shell",
+      "point": [9000, 2600]
+    }
+  ],
+  "building_elements": [
+    {
+      "element_id": "outer-wall",
+      "type": "exterior_wall"
     }
   ],
   "uncertainties": [
     "Manual shell boundary has not been confirmed from CAD readback.",
     "Avoid zones are hand-authored and require project confirmation."
-  ]
+  ],
+  "source": {
+    "type": "manual_annotation",
+    "path": "projects/sample_blank_shell/input/shell.manual.json"
+  }
 }

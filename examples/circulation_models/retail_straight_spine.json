@@ -1,0 +1,30 @@
+{
+  "version": "0.1",
+  "circulation_id": "circulation-shell-retail-blank-straight_spine",
+  "shell_id": "shell-retail-blank",
+  "strategy": "straight_spine",
+  "status": "blocked",
+  "score": 0.32,
+  "paths": [
+    {
+      "path_id": "path-straight_spine-main",
+      "type": "main",
+      "width_mm": 1200,
+      "start": [0, 2600],
+      "end": [9000, 2600],
+      "polyline": [[0, 2600], [9000, 2600]],
+      "connects": ["entry-main", "deep-shell"],
+      "path_surface": [
+        {
+          "min": [0, 2000],
+          "max": [9000, 3200]
+        }
+      ],
+      "blocked_reasons": [
+        "path overlaps fixed_obstacle:column-01.",
+        "required_connection:entry-to-fire-exit not connected."
+      ],
+      "score": 0.32
+    }
+  ]
+}

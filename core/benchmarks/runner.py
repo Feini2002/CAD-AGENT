@@ -7,6 +7,7 @@ from typing import Any
 
 from core.schemas.validator import load_json
 from core.workflows.non_cad_pipeline import run_non_cad_pipeline
+from core.workflows.blank_shell_pipeline import run_blank_shell_pipeline
 
 
 def _find_project_root(path: Path) -> Path:
@@ -25,6 +26,11 @@ def _actual_from_pipeline(result: dict[str, Any]) -> dict[str, Any]:
         "pipeline_status": result.get("status", "unknown"),
         "dry_run_status": dry_run_report.get("status", "unknown"),
         "verification_status": verification_report.get("status", "unknown"),
+        "candidate_count": result.get("metrics", {}).get("circulation_candidates", 0),
+        "zone_count": result.get("metrics", {}).get("zones", 0),
+        "placement_count": result.get("metrics", {}).get("placements", 0),
+        "cad_plan_count": result.get("metrics", {}).get("cad_plans", 0),
+        "failed_check_count": result.get("metrics", {}).get("failed_checks", 0),
     }
 
 
@@ -46,7 +52,10 @@ def run_benchmark_case(
     case_id = str(case["case_id"])
     workflow_path = root / str(case["workflow"])
     case_output = output_root / case_id
-    result = run_non_cad_pipeline(workflow_path, output_dir=case_output)
+    if case.get("pipeline") == "blank_shell":
+        result = run_blank_shell_pipeline(workflow_path, output_dir=case_output)
+    else:
+        result = run_non_cad_pipeline(workflow_path, output_dir=case_output)
     actual = _actual_from_pipeline(result)
     expected = case.get("expected", {})
     errors = _compare_expected(actual, expected if isinstance(expected, dict) else {})

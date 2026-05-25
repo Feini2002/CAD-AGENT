@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "scenario": "restaurant",
+  "preview_layer": "CODEX_PREVIEW",
+  "object_preferences": ["table", "chair", "counter", "shelf"],
+  "circulation": {
+    "main_aisle_width_mm": 1200,
+    "secondary_aisle_width_mm": 950
+  },
+  "layout_weights": {
+    "circulation": 0.4,
+    "service_access": 0.3,
+    "seating_capacity": 0.3
+  }
+}

@@ -3,7 +3,7 @@
   "$id": "design_proposal.schema.json",
   "title": "DESIGN_PROPOSAL",
   "type": "object",
-  "required": ["version", "proposal_id", "brief_id", "project_id", "summary", "decisions", "evidence", "needs_confirmation", "next_cad_plans"],
+  "required": ["version", "proposal_id", "brief_id", "project_id", "summary", "decisions", "evidence", "candidates", "confirmed_candidate_id", "comparison_summary", "needs_confirmation", "next_cad_plans"],
   "properties": {
     "version": { "type": "string", "enum": ["0.1"] },
     "proposal_id": { "type": "string" },
@@ -13,15 +13,38 @@
     "decisions": { "type": "array", "items": { "type": "string" } },
     "evidence": {
       "type": "object",
-      "required": ["from_user", "from_drawing", "from_library", "inferred"],
+      "required": ["from_user", "from_drawing", "from_shell", "from_library", "from_algorithm", "inferred"],
       "properties": {
         "from_user": { "type": "array", "items": { "type": "string" } },
         "from_drawing": { "type": "array", "items": { "type": "string" } },
+        "from_shell": { "type": "array", "items": { "type": "string" } },
         "from_library": { "type": "array", "items": { "type": "string" } },
+        "from_algorithm": { "type": "array", "items": { "type": "string" } },
         "inferred": { "type": "array", "items": { "type": "string" } }
       },
       "additionalProperties": false
     },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["candidate_id", "layout_candidate_id", "score", "summary", "strengths", "risks", "failed_checks", "applicable_scenarios", "confirmation_questions"],
+        "properties": {
+          "candidate_id": { "type": "string" },
+          "layout_candidate_id": { "type": "string" },
+          "score": { "type": "number" },
+          "summary": { "type": "string" },
+          "strengths": { "type": "array", "items": { "type": "string" } },
+          "risks": { "type": "array", "items": { "type": "string" } },
+          "failed_checks": { "type": "array", "items": { "type": "string" } },
+          "applicable_scenarios": { "type": "array", "items": { "type": "string" } },
+          "confirmation_questions": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "confirmed_candidate_id": { "type": "string" },
+    "comparison_summary": { "type": "string" },
     "needs_confirmation": { "type": "boolean" },
     "next_cad_plans": { "type": "array", "items": { "type": "string" } }
   },

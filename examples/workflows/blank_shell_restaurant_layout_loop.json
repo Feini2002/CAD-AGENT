@@ -1,0 +1,12 @@
+{
+  "version": "0.1",
+  "workflow_id": "blank-shell-restaurant-layout-loop",
+  "inputs": {
+    "design_brief": "examples/design_briefs/blank_shell_layout_brief.json",
+    "drawing_model": "examples/drawing_models/minimal_empty_room.json",
+    "shell_model": "examples/shell_models/restaurant_small_front_shell.json",
+    "preferences": "agents/restaurant/preferences.json",
+    "block_library": "libraries/blocks/block_library.example.json"
+  },
+  "object_types": ["table", "chair", "counter", "shelf", "display_unit"]
+}

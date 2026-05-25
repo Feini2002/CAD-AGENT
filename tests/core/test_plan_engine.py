@@ -69,6 +69,36 @@ class PlanEngineTests(unittest.TestCase):
         self.assertEqual(result["status"], "blocked")
         self.assertIn("needs confirmation", result["errors"][0])
 
+    def test_model_to_plans_uses_confirmed_candidate_id(self) -> None:
+        spec = load_example("examples/object_specs/minimal_cabinet_object.json")
+        layout = {
+            "layout_id": "layout-many",
+            "candidates": [
+                {
+                    "candidate_id": "candidate-a",
+                    "score": 0.5,
+                    "placements": [{"object_id": spec["object_id"], "base_point": [0, 0, 0]}],
+                    "checks": [],
+                },
+                {
+                    "candidate_id": "candidate-b",
+                    "score": 0.9,
+                    "placements": [{"object_id": spec["object_id"], "base_point": [1200, 0, 0]}],
+                    "checks": [],
+                },
+            ],
+        }
+        proposal = {
+            "proposal_id": "proposal-many",
+            "needs_confirmation": False,
+            "confirmed_candidate_id": "candidate-b",
+        }
+
+        result = model_to_plans(object_spec=spec, layout_proposal=layout, design_proposal=proposal, confirmed=True)
+
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["plans"][0]["cad_plan"]["placement"]["base_point"], [1200, 0, 0])
+
     def test_dry_run_report_is_machine_readable(self) -> None:
         plan = load_example("examples/plans/draw_test_cabinet.json")
 

@@ -24,6 +24,220 @@
 
 ## 已知问题
 
+### 问题：blank-shell placement bbox 与 CAD_PLAN 对象尺寸不一致
+
+日期：2026-05-25
+
+现象：
+
+大范围审计 Phase V pipeline 时，`layout_proposal` 中的 shelf placement 使用块库命中的 `900 x 350` 尺寸，但最终生成的 CAD_PLAN 使用 `OBJECT_SPEC` 默认 shelf `1200 x 400`。
+
+影响：
+
+非 CAD 布局检查认为对象在 zone 内且不碰撞，但真实 CAD_PLAN 会画出另一套尺寸，可能导致预演和后续 CAD 回读验收不一致。
+
+原因：
+
+`blank_shell_pipeline` 先用 block metadata 做 placement，再重新按对象类型创建默认 `OBJECT_SPEC`，没有把 placement 的实际来源尺寸传给 CAD_PLAN 生成链路。
+
+修复：
+
+- 新增 `test_cad_plan_dimensions_match_layout_placement_bbox` 回归测试。
+- `blank_shell_pipeline` 现在从 placement source 派生 `OBJECT_SPEC`：block 命中时使用 block size，fallback 时沿用 fallback object spec。
+
+以后规则：
+
+布局 bbox、`OBJECT_SPEC` 和 CAD_PLAN 对象尺寸必须来自同一来源；block-first placement 后不得再静默退回默认对象尺寸。
+
+相关文件：
+
+- `core/workflows/blank_shell_pipeline.py`
+- `tests/core/test_blank_shell_pipeline.py`
+
+### 问题：benchmark 四个 case 实际重复同一 workflow
+
+日期：2026-05-25
+
+现象：
+
+`blank_shell_core_benchmark.json` 初版有 retail、office、residential、restaurant 四个 case id，但四个 case 都指向同一个 `blank_shell_layout_loop.json`。
+
+影响：
+
+benchmark 看似覆盖四个场景，实则只能证明同一输入重复运行成功，无法防止不同 shell / preferences / object_types 的回归。
+
+原因：
+
+Phase V 初版先接通 benchmark runner，尚未补齐四个独立 workflow 和场景偏好输入。
+
+修复：
+
+- 新增 office、residential、restaurant 三个 workflow 和对应 shell examples。
+- 新增 `agents/restaurant/preferences.json`。
+- 新增 `test_blank_shell_benchmark_cases_use_distinct_workflows`，确保四个 benchmark case 指向不同 workflow。
+
+以后规则：
+
+多 case benchmark 必须检查输入差异；不能只改 case id 或显示名称。
+
+相关文件：
+
+- `examples/benchmarks/blank_shell_core_benchmark.json`
+- `examples/workflows/blank_shell_*_layout_loop.json`
+- `tests/core/test_benchmarks.py`
+
+### 问题：`path_to_rect_strips()` 遇到重复连续点会生成零面积 strip
+
+日期：2026-05-25
+
+现象：
+
+当入口点和目标点在同一水平线上时，`l_spine` polyline 中可能出现重复连续点，`path_to_rect_strips()` 随后把零长度段转成零面积 rect 并抛出 `strip.min must be lower than strip.max.`。
+
+影响：
+
+合理的直通型 shell 会让 circulation generation 或 blank-shell benchmark 直接异常，而不是产出可解释的候选路径。
+
+原因：
+
+几何底座只处理正长度水平/竖直线段，没有跳过重复连续点。
+
+修复：
+
+- 新增 `test_path_to_rect_strips_skips_duplicate_consecutive_points`。
+- `path_to_rect_strips()` 现在跳过零长度 segment；如果整条 polyline 没有任何有效 segment，则返回明确错误。
+
+以后规则：
+
+路径生成器可以产生轻微冗余点；几何底座应稳定处理重复连续点，并只对真正不可解释的路径报错。
+
+相关文件：
+
+- `core/geometry_backends/rect2d.py`
+- `tests/core/test_geometry_rect2d.py`
+
+### 问题：zone 剩余空间为负时 placement fallback 抛异常
+
+日期：2026-05-25
+
+现象：
+
+对象顺排到 zone 末尾后，后续对象的 remaining width 可能为负。`create_zone_placements()` 把负数传给 `select_block_candidate()` 的 fallback object spec，最终 `create_object_spec()` 报 `width must be a positive number.`。
+
+影响：
+
+布局失败本应成为结构化 `blocked` placement，却会中断整个 pipeline / benchmark，导致调用方拿不到失败原因和中间 artifacts。
+
+原因：
+
+placement 层没有先检查剩余 zone 空间是否为正，把“空间不够”的业务失败交给了 object spec 尺寸校验。
+
+修复：
+
+- 新增 `test_placement_blocks_cleanly_when_no_remaining_zone_width_exists`。
+- `create_zone_placements()` 现在在剩余空间不足时产出 `blocked` placement，并记录 `insufficient remaining zone space for placement.`。
+
+以后规则：
+
+布局容量不足属于可解释失败，应返回结构化 blocked reason；不要让下游尺寸校验承担布局决策职责。
+
+相关文件：
+
+- `core/layout_engine/placement.py`
+- `tests/core/test_placement_engine.py`
+
+### 问题：blank-shell pipeline 盲选最高分 zone 可能放不下对象
+
+日期：2026-05-25
+
+现象：
+
+residential blank-shell workflow 中，底侧 zone 因面积/入口距离评分较高被优先选中，但该 zone 深度不足，无法放下 sofa 等对象，导致 `DESIGN_PROPOSAL needs confirmation before CAD_PLAN generation.`。
+
+影响：
+
+zone 分数通过不代表 placement 可行；pipeline 如果只取 `zones[0]`，会把可放置的候选 zone 跳过，使本可成功的 workflow 被阻断。
+
+原因：
+
+Phase V 初版 zone 选择策略只看 zone score，没有把对象放置可行性纳入选择。
+
+修复：
+
+- 新增 `test_residential_workflow_selects_zone_that_can_fit_objects`。
+- `blank_shell_pipeline` 现在会对候选 zones 做 placement 试算，优先选择 failed placement 最少、placed count 更高的 zone。
+
+以后规则：
+
+端到端 pipeline 选择中间候选时，不能只看上游单项分数；下游可行性必须进入选择依据，至少要避免明显可放置候选被跳过。
+
+相关文件：
+
+- `core/workflows/blank_shell_pipeline.py`
+- `tests/core/test_blank_shell_pipeline.py`
+
+### 问题：no-place-zone 未相交时误报 `partial`
+
+日期：2026-05-25
+
+现象：
+
+执行 Phase S 时，`zone_splitter` 调用 `rect2d.subtract_no_place_zones()` 后，发现下侧功能区并没有与任何 no-place-zone 相交，却仍被标记 uncertainty，分数也被降低。
+
+影响：
+
+无关避让区会污染功能区评分与解释，后续 placement / proposal 可能错误地认为可布置区域被扣减。
+
+原因：
+
+`subtract_no_place_zones()` 只根据“传入了 zones”判断返回 `partial`，没有记录实际 fragments 是否发生变化。
+
+修复：
+
+- 在 `core/geometry_backends/rect2d.py` 中增加 `changed` 标记，只有实际拆分或扣减时才返回 `partial`。
+- 新增 `test_subtract_no_place_zones_ignores_non_intersecting_zones` 回归测试。
+
+以后规则：
+
+几何扣减函数的状态必须反映实际几何变化；传入约束但未发生相交时应保持 `pass`，不能制造虚假 uncertainty。
+
+相关文件：
+
+- `core/geometry_backends/rect2d.py`
+- `tests/core/test_geometry_rect2d.py`
+- `core/layout_engine/zone_splitter.py`
+
+### 问题：空壳样例升级为 `SHELL_MODEL` 后旧 drawing schema 测试失配
+
+日期：2026-05-25
+
+现象：
+
+执行 Phase P 后，`projects/sample_blank_shell/input/shell.manual.json` 已从旧 drawing-style 手工输入升级为 `SHELL_MODEL`。全量 `unittest discover -s tests` 中，`tests/core/test_drawing_analysis.py::test_sample_blank_shell_manual_input_validates` 仍按 `drawing_model.schema.json` 校验该文件，导致缺少 `drawing_id`、`layers`、`entities_summary` 等字段，并把 `shell_id`、`boundary`、`fixed_obstacles` 等新字段判为非法。
+
+影响：
+
+Phase P 的模型口径已经切到 `SHELL_MODEL`，但旧测试会把正确的新样例误判为错误，阻断全量回归。
+
+原因：
+
+样例文件职责变化后，旧 drawing analysis 测试没有同步到 shell schema 与 `load_manual_shell()` 入口。
+
+修复：
+
+- 更新 `tests/core/test_drawing_analysis.py`，让 sample blank shell 按 `shell_model.schema.json` 校验，并通过 `load_manual_shell()` 规范化后断言 `no_place_zones`。
+- 保留 `build_manual_drawing_model()` 的原有测试，确保旧 `DRAWING_MODEL` 构建路径仍可用。
+
+以后规则：
+
+当样例文件从一种模型升级为另一种模型时，同步更新引用它的 schema 测试；不要让旧 schema 测试继续绑定已经换职责的文件。
+
+相关文件：
+
+- `projects/sample_blank_shell/input/shell.manual.json`
+- `core/drawing_analysis/shell_loader.py`
+- `tests/core/test_drawing_analysis.py`
+
 ### 问题：CAD 层面验证容易停在第一个失败点
 
 日期：2026-05-25

@@ -16,7 +16,17 @@ def proposal_to_plans(
 ) -> list[dict[str, Any]]:
     if proposal.get("needs_confirmation") and not confirmed:
         raise ValueError("DESIGN_PROPOSAL needs confirmation before it can become CAD_PLAN.")
-    candidate = layout_proposal["candidates"][0]
+    requested_candidate_id = proposal.get("confirmed_candidate_id")
+    layout_candidates = layout_proposal["candidates"]
+    if requested_candidate_id:
+        candidate = next(
+            (item for item in layout_candidates if item.get("candidate_id") == requested_candidate_id),
+            None,
+        )
+        if candidate is None:
+            raise ValueError(f"No layout candidate found for confirmed_candidate_id: {requested_candidate_id}")
+    else:
+        candidate = layout_candidates[0]
     failed_checks = [
         check.get("name", "unknown")
         for check in candidate.get("checks", [])

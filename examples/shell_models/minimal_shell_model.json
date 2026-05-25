@@ -3,6 +3,7 @@
   "shell_id": "shell-minimal-retail",
   "units": "mm",
   "boundary": {
+    "type": "bbox",
     "min": [0, 0],
     "max": [8000, 5000]
   },
@@ -22,5 +23,34 @@
         "max": [4100, 2700]
       }
     }
-  ]
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "column-001-clearance",
+      "bbox": {
+        "min": [3700, 2300],
+        "max": [4200, 2800]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "fire-exit-path",
+      "target": "opening-entry",
+      "point": [4000, 0]
+    }
+  ],
+  "building_elements": [
+    {
+      "element_id": "wall-shell",
+      "type": "exterior_wall"
+    }
+  ],
+  "uncertainties": [
+    "Minimal shell model is hand-authored for schema validation."
+  ],
+  "source": {
+    "type": "manual_annotation",
+    "path": "examples/shell_models/minimal_shell_model.json"
+  }
 }

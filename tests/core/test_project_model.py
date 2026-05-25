@@ -10,6 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.project_model.project_builder import ProjectModelError, build_project_model
+from core.drawing_analysis.shell_loader import load_manual_shell
 from core.schemas.validator import validate_value
 
 
@@ -60,6 +61,35 @@ class ProjectModelBuilderTests(unittest.TestCase):
 
         self.assertEqual(result.project_model["spaces"][0]["space_id"], "space-manual")
         self.assertEqual(result.pending_questions, [])
+
+    def test_builds_project_model_from_shell_model_without_losing_constraints(self) -> None:
+        brief = load_example("examples/design_briefs/minimal_cabinet_brief.json")
+        drawing = load_example("examples/drawing_models/minimal_empty_room.json")
+        shell = load_manual_shell(PROJECT_ROOT / "projects/sample_blank_shell/input/shell.manual.json")
+
+        result = build_project_model(brief, drawing, shell_model=shell)
+
+        project_model = result.project_model
+        self.assertEqual(project_model["shell_id"], shell["shell_id"])
+        self.assertEqual(project_model["spaces"][0]["shell_id"], shell["shell_id"])
+        self.assertEqual(project_model["spaces"][0]["source"], "shell_model.boundary")
+        self.assertEqual(project_model["shell_context"]["openings"][0]["opening_id"], "entrance-main")
+        self.assertEqual(project_model["shell_context"]["fixed_obstacles"][0]["obstacle_id"], "column-01")
+        self.assertEqual(project_model["shell_context"]["no_place_zones"][0]["zone_id"], "column-01-clearance")
+        self.assertEqual(project_model["shell_context"]["required_connections"][0]["connection_id"], "entry-to-back")
+        self.assertIn("fixed_obstacle:column-01", project_model["constraints"])
+        self.assertIn("Manual shell boundary has not been confirmed from CAD readback.", project_model["uncertainties"])
+        self.assertEqual(result.provenance[0]["source"], "shell_model.boundary")
+
+        schema = load_example("core/schemas/project_model.schema.json")
+        self.assertEqual(validate_value(project_model, schema), [])
+
+    def test_rejects_shell_model_without_boundary(self) -> None:
+        brief = load_example("examples/design_briefs/minimal_cabinet_brief.json")
+        drawing = load_example("examples/drawing_models/minimal_empty_room.json")
+
+        with self.assertRaisesRegex(ProjectModelError, "shell_model.boundary"):
+            build_project_model(brief, drawing, shell_model={"shell_id": "shell-bad", "units": "mm"})
 
     def test_invalid_boundary_is_rejected(self) -> None:
         brief = load_example("examples/design_briefs/minimal_cabinet_brief.json")

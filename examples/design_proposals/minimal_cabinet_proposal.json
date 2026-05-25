@@ -8,9 +8,26 @@
   "evidence": {
     "from_user": ["cabinet size 1800 x 2400 x 600", "European style"],
     "from_drawing": ["manual preview space boundary"],
+    "from_shell": ["shell_id: none"],
     "from_library": ["object spec object-cabinet-1800", "style profile style-european"],
+    "from_algorithm": ["layout candidates: 1"],
     "inferred": ["plan preview uses width and depth; height is retained in OBJECT_SPEC"]
   },
+  "candidates": [
+    {
+      "candidate_id": "candidate-001",
+      "layout_candidate_id": "candidate-001",
+      "score": 0.85,
+      "summary": "Single baseline cabinet preview candidate.",
+      "strengths": ["Simple preview layout with no failed checks."],
+      "risks": [],
+      "failed_checks": [],
+      "applicable_scenarios": ["generic_preview"],
+      "confirmation_questions": []
+    }
+  ],
+  "confirmed_candidate_id": "",
+  "comparison_summary": "1 layout candidate prepared for comparison.",
   "needs_confirmation": false,
   "next_cad_plans": ["examples/plans/draw_test_cabinet.json"]
 }

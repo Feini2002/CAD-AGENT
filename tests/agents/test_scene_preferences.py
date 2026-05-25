@@ -12,7 +12,7 @@ from core.layout_engine.basic_layout import create_layout_candidates
 
 class ScenePreferencesTests(unittest.TestCase):
     def test_core_scene_preferences_exist_for_primary_scenarios(self) -> None:
-        for scenario in ["commercial_fitout", "residential", "office"]:
+        for scenario in ["commercial_fitout", "residential", "office", "restaurant"]:
             with self.subTest(scenario=scenario):
                 path = PROJECT_ROOT / "agents" / scenario / "preferences.json"
                 self.assertTrue(path.exists())
@@ -60,7 +60,7 @@ class ScenePreferencesTests(unittest.TestCase):
         second = {"object_id": "object-b", "size": {"width": 1000, "depth": 500, "height": 1000}}
         second_x_by_scenario = {}
 
-        for scenario in ["commercial_fitout", "residential", "office"]:
+        for scenario in ["commercial_fitout", "residential", "office", "restaurant"]:
             preferences = json.loads((PROJECT_ROOT / "agents" / scenario / "preferences.json").read_text(encoding="utf-8"))
             layout_preferences = {
                 "object_spacing_mm": preferences["circulation"]["secondary_aisle_width_mm"],
@@ -80,6 +80,7 @@ class ScenePreferencesTests(unittest.TestCase):
                 "commercial_fitout": 1900,
                 "residential": 1750,
                 "office": 1850,
+                "restaurant": 1950,
             },
         )
 

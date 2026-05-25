@@ -8,11 +8,13 @@
 
 新增横向机制：卡壳自查、截图能力检查和无 CAD 自检入口已建立。后续任何阶段出现“画不准、画不出来、验证不了”，先按 `CAD_AGENT_BLOCKER_PLAYBOOK.md` 排查。
 
-规则入口已写入根目录 `AGENTS.md`：负责触发 CAD 相关任务、恢复上下文、执行绘图自检门和默认中文输出规则。
+规则入口已写入根目录 `AGENTS.md`：负责触发 CAD 相关任务、恢复上下文、执行绘图自检门和默认中文输出规则。为提高后续开发时的上下文缓存命中率，日常恢复已新增稳定短入口 `CORE_CONTEXT_BRIEF.md`，详细计划、变更流水和问题库改为按任务展开。
 
 新增架构方向：已按 `CORE_RESTRUCTURE_PLAN.md` 执行第一轮大规模仓库重装，并在第二轮继续推进非 CAD 全量底座：通用底座优先，场景 Agent 轻量化。
 
 本轮已形成一条不依赖真实 CAD 的最小闭环：`DESIGN_BRIEF + DRAWING_MODEL + preferences -> PROJECT_MODEL -> OBJECT_SPEC -> LAYOUT_PROPOSAL -> DESIGN_PROPOSAL -> CAD_PLAN -> dry-run report -> VERIFICATION_REPORT(unverified)`。真实 CAD 落图、截图和实体回读仍登记为延后补验，当前不声称几何准确。
+
+本次状态同步复验（2026-05-25 15:17）：全量 `unittest discover -s tests` 仍为 165 tests OK；`self_check.py` pass；`render_preview.py --check` ready；blank-shell pipeline status ok；blank-shell 4 场景 benchmark status pass；`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\docs-sync-no-cad` status pass。
 
 这个开发包不绑定当前家装图纸。当前电脑和当前 DWG 只作为第一套验证环境。后续应能迁移到任意安装好 Codex、CAD、CAD-MCP/Python 的电脑，并适配住宅、工装、店铺、办公、餐饮、展陈等项目。
 
@@ -80,9 +82,19 @@
 - 已新增 `core/object_engine/object_explainer.py` 和 `core/proposal_engine/proposal_comparison.py`，补齐对象来源说明与候选方案比较。
 - 已补齐 schema invalid fixtures、多场景 `PROJECT_MODEL` examples，以及更多通用 block metadata。
 - 已新增 `SHELL_MODEL`、`CIRCULATION_MODEL`、`FUNCTION_ZONE` schema/example/invalid fixture，并补充多场景 preferences 差异化回归测试。
+- 已完成 Phase P 补强：`tests/core/test_shell_loader.py` 增加 legacy drawing-style 手工输入兼容回归，确认旧 `spaces/entrances/avoid_zones` 仍可规范化为 `SHELL_MODEL`。
+- 已完成 Phase Q：新增 `core/geometry_backends/rect2d.py` 与 `core/geometry_backends/orthogonal.py`，提供无依赖矩形、bbox 扣减、path strip、门洞/障碍距离和正交多边形基础校验；layout 的 bbox inside / overlap / clearance 已开始复用该几何底座。
+- 已完成 Phase R：新增 `core/layout_engine/path_generation.py`，可从 `PROJECT_MODEL.shell_context` 生成 `straight_spine`、`l_spine`、`along_wall` 动线候选；候选包含 `polyline`、`path_surface`、`connects`、`blocked_reasons` 和 `score`。
+- 已完成 Phase S：新增 `core/layout_engine/zone_splitter.py`，可从 bbox shell 和 circulation path surface 切出左右 `FUNCTION_ZONE`，并输出面积、深度、frontage、候选功能、约束、score 和 uncertainties。
+- 已完成 Phase T：新增 `libraries/objects/object_defaults.json` 和 `core/layout_engine/placement.py`，扩展 desk/chair/bed/sofa/counter/display_unit 等对象，并支持 block 优先、OBJECT_SPEC fallback 的 zone placement。
+- 已完成 Phase U：`DESIGN_PROPOSAL` 已支持多候选 `candidates[]`、`confirmed_candidate_id`、`comparison_summary`，proposal evidence 增加 `from_shell` 与 `from_algorithm`，proposal comparison 支持带来源的场景权重。
+- 已完成 Phase V：新增 `core/workflows/blank_shell_pipeline.py` 与 `scripts/run_blank_shell_pipeline.py`，可串联 `SHELL_MODEL -> PROJECT_MODEL -> CIRCULATION_MODEL -> FUNCTION_ZONE -> placements -> LAYOUT_PROPOSAL -> DESIGN_PROPOSAL -> CAD_PLAN -> dry-run -> VERIFICATION_REPORT(unverified)`。
+- Phase V benchmark 已从“同一 workflow 重复 4 次”补强为 retail / office / residential / restaurant 四个不同 workflow case；新增 office、residential、restaurant shell examples 和 restaurant preferences。
+- 本轮大范围审计已修复三类隐蔽问题：block 尺寸与 CAD_PLAN 默认对象尺寸不一致、`path_to_rect_strips()` 不处理重复连续点、zone 剩余空间为负时 placement fallback 抛异常。
 
 ## 正在做
 
+- 本轮已完成开发状态检查与文档同步：`CORE_RESTRUCTURE_PLAN.md`（用户提到 `plan.md` 时默认指该主计划）、`CORE_STATUS.md`、`CAD_AGENT_STATUS.md`、`README.md`、`CORE_CONTEXT_BRIEF.md` 和 `CAD_AGENT_CHANGELOG.md` 已对齐当前“Phase O-V 非 CAD 已通过、Phase W/X 待推进”的口径。
 - 已补充 `README.md` 的 Git 提交/推送说明，并收紧 `.gitignore`，避免本机日志和生成输出进入可迁移开发包。
 - 第二轮非 CAD 底座第一条闭环已完成；`CORE_RESTRUCTURE_PLAN.md` 已整理为 Phase O-X 的 Core 可用 Alpha 深水计划、待校验登记表、非 CAD 自检命令和 CAD 延后补验总清单。
 - 当前仍不扩张单一工装或家装 Agent，场景层只新增边界规则和 workflow 说明，避免把通用能力写死到场景层。
@@ -90,6 +102,15 @@
 - 已新增根目录 `SHELL_LAYOUT_FOUNDATION_DESIGN.md`，沉淀“空壳布局底座”设计说明。该文档是后续 Core 子能力开发蓝图，不代表功能已实现。
 - 已新增 `CAD_AGENT_AUTONOMOUS_VALIDATION.md` 和 `scripts/run_cad_validation.py`，用于换机或真实 CAD 环境中一次性执行自检、落图、截图、回读和结构化报告；Codex 后续不得遇到第一处失败就停止，应按报告分类自动修复仓库内问题并复验。
 - 已补强 `CORE_RESTRUCTURE_PLAN.md` 的交付级执行协议：明确一次只执行一个 phase、每个 phase 的固定工作循环、证据状态口径、Phase O-X 依赖交付物、文档交付自检，以及 `run_cad_validation.py` 在 Phase O / Phase W / 固定自检中的使用方式。
+- 已继续细化 `CORE_RESTRUCTURE_PLAN.md` 的 Phase O-X：每个 phase 增加 O-01 / P-01 等可逐项执行的小清单，并补入 `context-auditor`、`unit-test-agent`、`engine-agent`、`pipeline-agent`、`cad-validation-agent`、`docs-sync-agent`、`review-agent` 等建议分工，方便后续 Codex 长时间、分阶段、自检式执行。
+- Phase O 已完成：`core/capabilities/registry.py` 现在为每个公开能力暴露 `maturity` 和 `known_limits`；`CORE_STATUS.md` 已补充 `alpha_ready` / `blocked_by_cad` 状态口径，并收紧 layout、drawing、proposal、verification 的限制说明。Phase O 证据路径：`output\validation_runs\phase-o-no-cad\report.json`，状态为 `pass`。
+- Phase P 已完成并补强：新增 `core/drawing_analysis/shell_loader.py`，`projects/sample_blank_shell/input/shell.manual.json` 已升级为 `SHELL_MODEL`，新增 retail / office blank shell examples，`project_builder` 支持 `shell_model` 输入并保留 shell_id、constraints、source、uncertainties；已补 legacy drawing-style 输入兼容测试。Phase P 证据路径：`output\validation_runs\phase-p-no-cad\report.json`，状态为 `pass`。
+- Phase Q 已完成：`rect2d` / `orthogonal_polygon` 默认几何能力已登记，目标测试组通过；`path_to_rect_strips()` 已补重复连续点回归。
+- Phase R 已完成：`PROJECT_MODEL` 已保留 `shell_context`；`layout.generate_circulation_candidates` capability 已登记；`examples/circulation_models/retail_straight_spine.json` 和 `retail_l_spine.json` 均通过 schema 校验。
+- Phase S 已完成：`layout.split_function_zones` capability 已登记；`examples/function_zones/retail_zone_left.json` 与 `office_zone_desk_band.json` 均通过 schema 校验。
+- Phase T 已完成：`layout.create_zone_placements` capability 已登记；`examples/object_specs/desk_1400x700.json` 与 `sofa_2200x900.json` 均通过 schema 校验；placement 已补剩余空间不足时的 blocked 结果。
+- Phase V 已完成：新增 `tests/core/test_blank_shell_pipeline.py`、`tests/core/test_benchmark_cli.py` 覆盖 pipeline 与 CLI；`workflow.blank_shell_pipeline` 已进入 capability registry。后续进入 Phase W / X 前，仍需真实 CAD readback 补验和更多场景偏好 Alpha 验收。
+- 已新增 `CORE_CONTEXT_BRIEF.md` 作为稳定短上下文入口，并更新 `AGENTS.md`、`README.md` 与 `CAD_AGENT_RULES.md`：后续日常开发默认先读短入口，再按任务读取详细文档，避免每轮无差别展开大计划、变更流水和历史问题。
 
 ## 下一步
 
@@ -129,7 +150,10 @@ $env:PYTHONIOENCODING='utf-8'
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' -m core.schemas.validator core\schemas\design_brief.schema.json examples\design_briefs\minimal_cabinet_brief.json
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\inspect_dwg.py --plan examples\plans\draw_test_cabinet.json --format json --no-cad
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_non_cad_pipeline.py examples\workflows\full_non_cad_core_loop.json --output-dir output\test_artifacts\non_cad_pipeline\manual
+& 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\manual
 & 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_benchmark_suite.py examples\benchmarks\non_cad_core_benchmark.json --output-root output\test_artifacts\benchmarks\manual
+& 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\blank_shell_manual
+& 'C:\Users\123235\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\docs-sync-no-cad
 ```
 
 结果：
@@ -138,14 +162,17 @@ $env:PYTHONIOENCODING='utf-8'
 VALID CAD_PLAN
 CAD_PLAN DRY RUN
 core test_execute_plan: OK
-unit test discover: 109 tests OK
+unit test discover: 165 tests OK
 self_check.py: status pass
 render_preview.py --check: status ready
 core.plan_engine.validate_plan: VALID CAD_PLAN
 core.schemas.validator: VALID JSON MODEL
 inspect_dwg --no-cad: JSON VERIFICATION_REPORT, status unverified
 run_non_cad_pipeline: status ok, output project/object/layout/proposal/CAD_PLAN/dry-run/verification artifacts
+run_blank_shell_pipeline: status ok, output shell/project/circulation/zones/placements/layout/proposal/CAD_PLAN/dry-run/verification artifacts
 run_benchmark_suite: status pass, minimal-cabinet-non-cad passed
+blank_shell_core_benchmark: status pass, 4 scenario workflow cases passed
+run_cad_validation --no-cad: status pass, report at output\validation_runs\docs-sync-no-cad\report.json
 ```
 
 ## 暂不做
@@ -161,20 +188,14 @@ run_benchmark_suite: status pass, minimal-cabinet-non-cad passed
 你可以直接说：
 
 ```text
-读取本仓库 README、CORE_STATUS 和 CORE_RESTRUCTURE_PLAN，告诉我 CAD Agent 开发到哪一步了。
+读取本仓库 AGENTS.md 和 CORE_CONTEXT_BRIEF.md，告诉我 CAD Agent 当前开发状态和下一步建议。
 ```
 
 我应该优先读取：
 
 ```text
-README.md
 AGENTS.md
-CORE_STATUS.md
-CORE_ROADMAP.md
-CORE_RESTRUCTURE_PLAN.md
-CAD_AGENT_STATUS.md
-CAD_AGENT_RULES.md
-CAD_AGENT_CHANGELOG.md
-CAD_AGENT_ISSUES.md
-CAD_AGENT_BLOCKER_PLAYBOOK.md
+CORE_CONTEXT_BRIEF.md
 ```
+
+如果要做完整交接、执行某个 Phase、排查失败或追溯历史，再按 `CORE_CONTEXT_BRIEF.md` 的“按需展开”表读取详细文件。
