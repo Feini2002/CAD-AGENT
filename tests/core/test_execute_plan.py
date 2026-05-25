@@ -175,6 +175,26 @@ class ExecutePlanTests(unittest.TestCase):
 
         self.assertEqual(result["created_handles"], ["H1", "H2", "H3", "H4"])
 
+    def test_large_object_label_height_is_capped_for_readable_previews(self) -> None:
+        plan = {
+            "version": "0.1",
+            "domain": "residential",
+            "intent": "draw_object",
+            "object": {"type": "bed", "name": "Bed", "width": 2400, "depth": 1900},
+            "placement": {"mode": "absolute", "base_point": [0, 0, 0]},
+            "drawing": {"layer": "CODEX_PREVIEW", "include_label": True, "include_dimensions": False},
+            "confidence": 1.0,
+            "needs_confirmation": False,
+        }
+        plan_path = artifact_path("execute_plan", "large_label.json")
+        plan_path.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+
+        driver = RecordingDriver()
+        execute_plan_file(plan_path, driver=driver)
+
+        text_call = next(kwargs for name, kwargs in driver.calls if name == "draw_text")
+        self.assertEqual(text_call["height"], 160)
+
     def test_autocad_driver_methods_return_created_handles_from_com_entities(self) -> None:
         class FakeEntity:
             def __init__(self, handle: str) -> None:
@@ -198,21 +218,48 @@ class ExecutePlanTests(unittest.TestCase):
             def AddDimAligned(self, *_: object) -> FakeEntity:
                 return self._entity()
 
+            def AddCircle(self, *_: object) -> FakeEntity:
+                return self._entity()
+
+            def AddArc(self, *_: object) -> FakeEntity:
+                return self._entity()
+
+            def AddLightWeightPolyline(self, *_: object) -> FakeEntity:
+                return self._entity()
+
         driver = object.__new__(AutoCADComDriver)
         driver.model_space = FakeModelSpace()
         driver._apply_common = lambda entity, **kwargs: None  # type: ignore[method-assign]
+        driver._point = lambda values: tuple(values)  # type: ignore[method-assign]
+        driver._point2d_array = lambda points: tuple(float(value) for point in points for value in point[:2])  # type: ignore[method-assign]
 
         self.assertEqual(
             driver.draw_rectangle(corner1=[0, 0, 0], corner2=[100, 50, 0]),
             {"handles": ["C1", "C2", "C3", "C4"]},
         )
         self.assertEqual(
-            driver.draw_text(text="T", position=[0, 0, 0], height=10),
+            driver.draw_line(start_point=[0, 0, 0], end_point=[100, 50, 0]),
             {"handle": "C5"},
         )
         self.assertEqual(
-            driver.add_dimension(start_point=[0, 0, 0], end_point=[100, 0, 0]),
+            driver.draw_circle(center=[25, 25, 0], radius=12),
             {"handle": "C6"},
+        )
+        self.assertEqual(
+            driver.draw_arc(center=[50, 25, 0], radius=15, start_angle=0, end_angle=90),
+            {"handle": "C7"},
+        )
+        self.assertEqual(
+            driver.draw_polyline(points=[[0, 0, 0], [40, 0, 0], [40, 20, 0]], closed=True),
+            {"handle": "C8"},
+        )
+        self.assertEqual(
+            driver.draw_text(text="T", position=[0, 0, 0], height=10),
+            {"handle": "C9"},
+        )
+        self.assertEqual(
+            driver.add_dimension(start_point=[0, 0, 0], end_point=[100, 0, 0]),
+            {"handle": "C10"},
         )
 
 

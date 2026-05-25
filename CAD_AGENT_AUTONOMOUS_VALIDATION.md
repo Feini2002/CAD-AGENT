@@ -48,6 +48,7 @@ output/validation_runs/<timestamp>/
   *.stderr.txt
   execution_summary.json
   readback_report.json
+  cad_capability_probe.json
   cad-validation-screen.png
 ```
 
@@ -83,6 +84,7 @@ output/validation_runs/<timestamp>/
 | `execution_failed` | `execute_plan.py` 无法落图 | Codex 自己检查执行器、driver、安全策略；环境阻塞才问用户 |
 | `screenshot_failed` | 截图能力或落盘失败 | 先判断是环境权限还是脚本问题；脚本问题自己修 |
 | `readback_failed` | 实体回读或验证报告失败 | Codex 自己检查 `inspect_dwg.py`、created handles、readback scope |
+| `cad_capability_failed` | CAD COM 能力探针失败 | Codex 自己检查 driver primitive write、handle readback、实体标准化和安全层约束 |
 
 ## 必须问用户的情况
 
@@ -133,6 +135,8 @@ run_cad_validation.py
 
 - `report.json` 路径。
 - 顶层 `status`。
+- `readback_report.json.status` 与关键 checks。
+- `cad_capability_probe.json.status` 与能力矩阵 checks。
 - 失败步骤和分类。
 - 已自动修复的内容。
 - 仍需用户处理的外部事项。

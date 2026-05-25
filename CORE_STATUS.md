@@ -1,73 +1,93 @@
 # Core Status
 
-最后更新：2026-05-25
+最后更新：2026-05-26
 
-本文追踪通用 CAD Agent Core Lab 的底座能力状态。当前目标是先把仓库从“执行层脚手架”整理成“通用底座优先、场景 Agent 轻量化”的结构，而不是扩写某一个工装、家装或店铺 Agent。
+本文是通用 CAD Agent Core Lab 的能力状态页。它只回答“当前能力成熟到哪里、证据是什么、缺口是什么”，不承载长历史和独立计划；历史变更看 `CAD_AGENT_CHANGELOG.md`，唯一 `PlanMD` / 主计划看 `CORE_RESTRUCTURE_PLAN.md`。
 
 ## 状态口径
 
 | 状态 | 含义 |
 | --- | --- |
-| prototype | 已有最小闭环或脚本原型，可以作为迁移来源，但接口和目录仍可能调整 |
-| alpha_ready | 已有较稳定入口、专项测试、基线验证和明确证据路径，可作为 Alpha 阶段能力使用 |
-| blocked_by_cad | 非 CAD 逻辑已有基础，但完成声明依赖真实 CAD 落图、截图或实体回读补验 |
-| scaffold | 已有目录或文档占位，职责明确，但核心逻辑尚未实现 |
-| not_started | 仅在路线图或架构中定义，尚未开始实现 |
-| blocked | 已知依赖缺失或验证路径缺失，不能继续声称可用 |
+| `alpha_ready_non_cad` | 非 CAD 链路已有稳定入口、测试和基线证据，可作为 Alpha 原型使用 |
+| `alpha_verified_cad` | 已对有限 baseline CAD_PLAN 完成真实 AutoCAD 落图、截图、实体回读和 `geometry_verified` 闭环 |
+| `prototype` | 已有最小实现或脚本原型，但接口、样本或验证仍需增强 |
+| `blocked_by_cad` | 仓库内入口已存在，但完成声明依赖真实 CAD 落图、截图辅助或实体回读；几何准确声明以实体回读为准 |
+| `scaffold` | 目录、文档或数据壳已建立，核心能力尚未形成 |
+| `not_started` | 仅在计划中定义，尚未开始 |
+| `blocked` | 缺依赖、缺证据或有已知失败，不能继续声称可用 |
+
+## 当前总状态
+
+当前 Core 已完成 Phase O-V 的非 CAD 主线和一次系统层安全补强。最新记录为：
+
+```text
+223 tests OK
+self_check.py pass
+render_preview.py --check ready
+repo audit 0 findings
+blank-shell pipeline ok
+blank-shell 4 场景 benchmark pass
+office alpha benchmark 4 cases pass
+interior delivery benchmark 3 persona composition cases pass
+interior delivery real CAD composition check 3/3 geometry_verified
+run_cad_validation.py --no-cad pass
+Phase W W-07 CAD foundation run_cad_validation.py pass
+readback_report.json status geometry_verified
+cad_capability_probe.json status cad_capability_verified
+primitive probe covers line/circle/arc/polyline/text/dimensions
+```
+
+这证明非 CAD 链路、benchmark、验证总控和维护门禁可用；Phase W baseline 真实 CAD 总验证已在用户会话下完成落图、截图、实体回读和 `geometry_verified` 闭环。本轮还加固了 CAD COM 调用底座：即使 `run_cad_validation.py` 顶层为 `pass`，也必须要求 `readback_report.json.status=geometry_verified`、`cad_capability_probe.json.status=cad_capability_verified` 且关键 checks 全部通过。最新能力探针已覆盖独立直线、圆、弧、闭合多段线、文字、标注和矩形边框。用户指出角色组合截图不在 CAD 后，本轮已将 3 个室内组合案例接入真实 AutoCAD 批量落图与 created handles 回读，最新证据为 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition_cad_check_report.json`，3/3 cases `geometry_verified`。该结论仍只覆盖当前简单矩形对象组合、baseline `examples\plans\draw_test_cabinet.json` 与当前能力探针，不扩大为真实项目图纸、块库、块插入或任意 CAD_PLAN 全部准确。
+
+## 当前进度估算
+
+估算口径：通用底座和多场景 Agent 各自按 100% 计算；总体默认按 `通用底座 70% + 多场景 Agent 30%` 加权。该估算只用于节奏判断，误差允许约 5-10 个百分点，不能替代测试和真实 CAD 证据。
+
+| 维度 | 当前估算 | 判断依据 | 主要剩余缺口 |
+| --- | ---: | --- | --- |
+| 通用底座进度 | 约 70% | Core 结构、schema、非 CAD pipeline、benchmark、自检、repo audit、真实 CAD baseline 回读、基础图元能力探针已形成闭环；Phase R runner 已补证据状态、对象规格 pipeline、角色驱动组合 pipeline、对象/组件/角色断言、视觉辅助预览和 3 个组合案例真实 CAD batch readback | 自动 DWG/PDF 识别、复杂几何、多候选硬化、真实项目样本、真实块插入/块库/hatch/属性块、更大规模批量 CAD readback 验证 |
+| 多场景 Agent 进度 | 约 34% | 多个 `agents/<scenario>` 目录、manifest、preferences 和边界测试已有；4 场景 blank-shell benchmark 已能跑通，office alpha 已有 4 个 non-CAD object/scene cases，interior delivery benchmark 已覆盖卧室/餐桌/办公桌 3 个 persona composition cases，并完成对应真实 CAD 组合回读 | Phase X 正式 Alpha 验收未做，场景差异影响仍浅，真实场景样本、场景工作流、micro-scene、failure 语义和复杂 CAD 组合回读不足 |
+| 总体进度 | 约 59% | `70% * 0.70 + 34% * 0.30` | 取决于 Core 继续硬化和场景 Agent 从 preferences / composition 原型推进到可验收 Alpha |
+
+本轮新增并细化 Phase R 新鲜视角评审计划，并把代码切口继续落到 benchmark runner 与真实 CAD 批量执行：非 CAD benchmark 现在能显式输出 `evidence_state`、`geometry_accuracy`、`screenshot_role`，并支持 `minimums`、`contains_object_types`、`contains_component_roles`、`contains_object_roles` 断言、`object_spec` 与 `composition_spec` pipeline、suite/case 配置校验，以及 blank-shell / composition 每个 CAD_PLAN 的 dry-run / verification 汇总证据。`examples/benchmarks/office_alpha_benchmark.json` 当前覆盖 desk / chair / cabinet 对象规格与 office blank-shell scene，共 4 个 non-CAD cases；`examples/benchmarks/interior_delivery_benchmark.json` 覆盖卧室床+地毯、餐桌组合、办公桌组合 3 个 persona composition cases，并输出浏览器截图辅助证据。新增 `scripts/run_composition_cad_check.py` 后，这 3 个组合案例已经在真实 AutoCAD `CODEX_PREVIEW` 中完成批量落图和回读。该进展提升 benchmark 证据门禁，但仍不代表真实块库和复杂家具符号已经完成。
 
 ## 能力矩阵
 
-| 能力 | 状态 | 当前依据 | 下一步 |
+| 能力 | 状态 | 当前依据 | 主要缺口 |
 | --- | --- | --- | --- |
-| CAD execution | prototype | `core/execution/execute_plan.py` 可执行最小 `CAD_PLAN` 并默认写入 `CODEX_PREVIEW`；`scripts/execute_plan.py` 保留兼容包装器 | 补更多对象类型与正式实体回读 |
-| preview safety | prototype | `core/safety/policy.py` 已提供可调用策略，执行层默认只允许 `CODEX_PREVIEW`，未确认计划、正式图层、保存、覆盖、删除需要显式批准 | 补更严格的批准证据格式与审计记录 |
-| validate | prototype | `core/plan_engine/validate_plan.py` 已可校验测试柜 CAD_PLAN；旧 `scripts/validate_plan.py` 兼容 | 扩展到高层模型 |
-| dry-run | prototype | `core/plan_engine/dry_run_plan.py` 已可预演测试柜；`core/plan_engine/dry_run_report.py` 已输出机器可读 report；旧 `scripts/dry_run_plan.py` 兼容 | 扩展批量 dry-run 汇总 |
-| self_check | prototype | `core/verification/self_check.py` 已作为基础自检入口；旧 `scripts/self_check.py` 兼容 | 补更多环境探针 |
-| render_preview | prototype | `core/verification/render_preview.py --check` 和截图入口已建立；旧 `scripts/render_preview.py` 兼容 | 连接实体回读报告 |
-| CAD IO adapter | prototype | `core/cad_io/autocad_com.py` 可连接 AutoCAD COM；旧 `drivers/` 兼容 | 设计统一驱动接口 |
-| entity readback | prototype | `core/verification/inspect_dwg.py` 已支持无 CAD 报告壳、COM-like 实体标准化、`--execution-summary` created handles 入口、`--connect-cad` 显式真实回读入口 | 在真实 CAD 环境验证 `snapshot_modelspace`、handles 和 report 升级路径 |
-| schemas | prototype | `core/schemas/` 已有 CAD_PLAN、CAD_CONTEXT、CAD_OBJECT 兼容副本，并新增 9 个高层 schema、examples、registry、workflow schema/reference checker；每个注册模型已有 invalid fixture | 继续扩展更贴近真实项目的正反例 |
-| capability runtime | prototype | `core/capabilities/registry.py` 已登记 Core 能力、输入 schema、输出 contract、风险等级、CAD 依赖、验证命令、`maturity` 和 `known_limits`，并支持 `run_capability()`；已新增 `drawing_analysis.load_shell_model`、`layout.generate_circulation_candidates`、`layout.split_function_zones`、`layout.create_zone_placements` 与 `workflow.blank_shell_pipeline` | 补更多 Core 能力与审计记录字段 |
-| artifact graph | prototype | `core/workflows/artifact_graph.py` 可从 workflow artifacts 生成依赖顺序、路径检查和循环依赖错误 | 后续接入更多 workflow 类型和产物差异检查 |
-| geometry backends | alpha_ready | `core/geometry_backends/rect2d.py` 已提供面积、中心点、相交、包含、间距、膨胀、bbox no-place-zone 保守扣减、path strip 和门洞/障碍距离检查；`orthogonal.py` 已提供闭合、正交、自交、bbox、面积校验；registry 可发现 `rect2d`、`orthogonal_polygon`、`cad_plan_rect2d`，外部几何库仍只是可选槽位 | 当前只覆盖矩形和简单正交多边形，不替代成熟几何库；是否引入 `shapely` / CAD kernel 仍需用户决策 |
-| benchmarks | prototype | `core/benchmarks/runner.py` 与 `scripts/run_benchmark_suite.py` 可重复运行 minimal non-CAD benchmark；`examples/benchmarks/blank_shell_core_benchmark.json` 已覆盖 retail、office、residential、restaurant 四个不同 blank-shell workflow 并输出 pass/fail 汇总 | 扩展历史趋势记录和更多真实项目回归样本 |
-| drawing_model | prototype | `core/drawing_analysis/manual_model.py` 和 `entity_summary.py` 可从手工标注或简化实体列表生成/汇总 `DRAWING_MODEL`，并保留不确定点；`core/drawing_analysis/shell_loader.py` 已可把人工空壳 JSON 规范化为 `SHELL_MODEL` | 接真实 DWG/PDF 提取，继续保持人工空壳与自动读图边界清楚 |
-| project_model | prototype | `core/project_model/project_builder.py` 可从 `DESIGN_BRIEF + DRAWING_MODEL` 或 `DESIGN_BRIEF + SHELL_MODEL` 合并生成 `PROJECT_MODEL`，并保留 shell_id、约束、来源、不确定点和 `shell_context` 中的入口、障碍、避让区、必连通点 | 增加多场景 examples、冲突处理和 shell/circulation/zones 串联 |
-| object_engine | prototype | `core/object_engine/parametric_objects.py` 从 `libraries/objects/object_defaults.json` 读取默认尺寸，可生成 cabinet/shelf/table/desk/chair/bed/sofa/counter/display_unit 的 `OBJECT_SPEC`，并包含基础构件角色；`object_to_plan.py` 负责安全预览计划转换 | 扩展尺寸来源说明、更多对象规格和真实块库映射 |
-| style_engine | prototype | `core/style_engine/style_profile.py` 可加载 modern/european/minimal 风格配置 | 将风格 token 连接到对象细节生成 |
-| block_engine | prototype | `core/block_engine/block_library.py`、`block_selector.py`、`block_placement.py` 可做元数据筛选、fallback object spec 和 insertion intent；示例块库已覆盖 cabinet/table/shelf/chair/counter/desk/sofa/display_unit；旋转/插入点 bbox 已有保守规则 | 接真实块插入和块引用验证 |
-| layout_engine | prototype | `core/layout_engine/basic_layout.py`、`collision.py`、`clearance.py`、`circulation.py`、`path_generation.py`、`zone_splitter.py`、`placement.py` 已支持多对象候选、边界/碰撞/clearance/主通道检查、动线候选、功能区切分和 zone-driven placement；bbox containment / overlap / clearance 已复用 `core.geometry_backends.rect2d` | 扩展更真实的通道、zone 和 placement 优化 |
-| shell/circulation/function zones | prototype | `SHELL_MODEL`、`CIRCULATION_MODEL`、`FUNCTION_ZONE` schema、example 和 invalid fixture 已建立；Phase P/R/S 已完成 shell loader、project merge、straight / L / along-wall 动线候选与 bbox shell 左右功能区切分；Phase V 已接入 placement/proposal/CAD_PLAN pipeline | 扩展正交 shell 与更真实空间语义 |
-| proposal_engine | prototype | `core/proposal_engine/design_proposal.py` 可生成多候选方案，并区分 user/drawing/shell/library/algorithm/inferred evidence；`proposal_to_plan.py` 支持 `confirmed_candidate_id` 并保持确认门；`proposal_comparison.py` 已支持 layout candidates 排序、tradeoffs 和带来源的场景权重 | 扩展真实多方案设计推理、候选转计划和用户确认流 |
-| plan_engine | prototype | validate/dry-run 兼容入口已稳定；`model_to_plan.py` 可把高层对象/布局/方案转为一个或多个安全 `CAD_PLAN` envelope | 扩展 plan_id、批量失败隔离和 generated examples |
-| verification | prototype | `VERIFICATION_REPORT`、fake readback、plan geometry checks、created handles 证据门、截图存在性检查、before/after snapshot diff、批量汇总和修复建议已建立；无真实 CAD readback 时仍只能给出 `unverified` 口径 | 接真实 CAD 回读和真实 before/after diff |
-| safety | prototype | `core/safety/policy.py` 已接入 `execute_plan_file()`，场景 Agent 边界测试禁止绕过执行/验证核心 | 强化批准来源与审计 evidence |
-| commercial_fitout_agent | prototype | `agents/commercial_fitout/` 已建立轻量脚手架、workflow 名称和 preferences 数据；多场景 preference 差异已进入 layout 回归测试 | 继续只写场景差异，不实现 Core 算法 |
-| residential_agent | prototype | `agents/residential/` 已建立轻量脚手架和 preferences 数据；多场景 preference 差异已进入 layout 回归测试 | 继续只写场景差异 |
+| CAD execution | `alpha_verified_cad` | `core/execution/execute_plan.py` 已在真实 AutoCAD 中执行 baseline CAD_PLAN 到 `CODEX_PREVIEW`；`core/execution/batch_plan_runner.py` 已将 3 个室内组合 benchmark 的多 CAD_PLAN 批量写入真实 AutoCAD 并按 created handles 回读；最新组合证据为 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition_cad_check_report.json` | 扩展到更多 CAD_PLAN、真实项目样本和块库插入验证 |
+| CAD COM capability probe | `alpha_verified_cad` | `core/verification/cad_capability_probe.py` 已验证活动文档读取、`CODEX_PREVIEW` 图层、矩形边框、独立直线、圆、弧、闭合多段线、文字、标注、handles、定向回读、类型统计和 bbox；证据为 `output\validation_runs\manual-cad-after-primitive-probe\cad_capability_probe.json` | 扩展块插入、hatch、属性块、选择集和更复杂实体类型 |
+| preview safety | `prototype` | `core/safety/policy.py` 默认只允许 `CODEX_PREVIEW`，正式图层/保存/覆盖/删除需要显式批准 | 补批准证据格式和审计字段 |
+| validate / dry-run | `alpha_ready_non_cad` | `scripts/validate_plan.py`、`scripts/dry_run_plan.py` 和 core 入口稳定；baseline plan 通过 | 扩展批量 CAD_PLAN 和高层模型失败隔离 |
+| self check / repo audit | `alpha_ready_non_cad` | `self_check.py`、`run_repo_audit.py --fail-on-findings` 已进入固定基线 | 继续把新维护风险纳入 audit |
+| render preview | `prototype` | `render_preview.py --check` ready，截图入口存在 | Phase W 验证真实 CAD 截图落盘和报告挂载 |
+| entity readback | `alpha_verified_cad` | `inspect_dwg.py --connect-cad` 已对真实 AutoCAD baseline 输出生成 `readback_report.json`；最新复验使用 created handles 定向回读，`status=geometry_verified` 且 `readback_scope`、`layer_entities`、`bbox_size`、`base_point`、`label_text`、`dimension_count`、`created_handles_scope` 全部 pass | 扩展 before/after snapshot、批量 plan 和真实图纸回读样本 |
+| schemas | `alpha_ready_non_cad` | 高层 schema、examples、invalid fixtures、registry 和 validator 已建立 | 扩展真实项目正反例和跨模型引用边界 |
+| capability runtime | `alpha_ready_non_cad` | `core/capabilities/` 已登记能力、风险、CAD 依赖、验证命令、maturity、known_limits；`workflow.blank_shell_pipeline` 可运行 | 增加审计记录字段和更多 workflow 类型 |
+| artifact graph | `prototype` | workflow artifacts 可排序、检查路径和发现循环依赖 | 接更多工作流和产物差异检查 |
+| geometry backends | `prototype` | `rect2d` 与 `orthogonal_polygon` 支持 bbox、正交多边形、no-place-zone、path strip 和基础距离检查 | Phase Y 评估复杂多边形/成熟几何库 |
+| drawing analysis | `prototype` | manual drawing model、entity summary、manual shell loader 已可用 | 自动 DWG/PDF 空壳识别仍未开始闭环 |
+| project model | `alpha_ready_non_cad` | `build_project_model()` 支持 `DESIGN_BRIEF + DRAWING_MODEL` 或 `DESIGN_BRIEF + SHELL_MODEL`，保留 shell_context | 增加冲突处理、真实样本和场景差异输入 |
+| object engine | `prototype` | `object_defaults.json` 覆盖 cabinet/table/chair/desk/shelf/counter/bed/rug/sofa/display_unit/monitor，能生成 OBJECT_SPEC | 补尺寸来源说明和更多对象规格 |
+| composition engine | `prototype` | `core/composition_engine/templates.py` 可将卧室床+地毯、餐桌+椅、办公桌+椅+显示器组合转成多 CAD_PLAN、dry-run、unverified verification 和 SVG/PNG 视觉辅助预览；当前 3 个模板已通过真实 CAD 批量落图与 created handles 回读 | 扩展更多组合模板、失败样本和 block insertion alpha |
+| block engine | `prototype` | block metadata 筛选、fallback object spec 和 insertion intent 已有 | Phase W/Y 之后再接真实块插入和 block readback |
+| layout engine | `prototype` | 多对象候选、碰撞、clearance、主通道、动线、功能区、zone placement 已建立 | Phase Y 强化多候选布局、失败基准和复杂空间 |
+| shell / circulation / function zones | `alpha_ready_non_cad` | Phase P/R/S/V 已完成 shell loader、动线候选、功能区切分并接入 pipeline | 扩展正交 shell、真实空间语义和更复杂样本 |
+| proposal engine | `prototype` | DESIGN_PROPOSAL 支持多候选、确认候选、比较摘要和来源化 evidence | 强化真实多方案设计推理和用户确认流 |
+| plan engine | `prototype` | 高层对象/布局/方案可转安全 CAD_PLAN envelope | 扩展 plan_id、批量生成和失败隔离 |
+| verification | `alpha_verified_cad` | fake readback、created handles 证据门、截图存在性、before/after diff 和修复建议已建立；Phase W baseline 真实 CAD readback 已通过 `geometry_verified` 门禁；`cad_validation_runner` 已禁止把非 `geometry_verified` 回读或非 `cad_capability_verified` 能力探针误判为 CAD pass | 继续扩大失败样本、真实项目样本和多对象 CAD_PLAN 验证 |
+| benchmarks | `alpha_ready_non_cad` | minimal benchmark、blank-shell 4 场景 benchmark、office alpha benchmark 和 interior delivery benchmark 可重复运行；runner 支持 non-CAD 证据状态、最小指标、对象类型、组件角色、对象角色断言、suite/case 配置校验和 `object_spec` / `composition_spec` benchmark pipeline；blank-shell 与 composition 已输出每个 CAD_PLAN 的 dry-run / verification 汇总证据；interior delivery 另有真实 CAD batch check 证据 | Phase R/Y 增加更多 micro-scene、failure case、历史趋势、真实项目样本和更复杂组合真实 CAD readback |
+| blank-shell pipeline | `alpha_ready_non_cad` | `run_blank_shell_pipeline.py` 串联 shell/project/circulation/zones/placements/layout/proposal/CAD_PLAN/dry-run/unverified report | Phase Y 强化多候选输出和失败解释 |
+| scene agents | `prototype` | commercial/residential/office/restaurant preferences 已有，边界测试保护场景层不复制 Core | Phase X 做正式 Alpha 验收 |
 
-## 当前结论
+## 近期关键风险
 
-当前仓库已经具备 Core 执行底座与非 CAD 设计链路的早期闭环，并新增了方法论内化层：能力目录/runtime、workflow 产物图、几何后端抽象、benchmark runner、对象解释和候选比较。它们让非 CAD 底座更可治理、可追踪、可替换和可评测，但仍不等同于完整自动设计大脑，也不替代真实 CAD 落图、截图和实体回读补验。后续 70%-80% 的开发仍应进入 `core/`：数据模型、图纸理解、项目模型、对象、风格、图库块、布局、方案、计划、执行、验证和安全。
+- 不能把 Phase W baseline、基础图元探针或 3 个室内组合案例的 `geometry_verified` / `cad_capability_verified` 扩大解释为真实项目图纸、块库、块插入或任意 CAD_PLAN 全部准确。
+- blank-shell pipeline 已可运行，但当前不等于完整自动设计大脑。
+- 场景 Agent 已有 preferences，但仍是轻量数据层原型。
+- 若继续扩张场景业务而不强化 Core，会重新把通用能力写死到单场景。
+- 根目录文档曾经有重复状态描述；当前已把 Phase W/X/Y/Z 长篇执行剧本迁入 `docs/planning/`，并新增 Phase R 新鲜视角评审计划。后续应以 `CORE_CONTEXT_BRIEF.md` 为短入口、本文为能力矩阵、`CORE_RESTRUCTURE_PLAN.md` 为主计划索引。
 
-场景 Agent 只能保持轻量：它们复用 Core，只补场景词汇、默认参数、业务偏好、专用工作流和少量专用规则。
+## 计划入口
 
-`CORE_RESTRUCTURE_PLAN.md` 已从第一轮重装设计草案修剪为剩余工作计划。后续读取它时，应把它当作“还没做什么”的清单，而不是已完成迁移的待办。
-
-最近复验：2026-05-25 17:19 已跑通非 CAD 基线，`unittest discover -s tests` 为 196 tests OK，`self_check.py` 为 pass，`render_preview.py --check` 为 ready，`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-findings` 为 pass 且 0 findings，`scripts/run_blank_shell_pipeline.py examples\workflows\blank_shell_layout_loop.json --output-dir output\test_artifacts\blank_shell_pipeline\hardening-polish` 为 ok，`scripts/run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\hardening-polish` 为 4/4 pass，`scripts/run_cad_validation.py --no-cad --output-dir output\validation_runs\hardening-polish-no-cad` 为 pass。真实 CAD 验证本轮未运行；该复验只证明非 CAD 链路和无 CAD 验证总控可用，不证明真实 CAD 几何准确。
-
-## 遗留目录
-
-第一轮重装保留了两个遗留目录，避免一次迁移同时改变过多引用：
-
-- `cad_agent/`：已标注为 legacy；核心说明收束到 `docs/architecture/`、`core/schemas/` 和 `core/safety/`。
-- `libraries/domains/`：保留 legacy 兼容副本；新入口为 `libraries/domain_presets/`。
-
-保留它们不是新主线。后续新增通用能力仍应进入 `core/`，新增场景差异仍应进入 `agents/`。
-
-## 近期风险
-
-- 第一轮迁移已建立兼容包装器；后续移除旧入口前必须先更新所有文档和测试。
-- `cad_agent/` 与 `libraries/domains/` 已完成第二轮 legacy 标注和新入口收束；后续不作为新开发入口。
-- `entity readback` 已有最小可测协议、created handles 证据门和执行摘要入口，但真实 AutoCAD COM 回读尚需在已打开 DWG 中集成验证；在此之前仍不能把执行返回值等同于完整几何验收。
-- 若过早扩写工装或家装 Agent，容易把通用能力写死到单一场景。
+后续优先级、Phase 顺序和退出标准只以唯一 `PlanMD`：`CORE_RESTRUCTURE_PLAN.md` 为准。本文只维护能力矩阵、成熟度、证据路径和能力缺口，避免状态页再次变成第二份计划。

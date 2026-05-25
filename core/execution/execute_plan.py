@@ -111,7 +111,7 @@ def execute_plan_file(
     )
 
     if drawing.get("include_label", False):
-        label_height = max(80, min(width, depth) * 0.2)
+        label_height = max(80, min(min(width, depth) * 0.2, 160))
         created_handles.extend(
             _collect_handles(
                 driver.draw_text(

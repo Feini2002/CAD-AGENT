@@ -5,7 +5,12 @@ import unittest
 
 from tests.bootstrap import PROJECT_ROOT
 
-from core.verification.inspect_dwg import load_execution_summary, normalize_com_entity, snapshot_entities
+from core.verification.inspect_dwg import (
+    load_execution_summary,
+    normalize_com_entity,
+    snapshot_entities,
+    snapshot_entities_by_handles,
+)
 from core.verification.verification_report import (
     build_verification_report,
     snapshot_diff,
@@ -29,6 +34,32 @@ class FakeText:
     Handle = "T1"
     TextString = "测试柜"
     InsertionPoint = [900, 300, 0]
+
+
+class FakeCircle:
+    ObjectName = "AcDbCircle"
+    Layer = "CODEX_PREVIEW"
+    Handle = "C1"
+    Center = [500, 250, 0]
+    Radius = 100
+
+
+class FakeArc:
+    ObjectName = "AcDbArc"
+    Layer = "CODEX_PREVIEW"
+    Handle = "A1"
+    Center = [700, 250, 0]
+    Radius = 80
+    StartAngle = 0
+    EndAngle = 1.5707963267948966
+
+
+class FakePolyline:
+    ObjectName = "AcDbPolyline"
+    Layer = "CODEX_PREVIEW"
+    Handle = "P1"
+    Coordinates = [0, 0, 400, 0, 400, 200]
+    Closed = True
 
 
 class VerificationReportTests(unittest.TestCase):
@@ -233,11 +264,24 @@ class VerificationReportTests(unittest.TestCase):
     def test_com_like_entities_normalize_to_plain_readback(self) -> None:
         line = normalize_com_entity(FakeLine())
         text = normalize_com_entity(FakeText())
+        circle = normalize_com_entity(FakeCircle())
+        arc = normalize_com_entity(FakeArc())
+        polyline = normalize_com_entity(FakePolyline())
 
         self.assertEqual(line["type"], "line")
         self.assertEqual(line["end_point"], [1800.0, 0.0, 0.0])
         self.assertEqual(text["type"], "text")
         self.assertEqual(text["text"], "测试柜")
+        self.assertEqual(circle["type"], "circle")
+        self.assertEqual(circle["center"], [500.0, 250.0, 0.0])
+        self.assertEqual(circle["radius"], 100.0)
+        self.assertEqual(circle["bbox"], {"min": [400.0, 150.0], "max": [600.0, 350.0]})
+        self.assertEqual(arc["type"], "arc")
+        self.assertEqual(arc["start_angle"], 0.0)
+        self.assertEqual(arc["end_angle"], 1.5707963267948966)
+        self.assertEqual(polyline["type"], "polyline")
+        self.assertEqual(polyline["points"], [[0.0, 0.0, 0.0], [400.0, 0.0, 0.0], [400.0, 200.0, 0.0]])
+        self.assertTrue(polyline["closed"])
 
     def test_snapshot_uses_driver_readback_when_available(self) -> None:
         class Driver:
@@ -245,6 +289,26 @@ class VerificationReportTests(unittest.TestCase):
                 return [{"type": "line", "layer": layer or "CODEX_PREVIEW"}]
 
         self.assertEqual(snapshot_entities(Driver(), layer="CODEX_PREVIEW")[0]["layer"], "CODEX_PREVIEW")
+
+    def test_snapshot_by_handles_uses_handle_lookup_without_modelspace_scan(self) -> None:
+        class FakeModelSpace:
+            def __iter__(self):
+                raise AssertionError("full modelspace scan should not run when handles are available")
+
+        class FakeDocument:
+            def HandleToObject(self, handle: str) -> object:
+                entity = FakeLine()
+                entity.Handle = handle
+                return entity
+
+        class Driver:
+            doc = FakeDocument()
+            model_space = FakeModelSpace()
+
+        entities = snapshot_entities_by_handles(Driver(), ["H1", "H2"], layer="CODEX_PREVIEW")
+
+        self.assertEqual([entity["handle"] for entity in entities], ["H1", "H2"])
+        self.assertEqual({entity["layer"] for entity in entities}, {"CODEX_PREVIEW"})
 
     def test_execution_summary_loader_extracts_created_handles(self) -> None:
         path = PROJECT_ROOT / "output" / "test_artifacts" / "verification" / "execution_summary.json"

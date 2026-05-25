@@ -70,6 +70,16 @@
         {"component_id": "bed-base", "role": "base", "count": 1}
       ]
     },
+    "rug": {
+      "name": "Area Rug",
+      "width": 2400,
+      "depth": 1900,
+      "height": 20,
+      "components": [
+        {"component_id": "rug-soft-zone", "role": "soft_zone", "count": 1},
+        {"component_id": "rug-boundary", "role": "boundary", "count": 1}
+      ]
+    },
     "sofa": {
       "name": "Sofa",
       "width": 2200,
@@ -101,6 +111,16 @@
         {"component_id": "display-surface", "role": "display_surface", "count": 1},
         {"component_id": "display-levels", "role": "storage_level", "count": 3},
         {"component_id": "display-base", "role": "base", "count": 1}
+      ]
+    },
+    "monitor": {
+      "name": "Monitor",
+      "width": 350,
+      "depth": 80,
+      "height": 320,
+      "components": [
+        {"component_id": "monitor-screen", "role": "screen", "count": 1},
+        {"component_id": "monitor-stand", "role": "support", "count": 1}
       ]
     }
   }

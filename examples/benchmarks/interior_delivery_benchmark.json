@@ -1,0 +1,73 @@
+{
+  "version": "0.1",
+  "suite_id": "interior-delivery-benchmark",
+  "description": "Persona-driven non-CAD delivery benchmark for reusable interior object compositions.",
+  "cases": [
+    {
+      "case_id": "interior_designer_bedroom_bed_rug",
+      "pipeline": "composition_spec",
+      "composition_id": "bedroom_bed_rug",
+      "persona_role": "interior_designer",
+      "request_text": "生成一个床铺加地毯的卧室组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "persona_role": "interior_designer",
+        "composition_id": "bedroom_bed_rug",
+        "object_count": 2,
+        "cad_plan_count": 2,
+        "visual_preview_status": "written",
+        "contains_object_types": ["bed", "rug"],
+        "contains_object_roles": ["primary_bed", "soft_zone"]
+      }
+    },
+    {
+      "case_id": "home_designer_dining_table_set",
+      "pipeline": "composition_spec",
+      "composition_id": "dining_table_set",
+      "persona_role": "home_designer",
+      "request_text": "生成一个餐桌组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "persona_role": "home_designer",
+        "composition_id": "dining_table_set",
+        "object_count": 5,
+        "cad_plan_count": 5,
+        "visual_preview_status": "written",
+        "contains_object_types": ["table", "chair"],
+        "contains_object_roles": ["dining_surface", "dining_seat"]
+      }
+    },
+    {
+      "case_id": "office_planner_desk_combo",
+      "pipeline": "composition_spec",
+      "composition_id": "office_desk_combo",
+      "persona_role": "office_planner",
+      "request_text": "生成一个办公桌组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "persona_role": "office_planner",
+        "composition_id": "office_desk_combo",
+        "object_count": 3,
+        "cad_plan_count": 3,
+        "visual_preview_status": "written",
+        "contains_object_types": ["desk", "chair", "monitor"],
+        "contains_object_roles": ["work_surface", "task_seat", "screen_zone"]
+      }
+    }
+  ]
+}

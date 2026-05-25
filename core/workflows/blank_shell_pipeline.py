@@ -17,7 +17,7 @@ from core.plan_engine.model_to_plan import model_to_plans
 from core.project_model.project_builder import build_project_model
 from core.proposal_engine.design_proposal import create_design_proposal
 from core.schemas.validator import load_json
-from core.verification.verification_report import build_verification_report
+from core.verification.verification_report import build_verification_report, summarize_verification_reports
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -59,6 +59,36 @@ def _resolve_output_dir(root: Path, output_dir: Path) -> Path:
 def _write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _summarize_dry_run_reports(reports: list[dict[str, Any]]) -> dict[str, Any]:
+    status_counts: dict[str, int] = {}
+    for report in reports:
+        status = str(report.get("status", "unknown"))
+        status_counts[status] = status_counts.get(status, 0) + 1
+    valid_count = status_counts.get("valid", 0)
+    return {
+        "version": "0.1",
+        "status": "valid" if reports and valid_count == len(reports) else "invalid",
+        "plan_count": len(reports),
+        "valid_count": valid_count,
+        "invalid_count": len(reports) - valid_count,
+        "status_counts": status_counts,
+    }
+
+
+def _summarize_plan_verification_reports(reports: list[dict[str, Any]]) -> dict[str, Any]:
+    summary = summarize_verification_reports(reports)
+    status_counts = summary["status_counts"]
+    if summary["all_geometry_verified"]:
+        status = "geometry_verified"
+    elif reports and status_counts.get("unverified", 0) == len(reports):
+        status = "unverified"
+    elif status_counts.get("failed", 0) > 0:
+        status = "failed"
+    else:
+        status = "mixed"
+    return {**summary, "status": status}
 
 
 def _validate_workflow_inputs(workflow: dict[str, Any]) -> list[str]:
@@ -274,7 +304,9 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
     if plan_result["status"] != "ok":
         return {"status": "blocked", "errors": plan_result["errors"], "artifacts": {}, "metrics": {}}
     cad_plans = [item["cad_plan"] for item in plan_result["plans"]]
-    dry_run_report = create_dry_run_report(cad_plans[0])
+    dry_run_reports = [create_dry_run_report(cad_plan) for cad_plan in cad_plans]
+    dry_run_report = dry_run_reports[0]
+    dry_run_summary = _summarize_dry_run_reports(dry_run_reports)
 
     paths = {
         "shell_model": output_dir / "shell_model.json",
@@ -287,8 +319,11 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
         "cad_plan": output_dir / "cad_plan.json",
         "cad_plans": output_dir / "cad_plans.json",
         "dry_run_report": output_dir / "dry_run_report.json",
+        "dry_run_reports": output_dir / "dry_run_reports.json",
         "verification_report": output_dir / "verification_report.json",
+        "verification_reports": output_dir / "verification_reports.json",
     }
+    cad_plan_paths = [output_dir / "cad_plan_items" / f"cad_plan_{index + 1:03d}.json" for index in range(len(cad_plans))]
     _write_json(paths["shell_model"], shell)
     _write_json(paths["project_model"], project_model)
     _write_json(paths["circulation_candidates"], circulation_candidates)
@@ -298,14 +333,21 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
     _write_json(paths["design_proposal"], proposal)
     _write_json(paths["cad_plan"], cad_plans[0])
     _write_json(paths["cad_plans"], cad_plans)
+    for plan_path, cad_plan in zip(cad_plan_paths, cad_plans):
+        _write_json(plan_path, cad_plan)
     _write_json(paths["dry_run_report"], dry_run_report)
-    verification_report = build_verification_report(plan_path=paths["cad_plan"])
+    _write_json(paths["dry_run_reports"], dry_run_reports)
+    verification_reports = [build_verification_report(plan_path=plan_path) for plan_path in cad_plan_paths]
+    verification_report = verification_reports[0]
+    verification_summary = _summarize_plan_verification_reports(verification_reports)
     _write_json(paths["verification_report"], verification_report)
+    _write_json(paths["verification_reports"], verification_reports)
 
     metrics = {
         "circulation_candidates": len(circulation_candidates),
         "zones": len(zones),
         "placements": len(placements),
+        "object_types": sorted({str(placement.get("object_type")) for placement in placements if placement.get("object_type")}),
         "cad_plans": len(cad_plans),
         "failed_checks": sum(1 for check in layout["candidates"][0]["checks"] if check["status"] == "fail"),
     }
@@ -314,5 +356,9 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
         "artifacts": {key: str(path) for key, path in paths.items()},
         "metrics": metrics,
         "dry_run_report": dry_run_report,
+        "dry_run_reports": dry_run_reports,
+        "dry_run_summary": dry_run_summary,
         "verification_report": verification_report,
+        "verification_reports": verification_reports,
+        "verification_summary": verification_summary,
     }

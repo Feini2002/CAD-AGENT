@@ -79,6 +79,7 @@ def _cad_steps(root: Path, output_dir: Path) -> list[ValidationStep]:
     plan = str(root / "examples" / "plans" / "draw_test_cabinet.json")
     screenshot = str(output_dir / "cad-validation-screen.png")
     execution_summary = str(output_dir / "execution_summary.json")
+    capability_report = str(output_dir / "cad_capability_probe.json")
     return [
         ValidationStep(
             "autocad_com_connect",
@@ -126,6 +127,14 @@ def _cad_steps(root: Path, output_dir: Path) -> list[ValidationStep]:
             cad_required=True,
             stdout_artifact=str(output_dir / "readback_report.json"),
         ),
+        ValidationStep(
+            "cad_capability_probe",
+            "Probe AutoCAD COM primitive write and handle readback capability",
+            [_python(), "scripts/run_cad_capability_probe.py", "--output-dir", str(output_dir)],
+            "cad_capability_failed",
+            cad_required=True,
+            stdout_artifact=capability_report,
+        ),
     ]
 
 
@@ -134,16 +143,84 @@ def _write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def _readback_gate_failure(stdout: str) -> str:
+    try:
+        report = json.loads(stdout)
+    except json.JSONDecodeError as exc:
+        return f"readback_report.json is not valid JSON: {exc}"
+    if not isinstance(report, dict):
+        return "readback_report.json must be a JSON object."
+
+    readback_status = report.get("status")
+    checks = report.get("checks", [])
+    non_pass_checks = []
+    if isinstance(checks, list):
+        for check in checks:
+            if not isinstance(check, dict):
+                non_pass_checks.append("unknown:invalid_check")
+                continue
+            if check.get("status") != "pass":
+                non_pass_checks.append(f"{check.get('name', 'unknown')}:{check.get('status', 'unknown')}")
+    else:
+        non_pass_checks.append("checks:missing_or_invalid")
+
+    if readback_status != "geometry_verified" or non_pass_checks:
+        details = ", ".join(non_pass_checks) if non_pass_checks else "all checks pass"
+        return f"readback_report.status={readback_status!r}; expected 'geometry_verified'; non_pass_checks={details}"
+    return ""
+
+
+def _cad_capability_gate_failure(stdout: str) -> str:
+    try:
+        report = json.loads(stdout)
+    except json.JSONDecodeError as exc:
+        return f"cad_capability_probe.json is not valid JSON: {exc}"
+    if not isinstance(report, dict):
+        return "cad_capability_probe.json must be a JSON object."
+
+    probe_status = report.get("status")
+    checks = report.get("checks", [])
+    non_pass_checks = []
+    if isinstance(checks, list):
+        for check in checks:
+            if not isinstance(check, dict):
+                non_pass_checks.append("unknown:invalid_check")
+                continue
+            if check.get("status") != "pass":
+                non_pass_checks.append(f"{check.get('name', 'unknown')}:{check.get('status', 'unknown')}")
+    else:
+        non_pass_checks.append("checks:missing_or_invalid")
+
+    if probe_status != "cad_capability_verified" or non_pass_checks:
+        details = ", ".join(non_pass_checks) if non_pass_checks else "all checks pass"
+        return f"cad_capability_probe.status={probe_status!r}; expected 'cad_capability_verified'; non_pass_checks={details}"
+    return ""
+
+
 def _step_record(step: ValidationStep, result: CommandResult, output_dir: Path) -> dict[str, Any]:
     safe_id = step.id.replace("/", "_")
     stdout_path = output_dir / f"{safe_id}.stdout.txt"
     stderr_path = output_dir / f"{safe_id}.stderr.txt"
-    _write_text(stdout_path, result.stdout)
-    _write_text(stderr_path, result.stderr)
-    if step.stdout_artifact and result.stdout:
-        _write_text(Path(step.stdout_artifact), result.stdout)
+    stdout = result.stdout
+    stderr = result.stderr
 
     status = "pass" if result.returncode == 0 else "fail"
+    if status == "pass" and step.id == "inspect_readback":
+        gate_failure = _readback_gate_failure(stdout)
+        if gate_failure:
+            status = "fail"
+            stderr = f"{stderr.rstrip()}\n{gate_failure}\n" if stderr else f"{gate_failure}\n"
+    if status == "pass" and step.id == "cad_capability_probe":
+        gate_failure = _cad_capability_gate_failure(stdout)
+        if gate_failure:
+            status = "fail"
+            stderr = f"{stderr.rstrip()}\n{gate_failure}\n" if stderr else f"{gate_failure}\n"
+
+    _write_text(stdout_path, stdout)
+    _write_text(stderr_path, stderr)
+    if step.stdout_artifact and result.stdout:
+        _write_text(Path(step.stdout_artifact), stdout)
+
     return {
         "id": step.id,
         "title": step.title,
@@ -155,8 +232,32 @@ def _step_record(step: ValidationStep, result: CommandResult, output_dir: Path) 
         "command": step.command,
         "stdout_path": str(stdout_path),
         "stderr_path": str(stderr_path),
-        "stdout_excerpt": result.stdout[-1200:],
-        "stderr_excerpt": result.stderr[-1200:],
+        "stdout_excerpt": stdout[-1200:],
+        "stderr_excerpt": stderr[-1200:],
+    }
+
+
+def _skipped_step_record(step: ValidationStep, output_dir: Path, *, blocked_by: str) -> dict[str, Any]:
+    safe_id = step.id.replace("/", "_")
+    stdout_path = output_dir / f"{safe_id}.stdout.txt"
+    stderr_path = output_dir / f"{safe_id}.stderr.txt"
+    message = f"Skipped because prerequisite step `{blocked_by}` did not pass.\n"
+    _write_text(stdout_path, message)
+    _write_text(stderr_path, "")
+    return {
+        "id": step.id,
+        "title": step.title,
+        "status": "not_run",
+        "failure_category": "",
+        "required": step.required,
+        "cad_required": step.cad_required,
+        "returncode": None,
+        "command": step.command,
+        "stdout_path": str(stdout_path),
+        "stderr_path": str(stderr_path),
+        "stdout_excerpt": message,
+        "stderr_excerpt": "",
+        "blocked_by": blocked_by,
     }
 
 
@@ -191,7 +292,17 @@ def _next_actions(report: dict[str, Any]) -> list[str]:
         actions.append("截图失败。确认桌面会话可截图，或修复 `render_preview.py` 截图入口。")
     if "readback_failed" in categories:
         actions.append("实体回读失败。Codex 应检查 `inspect_dwg.py`、created handles 和 AutoCAD COM 回读逻辑。")
+    if "cad_capability_failed" in categories:
+        actions.append("CAD COM 能力探针失败。Codex 应检查 driver primitive write、handle readback、实体标准化和安全层约束。")
     return actions
+
+
+def _clear_stale_derived_artifacts(steps: list[ValidationStep], output_dir: Path) -> None:
+    paths = [Path(step.stdout_artifact) for step in steps if step.stdout_artifact]
+    paths.append(output_dir / "cad-validation-screen.png")
+    for path in paths:
+        if path.exists():
+            path.unlink()
 
 
 def _markdown_report(report: dict[str, Any]) -> str:
@@ -231,9 +342,14 @@ def run_cad_validation(
     steps = _base_steps(project_root)
     if include_cad:
         steps.extend(_cad_steps(project_root, output_dir))
+    _clear_stale_derived_artifacts(steps, output_dir)
 
     records: list[dict[str, Any]] = []
+    blocked_cad_step: str | None = None
     for step in steps:
+        if step.cad_required and blocked_cad_step:
+            records.append(_skipped_step_record(step, output_dir, blocked_by=blocked_cad_step))
+            continue
         try:
             result = command_runner(step.command, project_root, step.timeout_seconds)
         except subprocess.TimeoutExpired as exc:
@@ -242,6 +358,8 @@ def run_cad_validation(
             result = CommandResult(returncode=1, stdout="", stderr=f"{type(exc).__name__}: {exc}")
         record = _step_record(step, result, output_dir)
         records.append(record)
+        if record["status"] == "fail" and step.id in {"autocad_com_connect", "execute_sample_plan"}:
+            blocked_cad_step = step.id
 
     report: dict[str, Any] = {
         "status": _overall_status(records),

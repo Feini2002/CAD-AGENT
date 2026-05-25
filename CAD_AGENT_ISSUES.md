@@ -24,6 +24,285 @@
 
 ## 已知问题
 
+### 问题：角色组合预览不能冒充真实 CAD 落图
+
+日期：2026-05-25
+
+现象：
+用户指出“你画的这些东西不是在 CAD 里面”。此前角色组合自检虽然生成了 `CAD_PLAN`、dry-run、verification shell 和浏览器截图，但实际交付证据停留在 SVG/PNG 视觉辅助层，没有把卧室床+地毯、餐桌组合、办公桌组合写入 AutoCAD 并回读实体。
+
+影响：
+如果把浏览器预览说成 CAD 结果，会直接违反“真实落图前必须 validate / dry-run / CODEX_PREVIEW / created handles 回读”的门槛，也会让角色模拟自检失去价值。
+
+原因：
+Phase R 初版为了快速验证组合规格和 benchmark 断言，先走了 non-CAD pipeline；后续汇报没有足够强调它只是视觉辅助，和真实 CAD created-handle 几何回读不是一回事。
+
+修复：
+新增 `core/execution/batch_plan_runner.py` 与 `scripts/run_composition_cad_check.py`，将 `interior_delivery_benchmark` 产出的多 CAD_PLAN 批量写入真实 AutoCAD `CODEX_PREVIEW` 图层，并对每个 plan 的 created handles 做定向回读。最终证据为 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition_cad_check_report.json`，3/3 cases `geometry_verified`，created handles 共 55 个；截图为 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition-cad-screen-clean-y8000.png`。
+
+以后规则：
+凡是用户要求“在 CAD 里面画出来”，必须运行真实 CAD 写入和 created handles 回读；浏览器截图、SVG、`render_preview.py --check` 只能作为视觉辅助，不能单独作为 CAD 几何准确证据。
+
+相关文件：
+- `core/execution/batch_plan_runner.py`
+- `scripts/run_composition_cad_check.py`
+- `tests/core/test_batch_plan_runner.py`
+- `tests/core/test_run_composition_cad_check.py`
+- `output/validation_runs/interior-composition-cad-label-clean-y8000/composition_cad_check_report.json`
+
+### 问题：真实 CAD 组合截图会被旧预览实体或原 DWG 底图污染
+
+日期：2026-05-25
+
+现象：
+首次把角色组合画入 AutoCAD 后，报告已经按本轮 created handles `geometry_verified`，但截图区域仍叠着之前同坐标的旧预览文字和原 DWG 白色底图，肉眼看起来像“新图仍然不干净”。
+
+影响：
+几何回读报告虽然可靠，但面向用户的截图证据会混入旧对象，容易误判为新绘制结果本身有重叠或文字错误。
+
+原因：
+遵守安全规则不能擅自删除旧 `CODEX_PREVIEW` 实体；早期脚本使用固定 offset，重复运行会把新旧预览画在同一片区域。真实 DWG 背景也可能占据默认 Y=0 附近。
+
+修复：
+`scripts/run_composition_cad_check.py` 增加 `--start-x`、`--start-y`、`--spacing-x` 参数，本轮最终把三组组合绘制到 `X=26000`、`Y=8000` 起始的空白区域，并重新截图验证。
+
+以后规则：
+真实 CAD 自检为了取得干净证据时，优先换新的 preview 坐标区域，不要为了干净截图擅自删除用户 DWG 或旧预览实体；截图前要缩放到本轮实体区域。
+
+相关文件：
+- `scripts/run_composition_cad_check.py`
+- `tests/core/test_run_composition_cad_check.py`
+- `output/validation_runs/interior-composition-cad-label-clean-y8000/composition-cad-screen-clean-y8000.png`
+
+### 问题：单对象 CAD 标注尺度放到组合里会遮挡图形
+
+日期：2026-05-25
+
+现象：
+组合真实落图后，地毯标签和大尺寸对象文字在 CAD 画面中过大，餐椅的 `Dining Chair` 文本也容易拥挤；几何回读通过，但截图可读性差。
+
+影响：
+系统可能“几何正确但交付难看”，用户难以判断组合关系，也不利于后续模拟设计行业角色验收。
+
+原因：
+`execute_plan.py` 原先按 `max(80, min(width, depth) * 0.2)` 计算文字高度，适合单对象测试，不适合大对象叠放组合；composition engine 也没有让底衬对象禁用标签。
+
+修复：
+地毯模板设置 `include_label=False`，`composition_to_cad_plans()` 尊重对象级 `include_label`；文字高度封顶为 160；餐椅标签缩短为 `Chair`。新增测试锁定这些行为。
+
+以后规则：
+组合交付不仅要验几何，也要做实际 CAD 截图可读性检查；底衬、地毯、区域类对象默认不要生成中心大字，大对象文字必须有上限。
+
+相关文件：
+- `core/composition_engine/templates.py`
+- `core/execution/execute_plan.py`
+- `tests/core/test_composition_engine.py`
+- `tests/core/test_execute_plan.py`
+
+### 问题：组合预览的标题区与图形区曾经过近
+
+日期：2026-05-25
+
+现象：
+角色组合 benchmark 首次生成 `office_desk_combo` 的 SVG/浏览器截图时，标题下方说明文字与第一组图形的顶部区域距离过近，虽然 dry-run 和 benchmark 都通过，但视觉交付不够清晰。
+
+影响：
+如果只看 benchmark pass，会漏掉“用户看到的截图不够专业、不够可读”的问题；这会削弱角色模拟自检的价值。
+
+原因：
+`write_composition_preview_svg()` 初版只按组合 bbox 计算画布高度，没有给标题和请求说明预留固定 header 区。
+
+修复：
+为 SVG 预览增加固定标题区，并把所有组合图形整体下移；重新运行 `interior_delivery_benchmark` 并用浏览器保存三张 `preview-browser.png`。
+
+以后规则：
+组合、报告、截图类视觉辅助产物除了验证数据结构，也要至少打开一次检查是否空白、遮挡或重叠。截图仍只能作为视觉辅助，真实 CAD 几何准确必须依赖 created handles 回读。
+
+相关文件：
+- `core/composition_engine/templates.py`
+- `examples/benchmarks/interior_delivery_benchmark.json`
+- `output/test_artifacts/benchmarks/interior_delivery_manual/*/preview-browser.png`
+
+### 问题：CAD 能力探针覆盖过浅且全屏截图不利于肉眼判断
+
+日期：2026-05-25
+
+现象：
+用户要求实际调用 CAD 画一些内容并截图检查时，现有总验证虽能通过，但底层能力探针主要覆盖矩形 4 线、文字和 2 个标注；全屏截图没有主动缩放到测试实体范围，画面里可见内容偏小，容易让“脚本 pass”和“肉眼看得清楚”脱节。
+
+影响：
+如果只保留浅层探针，圆、弧、多段线等基础 CAD 图元的 COM 参数转换和回读标准化问题可能长期漏测；如果截图不先缩放视图，视觉证据虽然存在，但排查“画没画对”时价值有限。
+
+原因：
+早期 Phase W 重点是证明 baseline `CAD_PLAN` 的矩形对象可落图和 handle 回读，能力矩阵尚未覆盖更多基础图元；`render_preview.py` 当前实现的是可见屏幕截图，不负责自动设置 CAD 视图窗口。
+
+修复：
+`AutoCADComDriver` 已新增 `draw_line`、`draw_circle`、`draw_arc`、`draw_polyline`；`inspect_dwg.py` 已能标准化回读 `circle`、`arc`、`polyline`；`cad_capability_probe` 已扩展为 11 个实体的基础图元探针，并在用户会话下真实运行通过。另手动将 AutoCAD 视图缩放到探针范围后保存截图 `output\validation_runs\manual-primitive-cad-probe\cad-primitive-screen.png`。
+
+以后规则：
+真实 CAD 能力探针不能只验证一个矩形对象；至少要覆盖常见基础图元、created handles、按 handle 回读、类型统计、bbox 和安全边界。需要肉眼判断时，应先把 CAD 视图缩放到测试实体范围再截图；截图只能作为视觉辅助，几何准确仍以实体回读为主。
+
+相关文件：
+- `core/cad_io/autocad_com.py`
+- `core/verification/inspect_dwg.py`
+- `core/verification/cad_capability_probe.py`
+- `tests/core/test_autocad_com_driver.py`
+- `tests/core/test_cad_capability_probe.py`
+- `tests/core/test_verification_report.py`
+- `output/validation_runs/manual-primitive-cad-probe/cad_capability_probe.json`
+- `output/validation_runs/manual-primitive-cad-probe/cad-primitive-screen.png`
+
+### 问题：CAD 总验证顶层 pass 不能替代 readback geometry_verified
+
+日期：2026-05-25
+
+现象：
+`output\validation_runs\full-repair-cad-20260525-212001\report.json` 顶层为 `status=pass`，但继续审查 `readback_report.json` 后发现其 `status=screenshot_captured`，`geometry_readback` 为 `not_run`，`created_handles_scope` 为 `warning`，实际没有完成几何回读验证。
+
+影响：
+如果只看 `run_cad_validation.py` 顶层状态，会错误宣布 baseline 真实 CAD 几何通过，违反 Phase W 的核心门槛，也会把截图证据误当作几何证据。
+
+原因：
+`cad_validation_runner` 初版只根据 `inspect_dwg.py` 的进程返回码判断 step 成败，没有把 `readback_report.json.status` 和 checks 作为硬门禁。另一个风险是，在真实大 DWG 中全量枚举 ModelSpace 容易超时或读不到本轮实体；当本轮 created handles 已存在时，应优先按 handle 定向回读。
+
+修复：
+`core/verification/cad_validation_runner.py` 已在 `inspect_readback` step 中解析 readback JSON，只有 `status=geometry_verified` 且所有 checks 为 `pass` 才允许通过；否则归类为 `readback_failed`。`core/verification/inspect_dwg.py` 与 `core/cad_io/autocad_com.py` 已支持按 `execution_summary.created_handles` 调用 `HandleToObject` 定向回读。新增单测锁定非 `geometry_verified` 不得通过、按 handles 回读不得扫描 ModelSpace。
+
+以后规则：
+任何真实 CAD 通过声明都必须同时审查 `report.json`、`execution_summary.json`、截图文件和 `readback_report.json`。只有 `readback_report.json.status=geometry_verified` 且 `readback_scope`、`layer_entities`、`bbox_size`、`base_point`、`label_text`、`dimension_count`、`created_handles_scope` 等关键 checks 全部 `pass`，才允许说 baseline 真实 CAD 几何通过。
+
+相关文件：
+- `core/verification/cad_validation_runner.py`
+- `core/verification/inspect_dwg.py`
+- `core/cad_io/autocad_com.py`
+- `tests/core/test_cad_validation_runner.py`
+- `tests/core/test_verification_report.py`
+- `output/validation_runs/full-repair-cad-20260525-212001/readback_report.json`
+- `output/validation_runs/full-repair-cad-retry-20260525-212916/readback_report.json`
+
+### 问题：默认沙箱身份看不到用户会话中的 AutoCAD COM 活动对象
+
+日期：2026-05-25
+
+现象：
+用户桌面上 AutoCAD 2026 与 `A1_page2_vector_full.dwg` 已打开，但默认命令环境运行 W-07 时 `autocad_com_connect` 失败，表现为无法取得活动 AutoCAD COM 对象。
+
+影响：
+如果不区分执行身份，会误判为用户没有打开 CAD、AutoCAD 未注册或 DWG 不活动；也会导致真实 CAD 验证无法进入落图、截图和回读阶段。
+
+原因：
+Codex 默认沙箱命令身份为 `desktop-r40v31q\codexsandboxoffline`，该身份看不到用户桌面会话中的 `acad.exe`、窗口和 ROT/COM 活动对象。沙箱外用户身份 `desktop-r40v31q\user` 下可见 AutoCAD PID 20880、主窗口 `Autodesk AutoCAD 2026 - [A1_page2_vector_full.dwg]`，且 `AutoCAD.Application`、`AutoCAD.Application.25.1`、`AutoCAD.Application.25` 均可 `GetActiveObject`。
+
+修复：
+真实 CAD 自动化命令需要在用户会话/沙箱外执行；本轮以只读诊断确认原因后，在用户会话下复跑 W-07。仓库内不需要绕过 COM，也不应该把截图可见误判为默认沙箱可见。
+
+以后规则：
+若用户确认 CAD 已打开但默认命令仍连不上 COM，先做“沙箱内 vs 用户会话”对照诊断：身份、进程、窗口、ProgID、`GetActiveObject`、权限级别。只有确认用户会话 COM 可用后，才继续真实 CAD 落图验证。
+
+相关文件：
+- `output/validation_runs/cad-com-diagnostic-20260525-210153/cad_com_diagnostic.json`
+- `output/validation_runs/cad-com-diagnostic-elevated-20260525-210219/cad_com_diagnostic.json`
+- `docs/verification/cad_readback_alpha_check.md`
+
+### 问题：AutoCAD COM AddLine 不接受普通 Python tuple 点参数
+
+日期：2026-05-25
+
+现象：
+在用户会话下 `autocad_com_connect` 已通过后，`execute_sample_plan` 调用 `ModelSpace.AddLine(start, end)` 失败，底层错误为 `pywintypes.com_error: (-2147352567, '发生意外。', (0, None, None, None, 0, -2147024809), None)`。
+
+影响：
+真实 CAD baseline 无法落图，自然也无法生成 `execution_summary.json`、截图和 `readback_report.json`。这属于仓库 driver 兼容问题，不能归为外部阻塞。
+
+原因：
+真实 AutoCAD COM 对点参数要求更严格，普通 Python tuple 在当前 AutoCAD 2026 / pywin32 组合下会被判为无效参数；fake ModelSpace 单测没有覆盖 COM VARIANT 参数形态。
+
+修复：
+`core/cad_io/autocad_com.py` 新增 `_point()`，把三维坐标转换为 `VT_ARRAY | VT_R8` float VARIANT，再传给 `AddLine`、`AddText` 和 `AddDimAligned`。新增 / 扩展测试覆盖 point VARIANT 转换和 draw methods 使用转换后的点参数。
+
+以后规则：
+真实 CAD COM driver 的参数形态必须用最小 fake 测试锁住；fake driver 不应只验证调用次数，还要覆盖真实 COM 对参数类型的关键要求。
+
+相关文件：
+- `core/cad_io/autocad_com.py`
+- `tests/core/test_autocad_com_driver.py`
+- `tests/core/test_execute_plan.py`
+- `output/validation_runs/cad-readback-alpha-elevated-20260525-210313/report.json`
+- `output/validation_runs/cad-readback-alpha-elevated-retry-20260525-210850/readback_report.json`
+
+### 问题：W-06 只读 AutoCAD COM 探针显示 `AutoCAD.Application` ProgID 无效
+
+日期：2026-05-25
+
+现象：
+
+Phase W W-06 执行只读 COM 探针时，用户侧 CAD 窗口已打开，但 `AutoCADComDriver(connect_existing_only=True)` 无法通过 `win32com.client.GetActiveObject("AutoCAD.Application")` 取得活动文档。底层错误为 `pywintypes.com_error: (-2147221005, '无效的类字符串', None, None)`。
+
+影响：
+
+W-07 真实 CAD 总验证不能继续执行；当前没有 `execution_summary.json`、`cad-validation-screen.png` 或 `readback_report.json`，因此不能声称 baseline 真实 CAD 几何通过。
+
+原因：
+
+当前现象更像外部 CAD/COM 前置条件未满足：可能是打开的不是 AutoCAD COM ProgID 对应程序、AutoCAD COM 注册不可用、当前用户会话没有可被 `GetActiveObject("AutoCAD.Application")` 发现的活动实例，或 AutoCAD 版本/安装没有注册该 ProgID。仓库内原先还存在一个诊断缺口：driver 会把底层 COM detail 压成泛化的 “No active AutoCAD.Application instance is available.”。
+
+修复：
+
+本轮未对 CAD 环境做安装或注册修改，也未进入真实落图。仓库内完成小型诊断加固：`AutoCADComDriver(connect_existing_only=True)` 连接失败时保留底层 COM detail，并新增回归测试锁定该行为。
+
+以后规则：
+
+进入 W-07 前必须先让 W-06 只读 COM 探针通过，能打印活动 DWG 名称。若再次出现 ProgID / COM 注册类错误，先处理 AutoCAD 安装、COM 注册、程序类型或活动文档，不要绕过 W-06 直接真实落图。
+
+补充记录（2026-05-25 20:52）：
+
+用户再次确认 CAD 已打开后，W-07 重试仍为 `external_blocker`。进程探测显示存在两个 `acad.exe` 进程，但 `MainWindowTitle` 均为空；`win32gui.EnumWindows` 未发现可见 AutoCAD / CAD / DWG / Autodesk 窗口标题；`win32com.client.Dispatch` 版本化 ProgID 探测 30 秒超时。当前更像 AutoCAD 处在后台/启动/弹窗/权限隔离状态，而不是仓库代码仍能自行修复的问题。
+
+补充记录（2026-05-25 21:10）：
+
+后续对照诊断确认，20:52 的外部阻塞结论是默认沙箱执行身份造成的观测偏差。沙箱身份 `desktop-r40v31q\codexsandboxoffline` 看不到用户桌面 AutoCAD；用户会话身份 `desktop-r40v31q\user` 下 AutoCAD 进程、窗口和 COM 活动对象均可用。随后在用户会话下完成真实 CAD baseline 总验证，`readback_report.json.status=geometry_verified` 且关键 checks 全部通过。
+
+相关文件：
+
+- `core/cad_io/autocad_com.py`
+- `tests/core/test_autocad_com_driver.py`
+- `output/validation_runs/phase-w-w06-cad-probe/autocad_com_connect.stderr.txt`
+- `output/validation_runs/cad-readback-alpha-retry-20260525-205208/report.json`
+- `CAD_AGENT_STATUS.md`
+
+### 问题：CAD 总验证在 COM 前置失败后继续运行会污染失败分类
+
+日期：2026-05-25
+
+现象：
+
+Phase W W-07 首次运行 `scripts/run_cad_validation.py --output-dir output\validation_runs\cad-readback-alpha` 时，`autocad_com_connect` 已经失败并明确属于 `cad_connection_failed`，但 runner 仍继续执行 `execute_sample_plan`、`capture_screen` 和 `inspect_readback`。后续步骤因为没有活动 COM、没有 `execution_summary.json`、截图失败等连锁问题继续失败，导致顶层状态变成 `fail`，遮住了真实的外部阻塞。
+
+影响：
+
+Codex 容易把外部 CAD 前置问题误判为多个仓库内失败，或者在缺少执行摘要、截图、readback report 的情况下继续扩大诊断范围。复用输出目录时，旧派生 artifact 还可能冒充本轮证据。
+
+原因：
+
+`cad_validation_runner` 初版按线性步骤全部执行，缺少 CAD 阶段依赖门；同时没有在新一轮运行前清理本轮会生成的派生 artifact。
+
+修复：
+
+- `autocad_com_connect` 或 `execute_sample_plan` 失败后，后续依赖 CAD step 记录为 `not_run`，并写入 stdout/stderr 证据文件。
+- runner 开始时清理本轮派生 artifact，包括 `execution_summary.json`、`readback_report.json` 和 `cad-validation-screen.png`。
+- 新增 `test_cad_connection_failure_skips_dependent_cad_steps` 锁定行为。
+
+以后规则：
+
+验证总控必须保留真实第一故障点；前置 CAD 连接失败时，不要继续执行会产生连锁错误的落图、截图和回读步骤。证据文件必须属于本轮运行，不允许旧 artifact 参与判断。
+
+相关文件：
+
+- `core/verification/cad_validation_runner.py`
+- `tests/core/test_cad_validation_runner.py`
+- `output/validation_runs/cad-readback-alpha/report.json`
+- `output/validation_runs/cad-readback-alpha-retry-20260525-205208/report.json`
+
 ### 问题：legacy driver wrapper 保留本地 `sys.path.insert` 会漏过共享 bootstrap 收敛
 
 日期：2026-05-25

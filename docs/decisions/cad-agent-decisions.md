@@ -1,5 +1,7 @@
 # CAD Agent 决策记录
 
+> 本文已从根目录迁入 `docs/decisions/`。它记录“为什么这样做”，不承载当前执行计划；当前唯一 PlanMD / 主计划是根目录 `CORE_RESTRUCTURE_PLAN.md`。
+
 这个文件记录“为什么这样做”。如果未来改方向，先看这里，避免重复讨论。
 
 ## D001：使用 CAD_PLAN 作为中间层
@@ -49,6 +51,10 @@
 决策：
 
 暂时不在总根目录创建 `AGENTS.md`。
+
+后续状态：
+
+该决策已被后续阶段取代。2026-05-25 已创建根目录 `AGENTS.md`，并把它作为 Codex 默认规则入口。此处保留作为历史记录，说明早期为何没有立即固化全局规则。
 
 原因：
 
@@ -121,3 +127,43 @@
 - 新建 `core/`、`agents/`、`libraries/`、`projects/` 等结构。
 - 旧 `scripts/`、`drivers/` 保留兼容壳，真实实现迁入 Core。
 - 场景 Agent 不得复制 Core 能力，只写场景差异。
+
+## D007：使用短上下文入口降低开发抖动
+
+日期：2026-05-25
+
+决策：
+
+新增 `CORE_CONTEXT_BRIEF.md` 作为日常恢复上下文的短入口。普通开发默认先读 `AGENTS.md` 和 `CORE_CONTEXT_BRIEF.md`，再按任务展开 `CORE_STATUS.md`、`CORE_RESTRUCTURE_PLAN.md`、`CAD_AGENT_ISSUES.md` 等详细文件。
+
+原因：
+
+- 当前系统经历深度开发和大型补强，状态文档、计划、changelog、issues 都变长。
+- 每轮都全文读取所有历史文档，会增加上下文噪音，也容易让旧阶段口径干扰当前判断。
+- 短入口能稳定记录当前结论、安全边界、下一步路线和按需展开表。
+
+影响：
+
+- `CORE_CONTEXT_BRIEF.md` 必须保持短、稳定、可扫读。
+- 历史流水继续写入 `CAD_AGENT_CHANGELOG.md`。
+- 失败教训继续写入 `CAD_AGENT_ISSUES.md`。
+- 主计划继续写入 `CORE_RESTRUCTURE_PLAN.md`。
+
+## D008：`CORE_RESTRUCTURE_PLAN.md` 作为主 plan
+
+日期：2026-05-25
+
+决策：
+
+根目录不新增独立 `plan.md`。当前唯一 PlanMD / 主计划文件为 `CORE_RESTRUCTURE_PLAN.md`；用户提到 `PlanMD`、`plan.md`、主计划或主 plan 时，默认指该文件。
+
+原因：
+
+- 仓库已经有大量根目录 Markdown，再新增同义 plan 文件会增加重复入口。
+- `CORE_RESTRUCTURE_PLAN.md` 已承载 Phase 计划、执行边界、验证命令和完成判定。
+- 明确映射比复制一份计划更容易维护。
+
+影响：
+
+- `README.md`、`CORE_CONTEXT_BRIEF.md`、`CAD_AGENT_STATUS.md` 和 `CORE_RESTRUCTURE_PLAN.md` 都应保持这个口径。
+- 若未来真的创建 `plan.md`，它应是极薄跳转文件，不能复制主计划正文。

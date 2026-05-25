@@ -29,7 +29,9 @@ class BlankShellPipelineTests(unittest.TestCase):
             "design_proposal",
             "cad_plans",
             "dry_run_report",
+            "dry_run_reports",
             "verification_report",
+            "verification_reports",
         ]:
             self.assertIn(key, result["artifacts"])
             self.assertTrue(Path(result["artifacts"][key]).exists())
@@ -37,7 +39,11 @@ class BlankShellPipelineTests(unittest.TestCase):
         self.assertGreaterEqual(result["metrics"]["zones"], 2)
         self.assertGreaterEqual(result["metrics"]["placements"], 5)
         self.assertEqual(result["dry_run_report"]["status"], "valid")
+        self.assertEqual(result["dry_run_summary"]["plan_count"], result["metrics"]["cad_plans"])
+        self.assertEqual(result["dry_run_summary"]["valid_count"], result["metrics"]["cad_plans"])
         self.assertEqual(result["verification_report"]["status"], "unverified")
+        self.assertEqual(result["verification_summary"]["total"], result["metrics"]["cad_plans"])
+        self.assertEqual(result["verification_summary"]["status_counts"], {"unverified": result["metrics"]["cad_plans"]})
 
     def test_cad_plan_dimensions_match_layout_placement_bbox(self) -> None:
         result = run_blank_shell_pipeline(
@@ -70,6 +76,20 @@ class BlankShellPipelineTests(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["metrics"]["failed_checks"], 0)
         self.assertEqual(result["metrics"]["cad_plans"], 5)
+
+    def test_blank_shell_dry_run_and_verification_cover_every_cad_plan(self) -> None:
+        result = run_blank_shell_pipeline(
+            PROJECT_ROOT / "examples/workflows/blank_shell_office_layout_loop.json",
+            output_dir=artifact_path("blank_shell_pipeline", "all_plan_evidence"),
+        )
+
+        self.assertEqual(result["status"], "ok")
+        dry_run_reports = json.loads(Path(result["artifacts"]["dry_run_reports"]).read_text(encoding="utf-8"))
+        verification_reports = json.loads(Path(result["artifacts"]["verification_reports"]).read_text(encoding="utf-8"))
+        self.assertEqual(len(dry_run_reports), result["metrics"]["cad_plans"])
+        self.assertEqual(len(verification_reports), result["metrics"]["cad_plans"])
+        self.assertTrue(all(report["status"] == "valid" for report in dry_run_reports))
+        self.assertTrue(all(report["status"] == "unverified" for report in verification_reports))
 
 
 if __name__ == "__main__":

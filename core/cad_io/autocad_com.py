@@ -7,6 +7,7 @@ document.
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 
@@ -21,6 +22,19 @@ ACI_COLORS = {
 }
 
 
+AUTOCAD_PROG_IDS = (
+    "AutoCAD.Application",
+    "AutoCAD.Application.25.1",
+    "AutoCAD.Application.25",
+    "AutoCAD.Application.24.3",
+    "AutoCAD.Application.24.2",
+    "AutoCAD.Application.24.1",
+    "AutoCAD.Application.24",
+    "AutoCAD.Application.23.1",
+    "AutoCAD.Application.23",
+)
+
+
 def driver_status() -> str:
     return "autocad_com driver ready"
 
@@ -29,16 +43,34 @@ class AutoCADComDriver:
     def __init__(self, *, connect_existing_only: bool = False) -> None:
         try:
             import win32com.client
+            import pythoncom
         except ImportError as exc:
             raise RuntimeError("pywin32 is required for AutoCAD COM drawing.") from exc
 
         self._win32com = win32com.client
-        try:
-            self.app = win32com.client.GetActiveObject("AutoCAD.Application")
-        except Exception:
+        self._pythoncom = pythoncom
+        self.app = None
+        active_errors: list[str] = []
+        for prog_id in AUTOCAD_PROG_IDS:
+            try:
+                self.app = win32com.client.GetActiveObject(prog_id)
+                break
+            except Exception as exc:
+                active_errors.append(f"{prog_id}: {exc}")
+        if self.app is None:
             if connect_existing_only:
-                raise RuntimeError("No active AutoCAD.Application instance is available.")
-            self.app = win32com.client.Dispatch("AutoCAD.Application")
+                detail = " | ".join(active_errors)
+                raise RuntimeError(f"No active AutoCAD.Application instance is available. COM detail: {detail}")
+            dispatch_errors: list[str] = []
+            for prog_id in AUTOCAD_PROG_IDS:
+                try:
+                    self.app = win32com.client.Dispatch(prog_id)
+                    break
+                except Exception as exc:
+                    dispatch_errors.append(f"{prog_id}: {exc}")
+            if self.app is None:
+                detail = " | ".join(dispatch_errors)
+                raise RuntimeError(f"Unable to dispatch AutoCAD.Application. COM detail: {detail}")
         self.doc = self.app.ActiveDocument
         self.model_space = self.doc.ModelSpace
 
@@ -61,6 +93,35 @@ class AutoCADComDriver:
     def _handle(entity: Any) -> str:
         return str(getattr(entity, "Handle", getattr(entity, "handle", "")))
 
+    def _point(self, values: list[float | int]) -> Any:
+        if len(values) != 3:
+            raise ValueError("AutoCAD COM points must contain exactly three coordinates.")
+        point = tuple(float(value) for value in values)
+        return self._win32com.VARIANT(self._pythoncom.VT_ARRAY | self._pythoncom.VT_R8, point)
+
+    def _point2d_array(self, points: list[list[float | int]]) -> Any:
+        if len(points) < 2:
+            raise ValueError("AutoCAD COM polylines require at least two points.")
+        coordinates: list[float] = []
+        for point in points:
+            if len(point) < 2:
+                raise ValueError("Polyline points must contain at least x and y coordinates.")
+            coordinates.extend([float(point[0]), float(point[1])])
+        return self._win32com.VARIANT(self._pythoncom.VT_ARRAY | self._pythoncom.VT_R8, tuple(coordinates))
+
+    def draw_line(
+        self,
+        *,
+        start_point: list[float | int],
+        end_point: list[float | int],
+        layer: str | None = None,
+        color: str | None = None,
+        **_: object,
+    ) -> dict[str, str]:
+        entity = self.model_space.AddLine(self._point(start_point), self._point(end_point))
+        self._apply_common(entity, layer=layer, color=color)
+        return {"handle": self._handle(entity)}
+
     def draw_rectangle(
         self,
         *,
@@ -80,12 +141,59 @@ class AutoCADComDriver:
         ]
         handles: list[str] = []
         for start, end in points:
-            entity = self.model_space.AddLine(start, end)
+            entity = self.model_space.AddLine(self._point(list(start)), self._point(list(end)))
             self._apply_common(entity, layer=layer, color=color)
             handle = self._handle(entity)
             if handle:
                 handles.append(handle)
         return {"handles": handles}
+
+    def draw_circle(
+        self,
+        *,
+        center: list[float | int],
+        radius: float | int,
+        layer: str | None = None,
+        color: str | None = None,
+        **_: object,
+    ) -> dict[str, str]:
+        entity = self.model_space.AddCircle(self._point(center), float(radius))
+        self._apply_common(entity, layer=layer, color=color)
+        return {"handle": self._handle(entity)}
+
+    def draw_arc(
+        self,
+        *,
+        center: list[float | int],
+        radius: float | int,
+        start_angle: float | int,
+        end_angle: float | int,
+        layer: str | None = None,
+        color: str | None = None,
+        **_: object,
+    ) -> dict[str, str]:
+        entity = self.model_space.AddArc(
+            self._point(center),
+            float(radius),
+            math.radians(float(start_angle)),
+            math.radians(float(end_angle)),
+        )
+        self._apply_common(entity, layer=layer, color=color)
+        return {"handle": self._handle(entity)}
+
+    def draw_polyline(
+        self,
+        *,
+        points: list[list[float | int]],
+        closed: bool = False,
+        layer: str | None = None,
+        color: str | None = None,
+        **_: object,
+    ) -> dict[str, str]:
+        entity = self.model_space.AddLightWeightPolyline(self._point2d_array(points))
+        entity.Closed = bool(closed)
+        self._apply_common(entity, layer=layer, color=color)
+        return {"handle": self._handle(entity)}
 
     def draw_text(
         self,
@@ -98,7 +206,7 @@ class AutoCADComDriver:
         rotation: float | int = 0,
         **_: object,
     ) -> dict[str, str]:
-        entity = self.model_space.AddText(text, tuple(position), height)
+        entity = self.model_space.AddText(text, self._point(position), height)
         entity.Rotation = rotation
         self._apply_common(entity, layer=layer, color=color)
         return {"handle": self._handle(entity)}
@@ -120,7 +228,11 @@ class AutoCADComDriver:
                 (start_point[1] + end_point[1]) / 2,
                 start_point[2],
             ]
-        entity = self.model_space.AddDimAligned(tuple(start_point), tuple(end_point), tuple(text_position))
+        entity = self.model_space.AddDimAligned(
+            self._point(start_point),
+            self._point(end_point),
+            self._point(text_position),
+        )
         if textheight is not None:
             entity.TextHeight = textheight
         self._apply_common(entity, layer=layer, color=color)
@@ -131,6 +243,21 @@ class AutoCADComDriver:
 
         entities: list[dict[str, object]] = []
         for entity in self.model_space:
+            normalized = normalize_com_entity(entity)
+            if layer and normalized.get("layer") != layer:
+                continue
+            entities.append(normalized)
+        return entities
+
+    def snapshot_handles(self, *, handles: list[str], layer: str | None = None) -> list[dict[str, object]]:
+        from core.verification.inspect_dwg import normalize_com_entity
+
+        entities: list[dict[str, object]] = []
+        for handle in handles:
+            try:
+                entity = self.doc.HandleToObject(str(handle))
+            except Exception:
+                continue
             normalized = normalize_com_entity(entity)
             if layer and normalized.get("layer") != layer:
                 continue

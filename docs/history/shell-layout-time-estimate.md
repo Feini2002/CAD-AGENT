@@ -1,5 +1,7 @@
 # 空壳布局方案开发时间粗估
 
+> 已归档：本文只作历史估算和预期管理材料，不作为当前计划入口。当前唯一 PlanMD / 主计划是根目录 `CORE_RESTRUCTURE_PLAN.md`。
+
 最后更新：2026-05-25
 
 ## 0. 用途声明
@@ -9,6 +11,8 @@
 本文不是系统开发规范，不是正式实施计划，也不是 Core 架构文档。后续开发仍应以 `README.md`、`CORE_STATUS.md`、`CORE_ROADMAP.md`、`CORE_RESTRUCTURE_PLAN.md` 和 `SHELL_LAYOUT_FOUNDATION_DESIGN.md` 为准。
 
 本文讨论的目标只包含 CAD 平面方案本体，不包含 PPT 标注、红色说明箭头、汇报排版、渲染包装等内容。
+
+复盘更新：截至 2026-05-25，本文中“Core 基础模型和协议”“半自动空壳输入闭环”“动线与功能区算法”“参数化家具 / 对象布置”的一部分，已经以 Phase P-V 的形式落入主计划并形成非 CAD prototype。本文保留为历史估算和预期管理材料，不作为当前开发进度来源；当前进度以 `CORE_STATUS.md` 和 `CAD_AGENT_STATUS.md` 为准，下一阶段执行计划以 `CORE_RESTRUCTURE_PLAN.md` 为准。
 
 ## 1. 总体判断
 

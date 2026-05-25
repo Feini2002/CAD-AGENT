@@ -25,7 +25,39 @@ def normalize_com_entity(entity: Any) -> dict[str, Any]:
     }
 
     lowered = object_name.lower()
-    if "line" in lowered:
+    if "polyline" in lowered:
+        points = _polyline_points(getattr(entity, "Coordinates", getattr(entity, "coordinates", [])))
+        result["type"] = "polyline"
+        result["points"] = points
+        result["closed"] = bool(getattr(entity, "Closed", getattr(entity, "closed", False)))
+        bbox = _bbox_from_points(points)
+        if bbox:
+            result["bbox"] = bbox
+    elif "circle" in lowered:
+        center = _point(getattr(entity, "Center", getattr(entity, "center", [])))
+        radius = _float(getattr(entity, "Radius", getattr(entity, "radius", None)))
+        result["type"] = "circle"
+        result["center"] = center
+        result["radius"] = radius
+        if len(center) >= 2 and radius is not None:
+            result["bbox"] = {
+                "min": [center[0] - radius, center[1] - radius],
+                "max": [center[0] + radius, center[1] + radius],
+            }
+    elif "arc" in lowered:
+        center = _point(getattr(entity, "Center", getattr(entity, "center", [])))
+        radius = _float(getattr(entity, "Radius", getattr(entity, "radius", None)))
+        result["type"] = "arc"
+        result["center"] = center
+        result["radius"] = radius
+        result["start_angle"] = _float(getattr(entity, "StartAngle", getattr(entity, "start_angle", None)))
+        result["end_angle"] = _float(getattr(entity, "EndAngle", getattr(entity, "end_angle", None)))
+        if len(center) >= 2 and radius is not None:
+            result["bbox"] = {
+                "min": [center[0] - radius, center[1] - radius],
+                "max": [center[0] + radius, center[1] + radius],
+            }
+    elif "line" in lowered:
         result["type"] = "line"
         result["start_point"] = _point(getattr(entity, "StartPoint", getattr(entity, "start_point", [])))
         result["end_point"] = _point(getattr(entity, "EndPoint", getattr(entity, "end_point", [])))
@@ -46,6 +78,41 @@ def _point(value: Any) -> list[float]:
         return []
 
 
+def _float(value: Any) -> float | None:
+    try:
+        return float(value)
+    except Exception:
+        return None
+
+
+def _polyline_points(value: Any) -> list[list[float]]:
+    if value is None:
+        return []
+    try:
+        values = list(value)
+    except Exception:
+        return []
+    if not values:
+        return []
+    first = values[0]
+    if isinstance(first, (list, tuple)):
+        return [_point(point) for point in values]
+    points: list[list[float]] = []
+    for index in range(0, len(values) - 1, 2):
+        points.append([float(values[index]), float(values[index + 1]), 0.0])
+    return points
+
+
+def _bbox_from_points(points: list[list[float]]) -> dict[str, list[float]] | None:
+    if not points:
+        return None
+    xs = [point[0] for point in points if len(point) >= 2]
+    ys = [point[1] for point in points if len(point) >= 2]
+    if not xs or not ys:
+        return None
+    return {"min": [min(xs), min(ys)], "max": [max(xs), max(ys)]}
+
+
 def snapshot_entities(driver: Any, *, layer: str | None = None) -> list[dict[str, Any]]:
     if hasattr(driver, "snapshot_modelspace"):
         entities = driver.snapshot_modelspace(layer=layer)
@@ -58,6 +125,31 @@ def snapshot_entities(driver: Any, *, layer: str | None = None) -> list[dict[str
     if layer:
         result = [entity for entity in result if entity.get("layer") == layer]
     return result
+
+
+def snapshot_entities_by_handles(driver: Any, handles: list[str], *, layer: str | None = None) -> list[dict[str, Any]]:
+    if not handles:
+        return []
+
+    if hasattr(driver, "snapshot_handles"):
+        entities = driver.snapshot_handles(handles=handles, layer=layer)
+        return [entity for entity in entities if isinstance(entity, dict)]
+
+    doc = getattr(driver, "doc", None)
+    if doc is None or not hasattr(doc, "HandleToObject"):
+        return []
+
+    entities: list[dict[str, Any]] = []
+    for handle in handles:
+        try:
+            entity = doc.HandleToObject(str(handle))
+        except Exception:
+            continue
+        normalized = normalize_com_entity(entity)
+        if layer and normalized.get("layer") != layer:
+            continue
+        entities.append(normalized)
+    return entities
 
 
 def load_execution_summary(path: Path | None) -> tuple[dict[str, Any] | None, list[str] | None]:
@@ -98,7 +190,11 @@ def main() -> int:
         try:
             from core.cad_io.autocad_com import AutoCADComDriver
 
-            entities = snapshot_entities(AutoCADComDriver(connect_existing_only=True), layer=args.layer)
+            driver = AutoCADComDriver(connect_existing_only=True)
+            if created_handles:
+                entities = snapshot_entities_by_handles(driver, created_handles, layer=args.layer)
+            else:
+                entities = snapshot_entities(driver, layer=args.layer)
         except Exception as exc:
             if args.format == "json" and args.plan:
                 report = build_verification_report(plan_path=args.plan, screenshot_path=args.screenshot)

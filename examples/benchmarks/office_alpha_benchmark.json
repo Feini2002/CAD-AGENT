@@ -1,0 +1,81 @@
+{
+  "version": "0.1",
+  "suite_id": "office-alpha-benchmark",
+  "description": "Phase R non-CAD benchmark for office desk, chair, cabinet and aisle baseline assertions.",
+  "cases": [
+    {
+      "case_id": "office_desk_default_spec",
+      "pipeline": "object_spec",
+      "object_type": "desk",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "desk",
+        "width": 1400,
+        "depth": 700,
+        "height": 750,
+        "contains_component_roles": ["worktop", "clearance_zone"]
+      }
+    },
+    {
+      "case_id": "office_chair_default_spec",
+      "pipeline": "object_spec",
+      "object_type": "chair",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "chair",
+        "width": 500,
+        "depth": 500,
+        "height": 850,
+        "contains_component_roles": ["seat", "back"]
+      }
+    },
+    {
+      "case_id": "office_cabinet_default_spec",
+      "pipeline": "object_spec",
+      "object_type": "cabinet",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "cabinet",
+        "width": 1800,
+        "depth": 600,
+        "height": 2400,
+        "contains_component_roles": ["body", "front_panel", "shelf"]
+      }
+    },
+    {
+      "case_id": "office_small_suite_alpha",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "minimums": {
+          "candidate_count": 2,
+          "zone_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 1
+        },
+        "contains_object_types": ["desk", "chair", "cabinet"]
+      }
+    }
+  ]
+}

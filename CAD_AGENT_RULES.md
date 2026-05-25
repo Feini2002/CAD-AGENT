@@ -37,6 +37,52 @@
 
 `CORE_CONTEXT_BRIEF.md` 必须保持短、稳定、可扫读；详细历史继续留在 `CAD_AGENT_CHANGELOG.md` 和 `CAD_AGENT_ISSUES.md`，不要搬进短入口。
 
+## 0.3 单一 PlanMD 与开发状态文档职责
+
+当前唯一 `PlanMD` / 开发主线文件是 `CORE_RESTRUCTURE_PLAN.md`。根目录没有独立 `plan.md`；用户提到 `PlanMD`、`plan.md`、主计划或主 plan 时，默认指 `CORE_RESTRUCTURE_PLAN.md`。
+
+`CORE_RESTRUCTURE_PLAN.md` 负责决定当前活跃工作队列、Phase 顺序、优先级、Decision Gate 和退出标准。其他 Markdown 只能作为辅助文档：可以补充状态、证据、规则、执行剧本、设计依据、历史和问题教训，但不得形成第二套“下一步”。如果辅助 MD 需要新增待办、调整优先级或改变退出标准，先同步 `CORE_RESTRUCTURE_PLAN.md`。
+
+`PlanMD` 不得改变系统根方向：通用 Core Lab、Core 优先、`CAD_PLAN` 中间层、真实 CAD 证据门槛、场景 Agent 轻量化和保护用户 DWG。若文档治理与这些边界冲突，以边界为准，先修文档，不改方向。
+
+开发状态文档按职责维护：
+
+- `CORE_CONTEXT_BRIEF.md`：短上下文入口，只写当前结论、目标入口和按需展开表。
+- `CORE_RESTRUCTURE_PLAN.md`：唯一 PlanMD、主计划和下一阶段执行路线。
+- `CORE_STATUS.md`：Core 能力矩阵和成熟度。
+- `CAD_AGENT_STATUS.md`：当前进展页，不堆长历史。
+- `CAD_AGENT_CHANGELOG.md`：历史变更流水。
+- `CAD_AGENT_ISSUES.md`：失败、回归、风险和排障教训。
+- `docs/decisions/cad-agent-decisions.md`：方向和架构决策。
+- `docs/planning/phase-*.md`：Phase 辅助执行剧本，只展开主计划中的工作项。
+
+如果未来判断根目录 Markdown 过多，优先迁移到 `docs/history/`、`docs/architecture/`、`docs/decisions/` 或 `docs/verification/`，不要直接删除仍有历史依据的文档。
+
+## 0.4 开发进度百分比估算口径
+
+后续每次完成 CAD Agent 相关改动后，Codex 都要顺手模拟估算一次开发进度，并在最终回复中给出大概百分比。该百分比是产品和工程节奏判断工具，不是严格项目管理 KPI，允许有 5-10 个百分点的主观误差。
+
+固定按三项汇报：
+
+- `通用底座进度`：把 Core 通用计划按 100% 估算，包含 schema、workflow、CAD IO、执行、验证、安全、benchmark、真实样本、维护治理和可迁移性。
+- `多场景 Agent 进度`：把场景扩展层按 100% 估算，包含 `agents/<scenario>` manifest、preferences、场景 workflow、场景 benchmark、场景语义、真实样本和不得复制 Core 的边界。
+- `总体进度`：默认按 `通用底座 70% + 多场景 Agent 30%` 加权估算。除非用户另行指定权重，否则使用这个口径。
+
+当前基准估算见 `CORE_STATUS.md` 与 `CAD_AGENT_STATUS.md`。截至 2026-05-26 的同步口径为：
+
+```text
+通用底座进度：约 70%
+多场景 Agent 进度：约 34%
+总体进度：约 59% = 70% * 0.70 + 34% * 0.30
+```
+
+估算规则：
+
+- 新增一个测试或一次 CAD 截图通过，不得直接大幅提高百分比；只有形成可复验能力、文档同步和明确边界后，才小幅上调。
+- 发现回归、验证缺口或之前结论夸大时，可以下调百分比。
+- 百分比变化达到约 2 个百分点以上，或用户要求状态汇报时，同步 `CORE_STATUS.md` / `CAD_AGENT_STATUS.md`。
+- 任何百分比都不得替代真实验证证据；涉及 CAD 几何准确仍必须看 `readback_report.json`、`cad_capability_probe.json` 和关键 checks。
+
 ## 1. 不直接从白话画 CAD
 
 用户用白话或语音提出需求后，Codex 必须先生成 `CAD_PLAN`。
@@ -99,7 +145,7 @@
 - `scripts/` 放兼容旧命令的薄包装器，真实实现逐步迁入 `core/`。
 - `drivers/` 放兼容旧导入的薄包装器，真实驱动逐步迁入 `core/cad_io/`。
 - `schemas/` 放过渡期 schema 兼容副本，正式 schema 逐步迁入 `core/schemas/`。
-- `docs/` 放架构、路线、决策和历史文档。
+- `docs/` 放架构、路线、决策、治理、验证、历史和 Phase 辅助执行剧本；不承载独立 PlanMD。
 - `skills/` 放给 Codex 使用的 CAD Skill 草稿，后续逐步对齐 Core 架构。
 
 ## 7. 跑偏检查
@@ -142,7 +188,7 @@
 
 不得遇到第一个失败就停止。仓库内可修问题应由 Codex 自己最小复现、最小修复并重新运行验证；只有依赖安装、AutoCAD 授权/窗口/活动 DWG、正式图层/保存/删除/覆盖、或真实项目语义缺失时，才停下来问用户。
 
-验证结果必须以 `output/validation_runs/<timestamp>/report.json` 和 `report.md` 为证据。没有通过真实 CAD 落图、截图和实体回读时，不得声称几何准确。
+验证结果必须以 `output/validation_runs/<timestamp>/report.json`、`report.md`、`readback_report.json` 和 `cad_capability_probe.json` 为证据。没有通过真实 CAD 落图、截图、实体回读和 CAD COM 能力探针时，不得声称几何准确或 CAD 调用底座可用。
 
 ## 10. 系统维护与安全重构门禁
 

@@ -38,6 +38,17 @@
 8. `CAD_AGENT_CHANGELOG.md`
 9. `CAD_AGENT_ISSUES.md`
 
+## 单一 PlanMD 开发主线
+
+当前唯一 `PlanMD` / 开发主线是 `CORE_RESTRUCTURE_PLAN.md`。根目录没有独立 `plan.md`；用户提到 `PlanMD`、`plan.md`、主计划或主 plan 时，默认指 `CORE_RESTRUCTURE_PLAN.md`。
+
+- `PlanMD` 只做文档治理和开发排序，不改变本仓库“通用 CAD Agent Core Lab”的方向。
+- `CORE_RESTRUCTURE_PLAN.md` 决定当前活跃工作队列、Phase 顺序、优先级、Decision Gate 和退出标准。
+- `docs/planning/phase-*.md` 只是辅助执行剧本，可以写命令和检查表，但不能成为第二套主计划。
+- `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` 只写能力、证据、风险和当前状态，不承载独立下一步。
+- 新增待办、调整优先级或改变退出标准时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD。
+- 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
+
 ## Core 优先
 
 本仓库是通用 CAD Agent Core Lab。可复用能力放入 `core/`，共享资源放入 `libraries/`，项目专属资料放入 `projects/`，只有场景差异放入 `agents/<scenario>/`。

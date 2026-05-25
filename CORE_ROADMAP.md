@@ -1,195 +1,118 @@
 # Core Roadmap
 
-本文按 `CORE_RESTRUCTURE_PLAN.md` 的阶段 0-10 追踪通用 CAD Agent Core Lab 的路线。核心原则保持不变：通用底座优先，场景 Agent 轻量化。
+最后更新：2026-05-26
 
-## 阶段 0：架构冻结
+本文是高层路线图，只描述方向和阶段关系。唯一 `PlanMD` / 具体执行清单见 `CORE_RESTRUCTURE_PLAN.md`，能力成熟度见 `CORE_STATUS.md`。本文不承载独立下一步。
 
-目标：
-
-- 固定 `CORE_RESTRUCTURE_PLAN.md`。
-- 明确仓库定位为通用 CAD Agent Core Lab。
-- 明确 `CAD_PLAN` 是落图指令，不是设计大脑。
-- 明确下一步只做仓库重装，不做业务扩张。
-
-完成标准：
-
-- 根目录存在 `CORE_RESTRUCTURE_PLAN.md`。
-- 用户确认方案。
-
-当前状态：done。架构草案已存在，并已完成第一轮仓库重装。
-
-## 阶段 1：仓库重装
-
-目标：
-
-- 创建 `core/`、`agents/`、`projects/` 等基础结构。
-- 将现有执行层文件逐步迁移到对应目录。
-- 更新 README、AGENTS、STATUS、ROADMAP。
-- 不大改逻辑。
-
-完成标准：
-
-- 旧验证命令仍能跑。
-- 当前测试仍能通过。
-- 文件职责更清晰。
-
-当前状态：prototype。`core/`、`agents/`、`projects/` 等结构已创建；现有脚本、schema、drivers 和 tests 已迁移或建立兼容包装器。
-
-## 阶段 2：Core 状态看板
-
-目标：
-
-- 新增 `CORE_STATUS.md`。
-- 用能力矩阵追踪通用底座进度。
-- 区分 prototype、scaffold、not_started、blocked。
-
-完成标准：
-
-- 能回答“通用底座开发到哪了？”。
-- 能看出哪些能力已有原型，哪些只是设计占位。
-
-当前状态：done。已建立第一版能力矩阵，并记录迁移后的 Core 入口。
-
-## 阶段 3：Core 数据模型
-
-目标：
-
-- 建立通用 schema：`DESIGN_BRIEF`、`DRAWING_MODEL`、`PROJECT_MODEL`、`OBJECT_SPEC`、`STYLE_PROFILE`、`BLOCK_LIBRARY`、`LAYOUT_PROPOSAL`、`DESIGN_PROPOSAL`、`VERIFICATION_REPORT`。
-- 每个 schema 配最小 example。
-
-完成标准：
-
-- 每个 example 可以校验。
-- 高层模型和最终 `CAD_PLAN` 的职责边界清楚。
-
-当前状态：prototype。9 个高层 schema、最小 example、轻量校验器、模型间引用检查和每个注册模型的 invalid fixture 已建立，后续需要扩展更贴近真实项目的正反例。
-
-## 阶段 4：对象与风格底座
-
-目标：
-
-- 从白话生成参数化对象。
-- 第一批对象：柜子、货架、桌子。
-- 第一批风格：现代、欧式、极简。
-
-完成标准：
-
-- 生成 `OBJECT_SPEC`。
-- 生成方案说明。
-- 生成 CAD_PLAN。
-- 绘制到 `CODEX_PREVIEW`。
-- 验证主要尺寸和图层。
-
-当前状态：prototype。已建立 cabinet/shelf/table 的最小 `OBJECT_SPEC` 生成和 `OBJECT_SPEC -> CAD_PLAN`，但现有测试柜仍只是第一批对象闭环样例。
-
-## 阶段 5：图库块底座
-
-目标：
-
-- 建立公司图库块元数据格式。
-- 支持块分类、尺寸、插入点、旋转规则、避让范围、适用场景。
-
-完成标准：
-
-- 能登记一批块。
-- 能按用途选择块。
-- 能插入块到预览层。
-
-当前状态：prototype。已建立 modern/european/minimal 风格 profile 加载，尚未将风格 token 深度影响 CAD 细节。
-
-## 阶段 6：布局底座
-
-目标：
-
-- 在给定边界、入口和对象集合时生成基础布局。
-- 先做通用布局，不绑定工装。
-
-完成标准：
-
-- 可生成候选布局。
-- 可做碰撞检查。
-- 可检查基本通道。
-- 可输出 `LAYOUT_PROPOSAL`。
-
-当前状态：prototype。已建立 `BLOCK_LIBRARY` schema、示例块库和筛选逻辑，示例块已覆盖 cabinet/table/shelf/chair/counter；尚未接真实块插入。
-
-## 阶段 7：图纸理解底座
-
-目标：
-
-- 从已有 DWG/PDF 提取实体和文字。
-- 生成 `DRAWING_MODEL`。
-
-完成标准：
-
-- 能列出图层、实体数量、文字、尺寸、块。
-- 能初步识别空间名和边界候选。
-- 能把不确定点列出来。
-
-当前状态：prototype。已建立 bbox、碰撞和单对象边界内布置，尚未覆盖多对象布局、通道和评分。
-
-## 阶段 8：方案推理底座
-
-目标：
-
-- 从 `DESIGN_BRIEF + PROJECT_MODEL` 生成 `DESIGN_PROPOSAL`。
-- 不直接画图，先让用户确认方案。
-
-完成标准：
-
-- 方案包含依据、推断、不确定点。
-- 用户确认后可转 CAD_PLAN。
-
-当前状态：prototype。已建立最小 `DESIGN_PROPOSAL`、确认后转 `CAD_PLAN` 和 layout candidates 比较；尚未覆盖真实多方案设计推理和用户确认流。
-
-## 阶段 9：轻量场景 Agent
-
-目标：
-
-- 建立第一个 `commercial_fitout` Agent。
-- 只写场景差异，不复制 Core。
-
-完成标准：
-
-- 支持 `existing_plan_to_elevation` 工作流草案。
-- 支持 `blank_store_to_layout` 工作流草案。
-- 共用 Core 数据模型和执行层。
-
-当前状态：agent scaffold done, formal capability not_started。场景 Agent 目录与轻量规则已建立，但还没有实现真实场景能力。
-
-## 阶段 10：真实项目闭环
-
-目标：
-
-- 用真实或近真实项目验证 Core。
-
-完成标准：
+## 路线原则
 
 ```text
-输入 -> 分析 -> 项目模型 -> 方案 -> CAD_PLAN -> 预览 -> 验证 -> 修改记录
+通用 Core 优先
+场景 Agent 轻量复用
+真实 CAD 证据优先于口头完成声明
+非 CAD benchmark 不能替代真实 CAD readback
 ```
 
-当前状态：not_started。
+## 已完成路线
 
-## 阶段 N：Core 方法论内化层
+| 阶段 | 当前状态 | 说明 |
+| --- | --- | --- |
+| 架构冻结 | done | 仓库定位为可迁移 CAD Agent Core Lab，`CAD_PLAN` 是落图中间层 |
+| 仓库重装 | done | `core/`、`agents/`、`libraries/`、`projects/`、`tests/` 结构已建立，旧 `scripts/` / `drivers/` 保留兼容包装器 |
+| 状态看板 | done | `CORE_STATUS.md`、`CAD_AGENT_STATUS.md`、`CORE_CONTEXT_BRIEF.md` 已建立 |
+| 高层模型 | prototype | DESIGN / DRAWING / PROJECT / OBJECT / STYLE / BLOCK / LAYOUT / PROPOSAL / VERIFICATION 及 SHELL / CIRCULATION / FUNCTION_ZONE 已有 schema 与 examples |
+| 非 CAD Core 原型 | prototype | object/style/block/layout/proposal/plan/verification/safety/capability/benchmark/composition 已形成第一批原型 |
+| blank-shell pipeline | alpha_ready_non_cad | Phase P-V 已跑通 shell -> project -> circulation -> zones -> placement -> proposal -> CAD_PLAN -> dry-run -> unverified report |
+| 系统层安全补强 | done | repo audit、路径边界、pipeline failure hardening、verification edge tests、无 CAD 总控已补强 |
 
-目标：
-- 建立能力目录/runtime，让 Core 能力可发现、可验证、可风险分级。
-- 建立 workflow artifact graph，让中间产物顺序、路径和依赖可追踪。
-- 建立 geometry backend registry，让当前无依赖 bbox 检查和未来成熟几何库适配有统一槽位。
-- 建立 non-CAD benchmark runner，让端到端样例可重复评测。
+## 当前主线
 
-完成标准：
-- capability catalog 可列出能力、输入 schema、输出 contract、CAD 依赖和验证命令。
-- artifact graph 可排序、检查路径并发现循环依赖。
-- geometry backend registry 不引入新依赖，外部库只作为可选槽位。
-- benchmark runner 可输出 pass/fail 汇总。
+### Phase W：真实 CAD 回读闭环
 
-当前状态：prototype。`core/capabilities`、`core/workflows/artifact_graph.py`、`core/geometry_backends`、`core/benchmarks` 已建立；真实 CAD 验证仍走延后补验清单。
+目标：完成真实 AutoCAD 环境中的落图、截图、实体回读和 verification report。
+
+为什么优先：没有这一步，系统只能说“非 CAD 链路可用”，不能说“图纸画准了”。
+
+入口：
+
+- `CAD_AGENT_AUTONOMOUS_VALIDATION.md`
+- `scripts/run_cad_validation.py`
+- `core/verification/inspect_dwg.py`
+- `core/verification/verification_report.py`
+
+### Phase X：场景 Agent Alpha
+
+目标：让 commercial / residential / office / restaurant 等场景通过 preferences 复用同一 Core pipeline。
+
+为什么重要：证明场景 Agent 是轻量差异层，不是复制 Core 算法。
+
+入口：
+
+- `agents/*/preferences.json`
+- `agents/SCENE_AGENT_RULES.md`
+- `tests/agents/`
+
+### Phase Y：空壳布局硬化
+
+目标：把当前可跑通的 blank-shell pipeline 强化成多候选、可解释失败、更多真实样本的非 CAD 实验台。
+
+为什么重要：当前 pipeline 仍偏单条主候选，不能当作完整自动设计大脑。
+
+入口：
+
+- `core/workflows/blank_shell_pipeline.py`
+- `core/layout_engine/`
+- `core/proposal_engine/`
+- `examples/benchmarks/blank_shell_core_benchmark.json`
+
+### Phase Z：维护治理
+
+目标：保持文档职责清晰、验证命令稳定、历史与问题可追溯。
+
+为什么重要：当前系统经历深度开发和安全补强，后续最大风险之一是状态文档再次分散或过期。
+
+入口：
+
+- `CORE_CONTEXT_BRIEF.md`
+- `CORE_RESTRUCTURE_PLAN.md`
+- `CORE_STATUS.md`
+- `CAD_AGENT_STATUS.md`
+- `CAD_AGENT_CHANGELOG.md`
+- `CAD_AGENT_ISSUES.md`
+
+### Phase R：新鲜视角评审
+
+目标：用多个第一次接触系统的只读专家视角，校准下一轮深度开发方向，避免沿惯性补功能或把场景能力写偏。
+
+为什么重要：当前 Core 已有有限 baseline CAD 闭环和第一批 persona composition 自检，但仍需要持续判断真正缺口是 CAD 能力契约、办公基础闭环、图块库设计、benchmark 门禁、角色组合真实 CAD readback，还是文档/协作治理。
+
+入口：
+
+- `docs/reviews/fresh-eyes-review-2026-05-25.md`
+- `docs/planning/phase-r-fresh-perspective-rebirth-plan.md`
+- `docs/planning/phase-r-rebirth-implementation-plan.md`
+- `docs/planning/phase-r-cad-capability-contract.md`
+- `docs/planning/phase-r-block-library-roadmap.md`
+- `docs/planning/phase-r-office-benchmark-cases.md`
+- `examples/benchmarks/interior_delivery_benchmark.json`
+- `docs/governance/multi-agent-contribution.md`
+- `docs/onboarding/first-handoff.md`
+
+## 长期路线
+
+| 方向 | 当前状态 | 后续判断点 |
+| --- | --- | --- |
+| 自动 DWG/PDF 空壳识别 | not_started / prototype 边缘 | 是否优先继续人工 JSON 闭环，还是投入自动识别 |
+| 成熟几何库 | undecided | 是否引入 `shapely` 或其他几何库，需用户决策和环境清单 |
+| 真实块库 | prototype | 是否接入公司块库，如何处理隐私和路径迁移 |
+| 多方案设计推理 | prototype | 何时从可解释候选进入更复杂设计策略 |
+| 真实项目回归集 | not_started | 哪些项目可作为可提交样本，哪些只能留本机 |
+| 换机验收 | blocked_by_cad | 用 `run_cad_validation.py` 在新机器上跑完整 CAD 验证 |
 
 ## 路线约束
 
-- 先让 Core 能复用，再让场景 Agent 变聪明。
 - 不把工装、家装、办公、餐饮、展陈的通用能力重复写进各自 Agent。
-- 第一轮已迁移现有 `scripts/`、`schemas/`、`drivers/`、`tests/` 的核心实现，同时保留旧入口兼容。
-- 任何落图能力都必须继续遵守 `CODEX_PREVIEW`、validate、dry-run、自检和验证门。
+- 不从白话直接跳到 CAD；必须先结构化为 `CAD_PLAN` 或更高层模型。
+- 不把截图当作几何准确证据。
+- 不保存、覆盖、删除或修改正式图层，除非用户明确批准。
+- 任何阶段完成后都要同步状态和证据。

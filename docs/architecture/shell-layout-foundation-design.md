@@ -4,11 +4,35 @@
 
 ## 0. 文档用途
 
-本文是后续开发 `通用空壳空间理解与布局底座` 的设计上下文。它不是当前已实现能力，也不是某个公司业务场景的专用需求文档。
+本文是 `通用空壳空间理解与布局底座` 的设计上下文和边界说明。它最初是后续开发蓝图；截至 2026-05-25，核心思路已经被 `CORE_RESTRUCTURE_PLAN.md` 纳入 Phase P-V，并部分落地为可运行的 blank-shell pipeline。
 
-后续当 Core 大框架稳定后，Codex 可以先读取本文，再制定实现计划。本文目标是让新对话里的 Codex 不必重新翻完整个仓库，也能理解这部分能力要做什么、边界在哪里、如何分阶段实现、如何验证和验收。
+本文仍不是某个公司业务场景的专用需求文档，也不是当前执行主计划。后续需要执行开发时，以 `CORE_RESTRUCTURE_PLAN.md` 为主；需要理解空壳布局的设计边界、数据模型和验收思想时，再读取本文。
 
 本文中的英文标识如 `SHELL_MODEL`、`LAYOUT_PROPOSAL`、`CAD_PLAN` 是建议的数据模型或接口名，不代表面向用户输出要使用英文。
+
+## 0.1 当前落地状态
+
+当前已经落地的部分：
+
+- `SHELL_MODEL`、`CIRCULATION_MODEL`、`FUNCTION_ZONE` 已有 schema、example 和 invalid fixture。
+- `core/drawing_analysis/shell_loader.py` 已支持人工空壳 JSON 规范化。
+- `core/project_model/project_builder.py` 已支持 `DESIGN_BRIEF + SHELL_MODEL` 合成 `PROJECT_MODEL`。
+- `core/layout_engine/path_generation.py` 已支持直线、L 型和沿边动线候选。
+- `core/layout_engine/zone_splitter.py` 已支持基于 path surface 的功能区切分。
+- `core/layout_engine/placement.py` 已支持多类对象、block metadata 优先和 `OBJECT_SPEC` fallback。
+- `core/workflows/blank_shell_pipeline.py` 已串联到 `CAD_PLAN`、dry-run 和 `VERIFICATION_REPORT(unverified)`。
+- `examples/benchmarks/blank_shell_core_benchmark.json` 已覆盖 retail、office、residential、restaurant 四个非 CAD benchmark case。
+
+当前仍未完成的部分：
+
+- 自动 DWG / PDF 空壳识别。
+- 复杂多边形、曲线和 CAD kernel 级几何。
+- 真实块插入和 block reference readback。
+- 完整多候选布局设计脑。
+- 真实 CAD 落图、截图和实体回读闭环。
+- 足够多的真实项目回归样本和失败基准。
+
+因此，本文后续应作为 Phase Y 继续硬化空壳布局的设计参考，而不是重复记录每天的开发流水。
 
 ## 1. 一句话目标
 
@@ -1025,7 +1049,7 @@ projects/
 后续新对话可以这样启动：
 
 ```text
-读取根目录 SHELL_LAYOUT_FOUNDATION_DESIGN.md，以及 README.md、CORE_STATUS.md、CORE_ROADMAP.md。
+读取 `docs/architecture/shell-layout-foundation-design.md`，以及根目录 `README.md`、`CORE_STATUS.md`、`CORE_ROADMAP.md`。
 不要直接开发公司专用方案 Agent。
 请围绕“空壳布局底座”制定 Core 实施计划：
 第一版允许人工标注空壳输入，输出 SHELL_MODEL、PROJECT_MODEL、CIRCULATION_MODEL、FUNCTION_ZONE、LAYOUT_PROPOSAL，并能转 CAD_PLAN。
