@@ -24,6 +24,345 @@
 
 ## 已知问题
 
+### 问题：CAD 层面验证容易停在第一个失败点
+
+日期：2026-05-25
+
+现象：
+
+用户准备在另一台电脑上 clone 仓库做真实 CAD 验证时，担心 Codex 只执行到第一处失败就停下来询问，导致一次对话只解决一个小点，整体换机验收和 CAD 补验效率很低。
+
+影响：
+
+真实 CAD 验证链路包含依赖、AutoCAD COM、预览落图、截图、实体回读和验证报告。任一环失败都可能中断；如果没有总控脚本和强约束手册，Codex 容易依赖聊天框里的临时文字要求，复用性不足。
+
+原因：
+
+已有 `CAD_AGENT_BLOCKER_PLAYBOOK.md` 偏向卡壳后的人工方法论，缺少一个能一次跑完整链路、结构化分类失败、输出报告并要求 Codex 自主修复仓库内问题的入口。
+
+修复：
+
+- 新增 `CAD_AGENT_AUTONOMOUS_VALIDATION.md`，固化自主验证规则和复制给 Codex 的启动语。
+- 新增 `core/verification/cad_validation_runner.py` 与 `scripts/run_cad_validation.py`，按步骤执行验证并生成 `report.json` / `report.md`。
+- 新增失败分类和下一步动作，让 Codex 区分仓库内可修问题与用户侧外部阻塞。
+- 新增 `tests/core/test_cad_validation_runner.py` 覆盖关键分类行为。
+- 在 `CAD_AGENT_RULES.md` 增加自主验证闭环规则。
+
+以后规则：
+
+真实 CAD 验证、换机验收或 CAD 补验时，优先运行 `scripts/run_cad_validation.py`，并以 `output/validation_runs/<timestamp>/report.json` 为证据。Codex 不得遇到第一处失败就停止；仓库内问题必须自行修复并复验，只有外部环境、权限或用户项目语义缺失才交回用户。
+
+相关文件：
+
+- `CAD_AGENT_AUTONOMOUS_VALIDATION.md`
+- `core/verification/cad_validation_runner.py`
+- `scripts/run_cad_validation.py`
+- `tests/core/test_cad_validation_runner.py`
+- `CAD_AGENT_RULES.md`
+
+### 问题：Windows 子进程 stderr 可能不是 UTF-8，CLI 缺失测试会被解码错误遮住
+
+日期：2026-05-25
+
+现象：
+新增 `tests/core/test_benchmark_cli.py` 时，脚本尚未存在，本应得到“文件不存在”的红灯；但 `subprocess.run(..., encoding="utf-8")` 读取 Windows Python stderr 时先触发 `UnicodeDecodeError`。
+
+影响：
+CLI wrapper 测试可能把真实失败原因遮住，尤其是路径中包含中文时更明显。
+
+原因：
+Windows 子进程错误输出可能使用本地代码页，而不是 UTF-8。
+
+修复：
+在 CLI 测试里使用 `errors="replace"`，让测试能稳定读取 stderr，并继续断言 return code 与 JSON 输出。
+
+以后规则：
+新增直接运行 `scripts/*.py` 的 subprocess 测试时，若使用 `text=True` 和 `encoding="utf-8"`，同时加 `errors="replace"`，避免编码问题遮住真实失败。
+
+相关文件：
+- `tests/core/test_benchmark_cli.py`
+- `scripts/run_benchmark_suite.py`
+
+### 问题：Agent preference 测试向 `sys.path` 注入项目根会重新触发 discover 遮蔽
+
+日期：2026-05-25
+
+现象：
+
+新增 `tests/agents/test_scene_preferences.py` 后，`python -m unittest discover -s tests` 再次出现 `ModuleNotFoundError: No module named 'core.test_*'`。
+
+影响：
+
+单个测试文件可通过，但全量 discover 会失败，容易被误判为 Core 模块缺失。
+
+原因：
+
+Agent 测试为了导入 Core 函数把项目根插入 `sys.path`，导致真实 `core/` 包遮住 `tests/core` 测试包。这与此前 `test_scene_agent_boundaries.py` 的路径污染问题相同。
+
+修复：
+
+移除 Agent preference 测试中的 `sys.path.insert()`。在 `unittest discover -s tests` 模式下，直接导入 `core.*` 会先走 `tests/core/__init__.py` 的兼容路径扩展。
+
+以后规则：
+
+`tests/agents` 中需要读文件或导入 Core 时，不要手动把项目根插到 `sys.path`；新增 Agent 测试后必须跑完整 `unittest discover -s tests`。
+
+相关文件：
+
+- `tests/agents/test_scene_preferences.py`
+- `tests/core/__init__.py`
+
+### 问题：workflow schema 校验曾静默跳过未知 model_type
+
+日期：2026-05-25
+
+现象：
+
+`validate_workflow_schemas()` 遇到未注册的 `model_type` 时会继续执行，而不是报错。
+
+影响：
+
+workflow 中模型类型拼错或新增模型未注册时，schema 校验可能给出“看似通过”的结果。
+
+原因：
+
+早期实现把未知 schema 当作临时兼容情况处理，适合探索，但不适合作为模型合约门。
+
+修复：
+
+未知 `model_type` 现在会返回明确错误，并由 `tests/core/test_model_loop.py` 覆盖。
+
+以后规则：
+
+新增高层模型必须先进入 `core/schemas/registry.py`，workflow 校验不得静默跳过未知模型。
+
+相关文件：
+
+- `core/model_loop/reference_checker.py`
+- `core/schemas/registry.py`
+- `tests/core/test_model_loop.py`
+
+### 问题：`run_non_cad_pipeline.py` 直接运行时找不到 `core`
+
+日期：2026-05-25
+
+现象：
+
+直接执行 `scripts/run_non_cad_pipeline.py` 时曾报 `ModuleNotFoundError: No module named 'core'`。
+
+影响：
+
+pipeline 单测可通过，但用户按脚本入口运行会失败，破坏非 CAD 闭环验收。
+
+原因：
+
+脚本包装器没有把项目根目录加入导入路径。
+
+修复：
+
+在 `scripts/run_non_cad_pipeline.py` 中加入项目根目录路径处理。
+
+以后规则：
+
+新增 `scripts/*.py` 兼容入口后，必须同时用“模块测试”和“脚本直接运行”两种方式验证。
+
+相关文件：
+
+- `scripts/run_non_cad_pipeline.py`
+- `tests/core/test_non_cad_pipeline.py`
+
+### 问题：当前 CAD 可能因环境或代理问题无法稳定打开
+
+日期：2026-05-25
+
+现象：
+
+当前 AutoCAD 可能无法稳定打开，导致真实 `CODEX_PREVIEW` 落图、COM 实体回读和截图证据无法完整执行。
+
+影响：
+
+Core 的非 CAD 层开发不应被真实 CAD 环境卡住，但也不能因此声称已完成几何准确性验证。
+
+原因：
+
+真实 CAD 验证依赖本机 AutoCAD、活动 DWG、CAD-MCP/COM 链路和当前窗口状态；这些属于运行环境条件，不等同于 Core 逻辑是否正确。
+
+修复：
+
+- 将非 CAD 可验证内容作为当前交付门：单测、schema 校验、`CAD_PLAN` validate、dry-run、自检、截图能力检查、fake readback 验证报告。
+- 将真实 CAD 相关命令写入 `CORE_RESTRUCTURE_PLAN.md` 的延后验证清单。
+
+以后规则：
+
+CAD 不可用时，继续推进不依赖 CAD 的 Core 能力并完整验证；凡需要真实 CAD 证明的内容，必须在计划中列出补验命令和通过标准，不得在未补验前声称图纸已几何准确。
+
+相关文件：
+
+- `CORE_RESTRUCTURE_PLAN.md`
+- `core/verification/verification_report.py`
+- `scripts/inspect_dwg.py`
+
+### 问题：验证报告早期原型可能误报几何已验证
+
+日期：2026-05-25
+
+现象：
+
+`VERIFICATION_REPORT` 初版只检查目标图层、bbox 尺寸、文字和标注数量，未检查基点，且在有截图或执行摘要时可能让失败检查被较低等级状态覆盖。后续审计又发现，如果外部调用方只传 `entities_are_scoped=True`，也可能把“调用方声明已隔离”误当成真实证据。
+
+影响：
+
+如果柜子尺寸正确但画错位置，或文字/标注在别的图层，报告可能错误接近“通过”。如果没有 created handles 或 before/after diff，却信任裸 scope 布尔值，也可能把旧实体误认为本次输出。这会违反“不能把画不准当完成”的门槛。
+
+原因：
+
+第一版验证报告过于关注“有无证据”和“尺寸”，没有把失败优先级、基点、图层过滤和本次执行实体隔离放进核心判断。
+
+修复：
+
+- `failed` 状态优先于 `screenshot_captured` 和 `executed_only`。
+- 增加 `base_point` 检查。
+- 文字和标注检查只统计目标图层。
+- 增加 `readback_scope` 检查；未隔离本次执行实体时不能声称 `geometry_verified`。
+- 裸 `entities_are_scoped=True` 不再足以升级为 `geometry_verified`；需要 `created_handles` 覆盖回读实体。
+- 截图路径必须真实存在，才能算 `screenshot_captured`。
+- 增加 before/after snapshot diff 数据结构、批量汇总和失败修复建议字段。
+- 补充失败优先级、基点错误、错误图层、未隔离实体、created handles、截图路径、snapshot diff、批量汇总等测试。
+
+以后规则：
+
+实体回读验证必须同时覆盖图层、尺寸、基点、文字/标注图层和证据范围；没有本次执行实体隔离时，最多只能视作未完全验证。后续真实 CAD 闭环必须优先验证 handles / before-after diff 是否可靠。
+
+相关文件：
+
+- `core/verification/verification_report.py`
+- `tests/core/test_verification_report.py`
+
+### 问题：当前沙箱允许写入但不允许删除系统临时目录文件
+
+日期：2026-05-25
+
+现象：
+
+运行 `python -m unittest discover -s tests` 时，使用 `tempfile.TemporaryDirectory()` 的测试会在 `C:\Users\123235\AppData\Local\Temp` 下写入/清理临时文件，并触发 `PermissionError: [WinError 5] 拒绝访问`。
+
+影响：
+
+测试结果会被误判为业务失败；即使设置 `TEMP` / `TMP` 到工作区，当前 Python 运行时仍可能选择系统临时目录，且文件清理动作会失败。
+
+原因：
+
+当前执行环境对删除/移动既有文件和系统临时目录清理有限制。它允许部分写入，但不保证 `TemporaryDirectory` 的自动清理能成功。
+
+修复：
+
+- 新增 `tests/helpers.py`，把测试产物写到 `output/test_artifacts`。
+- 修改 `tests/core/test_execute_plan.py` 和 `tests/core/test_render_preview.py`，避免依赖 `TemporaryDirectory()` 清理。
+
+以后规则：
+
+在本仓库测试中优先使用工作区内的稳定测试产物目录；不要把系统临时目录清理失败当成 CAD Core 功能失败。
+
+相关文件：
+
+- `tests/helpers.py`
+- `tests/core/test_execute_plan.py`
+- `tests/core/test_render_preview.py`
+
+### 问题：Agent 测试向 `sys.path` 注入项目根会破坏 `unittest discover -s tests`
+
+日期：2026-05-25
+
+现象：
+
+新增 `tests/agents/test_scene_agent_boundaries.py` 后，`unittest discover -s tests` 报 `ModuleNotFoundError: No module named 'core.test_*'`。
+
+影响：
+
+`tests/core` 在该发现模式下会被导入为 `core` 测试包；如果其他测试提前把项目根插到 `sys.path` 最前，真实 `core/` 包会遮住测试包。
+
+原因：
+
+测试导入路径与真实包名同名，且 Agent 测试本来只需要读文件，却不必要地修改了 `sys.path`。
+
+修复：
+
+移除 Agent 边界测试中的 `sys.path.insert(0, str(PROJECT_ROOT))`，保持纯路径读取。
+
+以后规则：
+
+不需要导入项目模块的测试不要修改 `sys.path`；涉及 `tests/core` 包名兼容时，继续用 `tests/core/__init__.py` 的兼容处理。
+
+相关文件：
+
+- `tests/agents/test_scene_agent_boundaries.py`
+- `tests/core/__init__.py`
+
+### 问题：`inspect_dwg.py` 空跑时不应默认连接真实 CAD
+
+日期：2026-05-25
+
+现象：
+
+增强实体回读后，旧兼容测试执行 `scripts/inspect_dwg.py` 空命令时尝试连接 AutoCAD COM，导致无 CAD 或沙箱环境下运行变慢或不稳定。
+
+影响：
+
+普通自检命令不应因为没有打开 CAD 而卡住；真实 CAD 回读也不应在用户无意触发时执行。
+
+原因：
+
+最初把“检查 DWG”默认理解为连接活动 CAD，但仓库规则要求无 CAD 自检与真实 CAD 操作分离。
+
+修复：
+
+`core/verification/inspect_dwg.py` 默认不连接 CAD；需要真实回读时显式传 `--connect-cad`。`--no-cad` 可输出无 CAD 的 `VERIFICATION_REPORT` 壳。回读路径使用 `AutoCADComDriver(connect_existing_only=True)`，不会自动启动 AutoCAD。
+
+以后规则：
+
+凡涉及真实 CAD 窗口、COM 或当前 DWG 的操作，默认保持低风险，必须用显式参数触发。
+
+相关文件：
+
+- `core/verification/inspect_dwg.py`
+- `core/cad_io/autocad_com.py`
+- `scripts/inspect_dwg.py`
+
+### 问题：面向用户输出混入英文模板
+
+日期：2026-05-25
+
+现象：
+
+在方案讨论过程中，Codex 的中间说明和最终答复混入了英文句子，例如外部 brainstorming Skill 的视觉辅助提示原文。
+
+影响：
+
+用户希望工作流以中文沟通为主。英文模板原样输出会打断阅读，也容易让用户误以为仓库规则要求英文回复。
+
+原因：
+
+根目录 `AGENTS.md` 和 `skills/cad-drawing/SKILL.md` 是英文规则，且仓库缺少“面向用户默认中文输出”的明确约束。外部 Skill 或插件模板为英文时，Codex 容易直接转发模板句子。
+
+修复：
+
+- 将根目录 `AGENTS.md` 改为中文规则，并新增“默认中文输出”。
+- 将 `skills/cad-drawing/SKILL.md` 改为中文说明，并新增默认中文要求。
+- 在 `CAD_AGENT_RULES.md` 增加“默认中文沟通”规则。
+- 更新 `CAD_AGENT_STATUS.md` 和 `CAD_AGENT_CHANGELOG.md`。
+
+以后规则：
+
+除代码、命令、路径、Schema 字段、JSON key、工具名和 API 名称外，面向用户的说明、状态汇报、方案讨论、追问和结论默认使用中文。引用英文 Skill 或工具模板时，应理解后用中文转述，不要原样输出。
+
+相关文件：
+
+- `AGENTS.md`
+- `skills/cad-drawing/SKILL.md`
+- `CAD_AGENT_RULES.md`
+- `CAD_AGENT_STATUS.md`
+- `CAD_AGENT_CHANGELOG.md`
+
 ### 问题：`unittest discover -s tests` 会把 `tests/core` 当成 `core` 包
 
 日期：2026-05-25
@@ -142,7 +481,7 @@ Core 实现中改为 `Path(__file__).resolve().parents[2]`，旧 `scripts/self_c
 & 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'CAD测试相关文件\tests\test_execute_plan.py'
 ```
 
-后续仓库重装时已创建 `tests/__init__.py`、`tests/core/__init__.py`，并迁移到：
+后续仓库重装时已创建 `tests/__init__.py`、`tests/core/__init__.py`。以下仍是历史路径示例，不是当前仓库根目录下的推荐命令：
 
 ```powershell
 & 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' -m unittest discover -s 'CAD测试相关文件\tests'
@@ -198,11 +537,11 @@ CAD 相关说明文件和 DWG、PDF、视频、临时目录混在一起。
 
 修复：
 
-创建 `CAD测试相关文件` 子文件夹，并将 CAD Agent 相关说明归档到内部结构。
+早期修复是创建 `CAD测试相关文件` 子文件夹，并将 CAD Agent 相关说明归档到内部结构。当前 Core Lab 已进一步重装为仓库根目录结构。
 
 以后规则：
 
-CAD Agent 的说明、规则、Schema、示例、脚本骨架统一放入 `CAD测试相关文件`。
+当前现行规则：CAD Agent 说明和入口文档在仓库根目录，通用能力进入 `core/`，场景差异进入 `agents/`，共享资源进入 `libraries/`，真实项目资料进入 `projects/`。`CAD测试相关文件` 是历史路径口径，不再作为当前开发入口。
 
 ### 问题：PowerShell 中全局 python 命令不可用
 

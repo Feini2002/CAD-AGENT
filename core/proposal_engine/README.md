@@ -12,7 +12,7 @@
 - 哪些需要确认。
 - 用户通过后会生成哪些 CAD_PLAN。
 
-当前状态：not_started。
+当前状态：prototype。当前代码只包含最小 `DESIGN_PROPOSAL` 构建和确认后转 `CAD_PLAN` 原型，尚未覆盖完整多方案比较。
 
 边界：
 

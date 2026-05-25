@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "scenario": "office",
+  "preview_layer": "CODEX_PREVIEW",
+  "object_preferences": ["table", "shelf", "cabinet"],
+  "circulation": {
+    "main_aisle_width_mm": 1100,
+    "secondary_aisle_width_mm": 850
+  },
+  "layout_weights": {
+    "circulation": 0.35,
+    "workstation_density": 0.35,
+    "storage_access": 0.3
+  }
+}

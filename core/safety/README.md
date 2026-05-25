@@ -15,9 +15,19 @@
 
 - `CAD_AGENT_RULES.md`
 - `AGENTS.md`
-- `cad_agent/SAFETY_RULES.md`
+- legacy `cad_agent/SAFETY_RULES.md`
 
-当前状态：scaffold。规则已有文档来源，尚未抽象成可测试策略。
+当前状态：prototype。文档规则已收束到 Core 入口，后续会继续抽象为可测试策略。
+
+## 状态表达规则
+
+- `executed_only`：已经请求执行，但没有截图或实体回读证据。
+- `screenshot_captured`：已经有视觉证据，但还没有几何实体回读。
+- `geometry_verified`：已有实体回读，并且图层、数量、尺寸、文字或标注检查通过。
+- `unverified`：没有足够证据。
+- `failed`：验证证据显示与预期不一致。
+
+Codex 不得把 `executed_only` 或 `screenshot_captured` 描述成“图纸已经准确”。
 
 边界：
 

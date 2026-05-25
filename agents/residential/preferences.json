@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "scenario": "residential",
+  "preview_layer": "CODEX_PREVIEW",
+  "object_preferences": ["cabinet", "table", "shelf"],
+  "circulation": {
+    "main_aisle_width_mm": 900,
+    "secondary_aisle_width_mm": 750
+  },
+  "layout_weights": {
+    "clearance": 0.4,
+    "storage": 0.3,
+    "comfort": 0.3
+  }
+}

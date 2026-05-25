@@ -1,0 +1,21 @@
+{
+  "version": "0.1",
+  "project_id": "project-minimal-cabinet",
+  "domain": "generic",
+  "units": "mm",
+  "brief_id": "brief-minimal-cabinet",
+  "drawing_model_id": "drawing-empty-room",
+  "spaces": [
+    {
+      "space_id": "space-preview",
+      "name": "Preview Area",
+      "boundary": {
+        "min": [0, 0],
+        "max": [3000, 1800]
+      }
+    }
+  ],
+  "requirements": ["place one cabinet inside the preview area"],
+  "constraints": ["do not draw outside CODEX_PREVIEW"],
+  "pending_questions": []
+}

@@ -1,0 +1,26 @@
+{
+  "version": "0.1",
+  "shell_id": "shell-minimal-retail",
+  "units": "mm",
+  "boundary": {
+    "min": [0, 0],
+    "max": [8000, 5000]
+  },
+  "openings": [
+    {
+      "opening_id": "opening-entry",
+      "type": "entry",
+      "center": [4000, 0],
+      "width": 1800
+    }
+  ],
+  "fixed_obstacles": [
+    {
+      "obstacle_id": "column-001",
+      "bbox": {
+        "min": [3800, 2400],
+        "max": [4100, 2700]
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "scenario": "commercial_fitout",
+  "preview_layer": "CODEX_PREVIEW",
+  "object_preferences": ["display_cabinet", "shelf", "cashier_counter"],
+  "circulation": {
+    "main_aisle_width_mm": 1200,
+    "secondary_aisle_width_mm": 900
+  },
+  "layout_weights": {
+    "entrance_visibility": 0.35,
+    "circulation": 0.35,
+    "display_density": 0.3
+  }
+}

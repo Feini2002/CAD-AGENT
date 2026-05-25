@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design_proposal.schema.json",
+  "title": "DESIGN_PROPOSAL",
+  "type": "object",
+  "required": ["version", "proposal_id", "brief_id", "project_id", "summary", "decisions", "evidence", "needs_confirmation", "next_cad_plans"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "proposal_id": { "type": "string" },
+    "brief_id": { "type": "string" },
+    "project_id": { "type": "string" },
+    "summary": { "type": "string" },
+    "decisions": { "type": "array", "items": { "type": "string" } },
+    "evidence": {
+      "type": "object",
+      "required": ["from_user", "from_drawing", "from_library", "inferred"],
+      "properties": {
+        "from_user": { "type": "array", "items": { "type": "string" } },
+        "from_drawing": { "type": "array", "items": { "type": "string" } },
+        "from_library": { "type": "array", "items": { "type": "string" } },
+        "inferred": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "needs_confirmation": { "type": "boolean" },
+    "next_cad_plans": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

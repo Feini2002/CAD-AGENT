@@ -1,4 +1,8 @@
-# CAD 安全规则
+# legacy: CAD 安全规则
+
+本文件是旧安全规则入口。当前安全规则以 `core/safety/README.md`、`CAD_AGENT_RULES.md` 和根目录 `AGENTS.md` 为准。
+
+以下旧说明仅作为历史兼容记录。
 
 这些安全规则适用于所有 CAD 场景，不只适用于当前测试图纸。
 

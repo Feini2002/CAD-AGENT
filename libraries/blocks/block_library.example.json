@@ -1,0 +1,76 @@
+{
+  "version": "0.1",
+  "library_id": "builtin-example-blocks",
+  "blocks": [
+    {
+      "block_id": "block-cabinet-1800",
+      "name": "Cabinet 1800",
+      "category": "cabinet",
+      "domain": "generic",
+      "size": {
+        "width": 1800,
+        "depth": 600
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 100,
+      "tags": ["preview", "fallback"]
+    },
+    {
+      "block_id": "block-table-1200",
+      "name": "Table 1200",
+      "category": "table",
+      "domain": "generic",
+      "size": {
+        "width": 1200,
+        "depth": 700
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "tags": ["preview"]
+    },
+    {
+      "block_id": "block-shelf-900",
+      "name": "Shelf 900",
+      "category": "shelf",
+      "domain": "generic",
+      "size": {
+        "width": 900,
+        "depth": 350
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 150,
+      "tags": ["preview", "storage"]
+    },
+    {
+      "block_id": "block-chair-500",
+      "name": "Chair 500",
+      "category": "chair",
+      "domain": "generic",
+      "size": {
+        "width": 500,
+        "depth": 500
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "tags": ["preview", "seating"]
+    },
+    {
+      "block_id": "block-counter-1800",
+      "name": "Counter 1800",
+      "category": "counter",
+      "domain": "retail",
+      "size": {
+        "width": 1800,
+        "depth": 700
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 600,
+      "tags": ["preview", "retail", "service"]
+    }
+  ]
+}

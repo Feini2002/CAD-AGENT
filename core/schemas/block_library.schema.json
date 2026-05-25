@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "block_library.schema.json",
+  "title": "BLOCK_LIBRARY",
+  "type": "object",
+  "required": ["version", "library_id", "blocks"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "library_id": { "type": "string" },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["block_id", "name", "category", "domain", "size", "insertion_point", "rotation_allowed", "clearance_mm"],
+        "properties": {
+          "block_id": { "type": "string" },
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "domain": { "type": "string" },
+          "size": {
+            "type": "object",
+            "required": ["width", "depth"],
+            "properties": {
+              "width": { "type": "number", "exclusiveMinimum": 0 },
+              "depth": { "type": "number", "exclusiveMinimum": 0 }
+            },
+            "additionalProperties": false
+          },
+          "insertion_point": { "type": "array", "minItems": 2, "maxItems": 3, "items": { "type": "number" } },
+          "rotation_allowed": { "type": "boolean" },
+          "clearance_mm": { "type": "number", "minimum": 0 },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

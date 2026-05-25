@@ -1,0 +1,11 @@
+{
+  "version": "0.1",
+  "style_id": "style-modern",
+  "name": "Modern",
+  "tokens": {
+    "detail_level": "medium",
+    "label_policy": "object_name",
+    "line_weight": "medium"
+  },
+  "rules": ["flat panels", "low ornament", "clear preview label"]
+}

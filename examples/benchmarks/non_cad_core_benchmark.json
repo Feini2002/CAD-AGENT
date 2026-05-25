@@ -1,0 +1,16 @@
+{
+  "version": "0.1",
+  "suite_id": "non-cad-core-benchmark",
+  "description": "Repeatable non-CAD Core baseline for the minimal cabinet workflow.",
+  "cases": [
+    {
+      "case_id": "minimal-cabinet-non-cad",
+      "workflow": "examples/workflows/full_non_cad_core_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified"
+      }
+    }
+  ]
+}

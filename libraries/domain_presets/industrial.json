@@ -1,0 +1,12 @@
+{
+  "domain": "industrial",
+  "name": "工业与仓储空间",
+  "common_spaces": ["生产区", "仓储区", "包装区", "办公区", "设备区", "通道"],
+  "common_objects": ["货架", "工作台", "设备基础", "托盘位", "隔离栏", "储物柜"],
+  "default_layer_roles": {
+    "preview": "CODEX_PREVIEW",
+    "furniture": "A-FURN",
+    "annotation": "A-ANNO"
+  }
+}
+

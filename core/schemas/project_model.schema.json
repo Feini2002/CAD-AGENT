@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project_model.schema.json",
+  "title": "PROJECT_MODEL",
+  "type": "object",
+  "required": ["version", "project_id", "domain", "units", "brief_id", "spaces", "requirements", "pending_questions"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "project_id": { "type": "string" },
+    "domain": { "type": "string" },
+    "units": { "type": "string", "enum": ["mm", "cm", "m"] },
+    "brief_id": { "type": "string" },
+    "drawing_model_id": { "type": "string" },
+    "spaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["space_id", "name", "boundary"],
+        "properties": {
+          "space_id": { "type": "string" },
+          "name": { "type": "string" },
+          "boundary": {
+            "type": "object",
+            "required": ["min", "max"],
+            "properties": {
+              "min": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+              "max": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requirements": { "type": "array", "items": { "type": "string" } },
+    "constraints": { "type": "array", "items": { "type": "string" } },
+    "pending_questions": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

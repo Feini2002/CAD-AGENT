@@ -1,0 +1,16 @@
+{
+  "version": "0.1",
+  "proposal_id": "proposal-minimal-cabinet",
+  "brief_id": "brief-minimal-cabinet",
+  "project_id": "project-minimal-cabinet",
+  "summary": "Preview one parameterized cabinet on CODEX_PREVIEW before any formal drawing action.",
+  "decisions": ["Use absolute preview placement at the project origin.", "Represent the first plan view as a rectangle with label and dimensions."],
+  "evidence": {
+    "from_user": ["cabinet size 1800 x 2400 x 600", "European style"],
+    "from_drawing": ["manual preview space boundary"],
+    "from_library": ["object spec object-cabinet-1800", "style profile style-european"],
+    "inferred": ["plan preview uses width and depth; height is retained in OBJECT_SPEC"]
+  },
+  "needs_confirmation": false,
+  "next_cad_plans": ["examples/plans/draw_test_cabinet.json"]
+}

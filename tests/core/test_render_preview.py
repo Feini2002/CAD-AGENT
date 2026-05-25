@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -12,6 +11,7 @@ import sys
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.verification.render_preview import capture_screen, get_preview_capabilities
+from tests.helpers import artifact_path
 
 
 class FakeImage:
@@ -21,10 +21,9 @@ class FakeImage:
 
 class RenderPreviewTests(unittest.TestCase):
     def test_reports_screenshot_capabilities_without_capturing(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            output = Path(temp_dir) / "preview.png"
+        output = artifact_path("render_preview", "capabilities.png")
 
-            capabilities = get_preview_capabilities(output)
+        capabilities = get_preview_capabilities(output)
 
         self.assertEqual(capabilities["output"], str(output))
         self.assertTrue(capabilities["output_dir_exists"])
@@ -33,14 +32,13 @@ class RenderPreviewTests(unittest.TestCase):
         self.assertIn("screen", capabilities["capture_modes"])
 
     def test_capture_screen_writes_output_with_injected_grabber(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            output = Path(temp_dir) / "nested" / "preview.png"
+        output = artifact_path("render_preview", "nested", "preview.png")
 
-            result = capture_screen(output, grabber=lambda: FakeImage())
+        result = capture_screen(output, grabber=lambda: FakeImage())
 
-            self.assertEqual(result["status"], "captured")
-            self.assertEqual(result["output"], str(output))
-            self.assertTrue(output.exists())
+        self.assertEqual(result["status"], "captured")
+        self.assertEqual(result["output"], str(output))
+        self.assertTrue(output.exists())
 
 
 if __name__ == "__main__":

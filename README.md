@@ -4,6 +4,26 @@
 
 GitHub：[github.com/Feini2002/CAD-AGENT](https://github.com/Feini2002/CAD-AGENT)
 
+## 提交与推送说明
+
+本目录应作为独立 Git 仓库维护，远端默认使用：
+
+```powershell
+git remote add origin https://github.com/Feini2002/CAD-AGENT.git
+```
+
+如果目录是从工作区拷贝来的、没有 `.git`，先初始化再提交：
+
+```powershell
+git init
+git branch -M main
+git add .
+git commit -m "docs: refresh CAD Agent core lab"
+git push -u origin main
+```
+
+提交前不要把本机运行日志、截图、验证输出、`__pycache__` 或临时 DWG 文件放进版本库；这些应由 `.gitignore` 排除。真实项目资料放在 `projects/`，但不得包含用户未确认可公开的原始 DWG。
+
 ## 设计主线
 
 ```text
@@ -22,9 +42,7 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 
 ### 一句话结论
 
-**阶段 1 已完成**：仓库已从「零散脚本包」重装成「Core Lab」目录结构；**执行链路的早期原型能跑**（校验 → 预演 → 预览落图 → 自检），但 **设计大脑几乎还没做**——读图、项目模型、参数化对象、布局、方案说明、实体回读都未开工或仅有占位。
-
-可以把它理解成：**外壳和流水线搭好了，脑子还没长出来。**
+**阶段 2 已深度推进**：仓库已从「零散脚本包」重装成「Core Lab」目录结构；非 CAD 底座已有一条可运行闭环（brief / drawing / preferences → project → object / layout / proposal → CAD_PLAN → dry-run report → unverified verification report）。本轮新增 safety policy、project builder、model loop 引用检查、手工 drawing model、block selector/placement、多对象 layout、model_to_plan、created handles 证据门、场景 preferences，以及能力目录/runtime、artifact graph、geometry backend 抽象、benchmark runner、对象解释和候选比较。真实 CAD 落图、截图和实体回读仍需等 CAD 环境恢复后统一补验。
 
 ### 已完成（能直接用）
 
@@ -36,20 +54,25 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 | 环境自检 | `self_check.py` 不碰 DWG 即可检查文件、示例计划、工具链 |
 | 截图检查 | `render_preview.py --check` 可检查截图能力 |
 | 规则固化 | `AGENTS.md`、`CAD_AGENT_RULES.md`、`CAD_AGENT_BLOCKER_PLAYBOOK.md` |
-| 场景 Agent 脚手架 | 工装/家装/办公/餐饮/展陈/自定义 六个目录，**只有占位，无业务逻辑** |
+| 场景 Agent 脚手架 | 工装/家装/办公/餐饮/展陈/自定义 六个目录，已补商业/住宅/办公 preferences；仍只做轻量差异 |
 | 兼容层 | 旧 `scripts/`、`drivers/` 仍可用，真实实现已在 `core/` |
-| 测试 | `python -m unittest discover -s tests` 当前 13 项通过 |
+| 测试 | `python -m unittest discover -s tests` 当前 109 项通过 |
+| 高层 schema | `DESIGN_BRIEF`、`DRAWING_MODEL`、`PROJECT_MODEL`、`OBJECT_SPEC`、`STYLE_PROFILE`、`BLOCK_LIBRARY`、`LAYOUT_PROPOSAL`、`DESIGN_PROPOSAL`、`VERIFICATION_REPORT` 已有最小 schema 与 example |
+| 验证报告 | `core/verification/verification_report.py` 能区分已执行、已截图、几何验证、失败和未验证；缺 created handles 或截图文件不存在时不升级证据状态 |
+| 非 CAD pipeline | `scripts/run_non_cad_pipeline.py` 可生成 project/object/layout/proposal/CAD_PLAN/dry-run/verification artifacts |
+| 非 CAD benchmark | `scripts/run_benchmark_suite.py` 可重复运行 minimal benchmark 并输出 pass/fail 汇总 |
+| 设计引擎原型 | object/style/block/layout/proposal/plan 第一批 Core 原型已建立 |
 
 ### 未完成（别误以为已经有了）
 
 | 项目 | 状态 | 说明 |
 | --- | --- | --- |
-| 实体回读 `entity readback` | 未开始 | 还不能用 CAD 实体坐标证明「画准了」 |
-| 高层 schema | 占位 | `DESIGN_BRIEF`、`DRAWING_MODEL`、`PROJECT_MODEL` 等尚未建立 |
-| 设计大脑 | 未开始 | `drawing_model`、`object_engine`、`layout_engine`、`proposal_engine` 等 |
-| `core/safety` | 占位 | 安全规则仍在文档里，未收成可测试模块 |
-| 场景 Agent 业务 | 占位 | `agents/*` 不要扩写，等 Core 可复用后再补差异 |
-| 遗留目录收束 | 待第二轮 | `cad_agent/`、`libraries/domains/` 仍保留 |
+| 实体回读 `entity readback` | 原型 | 有 COM-like 实体标准化、created handles 摘要入口和 `--connect-cad` 显式入口，但真实 AutoCAD 回读还需实机验证 |
+| 高层 schema | 原型 | 9 个高层 schema、examples、workflow 引用检查已建立，后续要扩展反例 fixture 和职责边界测试 |
+| 设计大脑 | 原型 | object/style/block/layout/proposal/plan 已有第一批实现，尚未覆盖复杂图纸理解、真实块插入和多方案设计推理 |
+| `core/safety` | 原型 | `core/safety/policy.py` 已接入执行层；正式图层、保存、覆盖、删除仍需要显式批准 |
+| 场景 Agent 业务 | 数据层原型 | `agents/*` 仍不得实现 Core 算法；商业/住宅/办公 preferences 已有，更多场景差异待补 |
+| 遗留目录收束 | 原型 | `cad_agent/` 已标注 legacy；`libraries/domain_presets/` 为新入口，`libraries/domains/` 作为兼容副本保留 |
 
 ### Clone 后推荐动手顺序
 
@@ -67,14 +90,15 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 4. `CORE_RESTRUCTURE_PLAN.md` — **还没做什么**（剩余工作清单）
 5. `AGENTS.md` — Codex 绘图时必须遵守的规则
 
-**第 2 步：选一条开发主线（二选一，不要并行铺太开）**
+**第 2 步：选一条开发主线（三选一，不要并行铺太开）**
 
 | 路线 | 适合做什么 | 建议入口文件 |
 | --- | --- | --- |
-| **A. 实体回读** | 让「画准了」有证据，补验证闭环 | `core/verification/inspect_dwg.py`、`scripts/inspect_dwg.py` |
-| **B. 高层数据模型** | 从 `CAD_PLAN` 往上长设计大脑 | `core/schemas/`，新建 `DESIGN_BRIEF` / `DRAWING_MODEL` 等 schema |
+| **A. 实体回读** | 让「画准了」有证据，补真实 CAD 验证闭环 | `core/verification/inspect_dwg.py`、`scripts/inspect_dwg.py` |
+| **B. 高层数据模型** | 深化 schema 反例、引用检查、项目模型和计划生成 | `core/schemas/`、`core/model_loop/`、`core/project_model/`、`core/plan_engine/` |
+| **C. 非 CAD pipeline** | 在 CAD 不稳定时继续推进通用底座闭环 | `core/workflows/non_cad_pipeline.py`、`scripts/run_non_cad_pipeline.py` |
 
-仓库当前瓶颈是：**没有回读 = 无法证明几何正确**；**没有高层模型 = 只能从白话硬写 CAD_PLAN**。你更急哪边就先走哪条。
+仓库当前瓶颈是：**没有真实回读 = 无法证明几何正确**；**高层模型已有最小闭环，但复杂设计推理、通道模型、真实块库和多方案比较还不够厚**。你更急哪边就先走哪条。
 
 **第 3 步：暂不要做的事**
 
@@ -87,8 +111,8 @@ CAD-MCP / AutoCAD / ZWCAD 是执行工具，`CAD_PLAN` 是最终落图指令。�
 ```text
 阶段 0  架构冻结              done
 阶段 1  仓库重装 + 执行原型    done（prototype）
-阶段 2  Core 状态看板          scaffold（CORE_STATUS 已有，持续更新）
-阶段 3+ 数据模型 / 读图 / 对象 / 布局 / 方案   not_started 或 scaffold
+阶段 2  Core 状态看板 + 非 CAD 底座闭环   prototype（CORE_STATUS 持续更新）
+阶段 3+ 数据模型 / 读图 / 对象 / 布局 / 方案   prototype，复杂自动化仍待深化
 ```
 
 详细阶段划分见 `CORE_ROADMAP.md`。
@@ -139,6 +163,10 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 & $py scripts\execute_plan.py examples\plans\draw_test_cabinet.json   # 需 CAD 已打开
 & $py scripts\self_check.py
 & $py scripts\render_preview.py --check
+& $py scripts\inspect_dwg.py --plan examples\plans\draw_test_cabinet.json --format json --no-cad
+& $py scripts\run_non_cad_pipeline.py examples\workflows\full_non_cad_core_loop.json --output-dir output\test_artifacts\non_cad_pipeline\manual
+& $py scripts\run_benchmark_suite.py examples\benchmarks\non_cad_core_benchmark.json --output-root output\test_artifacts\benchmarks\manual
+& $py scripts\run_cad_validation.py --no-cad
 & $py -m unittest discover -s tests
 
 # 新 Core 入口
@@ -210,7 +238,7 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 | 脚本链 | `execute_plan.py` → AutoCAD COM → `CODEX_PREVIEW` |
 | MCP 链 | Codex/Cursor 调 CAD-MCP，在已打开 DWG 里能画简单实体 |
 
-**不是换机清单、但本机也尚未具备的能力：** 实体回读、设计大脑、`zwcad_com` 真驱动——换机全配也不会自动拥有，属于后续开发项。
+**不是换机清单、但本机也尚未完整具备的能力：** 真实 CAD 实体回读闭环、复杂设计大脑、`zwcad_com` 真驱动——换机全配也不会自动拥有，属于后续开发项。
 
 ### 开发机参考版本（2026-05-25 实测通过）
 
@@ -222,7 +250,7 @@ $py = 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe'
 | Pillow | 12.2.0 |
 | pywin32 / win32gui | 正常 import |
 | AutoCAD | COM 已连上活动图纸 |
-| 单元测试 | `unittest discover -s tests` → 13 passed |
+| 单元测试 | `unittest discover -s tests` → 109 passed |
 
 ### 换机流程总览
 
@@ -331,6 +359,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 & $py scripts\dry_run_plan.py examples\plans\draw_test_cabinet.json
 & $py scripts\render_preview.py --check
 & $py -m unittest discover -s tests
+& $py scripts\run_benchmark_suite.py examples\benchmarks\non_cad_core_benchmark.json --output-root output\test_artifacts\benchmarks\manual
 
 # 3) AutoCAD COM（必须先打开 DWG）
 & $py -c "from core.cad_io.autocad_com import AutoCADComDriver; d=AutoCADComDriver(); print('COM OK:', d.doc.Name)"
@@ -340,6 +369,9 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 # 5) 截图（必须能落盘）
 & $py scripts\render_preview.py --capture-screen --output output\previews\migration-check.png
+
+# 6) 自主 CAD 验证总控（回家或换机时推荐使用）
+& $py scripts\run_cad_validation.py --output-dir output\validation_runs\migration-check
 ```
 
 ### 通过标准（缺一即视为换机未完成）
@@ -351,7 +383,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `validate_plan` | 输出 `VALID CAD_PLAN` |
 | `dry_run_plan` | 正常预演输出 |
 | `render_preview --check` | `"status": "ready"`，且 `pillow_imagegrab: true` |
-| `unittest` | `OK`，13 tests |
+| `unittest` | `OK`，109 tests |
 | COM 探测 | 打印当前活动 DWG 文件名 |
 | `execute_plan` | 图上出现 `CODEX_PREVIEW` 测试柜 |
 | `--capture-screen` | 生成 `output\previews\migration-check.png` |

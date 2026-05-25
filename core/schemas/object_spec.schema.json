@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "object_spec.schema.json",
+  "title": "OBJECT_SPEC",
+  "type": "object",
+  "required": ["version", "object_id", "type", "name", "size", "components", "drawing_intent"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "object_id": { "type": "string" },
+    "type": { "type": "string", "enum": ["cabinet", "shelf", "table"] },
+    "name": { "type": "string" },
+    "style_profile_id": { "type": "string" },
+    "size": {
+      "type": "object",
+      "required": ["width", "depth", "height"],
+      "properties": {
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["component_id", "role"],
+        "properties": {
+          "component_id": { "type": "string" },
+          "role": { "type": "string" },
+          "count": { "type": "integer", "minimum": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "placement_requirements": { "type": "array", "items": { "type": "string" } },
+    "drawing_intent": { "type": "string", "enum": ["plan_preview", "elevation_preview"] }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,20 @@
+{
+  "version": "0.1",
+  "library_id": "builtin-minimal-blocks",
+  "blocks": [
+    {
+      "block_id": "block-generic-cabinet-1800",
+      "name": "Generic Cabinet 1800",
+      "category": "cabinet",
+      "domain": "generic",
+      "size": {
+        "width": 1800,
+        "depth": 600
+      },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 100,
+      "tags": ["fallback", "preview"]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "version": "0.1",
+  "project_id": "project-office-preview",
+  "domain": "office",
+  "units": "mm",
+  "brief_id": "brief-office-preview",
+  "drawing_model_id": "drawing-office-manual-suite",
+  "spaces": [
+    {
+      "space_id": "space-open-office",
+      "name": "Open Office",
+      "boundary": {
+        "min": [0, 0],
+        "max": [9000, 6200]
+      }
+    }
+  ],
+  "requirements": [
+    "Generate preview desk and collaboration area placements without CAD execution."
+  ],
+  "constraints": [
+    "Reserve circulation space for review before converting to CAD_PLAN."
+  ],
+  "pending_questions": [
+    "Confirm team count and meeting room boundary."
+  ]
+}

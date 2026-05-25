@@ -1,0 +1,14 @@
+{
+  "version": "0.1",
+  "circulation_id": "circulation-minimal-retail",
+  "shell_id": "shell-minimal-retail",
+  "paths": [
+    {
+      "path_id": "path-main-entry",
+      "type": "main",
+      "width_mm": 1200,
+      "start": [4000, 0],
+      "end": [4000, 5000]
+    }
+  ]
+}

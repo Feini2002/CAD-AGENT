@@ -16,7 +16,7 @@
 - `scripts/self_check.py`
 - `CAD_AGENT_BLOCKER_PLAYBOOK.md`
 
-当前状态：prototype。自检、截图检查和 inspect 脚手架已迁入本模块；实体回读仍为 not_started。
+当前状态：prototype。自检、截图检查、`VERIFICATION_REPORT`、fake readback 几何比较、COM-like 实体标准化和 `inspect_dwg.py --connect-cad` 显式入口已建立；真实 CAD 实体回读仍需在已打开 DWG 中实机验证。
 
 边界：
 

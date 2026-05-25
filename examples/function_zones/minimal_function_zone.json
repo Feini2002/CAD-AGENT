@@ -1,0 +1,13 @@
+{
+  "version": "0.1",
+  "zone_id": "zone-display",
+  "shell_id": "shell-minimal-retail",
+  "name": "Display Zone",
+  "purpose": "display",
+  "boundary": {
+    "min": [0, 800],
+    "max": [3500, 5000]
+  },
+  "preferred_objects": ["shelf", "cabinet"],
+  "constraints": ["Keep clear of the main circulation path."]
+}

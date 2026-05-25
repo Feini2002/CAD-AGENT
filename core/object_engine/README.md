@@ -12,7 +12,7 @@
 
 - 收银台、床、墙板、隔断、展示柜等。
 
-当前状态：not_started。现有测试柜只是执行层样例，不代表对象引擎已完成。
+当前状态：prototype。`parametric_objects.py` 已支持 cabinet、shelf、table 的最小 `OBJECT_SPEC`，并可转换为预览用 `CAD_PLAN`。现有能力仍是第一批原型，不代表复杂对象引擎已完成。
 
 边界：
 

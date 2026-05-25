@@ -1,0 +1,27 @@
+{
+  "version": "0.1",
+  "project_id": "project-residential-preview",
+  "domain": "residential",
+  "units": "mm",
+  "brief_id": "brief-residential-preview",
+  "drawing_model_id": "drawing-residential-manual-room",
+  "spaces": [
+    {
+      "space_id": "space-living-room",
+      "name": "Living Room",
+      "boundary": {
+        "min": [0, 0],
+        "max": [5200, 3600]
+      }
+    }
+  ],
+  "requirements": [
+    "Keep furniture preview objects inside the room boundary."
+  ],
+  "constraints": [
+    "Treat all placements as preview intent until confirmed by the user."
+  ],
+  "pending_questions": [
+    "Confirm door swing and fixed furniture locations."
+  ]
+}

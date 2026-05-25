@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design_brief.schema.json",
+  "title": "DESIGN_BRIEF",
+  "type": "object",
+  "required": ["version", "brief_id", "domain", "user_request", "intent", "needs_confirmation"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "brief_id": { "type": "string" },
+    "domain": { "type": "string" },
+    "user_request": { "type": "string" },
+    "intent": { "type": "string" },
+    "source_language": { "type": "string" },
+    "constraints": { "type": "array", "items": { "type": "string" } },
+    "assumptions": { "type": "array", "items": { "type": "string" } },
+    "needs_confirmation": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

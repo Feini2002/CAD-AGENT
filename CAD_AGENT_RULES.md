@@ -18,6 +18,12 @@
 - 展厅展陈
 - 其他 CAD 平面绘制、布置、标注和修改场景
 
+## 0.1 默认中文沟通
+
+面向用户的说明、状态汇报、方案讨论、追问和最终结论默认使用中文。代码、命令、路径、文件名、Schema 字段、JSON key、工具名和 API 名称可以保留英文或原文。
+
+如果外部 Skill、插件或工具模板提供英文流程，Codex 应先理解其含义，再用中文转述给用户；除非用户明确要求英文，不要把英文模板原样作为面向用户的输出。
+
 ## 1. 不直接从白话画 CAD
 
 用户用白话或语音提出需求后，Codex 必须先生成 `CAD_PLAN`。
@@ -112,3 +118,15 @@
 - 修复后更新 `CAD_AGENT_STATUS.md`、`CAD_AGENT_CHANGELOG.md`，失败或踩坑还要更新 `CAD_AGENT_ISSUES.md`。
 
 如果当前没有自检或截图能力，先补自检或截图入口，再继续推进依赖它们的绘图修复。
+
+## 9. CAD 层面验证要走自主验证闭环
+
+当用户要求在真实 CAD 环境中按计划做 CAD 层面验证、换机验收或回读补验时，Codex 应优先读取 `CAD_AGENT_AUTONOMOUS_VALIDATION.md`，并运行：
+
+```powershell
+& $py scripts\run_cad_validation.py
+```
+
+不得遇到第一个失败就停止。仓库内可修问题应由 Codex 自己最小复现、最小修复并重新运行验证；只有依赖安装、AutoCAD 授权/窗口/活动 DWG、正式图层/保存/删除/覆盖、或真实项目语义缺失时，才停下来问用户。
+
+验证结果必须以 `output/validation_runs/<timestamp>/report.json` 和 `report.md` 为证据。没有通过真实 CAD 落图、截图和实体回读时，不得声称几何准确。

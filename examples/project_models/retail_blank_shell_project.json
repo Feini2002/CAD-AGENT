@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "project_id": "project-retail-blank-shell",
+  "domain": "retail",
+  "units": "mm",
+  "brief_id": "brief-retail-blank-shell",
+  "drawing_model_id": "drawing-retail-manual-shell",
+  "spaces": [
+    {
+      "space_id": "space-sales-floor",
+      "name": "Sales Floor",
+      "boundary": {
+        "min": [0, 0],
+        "max": [8000, 5000]
+      }
+    }
+  ],
+  "requirements": [
+    "Create a repeatable preview layout for retail fixtures before CAD execution."
+  ],
+  "constraints": [
+    "Keep main aisle readable in non-CAD checks.",
+    "Do not write to formal CAD layers without approval."
+  ],
+  "pending_questions": [
+    "Confirm storefront entrance and checkout position before real CAD output."
+  ]
+}

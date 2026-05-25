@@ -62,7 +62,7 @@
 - 每个 example 可以校验。
 - 高层模型和最终 `CAD_PLAN` 的职责边界清楚。
 
-当前状态：not_started。
+当前状态：prototype。9 个高层 schema、最小 example、轻量校验器、模型间引用检查和每个注册模型的 invalid fixture 已建立，后续需要扩展更贴近真实项目的正反例。
 
 ## 阶段 4：对象与风格底座
 
@@ -80,7 +80,7 @@
 - 绘制到 `CODEX_PREVIEW`。
 - 验证主要尺寸和图层。
 
-当前状态：not_started。现有测试柜是执行层样例，不等同于对象引擎。
+当前状态：prototype。已建立 cabinet/shelf/table 的最小 `OBJECT_SPEC` 生成和 `OBJECT_SPEC -> CAD_PLAN`，但现有测试柜仍只是第一批对象闭环样例。
 
 ## 阶段 5：图库块底座
 
@@ -95,7 +95,7 @@
 - 能按用途选择块。
 - 能插入块到预览层。
 
-当前状态：not_started。
+当前状态：prototype。已建立 modern/european/minimal 风格 profile 加载，尚未将风格 token 深度影响 CAD 细节。
 
 ## 阶段 6：布局底座
 
@@ -111,7 +111,7 @@
 - 可检查基本通道。
 - 可输出 `LAYOUT_PROPOSAL`。
 
-当前状态：not_started。
+当前状态：prototype。已建立 `BLOCK_LIBRARY` schema、示例块库和筛选逻辑，示例块已覆盖 cabinet/table/shelf/chair/counter；尚未接真实块插入。
 
 ## 阶段 7：图纸理解底座
 
@@ -126,7 +126,7 @@
 - 能初步识别空间名和边界候选。
 - 能把不确定点列出来。
 
-当前状态：not_started。
+当前状态：prototype。已建立 bbox、碰撞和单对象边界内布置，尚未覆盖多对象布局、通道和评分。
 
 ## 阶段 8：方案推理底座
 
@@ -140,7 +140,7 @@
 - 方案包含依据、推断、不确定点。
 - 用户确认后可转 CAD_PLAN。
 
-当前状态：not_started。
+当前状态：prototype。已建立最小 `DESIGN_PROPOSAL`、确认后转 `CAD_PLAN` 和 layout candidates 比较；尚未覆盖真实多方案设计推理和用户确认流。
 
 ## 阶段 9：轻量场景 Agent
 
@@ -170,6 +170,22 @@
 ```
 
 当前状态：not_started。
+
+## 阶段 N：Core 方法论内化层
+
+目标：
+- 建立能力目录/runtime，让 Core 能力可发现、可验证、可风险分级。
+- 建立 workflow artifact graph，让中间产物顺序、路径和依赖可追踪。
+- 建立 geometry backend registry，让当前无依赖 bbox 检查和未来成熟几何库适配有统一槽位。
+- 建立 non-CAD benchmark runner，让端到端样例可重复评测。
+
+完成标准：
+- capability catalog 可列出能力、输入 schema、输出 contract、CAD 依赖和验证命令。
+- artifact graph 可排序、检查路径并发现循环依赖。
+- geometry backend registry 不引入新依赖，外部库只作为可选槽位。
+- benchmark runner 可输出 pass/fail 汇总。
+
+当前状态：prototype。`core/capabilities`、`core/workflows/artifact_graph.py`、`core/geometry_backends`、`core/benchmarks` 已建立；真实 CAD 验证仍走延后补验清单。
 
 ## 路线约束
 

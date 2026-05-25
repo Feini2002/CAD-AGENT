@@ -1,0 +1,49 @@
+{
+  "version": "0.1",
+  "drawing_id": "drawing-sample-blank-shell",
+  "source": "manual_annotation",
+  "units": "mm",
+  "layers": [
+    {
+      "name": "MANUAL_SHELL",
+      "role": "manual_boundary",
+      "entity_count": 0
+    }
+  ],
+  "entities_summary": {
+    "line_count": 0,
+    "text_count": 0,
+    "dimension_count": 0,
+    "block_count": 0
+  },
+  "spaces": [
+    {
+      "space_id": "space-main",
+      "name": "Main shell",
+      "boundary": {
+        "min": [0, 0],
+        "max": [9000, 5200]
+      },
+      "entrances": [
+        {
+          "id": "entrance-main",
+          "point": [0, 2600],
+          "width": 1200
+        }
+      ],
+      "avoid_zones": [
+        {
+          "id": "column-01",
+          "bbox": {
+            "min": [4200, 2200],
+            "max": [4600, 2600]
+          }
+        }
+      ]
+    }
+  ],
+  "uncertainties": [
+    "Manual shell boundary has not been confirmed from CAD readback.",
+    "Avoid zones are hand-authored and require project confirmation."
+  ]
+}

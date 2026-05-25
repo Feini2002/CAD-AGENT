@@ -2,8 +2,14 @@
 docs/archive/
 
 # Generated preview/output artifacts
+output/*
+!output/
+!output/previews/
 output/previews/*
 !output/previews/README.md
+
+# Local tool logs
+cad_mcp.log
 
 # Python/runtime caches
 __pycache__/
@@ -19,4 +25,3 @@ venv/
 *.dwl
 *.dwl2
 *.bak
-

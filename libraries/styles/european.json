@@ -1,0 +1,11 @@
+{
+  "version": "0.1",
+  "style_id": "style-european",
+  "name": "European",
+  "tokens": {
+    "detail_level": "high",
+    "label_policy": "object_and_size",
+    "line_weight": "medium"
+  },
+  "rules": ["top rail", "base rail", "front panel divisions", "ornamental preview lines"]
+}

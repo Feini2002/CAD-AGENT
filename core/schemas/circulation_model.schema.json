@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "circulation_model.schema.json",
+  "title": "CIRCULATION_MODEL",
+  "type": "object",
+  "required": ["version", "circulation_id", "shell_id", "paths"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "circulation_id": { "type": "string" },
+    "shell_id": { "type": "string" },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path_id", "type", "width_mm", "start", "end"],
+        "properties": {
+          "path_id": { "type": "string" },
+          "type": { "type": "string", "enum": ["main", "secondary"] },
+          "width_mm": { "type": "number", "exclusiveMinimum": 0 },
+          "start": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+          "end": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

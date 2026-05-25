@@ -26,7 +26,7 @@ def driver_status() -> str:
 
 
 class AutoCADComDriver:
-    def __init__(self) -> None:
+    def __init__(self, *, connect_existing_only: bool = False) -> None:
         try:
             import win32com.client
         except ImportError as exc:
@@ -36,6 +36,8 @@ class AutoCADComDriver:
         try:
             self.app = win32com.client.GetActiveObject("AutoCAD.Application")
         except Exception:
+            if connect_existing_only:
+                raise RuntimeError("No active AutoCAD.Application instance is available.")
             self.app = win32com.client.Dispatch("AutoCAD.Application")
         self.doc = self.app.ActiveDocument
         self.model_space = self.doc.ModelSpace
@@ -55,6 +57,10 @@ class AutoCADComDriver:
             if color_value is not None:
                 entity.Color = color_value
 
+    @staticmethod
+    def _handle(entity: Any) -> str:
+        return str(getattr(entity, "Handle", getattr(entity, "handle", "")))
+
     def draw_rectangle(
         self,
         *,
@@ -63,7 +69,7 @@ class AutoCADComDriver:
         layer: str | None = None,
         color: str | None = None,
         **_: object,
-    ) -> None:
+    ) -> dict[str, list[str]]:
         x1, y1, z1 = corner1
         x2, y2, _z2 = corner2
         points = [
@@ -72,9 +78,14 @@ class AutoCADComDriver:
             ((x2, y2, z1), (x1, y2, z1)),
             ((x1, y2, z1), (x1, y1, z1)),
         ]
+        handles: list[str] = []
         for start, end in points:
             entity = self.model_space.AddLine(start, end)
             self._apply_common(entity, layer=layer, color=color)
+            handle = self._handle(entity)
+            if handle:
+                handles.append(handle)
+        return {"handles": handles}
 
     def draw_text(
         self,
@@ -86,10 +97,11 @@ class AutoCADComDriver:
         color: str | None = None,
         rotation: float | int = 0,
         **_: object,
-    ) -> None:
+    ) -> dict[str, str]:
         entity = self.model_space.AddText(text, tuple(position), height)
         entity.Rotation = rotation
         self._apply_common(entity, layer=layer, color=color)
+        return {"handle": self._handle(entity)}
 
     def add_dimension(
         self,
@@ -101,7 +113,7 @@ class AutoCADComDriver:
         color: str | None = None,
         textheight: float | int | None = None,
         **_: object,
-    ) -> None:
+    ) -> dict[str, str]:
         if text_position is None:
             text_position = [
                 (start_point[0] + end_point[0]) / 2,
@@ -112,3 +124,15 @@ class AutoCADComDriver:
         if textheight is not None:
             entity.TextHeight = textheight
         self._apply_common(entity, layer=layer, color=color)
+        return {"handle": self._handle(entity)}
+
+    def snapshot_modelspace(self, *, layer: str | None = None) -> list[dict[str, object]]:
+        from core.verification.inspect_dwg import normalize_com_entity
+
+        entities: list[dict[str, object]] = []
+        for entity in self.model_space:
+            normalized = normalize_com_entity(entity)
+            if layer and normalized.get("layer") != layer:
+                continue
+            entities.append(normalized)
+        return entities

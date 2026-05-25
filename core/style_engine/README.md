@@ -14,7 +14,7 @@
 - 现代：平板、隐藏把手、低装饰线。
 - 极简：少分缝、少线条、弱装饰。
 
-当前状态：not_started。
+当前状态：prototype。`style_profile.py` 已支持加载 `libraries/styles/modern.json`、`european.json`、`minimal.json`，尚未把风格 token 深度转为复杂 CAD 细节。
 
 边界：
 

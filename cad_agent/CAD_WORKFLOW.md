@@ -1,6 +1,12 @@
-# CAD Agent 工作流
+# legacy: CAD Agent 工作流
 
-本工作流是通用流程，不绑定当前家装图纸。进入任何具体项目时，先读取该项目的上下文，再生成 CAD_PLAN。
+本文件是第一轮重装前的旧入口，已经收束到：
+
+- `docs/architecture/cad_workflow.md`
+- `docs/architecture/cad_plan_boundary.md`
+- `core/safety/README.md`
+
+新开发不要再以 `cad_agent/` 为入口。下面内容仅作为历史兼容说明保留。
 
 ## 标准流程
 

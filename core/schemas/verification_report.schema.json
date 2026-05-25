@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "verification_report.schema.json",
+  "title": "VERIFICATION_REPORT",
+  "type": "object",
+  "required": ["version", "report_id", "status", "plan_path", "expected", "actual", "checks", "evidence", "limitations", "requires_real_cad"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "report_id": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["unverified", "executed_only", "screenshot_captured", "geometry_verified", "failed"]
+    },
+    "plan_path": { "type": "string" },
+    "expected": {
+      "type": "object",
+      "required": ["layer", "object_name", "object_type", "object_size", "base_point", "include_label", "include_dimensions"],
+      "properties": {
+        "layer": { "type": "string" },
+        "object_name": { "type": "string" },
+        "object_type": { "type": "string" },
+        "object_size": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "base_point": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "number" } },
+        "include_label": { "type": "boolean" },
+        "include_dimensions": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "actual": {
+      "type": "object",
+      "required": ["entities", "readback_available"],
+      "properties": {
+        "entities": { "type": "array", "items": { "type": "object" } },
+        "readback_available": { "type": "boolean" },
+        "layer_counts": { "type": "object" },
+        "bbox": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": { "type": "string", "enum": ["pass", "fail", "warning", "not_run"] },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["execution_summary", "screenshot", "readback_source"],
+      "properties": {
+        "execution_summary": { "type": "object" },
+        "screenshot": { "type": "string" },
+        "readback_source": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "requires_real_cad": { "type": "array", "items": { "type": "string" } },
+    "repair_suggestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["check", "suggestion"],
+        "properties": {
+          "check": { "type": "string" },
+          "suggestion": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

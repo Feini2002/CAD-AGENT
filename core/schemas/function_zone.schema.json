@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "function_zone.schema.json",
+  "title": "FUNCTION_ZONE",
+  "type": "object",
+  "required": ["version", "zone_id", "shell_id", "name", "purpose", "boundary", "preferred_objects", "constraints"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "zone_id": { "type": "string" },
+    "shell_id": { "type": "string" },
+    "name": { "type": "string" },
+    "purpose": { "type": "string" },
+    "boundary": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "max": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+      },
+      "additionalProperties": false
+    },
+    "preferred_objects": { "type": "array", "items": { "type": "string" } },
+    "constraints": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

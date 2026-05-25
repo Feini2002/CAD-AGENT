@@ -1,4 +1,16 @@
-# CAD_PLAN 第一版说明
+# legacy: CAD_PLAN 第一版说明
+
+本文件是旧说明入口。机器可校验的权威 schema 位于：
+
+- `core/schemas/cad_plan.schema.json`
+- `core/schemas/*.schema.json`
+
+高层模型边界说明见：
+
+- `docs/architecture/cad_plan_boundary.md`
+- `core/schemas/README.md`
+
+以下旧说明仅作为历史兼容记录。
 
 `CAD_PLAN` 是用户白话和 CAD 绘制脚本之间的中间层。
 
