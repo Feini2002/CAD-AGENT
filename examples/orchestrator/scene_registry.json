@@ -1,0 +1,157 @@
+{
+  "version": "0.1",
+  "registry_id": "core-scene-registry",
+  "description": "Core Orchestrator scene registry: ids, maturity, trigger terms, capabilities, and disable conditions.",
+  "default_scene_id": "no_scene",
+  "scenes": [
+    {
+      "scene_id": "no_scene",
+      "display_name": "Generic Core (no scene)",
+      "maturity": "core_only",
+      "description": "Default route when user or manifest does not specify a scene module.",
+      "trigger_terms": [],
+      "capabilities": [
+        "generic_core_workflows",
+        "cad_plan_validate_dry_run",
+        "object_engine",
+        "layout_engine",
+        "verification"
+      ],
+      "disabled_conditions": [],
+      "auto_activate": false,
+      "may_bypass_core": false,
+      "notes": ["Must be used when scene is unspecified or activation confidence is low."]
+    },
+    {
+      "scene_id": "office",
+      "display_name": "Office",
+      "maturity": "scene_beta",
+      "description": "Office layout preferences and Scene Beta non-CAD benchmark; not a Scene Product.",
+      "trigger_terms": ["办公", "办公室", "工位", "会议室", "office", "workplace"],
+      "capabilities": [
+        "preferences",
+        "explanation_template",
+        "scene_beta_benchmark",
+        "circulation_preferences"
+      ],
+      "disabled_conditions": [
+        "no_explicit_scene_or_manifest",
+        "user_request_is_generic_draw_only"
+      ],
+      "agent_dir": "agents/office",
+      "preferences_path": "agents/office/preferences.json",
+      "workflows": [],
+      "auto_activate": false,
+      "may_bypass_core": false
+    },
+    {
+      "scene_id": "residential",
+      "display_name": "Residential",
+      "maturity": "scene_beta",
+      "description": "Residential preferences and Scene Beta benchmark; not a Scene Product.",
+      "trigger_terms": ["住宅", "家装", "卧室", "厨房", "residential", "home interior"],
+      "capabilities": [
+        "preferences",
+        "explanation_template",
+        "scene_beta_benchmark",
+        "room_clearance_preferences"
+      ],
+      "disabled_conditions": [
+        "no_explicit_scene_or_manifest",
+        "user_request_is_generic_draw_only"
+      ],
+      "agent_dir": "agents/residential",
+      "preferences_path": "agents/residential/preferences.json",
+      "workflows": [],
+      "auto_activate": false,
+      "may_bypass_core": false
+    },
+    {
+      "scene_id": "restaurant",
+      "display_name": "Restaurant",
+      "maturity": "scene_beta",
+      "description": "Restaurant preferences and Scene Beta benchmark; not a Scene Product.",
+      "trigger_terms": ["餐饮", "餐厅", "后厨", "前厅", "restaurant", "dining"],
+      "capabilities": [
+        "preferences",
+        "explanation_template",
+        "scene_beta_benchmark",
+        "seating_circulation_preferences"
+      ],
+      "disabled_conditions": [
+        "no_explicit_scene_or_manifest",
+        "user_request_is_generic_draw_only"
+      ],
+      "agent_dir": "agents/restaurant",
+      "preferences_path": "agents/restaurant/preferences.json",
+      "workflows": [],
+      "auto_activate": false,
+      "may_bypass_core": false
+    },
+    {
+      "scene_id": "commercial_fitout",
+      "display_name": "Commercial Fitout",
+      "maturity": "scaffold",
+      "description": "Office fitout Scene Product Alpha scope: open_office, meeting_room, reception; no full construction documents.",
+      "trigger_terms": [
+        "工装",
+        "办公工装",
+        "开放办公",
+        "会议室",
+        "前台",
+        "commercial fitout",
+        "office fitout"
+      ],
+      "capabilities": [
+        "preferences",
+        "subscene_scope",
+        "workflow_docs",
+        "rules_md"
+      ],
+      "scope_path": "agents/commercial_fitout/subscenes.json",
+      "disabled_conditions": [
+        "no_explicit_scene_or_manifest",
+        "missing_project_sample_or_block_metadata",
+        "real_cad_geometry_not_verified"
+      ],
+      "agent_dir": "agents/commercial_fitout",
+      "preferences_path": "agents/commercial_fitout/preferences.json",
+      "workflows": ["blank_store_to_layout", "existing_plan_to_elevation"],
+      "auto_activate": false,
+      "may_bypass_core": false,
+      "notes": [
+        "C-CFIT-01 scope: open_office, meeting_room, reception only.",
+        "Do not claim full construction documents or geometry_verified without real CAD readback."
+      ]
+    },
+    {
+      "scene_id": "exhibition",
+      "display_name": "Exhibition",
+      "maturity": "scaffold",
+      "description": "Exhibition scene scaffold for demand-side pressure tests only.",
+      "trigger_terms": ["展陈", "展览", "展台", "exhibition", "display booth"],
+      "capabilities": ["preferences", "rules_md"],
+      "disabled_conditions": ["no_explicit_scene_or_manifest"],
+      "agent_dir": "agents/exhibition",
+      "workflows": [],
+      "auto_activate": false,
+      "may_bypass_core": false
+    },
+    {
+      "scene_id": "custom",
+      "display_name": "Custom",
+      "maturity": "scaffold",
+      "description": "Placeholder for bespoke projects; requires explicit manifest activation.",
+      "trigger_terms": ["定制", "特殊项目", "custom project"],
+      "capabilities": ["rules_md"],
+      "disabled_conditions": [
+        "no_project_manifest_scene_id",
+        "no_explicit_user_confirmation"
+      ],
+      "agent_dir": "agents/custom",
+      "workflows": [],
+      "auto_activate": false,
+      "may_bypass_core": false
+    }
+  ]
+}

@@ -12,3 +12,4 @@
 
 - `shell-layout-time-estimate.md`：早期空壳布局时间估算和预期管理材料。
 - `core-platform-md-split-plan-2026-05-25.md`：已执行的主平台 Markdown 精细化拆分记录。
+- `root-md-full-snapshot-2026-05-26/`：根目录高频 MD 精度压缩前的完整快照；用于追溯旧完成记录，不作为默认上下文入口。

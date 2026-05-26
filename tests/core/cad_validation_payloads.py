@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from core.verification.entity_level_evidence import minimal_verified_entity_evidence
+from core.verification.created_handle_scope import analyze_created_handle_scope
+from core.verification.preview_only_audit import attach_preview_only_audit, build_preview_only_audit, with_legacy_safety_aliases
 from core.verification.evidence_contract import (
     EVIDENCE_CAD_CAPABILITY_VERIFIED,
     EVIDENCE_READBACK_GEOMETRY_VERIFIED,
@@ -42,6 +44,17 @@ def block_alpha_geometry_verified_payload() -> dict[str, object]:
     }
 
 
+def execution_summary_payload(*, handles: list[str], layer: str = "CODEX_PREVIEW") -> dict[str, object]:
+    return attach_preview_only_audit(
+        {
+            "status": "executed",
+            "layer": layer,
+            "created_handles": handles,
+        },
+        layer=layer,
+    )
+
+
 def cad_capability_verified_probe_payload(**extra: object) -> dict[str, object]:
     payload: dict[str, object] = {
         "status": "cad_capability_verified",
@@ -56,7 +69,9 @@ def cad_capability_verified_probe_payload(**extra: object) -> dict[str, object]:
         "checks": [
             {"name": "handle_readback_count", "status": "pass"},
             {"name": "readback_type_counts", "status": "pass"},
+            {"name": "preview_only_audit", "status": "pass"},
         ],
+        "safety": with_legacy_safety_aliases(build_preview_only_audit()),
     }
     payload.update(extra)
     return payload
@@ -68,6 +83,8 @@ def readback_geometry_verified_payload(
     screenshot: Path | None = None,
 ) -> dict[str, object]:
     screenshot_value = str(screenshot) if screenshot is not None else ""
+    entities = [{"handle": handle, "type": "line", "layer": "CODEX_PREVIEW"}]
+    scope = analyze_created_handle_scope(input_handles=[handle], readback_entities=entities)
     return {
         "status": "geometry_verified",
         "evidence_state": EVIDENCE_READBACK_GEOMETRY_VERIFIED,
@@ -78,8 +95,9 @@ def readback_geometry_verified_payload(
             "screenshot": screenshot_value,
         },
         "actual": {
-            "entities": [{"handle": handle, "type": "line", "layer": "CODEX_PREVIEW"}],
+            "entities": entities,
             "created_handles": [handle],
+            "created_handle_scope": scope,
         },
         "checks": [
             {"name": "readback_scope", "status": "pass"},

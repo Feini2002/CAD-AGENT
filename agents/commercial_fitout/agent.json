@@ -2,13 +2,19 @@
   "id": "commercial_fitout",
   "name": "Commercial Fitout Agent",
   "type": "scene_agent",
-  "status": "scaffold",
+  "status": "scene_product_alpha_scope",
   "coreReuseRequired": true,
+  "scopePath": "agents/commercial_fitout/subscenes.json",
+  "objectCatalogPath": "agents/commercial_fitout/capabilities/object_catalog.json",
+  "blockMappingPath": "agents/commercial_fitout/capabilities/block_mapping.json",
+  "scopeDocument": "agents/commercial_fitout/SCOPE.md",
+  "primarySubscenes": ["open_office", "meeting_room", "reception"],
   "scope": [
-    "retail_store",
     "commercial_fitout",
-    "store_layout",
-    "store_elevation"
+    "open_office",
+    "meeting_room",
+    "reception",
+    "office_fitout_layout"
   ],
   "workflows": [
     "existing_plan_to_elevation",

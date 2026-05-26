@@ -31,7 +31,7 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
                 "role": "primary_bed",
                 "base_point": [200, 200, 0],
                 "size": {"width": 2000, "depth": 1500, "height": 600},
-                "include_dimensions": True,
+                "include_dimensions": False,
             },
         ],
     },
@@ -46,7 +46,7 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
                 "role": "dining_surface",
                 "base_point": [600, 600, 0],
                 "size": {"width": 1600, "depth": 900, "height": 750},
-                "include_dimensions": True,
+                "include_dimensions": False,
             },
             {
                 "instance_id": "chair-01",
@@ -97,7 +97,7 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
                 "role": "work_surface",
                 "base_point": [0, 800, 0],
                 "size": {"width": 1400, "depth": 700, "height": 750},
-                "include_dimensions": True,
+                "include_dimensions": False,
             },
             {
                 "instance_id": "chair-01",
@@ -132,7 +132,7 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
                 "role": "work_surface",
                 "base_point": [0, 600, 0],
                 "size": {"width": 1400, "depth": 700, "height": 750},
-                "include_dimensions": True,
+                "include_dimensions": False,
             },
             {
                 "instance_id": "chair-01",
@@ -183,7 +183,7 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
                 "role": "work_surface",
                 "base_point": [0, 0, 0],
                 "size": {"width": 1400, "depth": 700, "height": 750},
-                "include_dimensions": True,
+                "include_dimensions": False,
             },
             {
                 "instance_id": "chair-01",
@@ -239,7 +239,7 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
                 "role": "reception_surface",
                 "base_point": [1400, 0, 0],
                 "size": {"width": 1400, "depth": 700, "height": 750},
-                "include_dimensions": True,
+                "include_dimensions": False,
             },
         ],
         "clearance_refs": [
@@ -327,6 +327,231 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
         ],
         "layout_notes": ["chair_pullback_and_cabinet_front_clearance_intentionally_overlap"],
     },
+    "fitout_open_office_desk_chair": {
+        "name": "Fitout Open Office Desk Chair",
+        "domain": "office",
+        "objects": [
+            {
+                "instance_id": "desk-01",
+                "type": "desk",
+                "name": "Office Desk",
+                "role": "work_surface",
+                "base_point": [0, 900, 0],
+                "size": {"width": 1400, "depth": 700, "height": 750},
+                "include_dimensions": False,
+            },
+            {
+                "instance_id": "chair-01",
+                "type": "chair",
+                "name": "Task Chair",
+                "role": "seating_for_desk",
+                "base_point": [450, 0, 0],
+                "size": {"width": 520, "depth": 520, "height": 850},
+                "include_dimensions": False,
+            },
+        ],
+        "bindings": [
+            {"from_instance_id": "chair-01", "to_instance_id": "desk-01", "relation": "seating_for_desk"}
+        ],
+        "clearance_refs": [
+            {
+                "role": "chair_pullback_clearance",
+                "bound_to": "chair-01",
+                "behind_depth_mm": 800,
+                "side_margin_mm": 150,
+            }
+        ],
+        "layout_notes": ["open_office_workstation_pair"],
+    },
+    "fitout_reception_counter_waiting": {
+        "name": "Fitout Reception Counter and Waiting",
+        "domain": "office",
+        "objects": [
+            {
+                "instance_id": "counter-reception",
+                "type": "desk",
+                "name": "Reception Counter",
+                "role": "reception_counter",
+                "base_point": [2600, 0, 0],
+                "size": {"width": 2400, "depth": 900, "height": 1100},
+                "include_dimensions": False,
+            },
+            {
+                "instance_id": "sofa-waiting",
+                "type": "sofa",
+                "name": "Waiting Sofa",
+                "role": "waiting_seating",
+                "base_point": [5200, 200, 0],
+                "size": {"width": 2200, "depth": 900, "height": 850},
+                "include_dimensions": False,
+            },
+        ],
+        "clearance_refs": [
+            {
+                "role": "entry_clearance",
+                "opening_id": "entry-main",
+                "clear_depth_mm": 1200,
+                "clear_width_mm": 2400,
+            }
+        ],
+        "layout_notes": ["reception_counter_outside_entry_clearance"],
+    },
+    "fitout_meeting_table_chairs": {
+        "name": "Fitout Meeting Table and Chairs",
+        "domain": "office",
+        "objects": [
+            {
+                "instance_id": "table-meeting",
+                "type": "table",
+                "name": "Meeting Table",
+                "role": "meeting_surface",
+                "base_point": [1000, 1000, 0],
+                "size": {"width": 3200, "depth": 1400, "height": 750},
+                "include_dimensions": False,
+            },
+            {
+                "instance_id": "chair-north-01",
+                "type": "chair",
+                "name": "Meeting Chair",
+                "role": "meeting_seating",
+                "base_point": [1600, 2600, 0],
+                "size": {"width": 520, "depth": 520, "height": 850},
+                "include_dimensions": False,
+            },
+            {
+                "instance_id": "chair-south-01",
+                "type": "chair",
+                "name": "Meeting Chair",
+                "role": "meeting_seating",
+                "base_point": [1600, 200, 0],
+                "size": {"width": 520, "depth": 520, "height": 850},
+                "include_dimensions": False,
+            },
+        ],
+        "bindings": [
+            {"from_instance_id": "chair-north-01", "to_instance_id": "table-meeting", "relation": "seating_for_table"},
+            {"from_instance_id": "chair-south-01", "to_instance_id": "table-meeting", "relation": "seating_for_table"},
+        ],
+        "layout_notes": ["meeting_room_table_with_two_chairs"],
+    },
+    "fitout_reception_entry_conflict": {
+        "name": "Fitout Reception Entry Conflict",
+        "domain": "office",
+        "objects": [
+            {
+                "instance_id": "counter-entry-blocked",
+                "type": "desk",
+                "name": "Blocking Reception Counter",
+                "role": "reception_counter",
+                "base_point": [200, 200, 0],
+                "size": {"width": 2400, "depth": 900, "height": 1100},
+                "include_dimensions": False,
+            }
+        ],
+        "clearance_refs": [
+            {
+                "role": "entry_clearance",
+                "opening_id": "entry-main",
+                "clear_depth_mm": 1200,
+                "clear_width_mm": 2400,
+            }
+        ],
+        "layout_notes": ["counter_intentionally_overlaps_entry_clearance_for_failure_benchmark"],
+    },
+    "fitout_file_cabinet_front_conflict": {
+        "name": "Fitout File Cabinet Front Conflict",
+        "domain": "office",
+        "objects": [
+            {
+                "instance_id": "desk-01",
+                "type": "desk",
+                "name": "Office Desk",
+                "role": "work_surface",
+                "base_point": [0, 700, 0],
+                "size": {"width": 1400, "depth": 700, "height": 750},
+                "include_dimensions": False,
+            },
+            {
+                "instance_id": "chair-01",
+                "type": "chair",
+                "name": "Task Chair",
+                "role": "seating_for_desk",
+                "base_point": [450, 0, 0],
+                "size": {"width": 520, "depth": 520, "height": 850},
+                "include_dimensions": False,
+            },
+            {
+                "instance_id": "cabinet-file",
+                "type": "cabinet",
+                "name": "File Cabinet",
+                "role": "document_storage",
+                "base_point": [200, 750, 0],
+                "size": {"width": 900, "depth": 450, "height": 1100},
+                "include_dimensions": False,
+            },
+        ],
+        "bindings": [
+            {"from_instance_id": "chair-01", "to_instance_id": "desk-01", "relation": "seating_for_desk"}
+        ],
+        "clearance_refs": [
+            {
+                "role": "chair_pullback_clearance",
+                "bound_to": "chair-01",
+                "behind_depth_mm": 800,
+                "side_margin_mm": 150,
+            },
+            {
+                "role": "cabinet_front_clearance",
+                "bound_to": "cabinet-file",
+                "front_depth_mm": 800,
+            },
+        ],
+        "layout_notes": ["chair_pullback_and_cabinet_front_clearance_intentionally_overlap"],
+    },
+    "fitout_main_aisle_conflict": {
+        "name": "Fitout Main Aisle Conflict",
+        "domain": "office",
+        "objects": [
+            {
+                "instance_id": "desk-aisle-blocker",
+                "type": "desk",
+                "name": "Aisle Blocking Desk",
+                "role": "work_surface",
+                "base_point": [1200, 1050, 0],
+                "size": {"width": 1400, "depth": 700, "height": 750},
+                "include_dimensions": False,
+            }
+        ],
+        "layout_constraints": {
+            "main_aisle": {"min": [0, 1000], "max": [6000, 2200]}
+        },
+        "layout_notes": ["desk_intentionally_blocks_main_aisle_zone"],
+    },
+    "fitout_meeting_seating_conflict": {
+        "name": "Fitout Meeting Seating Conflict",
+        "domain": "office",
+        "objects": [
+            {
+                "instance_id": "table-meeting",
+                "type": "table",
+                "name": "Meeting Table",
+                "role": "meeting_surface",
+                "base_point": [1000, 1000, 0],
+                "size": {"width": 3200, "depth": 1400, "height": 750},
+                "include_dimensions": False,
+            },
+            {
+                "instance_id": "chair-on-table",
+                "type": "chair",
+                "name": "Overlapping Chair",
+                "role": "meeting_seating",
+                "base_point": [1500, 1200, 0],
+                "size": {"width": 520, "depth": 520, "height": 850},
+                "include_dimensions": False,
+            },
+        ],
+        "layout_notes": ["chair_intentionally_overlaps_meeting_table_for_failure_benchmark"],
+    },
     "office_desk_combo": {
         "name": "Office Desk Combo",
         "domain": "office",
@@ -338,7 +563,7 @@ COMPOSITION_TEMPLATES: dict[str, dict[str, Any]] = {
                 "role": "work_surface",
                 "base_point": [0, 600, 0],
                 "size": {"width": 1400, "depth": 700, "height": 750},
-                "include_dimensions": True,
+                "include_dimensions": False,
             },
             {
                 "instance_id": "chair-01",
@@ -425,6 +650,9 @@ def create_composition_spec(
     layout_notes = template.get("layout_notes")
     if isinstance(layout_notes, list) and layout_notes:
         spec["layout_notes"] = list(layout_notes)
+    layout_constraints = template.get("layout_constraints")
+    if isinstance(layout_constraints, dict) and layout_constraints:
+        spec["layout_constraints"] = dict(layout_constraints)
     return spec
 
 
@@ -480,7 +708,7 @@ def composition_to_cad_plans(
             domain=composition.get("domain", "generic"),
             layer=layer,
             include_dimensions=bool(item.get("include_dimensions", False)),
-            include_label=bool(item.get("include_label", True)),
+            include_label=bool(item.get("include_label", False)),
         )
         plan["object"]["instance_id"] = item["instance_id"]
         plan["object"]["role"] = item["role"]

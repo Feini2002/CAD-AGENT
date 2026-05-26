@@ -26,6 +26,8 @@
 - `layout_proposal.schema.json`
 - `design_proposal.schema.json`
 - `verification_report.schema.json`
+- `symbol_spec.schema.json`
+- `symbol_graph.schema.json`
 
 旧 `schemas/` 下只保留第一轮兼容副本，不继续扩展为所有高层 schema 的镜像。
 

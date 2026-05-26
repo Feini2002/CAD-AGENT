@@ -1,8 +1,22 @@
 {
   "version": "0.1",
   "scenario": "commercial_fitout",
+  "scene_product_alpha": {
+    "status": "product_boundary",
+    "boundary_path": "agents/commercial_fitout/capabilities/product_alpha_boundary.json",
+    "primary_subscenes": ["open_office", "meeting_room", "reception"],
+    "scope_path": "agents/commercial_fitout/subscenes.json",
+    "object_catalog_path": "agents/commercial_fitout/capabilities/object_catalog.json",
+    "block_mapping_path": "agents/commercial_fitout/capabilities/block_mapping.json"
+  },
   "preview_layer": "CODEX_PREVIEW",
-  "object_preferences": ["display_cabinet", "shelf", "cashier_counter"],
+  "object_preferences": [
+    "workstation_cluster",
+    "desk",
+    "office_chair",
+    "meeting_table",
+    "reception_desk"
+  ],
   "circulation": {
     "main_aisle_width_mm": 1200,
     "secondary_aisle_width_mm": 900

@@ -34,7 +34,14 @@ ALLOWED_DOMAINS = {
     "industrial",
     "custom",
 }
-ALLOWED_INTENTS = {"draw_object", "draw_annotation", "modify_object", "delete_object", "insert_block_alpha"}
+ALLOWED_INTENTS = {
+    "draw_object",
+    "draw_symbol_glyph",
+    "draw_annotation",
+    "modify_object",
+    "delete_object",
+    "insert_block_alpha",
+}
 PREVIEW_LAYER = "CODEX_PREVIEW"
 ALLOWED_PLACEMENT_MODES = {"absolute", "space_reference", "relative_to_object"}
 
@@ -75,6 +82,26 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
         from core.plan_engine.block_alpha_plan import validate_insert_block_alpha
 
         errors.extend(validate_insert_block_alpha(plan))
+        return errors
+
+    if plan["intent"] == "draw_symbol_glyph":
+        from core.plan_engine.symbol_glyph_plan import validate_draw_symbol_glyph
+
+        errors.extend(validate_draw_symbol_glyph(plan))
+        placement = plan.get("placement", {})
+        drawing = plan.get("drawing", {})
+        require(placement.get("mode") in ALLOWED_PLACEMENT_MODES, "placement.mode is not supported.", errors)
+        if placement.get("mode") == "absolute":
+            base_point = placement.get("base_point")
+            require(isinstance(base_point, list), "placement.base_point is required for absolute placement.", errors)
+            if isinstance(base_point, list):
+                require(len(base_point) in (2, 3), "placement.base_point must contain 2 or 3 numbers.", errors)
+                require(
+                    all(isinstance(v, (int, float)) for v in base_point),
+                    "placement.base_point values must be numbers.",
+                    errors,
+                )
+        require(bool(drawing.get("layer")), "drawing.layer is required.", errors)
         return errors
 
     obj = plan["object"]

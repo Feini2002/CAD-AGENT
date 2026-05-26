@@ -1,0 +1,21 @@
+{
+  "model_type": "request_context",
+  "data": {
+    "version": "0.1",
+    "context_id": "req-invalid",
+    "request_kind": "not_a_real_kind",
+    "user_request": "test",
+    "inputs": {
+      "available": [],
+      "paths": {}
+    },
+    "cad_policy": {
+      "allow_cad": true,
+      "preview_only": true
+    },
+    "clarification": {
+      "needs_clarification": false,
+      "questions": []
+    }
+  }
+}

@@ -1,0 +1,315 @@
+{
+  "version": "0.2",
+  "library_id": "commercial-fitout-controlled-blocks",
+  "units": "mm",
+  "blocks": [
+    {
+      "block_id": "fitout-desk-1400",
+      "block_version": "1",
+      "name": "Fitout Desk 1400",
+      "category": "desk",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "open_office", "preview"],
+      "size": { "width": 1400, "depth": 700, "height": 750 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "source": { "type": "fitout_catalog", "path": "agents/commercial_fitout/capabilities/block_mapping.json", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_DESK_1400",
+        "definition_name": "FITOUT_DESK_1400",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [700, 350, 0] },
+      "footprint_2d": { "width": 1400, "depth": 700 },
+      "clearance_zones": [{ "role": "chair_pullback", "offset_mm": 300, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1400, "depth": 700 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-chair-520",
+      "block_version": "1",
+      "name": "Fitout Chair 520",
+      "category": "chair",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "seating", "preview"],
+      "size": { "width": 520, "depth": 520, "height": 850 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_CHAIR_520",
+        "definition_name": "FITOUT_CHAIR_520",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [260, 260, 0] },
+      "footprint_2d": { "width": 520, "depth": 520 },
+      "clearance_zones": [{ "role": "rear_clearance", "offset_mm": 300, "side": "back" }],
+      "symbol_2d": { "type": "rectangle", "width": 520, "depth": 520 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-cabinet-900",
+      "block_version": "1",
+      "name": "Fitout File Cabinet 900",
+      "category": "cabinet",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "storage", "preview"],
+      "size": { "width": 900, "depth": 450, "height": 1100 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 800,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_CABINET_900",
+        "definition_name": "FITOUT_CABINET_900",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [450, 225, 0] },
+      "footprint_2d": { "width": 900, "depth": 450 },
+      "clearance_zones": [{ "role": "front_pull", "offset_mm": 800, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 900, "depth": 450 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-counter-1600",
+      "block_version": "1",
+      "name": "Fitout Printer Counter 1600",
+      "category": "counter",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "equipment", "preview"],
+      "size": { "width": 1600, "depth": 700, "height": 900 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 600,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_COUNTER_1600",
+        "definition_name": "FITOUT_COUNTER_1600",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [800, 350, 0] },
+      "footprint_2d": { "width": 1600, "depth": 700 },
+      "clearance_zones": [{ "role": "service_aisle", "offset_mm": 600, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1600, "depth": 700 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-cabinet-600",
+      "block_version": "1",
+      "name": "Fitout Equipment Cabinet 600",
+      "category": "cabinet",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "equipment", "preview"],
+      "size": { "width": 600, "depth": 600, "height": 2000 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 600,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_CABINET_600",
+        "definition_name": "FITOUT_CABINET_600",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [300, 300, 0] },
+      "footprint_2d": { "width": 600, "depth": 600 },
+      "clearance_zones": [{ "role": "front_access", "offset_mm": 600, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 600, "depth": 600 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-table-3200",
+      "block_version": "1",
+      "name": "Fitout Meeting Table 3200",
+      "category": "table",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "meeting_room", "preview"],
+      "size": { "width": 3200, "depth": 1400, "height": 750 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 900,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_TABLE_3200",
+        "definition_name": "FITOUT_TABLE_3200",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [1600, 700, 0] },
+      "footprint_2d": { "width": 3200, "depth": 1400 },
+      "clearance_zones": [{ "role": "meeting_circulation", "offset_mm": 900, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 3200, "depth": 1400 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-cabinet-1200",
+      "block_version": "1",
+      "name": "Fitout Side Cabinet 1200",
+      "category": "cabinet",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "meeting_room", "preview"],
+      "size": { "width": 1200, "depth": 450, "height": 1100 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 800,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_CABINET_1200",
+        "definition_name": "FITOUT_CABINET_1200",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [600, 225, 0] },
+      "footprint_2d": { "width": 1200, "depth": 450 },
+      "clearance_zones": [{ "role": "front_pull", "offset_mm": 800, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1200, "depth": 450 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-counter-1800",
+      "block_version": "1",
+      "name": "Fitout AV Console 1800",
+      "category": "counter",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "meeting_room", "preview"],
+      "size": { "width": 1800, "depth": 600, "height": 900 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 600,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_COUNTER_1800",
+        "definition_name": "FITOUT_COUNTER_1800",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [900, 300, 0] },
+      "footprint_2d": { "width": 1800, "depth": 600 },
+      "clearance_zones": [{ "role": "service_aisle", "offset_mm": 600, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1800, "depth": 600 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-counter-2400",
+      "block_version": "1",
+      "name": "Fitout Reception Counter 2400",
+      "category": "counter",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "reception", "preview"],
+      "size": { "width": 2400, "depth": 900, "height": 1100 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 1200,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_COUNTER_2400",
+        "definition_name": "FITOUT_COUNTER_2400",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [1200, 450, 0] },
+      "footprint_2d": { "width": 2400, "depth": 900 },
+      "clearance_zones": [{ "role": "reception_queue", "offset_mm": 1200, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 2400, "depth": 900 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-sofa-2200",
+      "block_version": "1",
+      "name": "Fitout Waiting Sofa 2200",
+      "category": "sofa",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "reception", "preview"],
+      "size": { "width": 2200, "depth": 900, "height": 850 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_SOFA_2200",
+        "definition_name": "FITOUT_SOFA_2200",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [1100, 450, 0] },
+      "footprint_2d": { "width": 2200, "depth": 900 },
+      "clearance_zones": [{ "role": "circulation_front", "offset_mm": 300, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 2200, "depth": 900 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "fitout-display-3600",
+      "block_version": "1",
+      "name": "Fitout Feature Wall 3600",
+      "category": "display_unit",
+      "domain": "commercial_fitout",
+      "tags": ["fitout", "reception", "preview"],
+      "size": { "width": 3600, "depth": 200, "height": 2800 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": false,
+      "clearance_mm": 150,
+      "source": { "type": "fitout_catalog", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "FITOUT_DISPLAY_3600",
+        "definition_name": "FITOUT_DISPLAY_3600",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [1800, 100, 0] },
+      "footprint_2d": { "width": 3600, "depth": 200 },
+      "clearance_zones": [{ "role": "viewer_clearance", "offset_mm": 150, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 3600, "depth": 200 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    }
+  ]
+}

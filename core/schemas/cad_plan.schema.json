@@ -24,7 +24,14 @@
     },
     "intent": {
       "type": "string",
-      "enum": ["draw_object", "draw_annotation", "modify_object", "delete_object", "insert_block_alpha"]
+      "enum": [
+        "draw_object",
+        "draw_symbol_glyph",
+        "draw_annotation",
+        "modify_object",
+        "delete_object",
+        "insert_block_alpha"
+      ]
     },
     "object": {
       "type": "object",

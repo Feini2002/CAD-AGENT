@@ -1,0 +1,53 @@
+{
+  "version": "0.1",
+  "shell_id": "shell-commercial-fitout-open-office-sample",
+  "units": "mm",
+  "boundary": {
+    "type": "bbox",
+    "min": [0, 0],
+    "max": [12000, 7200]
+  },
+  "openings": [
+    {
+      "opening_id": "entry-main",
+      "type": "entry",
+      "center": [0, 3600],
+      "width": 1400
+    }
+  ],
+  "fixed_obstacles": [
+    {
+      "obstacle_id": "column-01",
+      "bbox": {
+        "min": [5200, 3000],
+        "max": [5600, 3400]
+      }
+    }
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "column-01-clearance",
+      "bbox": {
+        "min": [5000, 2800],
+        "max": [5800, 3600]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "entry-to-open-office",
+      "target": "open-office-zone",
+      "point": [11000, 3600]
+    }
+  ],
+  "building_elements": [
+    {
+      "element_id": "north-glazing-band",
+      "type": "window_wall"
+    }
+  ],
+  "uncertainties": [
+    "Open-office shell is hand-authored and not verified from CAD readback.",
+    "Column positions are indicative for layout preview only."
+  ]
+}

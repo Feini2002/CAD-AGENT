@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad_block_attribute_hatch_boundary.schema.json",
+  "title": "CAD_BLOCK_ATTRIBUTE_HATCH_BOUNDARY",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "boundary_id",
+    "package_id",
+    "preview_layer",
+    "capabilities",
+    "explicitly_not_supported",
+    "verification_commands"
+  ],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "boundary_id": { "type": "string", "minLength": 1 },
+    "package_id": { "type": "string", "const": "LCAD-07-BLOCK-ATTRIBUTE-HATCH" },
+    "preview_layer": { "type": "string", "const": "CODEX_PREVIEW" },
+    "capabilities": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "primitive", "status", "geometry_verified"],
+        "properties": {
+          "id": { "type": "string" },
+          "primitive": { "type": "string" },
+          "intent": { "type": "string" },
+          "status": { "type": "string", "enum": ["verified", "deferred"] },
+          "geometry_verified": { "type": "boolean" },
+          "scope": { "type": "string" },
+          "evidence": { "type": "array", "items": { "type": "string" } },
+          "tests": { "type": "array", "items": { "type": "string" } },
+          "failure_category": { "type": "string" },
+          "deferred_reason": { "type": "string" }
+        }
+      }
+    },
+    "explicitly_not_supported": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "reason"],
+        "properties": {
+          "id": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "verification_commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    }
+  }
+}

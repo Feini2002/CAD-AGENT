@@ -134,8 +134,11 @@ class VerificationReportTests(unittest.TestCase):
             created_handles=["H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8"],
         )
 
-        self.assertEqual(missing_report["status"], "unverified")
-        self.assertIn("created_handles_scope", [check["name"] for check in missing_report["checks"]])
+        self.assertNotEqual(missing_report["status"], "geometry_verified")
+        scope = missing_report["actual"]["created_handle_scope"]
+        self.assertEqual(scope["miss_count"], 1)
+        checks = {check["name"]: check for check in missing_report["checks"]}
+        self.assertEqual(checks["created_handles_scope"]["status"], "fail")
 
     def test_missing_screenshot_file_does_not_count_as_screenshot_evidence(self) -> None:
         report = build_verification_report(

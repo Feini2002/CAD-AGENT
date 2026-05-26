@@ -11,9 +11,11 @@ from typing import Any, Protocol
 try:
     from core.plan_engine.validate_plan import load_json, validate_plan
     from core.safety.policy import assert_plan_is_safe
+    from core.verification.preview_only_audit import attach_preview_only_audit
 except ImportError:  # pragma: no cover - compatibility for direct execution.
     from scripts.validate_plan import load_json, validate_plan
     from core.safety.policy import assert_plan_is_safe
+    from core.verification.preview_only_audit import attach_preview_only_audit
 
 
 PREVIEW_LAYER = "CODEX_PREVIEW"
@@ -21,6 +23,18 @@ PREVIEW_LAYER = "CODEX_PREVIEW"
 
 class CadPreviewDriver(Protocol):
     def draw_rectangle(self, **kwargs: object) -> object:
+        ...
+
+    def draw_line(self, **kwargs: object) -> object:
+        ...
+
+    def draw_polyline(self, **kwargs: object) -> object:
+        ...
+
+    def draw_circle(self, **kwargs: object) -> object:
+        ...
+
+    def draw_arc(self, **kwargs: object) -> object:
         ...
 
     def draw_text(self, **kwargs: object) -> object:
@@ -86,8 +100,18 @@ def execute_plan_file(
             preview_only=preview_only,
         )
 
+    if plan["intent"] == "draw_symbol_glyph":
+        return _execute_draw_symbol_glyph(
+            plan,
+            plan_path=plan_path,
+            driver=driver,
+            preview_only=preview_only,
+        )
+
     if plan["intent"] != "draw_object":
-        raise ValueError("execute_plan.py currently supports draw_object and insert_block_alpha only.")
+        raise ValueError(
+            "execute_plan.py currently supports draw_object, draw_symbol_glyph, and insert_block_alpha only."
+        )
     obj = plan["object"]
     placement = plan["placement"]
     drawing = plan["drawing"]
@@ -160,23 +184,82 @@ def execute_plan_file(
             )
         )
 
-    return {
-        "status": "executed",
-        "plan": str(plan_path),
-        "intent": plan["intent"],
-        "object_type": obj["type"],
-        "object_name": obj["name"],
-        "object_size": [width, depth],
-        "base_point": base,
-        "layer": layer,
-        "preview_only": preview_only,
-        "entities": {
-            "rectangle": 1,
-            "text": 1 if drawing.get("include_label", False) else 0,
-            "dimensions": 2 if drawing.get("include_dimensions", False) else 0,
+    return attach_preview_only_audit(
+        {
+            "status": "executed",
+            "plan": str(plan_path),
+            "intent": plan["intent"],
+            "object_type": obj["type"],
+            "object_name": obj["name"],
+            "object_size": [width, depth],
+            "base_point": base,
+            "layer": layer,
+            "preview_only": preview_only,
+            "entities": {
+                "rectangle": 1,
+                "text": 1 if drawing.get("include_label", False) else 0,
+                "dimensions": 2 if drawing.get("include_dimensions", False) else 0,
+            },
+            "created_handles": created_handles,
         },
-        "created_handles": created_handles,
-    }
+        layer=layer,
+    )
+
+
+def _execute_draw_symbol_glyph(
+    plan: dict[str, Any],
+    *,
+    plan_path: Path,
+    driver: CadPreviewDriver,
+    preview_only: bool,
+) -> dict[str, object]:
+    from core.execution.symbol_glyph_execute import execute_glyph_primitive, expected_readback_type_counts
+
+    obj = plan["object"]
+    placement = plan["placement"]
+    drawing = plan["drawing"]
+    layer = drawing["layer"]
+    if preview_only and layer != PREVIEW_LAYER:
+        raise ValueError(f"Preview execution only allows layer={PREVIEW_LAYER}.")
+
+    if placement.get("mode") != "absolute":
+        raise ValueError("draw_symbol_glyph only supports absolute placement.")
+
+    glyphs = obj.get("glyph_primitives", [])
+    if not isinstance(glyphs, list) or not glyphs:
+        raise ValueError("draw_symbol_glyph requires non-empty object.glyph_primitives.")
+
+    created_handles: list[str] = []
+    entity_counts: dict[str, int] = {}
+    for item in glyphs:
+        if not isinstance(item, dict):
+            raise ValueError("glyph_primitives entries must be objects.")
+        primitive = str(item.get("primitive", ""))
+        created_handles.extend(execute_glyph_primitive(driver, item, layer=layer))
+        entity_counts[primitive] = entity_counts.get(primitive, 0) + 1
+
+    base = point3(placement["base_point"])
+    return attach_preview_only_audit(
+        {
+            "status": "executed",
+            "plan": str(plan_path),
+            "intent": plan["intent"],
+            "object_type": obj.get("type", "symbol_glyph"),
+            "object_name": obj.get("name", obj.get("symbol_id", "symbol_glyph")),
+            "symbol_id": obj.get("symbol_id"),
+            "archetype": obj.get("archetype"),
+            "base_point": base,
+            "layer": layer,
+            "preview_only": preview_only,
+            "geometry_accuracy": "not_verified_without_cad_readback",
+            "glyph_primitive_count": len(glyphs),
+            "glyph_primitive_types": entity_counts,
+            "expected_readback_type_counts": expected_readback_type_counts(glyphs),
+            "entities": entity_counts,
+            "created_handles": created_handles,
+        },
+        layer=layer,
+    )
 
 
 def _execute_insert_block_alpha(
@@ -217,23 +300,26 @@ def _execute_insert_block_alpha(
     )
     created_handles = _collect_handles(insert_result)
 
-    return {
-        "status": "executed",
-        "plan": str(plan_path),
-        "intent": plan["intent"],
-        "object_type": obj.get("type", "block_reference"),
-        "object_name": obj.get("name", block_name),
-        "block_id": obj.get("block_id"),
-        "block_name": block_name,
-        "base_point": base,
-        "rotation": rotation,
-        "scale": scale,
-        "layer": layer,
-        "preview_only": preview_only,
-        "geometry_accuracy": "not_verified_without_cad_readback",
-        "entities": {"insert_block_alpha": 1},
-        "created_handles": created_handles,
-    }
+    return attach_preview_only_audit(
+        {
+            "status": "executed",
+            "plan": str(plan_path),
+            "intent": plan["intent"],
+            "object_type": obj.get("type", "block_reference"),
+            "object_name": obj.get("name", block_name),
+            "block_id": obj.get("block_id"),
+            "block_name": block_name,
+            "base_point": base,
+            "rotation": rotation,
+            "scale": scale,
+            "layer": layer,
+            "preview_only": preview_only,
+            "geometry_accuracy": "not_verified_without_cad_readback",
+            "entities": {"insert_block_alpha": 1},
+            "created_handles": created_handles,
+        },
+        layer=layer,
+    )
 
 
 def main() -> int:

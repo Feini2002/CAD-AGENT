@@ -36,6 +36,17 @@ class ObjectStyleBlockLayoutProposalTests(unittest.TestCase):
         schema = json_load(PROJECT_ROOT / "core" / "schemas" / "object_spec.schema.json")
         self.assertEqual(validate_value(spec, schema), [])
         self.assertEqual(plan["drawing"]["layer"], "CODEX_PREVIEW")
+        self.assertFalse(plan["drawing"]["include_label"])
+        self.assertFalse(plan["drawing"]["include_dimensions"])
+        self.assertEqual(validate_plan(plan), [])
+
+    def test_object_spec_can_explicitly_request_label_and_dimensions(self) -> None:
+        spec = create_object_spec("cabinet", width=1800, depth=600, height=2400)
+
+        plan = object_spec_to_cad_plan(spec, include_label=True, include_dimensions=True)
+
+        self.assertTrue(plan["drawing"]["include_label"])
+        self.assertTrue(plan["drawing"]["include_dimensions"])
         self.assertEqual(validate_plan(plan), [])
 
     def test_style_profiles_load_and_unknown_style_is_explicit(self) -> None:

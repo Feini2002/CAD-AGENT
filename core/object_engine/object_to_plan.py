@@ -11,8 +11,8 @@ def object_to_plan(
     base_point: list[float | int] | None = None,
     domain: str = "generic",
     layer: str = "CODEX_PREVIEW",
-    include_dimensions: bool = True,
-    include_label: bool = True,
+    include_dimensions: bool = False,
+    include_label: bool = False,
 ) -> dict[str, Any]:
     size = spec["size"]
     return {

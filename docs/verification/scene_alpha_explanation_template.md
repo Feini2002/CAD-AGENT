@@ -2,7 +2,7 @@
 
 ## 目的
 
-说明 **场景偏好如何影响 Core**，而不是把 Scene Agent 写成独立设计大脑。机器可读结构由 `core/agents/scene_explanation.build_scene_explanation()` 生成；各场景 `agents/<scenario>/rules.md` 保留人类可读映射表。
+说明 **场景偏好如何影响 Core**，而不是把 Scene Agent 写成独立设计大脑。机器可读结构由 `core/agents/scene_explanation.build_scene_explanation()` 生成；各场景 `agents/<scenario>/rules.md` 保留人类可读映射表。本文属于 Scene Alpha 壳层，不证明 Scene Product。
 
 ## 模板结构
 
@@ -34,6 +34,7 @@ agents/<scenario>/preferences.json
 ## 不可声称（全场景共用）
 
 - 不能说 Scene Alpha 已完成真实 CAD 几何验证。  
+- 不能说 Scene Alpha / Scene Beta 已完成具体工装、办公、住宅或餐饮 Scene Product。
 - 不能说场景层实现了碰撞、通道算法、zone 切分或 CAD 执行。  
 - 不能把 `scene_alpha_benchmark` pass 扩大为任意项目图纸或块库准确。  
 

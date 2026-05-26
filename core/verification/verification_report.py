@@ -6,6 +6,12 @@ from pathlib import Path
 from typing import Any
 
 from core.plan_engine.validate_plan import load_json, validate_plan
+from core.verification.created_handle_scope import (
+    analyze_created_handle_scope,
+    created_handle_scope_check,
+    created_handle_scope_ok,
+    filter_entities_to_created_handles,
+)
 from core.verification.evidence_contract import apply_readback_report_contract
 
 
@@ -257,25 +263,16 @@ def build_verification_report(
     screenshot = Path(screenshot_path) if screenshot_path is not None else None
     scope_checks: list[dict[str, str]] = []
     scoped_entities = entities
+    created_handle_scope: dict[str, Any] | None = None
     if created_handles is not None:
-        handle_set = {str(handle) for handle in created_handles}
-        entity_handles = {str(entity.get("handle")) for entity in entities if entity.get("handle") is not None}
-        missing_handles = sorted(handle_set - entity_handles)
-        extra_handles = sorted(entity_handles - handle_set)
-        handle_scope_ok = bool(handle_set) and not missing_handles
-        entities_are_scoped = handle_scope_ok
-        scoped_entities = [entity for entity in entities if str(entity.get("handle")) in handle_set]
-        scope_checks.append(
-            {
-                "name": "created_handles_scope",
-                "status": "pass" if handle_scope_ok else "warning",
-                "message": (
-                    "Readback covers created handles."
-                    if handle_scope_ok
-                    else f"Missing created handles: {missing_handles}; extra handles: {extra_handles}"
-                ),
-            }
+        created_handle_scope = analyze_created_handle_scope(
+            input_handles=created_handles,
+            readback_entities=entities,
         )
+        handle_scope_ok = created_handle_scope_ok(created_handle_scope)
+        entities_are_scoped = handle_scope_ok
+        scoped_entities = filter_entities_to_created_handles(entities, input_handles=created_handles)
+        scope_checks.append(created_handle_scope_check(created_handle_scope))
     elif entities_are_scoped:
         entities_are_scoped = False
         scope_checks.append(
@@ -325,12 +322,15 @@ def build_verification_report(
     else:
         status = "unverified"
 
+    actual_entities = scoped_entities if created_handles is not None else entities
     actual = {
-        "entities": entities,
-        "layer_counts": layer_counts(entities),
-        "readback_available": bool(entities),
+        "entities": actual_entities,
+        "layer_counts": layer_counts(actual_entities),
+        "readback_available": bool(actual_entities),
         "created_handles": created_handles or [],
     }
+    if created_handle_scope is not None:
+        actual["created_handle_scope"] = created_handle_scope
     if before_entities is not None:
         actual["snapshot_diff"] = snapshot_diff(before_entities=before_entities, after_entities=entities)
     bbox = bbox_from_entities(scoped_entities, layer=expected["layer"])

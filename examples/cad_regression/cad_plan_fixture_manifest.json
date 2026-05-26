@@ -1,0 +1,31 @@
+{
+  "version": "0.1",
+  "suite_id": "cad_plan_fixture_suite",
+  "description": "Batch validate, dry-run and optional CODEX_PREVIEW execution for regression CAD_PLAN fixtures.",
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false
+  },
+  "fixtures": [
+    {
+      "id": "draw_preview_cabinet",
+      "title": "Preview cabinet draw_object fixture",
+      "plan_path": "examples/cad_regression/fixtures/draw_preview_cabinet.json",
+      "cad_execution": true
+    },
+    {
+      "id": "draw_preview_desk",
+      "title": "Preview desk draw_object fixture",
+      "plan_path": "examples/cad_regression/fixtures/draw_preview_desk.json",
+      "cad_execution": true
+    },
+    {
+      "id": "insert_block_alpha_preview",
+      "title": "Preview insert_block_alpha fixture",
+      "plan_path": "examples/cad_regression/fixtures/insert_block_alpha_preview.json",
+      "cad_execution": true
+    }
+  ]
+}

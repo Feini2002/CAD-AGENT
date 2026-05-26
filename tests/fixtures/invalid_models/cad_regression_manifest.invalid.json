@@ -1,0 +1,27 @@
+{
+  "model_type": "cad_regression_manifest",
+  "data": {
+    "version": "0.1",
+    "suite_id": "invalid_local_cad_regression",
+    "description": "Invalid manifest without case safety.",
+    "safety": {
+      "layer": "CODEX_PREVIEW",
+      "saved_dwg": false,
+      "deleted_entities": false,
+      "modified_formal_layers": false
+    },
+    "cases": [
+      {
+        "id": "missing_safety",
+        "title": "Missing safety case",
+        "entrypoint": "scripts/run_cad_validation.py",
+        "requires_real_cad": true,
+        "expected_evidence_state": "geometry_verified",
+        "output_path": "missing/report.json",
+        "command": [
+          "scripts/run_cad_validation.py"
+        ]
+      }
+    ]
+  }
+}

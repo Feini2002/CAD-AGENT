@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "commercial_fitout_sample_confirmation_bundle.schema.json",
+  "title": "COMMERCIAL_FITOUT_SAMPLE_CONFIRMATION_BUNDLE",
+  "type": "object",
+  "required": [
+    "version",
+    "sample_id",
+    "proposal_id",
+    "confirmation_id",
+    "assumptions_risks",
+    "confirmation_gate",
+    "controlled_cad_policy",
+    "confirmed_cad_plan_bundle",
+    "finalize_report",
+    "evidence_claim",
+    "geometry_verified"
+  ],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "sample_id": { "type": "string" },
+    "workflow_path": { "type": "string" },
+    "proposal_id": { "type": "string" },
+    "confirmation_id": { "type": "string" },
+    "assumptions_risks": {
+      "type": "object",
+      "required": ["assumptions", "risks", "source"],
+      "properties": {
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "risks": { "type": "array", "items": { "type": "string" } },
+        "source": {
+          "type": "object",
+          "required": ["brief_id", "confirmation_id"],
+          "properties": {
+            "brief_id": { "type": "string" },
+            "confirmation_id": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "confirmation_gate": { "type": "object" },
+    "controlled_cad_policy": { "type": "object" },
+    "confirmed_cad_plan_bundle": { "type": "object" },
+    "finalize_report": { "type": "object" },
+    "evidence_claim": { "type": "string" },
+    "geometry_verified": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

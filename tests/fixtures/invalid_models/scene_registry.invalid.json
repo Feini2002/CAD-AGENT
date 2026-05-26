@@ -1,0 +1,18 @@
+{
+  "model_type": "scene_registry",
+  "data": {
+    "version": "0.1",
+    "registry_id": "bad-registry",
+    "default_scene_id": "no_scene",
+    "scenes": [
+      {
+        "scene_id": "no_scene",
+        "display_name": "No Scene",
+        "maturity": "not_a_maturity",
+        "trigger_terms": [],
+        "capabilities": ["generic_core_workflows"],
+        "may_bypass_core": false
+      }
+    ]
+  }
+}

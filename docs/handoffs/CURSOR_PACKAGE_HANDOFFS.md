@@ -3595,6 +3595,255 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 ---
 
+## LCAD-02-STRICT-MATRIX-RUNNER（manifest selected / all / strict runner）
+
+**日期**：2026-05-26
+
+**性质**：本地真实 CAD 校验扩样主线第 2 包；让 local CAD regression runner 真正支持 selected / all / strict 调度。
+
+### 1. 开发包名
+
+`LCAD-02-STRICT-MATRIX-RUNNER`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/verification/local_cad_regression.py` | 新增 manifest case 选择器、selected case 参数、summary rollup 字段、CLI `--case` 和 `--strict` |
+| `tests/core/test_local_cad_regression.py` | 新增 selected case、未知 case 拒绝和 strict rollup 测试 |
+| `README.md` / `CORE_CONTEXT_BRIEF.md` / `CORE_STATUS.md` / `CAD_AGENT_STATUS.md` / `CORE_RESTRUCTURE_PLAN.md` / `CAD_AGENT_CHANGELOG.md` / 本文 | 同步 LCAD-02 证据、下一包顺序和进度估算 |
+
+### 3. 关键设计说明
+
+- 默认不传 `--case` 时继续运行 manifest 的 all cases，保持 LCAD-01 的全量行为。
+- `--case <case_id>` 可重复传入，只跑被选中的 manifest case；未知 case 会在执行任何命令前被拒绝。
+- `--strict` 是 `--require-cad-verified` 的简写别名，便于本地真实 CAD smoke 使用。
+- summary 统一输出 `strict`、`manifest_case_count`、`selected_case_count`、`selected_case_ids`，方便后续趋势 rollup 和失败归因。
+
+### 4. 新增/修改测试
+
+- `test_lcad_02_selected_case_runs_only_project_sample_from_manifest`
+- `test_lcad_02_unknown_selected_case_is_rejected_before_running_commands`
+- `test_real_cad_strict_mode_fails_when_project_sample_is_not_geometry_verified` 补充 `summary.strict`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_local_cad_regression -v
+# 9 tests OK
+
+& $py scripts\run_local_cad_regression.py --no-cad --case project_sample_cad_check --output-dir output\validation_runs\lcad-02-selected-project-sample-no-cad
+# status=pass; selected_case_count=1; step_count=1; deferred_case_count=1
+
+& $py scripts\run_local_cad_regression.py --strict --output-dir output\validation_runs\lcad-02-strict-all-cad
+# status=pass; selected_case_count=3; step_count=4; geometry_verified_case_count=6; created_handle_count=90
+```
+
+真实 CAD strict all run 的 baseline 子流程内还执行了全量单测：`461 tests OK`。
+
+### 6. 是否运行真实 CAD
+
+**是**。本包运行了 `--strict` 全量真实 CAD regression。当前测试 CAD 文件允许写入和编辑；脚本仍记录 `layer=CODEX_PREVIEW`、`saved_dwg=false`、`deleted_entities=false`、`modified_formal_layers=false`。
+
+### 7. CAD 证据路径
+
+- `output\validation_runs\lcad-02-selected-project-sample-no-cad\local_cad_regression_report.json`
+- `output\validation_runs\lcad-02-strict-all-cad\local_cad_regression_report.json`
+- `output\validation_runs\lcad-02-strict-all-cad\baseline_cad_validation\report.json`
+- `output\validation_runs\lcad-02-strict-all-cad\project_sample_cad\project_sample_cad_check_report.json`
+- `output\validation_runs\lcad-02-strict-all-cad\composition_cad\composition_cad_check_report.json`
+
+### 8. 结论分类
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| runner 支持 selected case | fake runner / CLI no-CAD selected evidence | **否** |
+| runner 支持 all case strict rollup | strict CAD matrix | **是，6 个 case** |
+| 当前测试 CAD 会话写入实体已汇总 | created_handle_count | **是，90 个 handles** |
+| 未知 selected case 会在执行前拒绝 | negative unit test | **否** |
+
+### 9. 剩余风险
+
+- `LCAD-02` 解决调度和 rollup，不解决 ActiveDocument / no-save / no-delete 的前后守卫；下一包 `LCAD-03` 处理。
+- 当前 `--case` 选择只基于 manifest case id；更细的子 case 过滤、历史趋势聚合和失败趋势归因留给后续 `LCAD-11`。
+- 真实 CAD 结论仍只覆盖当前测试会话，不扩大到任意项目 DWG、正式图层、公司块库、属性块或 hatch。
+
+---
+
+## COMPLEX-CAD-SMOKE（复杂混合图形 CAD smoke）
+
+**日期**：2026-05-26
+
+**性质**：用户要求重新校验 CAD 测试层能否绘制复杂测试图形后的前置加固包；已纳入默认本地 CAD regression manifest。
+
+### 1. 开发包名
+
+`COMPLEX-CAD-SMOKE`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/verification/complex_cad_smoke.py` | 新增复杂混合图形 smoke runner，绘制并回读 line / polyline / circle / arc / text / dimension |
+| `scripts/run_complex_cad_smoke.py` | 新增 CLI wrapper，支持真实 CAD 与 `--no-cad` deferred |
+| `examples/cad_regression/local_cad_regression_manifest.json` | 增加第 4 个默认 case：`complex_cad_smoke` |
+| `core/verification/local_cad_regression.py` | 接入 complex case、selected case、no-CAD deferred 和 full strict rollup |
+| `core/verification/local_cad_regression_manifest.py` | 拆出 manifest 读取、语义校验、summary 和 case 选择，保持主矩阵文件低于 repo audit 行数上限 |
+| `tests/core/test_complex_cad_smoke.py` | 新增复杂 smoke 单测 |
+| `tests/core/test_local_cad_regression.py` | 增加 complex manifest / selected / deferred rollup 覆盖 |
+| `README.md` / `CORE_CONTEXT_BRIEF.md` / `CORE_STATUS.md` / `CAD_AGENT_STATUS.md` / `CORE_RESTRUCTURE_PLAN.md` / `CAD_AGENT_CHANGELOG.md` / 本文 | 同步证据、边界和进度 |
+
+### 3. 关键设计说明
+
+- 复杂 smoke 只写 `CODEX_PREVIEW`，不保存 DWG，不删除实体，不修改正式图层。
+- 图形包含外框、3 条竖向网格线、3 条横向网格线、1 条斜线、1 条开放多段线、3 个圆、2 段弧、4 段文字和 2 个标注。
+- 几何通过必须满足 created handles 定向回读、type counts 匹配、layer counts 全在 `CODEX_PREVIEW`、bbox 为 `3600 x 2200`。
+- 直接 CLI 输出复用 `core.path_safety`，`--output-dir` 必须留在仓库 `output/` 下。
+- 截图 `complex-cad-smoke-window.png` 只作为视觉辅助，不替代 readback。
+
+### 4. 新增/修改测试
+
+- `test_complex_smoke_draws_mixed_entities_and_verifies_created_handles`
+- `test_complex_smoke_no_cad_is_deferred_not_geometry_verified`
+- `test_complex_smoke_fails_when_created_handle_is_not_read_back`
+- `test_complex_smoke_cli_output_must_stay_under_project_output`
+- `test_complex_cad_smoke_can_be_selected_from_manifest`
+- no-CAD full matrix deferred rollup 增加 `complex_cad_smoke`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_complex_cad_smoke -v
+# 4 tests OK
+
+& $py scripts\run_complex_cad_smoke.py --no-cad --output-dir output\validation_runs\complex-cad-smoke-no-cad
+# status=deferred; geometry_verified=false; created_handle_count=0
+
+& $py scripts\run_complex_cad_smoke.py --output-dir output\validation_runs\complex-cad-smoke-real-final
+# status=geometry_verified; created_handle_count=23; bbox=3600 x 2200
+
+& $py scripts\render_preview.py --capture-autocad-window --execution-summary output\validation_runs\complex-cad-smoke-real-final\complex_cad_execution_summary.json --output output\validation_runs\complex-cad-smoke-real-final\complex-cad-smoke-window.png --fallback-screen
+# status=captured; mode=autocad_window; handle_count=23
+
+& $py scripts\run_local_cad_regression.py --strict --output-dir output\validation_runs\complex-cad-regression-strict-final
+# status=pass; selected_case_count=4; step_count=5; geometry_verified_case_count=7; created_handle_count=113
+```
+
+真实 CAD full strict run 的 baseline 子流程内还执行了全量单测：`466 tests OK`。
+
+### 6. 是否运行真实 CAD
+
+**是**。当前测试 CAD 文件允许写入和编辑；脚本仍记录只写 `CODEX_PREVIEW`，且 `saved_dwg=false`、`deleted_entities=false`、`modified_formal_layers=false`。
+
+### 7. CAD 证据路径
+
+- `output\validation_runs\complex-cad-smoke-no-cad\complex_cad_smoke_report.json`
+- `output\validation_runs\complex-cad-smoke-real-final\complex_cad_smoke_report.json`
+- `output\validation_runs\complex-cad-smoke-real-final\complex_cad_execution_summary.json`
+- `output\validation_runs\complex-cad-smoke-real-final\complex-cad-smoke-window.png`
+- `output\validation_runs\complex-cad-regression-strict-final\local_cad_regression_report.json`
+- `output\validation_runs\complex-cad-regression-strict-final\complex_cad_smoke\complex_cad_smoke_report.json`
+
+### 8. 结论分类
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 复杂混合图形可在当前测试 CAD 会话中绘制并回读 | created handles readback / strict CAD smoke | **是，23 个 handles** |
+| 默认 local CAD regression manifest 已包含 complex case | manifest / full strict matrix | **是，full strict 矩阵 7 个 verified case** |
+| no-CAD 模式不会误报几何通过 | deferred_cad_readback_required | **否** |
+| 截图可用于人工检查图形是否可见 | visual aid | **否，截图不替代几何回读** |
+
+### 9. 剩余风险
+
+- 本包是复杂混合 smoke，不等于完整 `LCAD-05` primitive matrix 或 `LCAD-06` CAD_PLAN fixture suite 完成。
+- ActiveDocument / no-save / no-delete 前后守卫仍属于 `LCAD-03`，没有因为复杂 smoke 通过而跳过。
+- 真实 CAD 结论只覆盖当前测试 DWG 会话和受控图形，不扩大到任意项目 DWG、正式图层、公司块库、属性块或 hatch。
+
+---
+
+## LCAD-01-REGRESSION-MANIFEST（本地真实 CAD regression manifest）
+
+**日期**：2026-05-26
+
+**性质**：本地真实 CAD 校验扩样主线第 1 包；定义 regression manifest，并在当前测试 CAD 会话下完成 strict smoke。
+
+### 1. 开发包名
+
+`LCAD-01-REGRESSION-MANIFEST`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/verification/local_cad_regression.py` | 新增默认 manifest 路径、manifest schema/语义校验、报告顶层 manifest metadata、CLI `--manifest` |
+| `core/schemas/cad_regression_manifest.schema.json` | 新增 CAD regression manifest schema |
+| `core/schemas/registry.py` | 登记 `cad_regression_manifest` 并支持模型类型推断 |
+| `examples/cad_regression/local_cad_regression_manifest.json` | 新增默认 manifest；LCAD-01 初版覆盖 baseline / project sample / composition 三个 case，后续 complex smoke 已扩为 4 case |
+| `tests/core/test_local_cad_regression.py` | 新增 LCAD-01 manifest、坏 manifest 和 no-CAD metadata 回归测试 |
+| `tests/core/test_schema_validation.py` / `tests/fixtures/invalid_models/cad_regression_manifest.invalid.json` | 新增 schema 示例和反例覆盖 |
+| `README.md` / `CORE_CONTEXT_BRIEF.md` / `CORE_STATUS.md` / `CAD_AGENT_STATUS.md` / `CORE_RESTRUCTURE_PLAN.md` / `CAD_AGENT_CHANGELOG.md` / 本文 | 同步状态、证据、计划和交接口径 |
+
+### 3. 关键设计说明
+
+- manifest 是本地真实 CAD regression 的 case contract，不替代 runner 本身；`LCAD-02` 才继续推进 selected / all / strict manifest runner。
+- 每个 case 必须声明 `requires_real_cad`、`expected_evidence_state`、`output_path`、入口命令和安全边界。
+- 安全边界仍以机器可读字段保存：`layer=CODEX_PREVIEW`、`saved_dwg=false`、`deleted_entities=false`、`modified_formal_layers=false`。
+- `run_local_cad_regression.py` 默认加载 `examples/cad_regression/local_cad_regression_manifest.json`，并允许用 `--manifest` 指定替代 manifest。
+
+### 4. 新增/修改测试
+
+- `test_lcad_01_default_manifest_declares_cases_and_safety_boundaries`
+- `test_lcad_01_manifest_rejects_missing_required_fields`
+- `test_lcad_01_no_cad_report_includes_manifest_metadata`
+- schema registry 示例/反例覆盖 `cad_regression_manifest`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_local_cad_regression -v
+# 7 tests OK
+
+& $py -m unittest tests.core.test_schema_validation -v
+# 10 tests OK
+
+& $py scripts\run_local_cad_regression.py --no-cad --output-dir output\validation_runs\lcad-01-manifest-no-cad
+# status=pass; step_count=3; deferred_case_count=2; geometry_verified_case_count=0
+
+& $py scripts\run_local_cad_regression.py --output-dir output\validation_runs\lcad-01-manifest-cad-smoke --require-cad-verified
+# status=pass; step_count=4; geometry_verified_case_count=6; created_handle_count=90
+```
+
+真实 CAD strict smoke 的 baseline 子流程内还执行了全量单测：`459 tests OK`。
+
+### 6. 是否运行真实 CAD
+
+**是**。用户明确说明当前 CAD 是测试文件，可随意测试、写入和编辑后，已运行真实 CAD strict smoke。脚本实际仍写入 `CODEX_PREVIEW`，并在报告中记录 `saved_dwg=false`、`deleted_entities=false`、`modified_formal_layers=false`。
+
+### 7. CAD 证据路径
+
+- `output\validation_runs\lcad-01-manifest-no-cad\local_cad_regression_report.json`
+- `output\validation_runs\lcad-01-manifest-cad-smoke\local_cad_regression_report.json`
+- `output\validation_runs\lcad-01-manifest-cad-smoke\baseline_cad_validation\report.json`
+- `output\validation_runs\lcad-01-manifest-cad-smoke\project_sample_cad\project_sample_cad_check_report.json`
+- `output\validation_runs\lcad-01-manifest-cad-smoke\composition_cad\composition_cad_check_report.json`
+
+### 8. 结论分类
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 默认 regression manifest 已定义并可校验 | schema / manifest tests | **否** |
+| no-CAD manifest dry-run 通过 | deferred_cad_readback_required / non-CAD gate | **否** |
+| 当前测试 CAD 会话下 strict smoke 通过 | created handles readback / strict CAD matrix | **是，6 个 case** |
+| 当前测试 CAD 会话写入实体已汇总 | created_handle_count | **是，90 个 handles** |
+
+### 9. 剩余风险
+
+- `LCAD-01` 只完成 manifest contract 和当前 3-case smoke；selected / all / strict 调度已由后续 `LCAD-02` 补齐。
+- 真实 CAD 结论只覆盖当前测试 DWG 会话，不扩大到任意项目 DWG、正式图层、公司块库、属性块或 hatch。
+- ActiveDocument / no-save / no-delete 前后守卫仍属于 `LCAD-03`，本包只保留机器可读安全字段和现有脚本行为。
+
+---
+
 ## LOCAL-CAD-REGRESSION（本地 CAD 回归矩阵加固）
 
 **日期**：2026-05-26  
@@ -3667,9 +3916,1236 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 ---
 
+## DEMAND-01-DEMAND-SIDE-AGENT-SUITE（需求侧多角色 Agent 套件）
+
+**日期**：2026-05-26  
+**性质**：需求侧压力测试层与 benchmark 扩展；不新增真实 CAD 几何结论。
+
+### 1. 开发包名
+
+`DEMAND-01-DEMAND-SIDE-AGENT-SUITE`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `agents/demand_side/role_agents.json` | 新增 12 个需求侧角色，覆盖 residential / office / restaurant / commercial_fitout / exhibition / custom |
+| `agents/demand_side/README.md` | 说明需求侧 Agent 是数据型压力测试层，不直接执行 CAD |
+| `core/demand_agents/` | 新增加载、校验、scene 覆盖汇总和 demand case 校验 |
+| `core/benchmarks/runner.py` | 新增 `demand_case` pipeline，分派到现有 object / composition / blank-shell benchmark |
+| `examples/benchmarks/demand_side_agent_benchmark.json` | 新增 10 个跨场景需求 case |
+| `tests/core/test_demand_agents.py` | 新增角色覆盖、需求 case、未知 Agent 拒绝和 benchmark 执行测试 |
+| `docs/superpowers/specs/2026-05-26-demand-side-agent-suite-design.md` | 新增本包设计记录 |
+| `docs/superpowers/plans/2026-05-26-demand-side-agent-suite.md` | 新增本包实施计划记录 |
+| `CORE_CONTEXT_BRIEF.md` / `CORE_RESTRUCTURE_PLAN.md` / `CORE_STATUS.md` / `CAD_AGENT_STATUS.md` / `CAD_AGENT_CHANGELOG.md` / `agents/SCENE_AGENT_RULES.md` / `docs/architecture/core-scene-agent-boundaries.md` / 本文 | 同步需求侧 Agent 层口径、证据和边界 |
+
+### 3. 关键设计说明
+
+- `agents/demand_side/` 只保存角色、用户原话、需求焦点和 Core 能力映射，不是 Scene Product；按用户澄清，它是开发期脚手架，能力沉淀完成后可清理角色表。
+- `demand_case` benchmark 不重新实现绘图能力，只把需求记录分派到已有 `object_spec`、`composition_spec` 或 `blank_shell` pipeline。
+- benchmark 结果保留 `demand_agent_id`、`scene_id`、`request_text`、`target_pipeline`、`core_capability_targets`，方便后续按需求侧追踪缺口。
+- 第一批需求 case 选取当前 Core 已能表达的对象和组合，目标是先建立“需求记录 -> 可跑验收 -> 缺口定位”的闭环。
+
+### 4. 新增/修改测试
+
+- `test_demand_agent_registry_covers_current_scene_agents`
+- `test_demand_agent_records_keep_user_voice_and_core_mapping`
+- `test_demand_case_records_reference_known_agents_and_target_pipeline`
+- `test_demand_agent_benchmark_runs_cross_scene_demands`
+- `test_demand_case_rejects_unknown_agent_reference`
+- 全量测试同时覆盖 `test_scene_agent_boundaries`，确认 `agents/demand_side/` 没有越界 Python / CAD 执行实现。
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_demand_agents
+# 先红灯：ModuleNotFoundError: No module named 'core.demand_agents.loaders'
+
+& $py -m unittest tests.core.test_demand_agents
+# 5 tests OK
+
+& $py -m unittest tests.core.test_demand_agents tests.core.test_benchmarks tests.agents.test_scene_agent_boundaries
+# 29 tests OK
+
+& $py scripts\run_benchmark_suite.py examples\benchmarks\demand_side_agent_benchmark.json --output-root output\test_artifacts\benchmarks\demand_side_agents_manual
+# status=pass; total=10; passed=10; failed=0; non_cad_only=true
+
+& $py -m unittest discover -s tests
+# 474 tests OK
+
+& $py scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
+# status=pass; finding_count=0
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。本包只建立需求侧 non-CAD benchmark 与数据层，不连接 AutoCAD，不写入真实 DWG。
+
+### 7. CAD 证据路径
+
+- `output\test_artifacts\benchmarks\demand_side_agents\benchmark_summary.json`
+- `output\test_artifacts\benchmarks\demand_side_agents_manual\benchmark_summary.json`
+
+这些路径是 non-CAD benchmark 证据，不是 created handles readback。
+
+### 8. 结论分类
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 需求侧角色 registry 可加载并覆盖 6 个场景 | unit tests / data validation | **否** |
+| 10 个 demand case 可分派到现有 Core benchmark pipeline | non-CAD benchmark | **否** |
+| 未知 `demand_agent_id` 会被拒绝 | negative unit test | **否** |
+| 全量单测未回归 | unittest | **否** |
+
+### 9. 剩余风险
+
+- 本包不证明真实 CAD 几何准确；后续若要说某个需求“可交付 CAD”，仍需 validate、dry-run、`CODEX_PREVIEW`、created handles readback 和 `geometry_verified`。
+- 需求侧 Agent 目前是数据和 benchmark 层，不是能自主持续对话的运行时 Agent。
+- 第一批 demand case 优先覆盖当前可表达对象 / 组合；更复杂需求如真实块库、属性块、hatch、立面深化和真实项目样本仍需后续小包补齐。
+
+---
+
+## OBJ-DETAIL-01-COMPONENT-PLAN（对象组件级 CAD_PLAN 展开）
+
+**日期**：2026-05-26  
+**性质**：将需求侧“精细餐桌 / 办公椅”等诉求沉淀为 Core 对象生成能力；当前为 non-CAD 验证。
+
+### 1. 开发包名
+
+`OBJ-DETAIL-01-COMPONENT-PLAN`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/object_engine/detail_plan.py` | 新增对象组件级 `CAD_PLAN` 展开，覆盖 table / bed / chair / sofa / desk |
+| `core/benchmarks/runner.py` | 新增 `object_detail_spec` pipeline，并允许 demand case 分派到该 pipeline |
+| `core/demand_agents/loaders.py` | 允许 `object_detail_spec` 作为需求目标 pipeline |
+| `examples/benchmarks/demand_side_agent_benchmark.json` | 将“比较精细的餐桌”和“办公椅”需求切到 `object_detail_spec` |
+| `tests/core/test_object_engine.py` | 新增对象细化 plan 生成、validate 和 dry-run 测试 |
+| `tests/core/test_benchmarks.py` | 新增 `object_detail_spec` benchmark contract 测试 |
+| `tests/core/test_demand_agents.py` | 更新 demand target pipeline 断言 |
+| `core/object_engine/README.md` / `CORE_CONTEXT_BRIEF.md` / `CORE_RESTRUCTURE_PLAN.md` / `CORE_STATUS.md` / `CAD_AGENT_STATUS.md` / `CAD_AGENT_CHANGELOG.md` / 本文 | 同步对象细化能力、证据和边界 |
+
+### 3. 关键设计说明
+
+- `object_detail_spec` 不引入新 CAD primitive；它把一个 `OBJECT_SPEC` 展开成多份安全 `draw_object` CAD_PLAN，继续复用现有 validate / dry-run / execution 合同。
+- table 输出桌面 + 4 个支撑；chair 输出座面、靠背 + 4 个支撑；bed 输出底座、睡眠面和床头；sofa 输出座面、靠背和两侧扶手；desk 输出台面和两侧支撑。
+- 默认继续 `CODEX_PREVIEW`、不加文字、不加尺寸标注。
+- 该能力提升“生成能力和理解能力”，而不是扩充最终产品中的角色表。
+
+### 4. 新增/修改测试
+
+- `test_detailed_table_plan_expands_into_component_level_preview_plans`
+- `test_detailed_furniture_plans_cover_bed_chair_and_sofa_components`
+- `test_object_detail_spec_benchmark_case_runs_component_plan_contract`
+- 需求侧 benchmark 更新后验证“精细餐桌”和“办公椅”均走 `object_detail_spec`。
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_object_engine tests.core.test_benchmarks.BenchmarkRunnerTests.test_object_detail_spec_benchmark_case_runs_component_plan_contract
+# 先红灯：No module named 'core.object_engine.detail_plan'；case.pipeline is not supported: object_detail_spec
+
+& $py -m unittest tests.core.test_object_engine tests.core.test_benchmarks.BenchmarkRunnerTests.test_object_detail_spec_benchmark_case_runs_component_plan_contract
+# 8 tests OK
+
+& $py -m unittest tests.core.test_demand_agents
+# 5 tests OK
+
+& $py scripts\run_benchmark_suite.py examples\benchmarks\demand_side_agent_benchmark.json --output-root output\test_artifacts\benchmarks\demand_side_agents_manual_after_detail
+# status=pass; total=10; passed=10; failed=0; non_cad_only=true
+
+& $py scripts\run_benchmark_suite.py examples\benchmarks\demand_side_agent_benchmark.json --output-root output\test_artifacts\benchmarks\demand_side_agents_cad_preflight
+# status=pass; total=10; passed=10; failed=0; non_cad_only=true
+
+# 使用 core.execution.batch_plan_runner.execute_plan_batch 将 10 个 demand case 写入 CODEX_PREVIEW 并回读 handles
+# output\validation_runs\demand-side-agent-cad-real-20260526\demand_side_agent_cad_check_report.json
+# status=geometry_verified; case_count=10; verified_case_count=10; created_handle_count=100
+
+# 聚焦 100 个 created handles 并截取 AutoCAD 窗口视觉辅助
+# output\validation_runs\demand-side-agent-cad-real-20260526\demand-side-agent-cad-window-focused.png
+# mode=autocad_window; focus.status=zoomed_to_bbox; handle_count=100
+
+& $py -m unittest tests.core.test_object_engine tests.core.test_benchmarks tests.core.test_demand_agents tests.agents.test_scene_agent_boundaries
+# 37 tests OK
+
+& $py -m unittest discover -s tests
+# 477 tests OK
+
+& $py scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
+# status=pass; finding_count=0
+```
+
+### 6. 是否运行真实 CAD
+
+**是**。本包后续补跑真实 CAD：10 个 demand-side case 写入当前 AutoCAD `CODEX_PREVIEW` 图层，并按 created handles 定向回读。脚本未保存 DWG、未删除实体、未修改正式图层。
+
+### 7. CAD 证据路径
+
+- `output\test_artifacts\benchmarks\object_detail_contract\residential-detailed-table\detail_cad_plans.json`
+- `output\test_artifacts\benchmarks\demand_side_agents_manual_after_detail\benchmark_summary.json`
+- `output\test_artifacts\benchmarks\demand_side_agents_manual_after_detail\demand_residential_beginner_dining_table\detail_cad_plans.json`
+- `output\test_artifacts\benchmarks\demand_side_agents_manual_after_detail\demand_office_admin_task_chair\detail_cad_plans.json`
+- `output\test_artifacts\benchmarks\demand_side_agents_cad_preflight\benchmark_summary.json`
+- `output\validation_runs\demand-side-agent-cad-real-20260526\demand_side_agent_cad_check_report.json`
+- `output\validation_runs\demand-side-agent-cad-real-20260526\all_created_handles_execution_summary.nobom.json`
+- `output\validation_runs\demand-side-agent-cad-real-20260526\demand-side-agent-cad-window-focused.png`
+
+其中 `demand_side_agent_cad_check_report.json` 是真实 CAD created handles readback 证据；PNG 截图只是视觉辅助。
+
+### 8. 结论分类
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| table / bed / chair / sofa 可展开组件级 CAD_PLAN | unit tests / validate / dry-run | **否** |
+| `object_detail_spec` benchmark pipeline 可运行 | non-CAD benchmark | **否** |
+| 需求侧“精细餐桌”和“办公椅”已命中对象细化能力 | demand benchmark + CAD batch readback | **是，随 10 个 demand case 验证** |
+| 10 个 demand-side case 写入 `CODEX_PREVIEW` 并回读 | created handles readback | **是，10/10 cases，100 handles** |
+
+### 9. 剩余风险
+
+- 组件级对象仍是预览矩形组合，不是正式块库、属性块或复杂家具符号。
+- 餐桌、椅子、床、沙发、办公桌之外的复杂对象仍需逐类扩展。
+- 真实 CAD 结论只覆盖本轮 `CODEX_PREVIEW` 写入和 10 个 demand-side case，不扩大为任意项目 DWG、公司块库、属性块或 hatch。
+
+---
+
 ## 当前交接说明
 
 本文只保留已经交付开发包的 9 项交接记录与 Codex 校验指引，不再承载当前队列、后置 Backlog 或未来小包表。后续优先级、Phase 顺序、退出门槛和后置主线唯一以 `CORE_RESTRUCTURE_PLAN.md` 为准；本文仅在对应小包真正交付后追加交接章节。
+
+2026-05-26 口径校准：本文中的历史开发包仍可作为交接证据，但不能把 scene preferences、Scene Alpha 验收或 scene beta non-CAD benchmark 解释为具体场景产品完成。Core / 场景边界以 `../architecture/core-scene-agent-boundaries.md`、`CORE_STATUS.md` 和 `CAD_AGENT_STATUS.md` 的最新口径为准。
+
+---
+
+## LCAD-08（Project sample CAD rollup）
+
+**日期**：2026-05-26  
+**性质**：双脱敏项目样本 CODEX_PREVIEW CAD 执行 + created handles readback rollup。
+
+### 1. 开发包名
+
+`LCAD-08-PROJECT-SAMPLE-CAD`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `examples/cad_regression/project_sample_cad_rollup.json` | 双样本 manifest |
+| `core/project_samples/project_sample_cad_rollup.py` | rollup runner |
+| `scripts/run_project_sample_cad_rollup.py` | CLI |
+| `docs/verification/project_sample_cad_boundaries.md` | 边界说明 |
+| `tests/core/test_project_sample_cad_rollup.py` | 3 tests |
+
+### 5. 实际运行的命令和结果
+
+```powershell
+python -m unittest tests.core.test_project_sample_cad_rollup -v
+# 3 tests OK
+
+python scripts/run_project_sample_cad_rollup.py --output-dir output/validation_runs/project-sample-cad-rollup-real
+# status=geometry_verified, 2/2 samples, handles 20+12
+```
+
+### 6. 是否运行真实 CAD
+
+**是**。`sample_blank_shell` 20 handles；`commercial_fitout_sample` 12 handles；均 `CODEX_PREVIEW`。
+
+### 7. 机器可读证据路径
+
+- `output/validation_runs/project-sample-cad-rollup-real/project_sample_cad_rollup_report.json`
+- per-sample：`cad/sample_blank_shell/project_sample_cad_check_report.json`
+- per-sample：`cad/commercial_fitout_sample/commercial_fitout_cad_smoke_report.json`
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 双样本 rollup readback | real_cad_readback | **是**（注册样本范围） |
+
+---
+
+## LCAD-07（Block / attribute / hatch boundary）
+
+**日期**：2026-05-26  
+**性质**：机器可读 block / attribute / hatch 能力边界；支持项 verified，hatch deferred。
+
+### 1. 开发包名
+
+`LCAD-07-BLOCK-ATTRIBUTE-HATCH`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `examples/cad_regression/cad_block_attribute_hatch_boundary.json` | 能力矩阵 fixture |
+| `core/verification/cad_block_attribute_hatch_boundary.py` | 契约断言 |
+| `docs/verification/cad_block_attribute_hatch_boundaries.md` | 人类可读边界 |
+
+### 5. 实际运行的命令和结果
+
+```powershell
+python -m unittest tests.core.test_cad_block_attribute_hatch_boundary tests.core.test_block_attribute_probe -v
+# 12 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（边界汇总 + 既有单测；真实 block alpha 证据见历史 `block_alpha_cad_evidence.md`）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 受控 block + attribute probe | unit_test + 历史 real CAD | **是**（受控范围） |
+| hatch | structured deferred | **否** |
+
+---
+
+## C-CFIT-07（Product boundary rollup）
+
+**日期**：2026-05-26  
+**性质**：汇总 commercial_fitout Scene Product Alpha 可声明 / 不可声明能力，统一状态页口径。
+
+### 1. 开发包名
+
+`C-CFIT-07-PRODUCT-BOUNDARY-ROLLUP`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `agents/commercial_fitout/capabilities/product_alpha_boundary.json` | 机器可读边界 rollup |
+| `core/agents/commercial_fitout_product_boundary.py` | 加载 / 契约断言 / 状态页摘要 |
+| `core/schemas/commercial_fitout_product_alpha_boundary.schema.json` | Schema |
+| `agents/commercial_fitout/subscenes.json` | `product_alpha_status` → `product_boundary` |
+| `docs/verification/commercial_fitout_product_alpha_boundaries.md` | 人类可读汇总 |
+| `CORE_STATUS.md` / `CAD_AGENT_STATUS.md` | 保守上调 commercial_fitout 为 Scene Product Alpha |
+
+### 3. 关键设计说明
+
+- `declares_scene_product_complete` 固定为 `false`。
+- 仅 1 项 `geometry_verified` 能力，且必须带 `commercial_fitout_sample` 范围注释。
+- C 路线 `C-CFIT-01`..`06` 全部列入 `completed_packages`。
+
+### 4. 新增/修改测试
+
+- `tests.agents.test_commercial_fitout_product_boundary`（5 tests）
+
+### 5. 实际运行的命令和结果
+
+```powershell
+python -m unittest tests.agents.test_commercial_fitout_product_boundary tests.agents.test_commercial_fitout_scope -v
+# 10 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（文档与契约汇总包）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| Scene Product Alpha 边界已机器化 | schema + unit_test | **否**（rollup 本身） |
+| 工装 ≠ Scene Product | 文档 + 契约 | **否** |
+
+### 9. 剩余风险
+
+- 真实 AutoCAD、多项目样本、公司块库仍为 `next_gaps_to_scene_product`。
+
+---
+
+## C-CFIT-06（Real CAD smoke）
+
+**日期**：2026-05-26  
+**性质**：工装脱敏样本确认后 `CAD_PLAN` 在 `CODEX_PREVIEW` 执行 + created handles readback。
+
+### 1. 开发包名
+
+`C-CFIT-06-REAL-CAD-SMOKE`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/agents/commercial_fitout_cad_smoke.py` | 确认产物收集 + batch 执行 + smoke 报告 |
+| `core/schemas/commercial_fitout_cad_smoke_report.schema.json` | 报告 schema（含 `product_claim_boundary`） |
+| `scripts/run_commercial_fitout_cad_smoke.py` | CLI |
+| `tests/agents/test_commercial_fitout_cad_smoke.py` | 3 tests |
+
+### 3. 关键设计说明
+
+- 先确保 `run_fitout_sample_confirmation_loop` 产出 `cad_plan_items`（desk / chair / cabinet）。
+- `execute_plan_batch` + `build_verification_report` 与 project sample CAD check 同路径。
+- `product_claim_boundary` 明确 **不** 声明完整工装 Scene Product。
+
+### 4. 新增/修改测试
+
+- `tests.agents.test_commercial_fitout_cad_smoke`（3 tests）
+
+### 5. 实际运行的命令和结果
+
+```powershell
+python -m unittest tests.agents.test_commercial_fitout_cad_smoke -v
+# 3 tests OK
+
+python scripts/run_commercial_fitout_cad_smoke.py --output-dir output/validation_runs/commercial-fitout-cad-smoke-real
+# exit 2: AutoCAD unavailable (deferred)
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（本环境无活动 AutoCAD）。单测使用 FakeCadDriver 完成 readback `geometry_verified`。
+
+### 7. 机器可读证据路径
+
+- 单测：`output/test_artifacts/commercial_fitout_sample/cad_smoke_*`
+- 真实 CAD（待补）：`output/validation_runs/commercial-fitout-cad-smoke-real/commercial_fitout_cad_smoke_report.json`
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 3 个确认后 CAD_PLAN batch readback | unit_test (FakeCadDriver) | **是**（仅 `commercial_fitout_sample` 范围） |
+| 真实 AutoCAD 会话 | deferred | **否**（待用户打开 CAD 补跑） |
+
+### 9. 剩余风险
+
+- 真实 AutoCAD 未在本会话验证；不得将 FakeCadDriver 证据扩大为生产环境几何结论。
+- `FITOUT_*` 块仍为占位；当前 smoke 走 `draw_object` 矩形预览。
+
+---
+
+## C-CFIT-05（Sample project confirmation）
+
+**日期**：2026-05-26  
+**性质**：工装脱敏样本从 `SHELL_MODEL` / `DESIGN_PROPOSAL` 到用户确认 bundle 的 non-CAD 闭环。
+
+### 1. 开发包名
+
+`C-CFIT-05-SAMPLE-PROJECT-CONFIRMATION`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `projects/commercial_fitout_sample/` | 新增脱敏样本 manifest / shell / brief / expected |
+| `examples/workflows/commercial_fitout_sample_confirmation_loop.json` | 工装确认 workflow |
+| `core/agents/commercial_fitout_sample_confirmation.py` | 确认前 gate + 确认后 bundle（assumptions / risks） |
+| `core/schemas/commercial_fitout_sample_confirmation_bundle.schema.json` | 样本确认 bundle schema |
+| `core/workflows/blank_shell_pipeline.py` | `confirmation_pending` 部分产物路径 |
+| `core/proposal_engine/partial_replan.py` | 先写 cad_plan_items 再 verification |
+| `scripts/run_commercial_fitout_sample_confirmation.py` | CLI |
+| `tests/agents/test_commercial_fitout_sample_confirmation.py` | 4 tests |
+
+### 3. 关键设计说明
+
+- `design_brief.needs_confirmation=true` 时 pipeline 状态为 `confirmation_pending`，不写出 `cad_plan` / `dry_run_report`。
+- 用户确认后走 `finalize_confirmed_cad_plans` + `commercial_fitout_sample_confirmation_bundle.json`（记录 assumptions / risks）。
+- 全部 `CAD_PLAN` 保持 `CODEX_PREVIEW` 且 `needs_confirmation=false`（确认后）。
+
+### 4. 新增/修改测试
+
+- `tests.agents.test_commercial_fitout_sample_confirmation`（4 tests）
+
+### 5. 实际运行的命令和结果
+
+```powershell
+python -m unittest tests.agents.test_commercial_fitout_sample_confirmation -v
+# 4 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。`geometry_verified=false`；仅 non-CAD validate / dry-run / unverified verification。
+
+### 7. 机器可读证据路径
+
+- 单测产物：`output/test_artifacts/commercial_fitout_sample/`
+- CLI 默认：`output/validation_runs/commercial-fitout-sample-confirmation/`
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 确认前无 CAD_PLAN 产物 | unit_test | **否** |
+| 确认后 confirmed bundle + assumptions/risks | unit_test + schema | **否** |
+
+### 9. 剩余风险
+
+- 真实 CAD smoke 与 created handles readback 留给 `C-CFIT-06-REAL-CAD-SMOKE`。
+- `FITOUT_*` 块仍为占位 metadata，未绑定公司图块库。
+
+---
+
+## C-CFIT-04（Micro-scene benchmark）
+
+**日期**：2026-05-26  
+**性质**：工装成功 / 失败微场景 non-CAD benchmark，失败 case 结构化 blocked。
+
+### 1. 开发包名
+
+`C-CFIT-04-MICRO-SCENE-BENCHMARK`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_commercial_fitout_layout_failure tests.agents.test_commercial_fitout_micro_scene_benchmark -v
+# 6 tests OK
+& $py scripts\run_commercial_fitout_micro_scene_benchmark.py
+# summary pass 8/8
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（non-CAD composition / object_spec benchmark only）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 4 pass + 4 blocked_expected_non_cad micro-scenes | unit_test + benchmark suite | **否** |
+
+---
+
+## C-CFIT-03（Block mapping）
+
+**日期**：2026-05-26  
+**性质**：工装受控块 metadata、mapping 与 OBJECT_SPEC fallback。
+
+### 1. 开发包名
+
+`C-CFIT-03-BLOCK-MAPPING`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.agents.test_commercial_fitout_block_mapping -v
+# 7 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（symbol_fallback 块 metadata；无 `cad_insertion_verified`）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 受控 FITOUT 块名 + mapping + OBJECT_SPEC fallback | unit_test + schema | **否** |
+
+---
+
+## C-CFIT-02（Object catalog）
+
+**日期**：2026-05-26  
+**性质**：工装 Scene Product Alpha 对象体系 fixture，可被 Core layout / object pipeline 读取。
+
+### 1. 开发包名
+
+`C-CFIT-02-OBJECT-CATALOG`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.agents.test_commercial_fitout_catalog -v
+# 5 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（catalog → OBJECT_SPEC → layout non-CAD only）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 14 项 object catalog + layout pipeline 可读 | unit_test + schema | **否** |
+
+---
+
+## C-CFIT-01（Scope and subscenes）
+
+**日期**：2026-05-26  
+**性质**：工装 Scene Product Alpha 首版范围与子场景收敛。
+
+### 1. 开发包名
+
+`C-CFIT-01-SCOPE-AND-SUBSCENES`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.agents.test_commercial_fitout_scope -v
+# 5 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（范围与边界扫描 only）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 三子场景范围 + 不做完整施工图 + agent 边界扫描 | unit_test + schema | **否** |
+
+---
+
+## B-ORCH-05（Route audit report）
+
+**日期**：2026-05-26  
+**性质**：中控路由审计报告，汇总 workflow 选择、场景启用与证据边界。
+
+### 1. 开发包名
+
+`B-ORCH-05-ROUTE-AUDIT-REPORT`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_route_audit_report tests.core.test_workflow_dispatch -v
+# 11 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（`readback_geometry_verified` 在 allow_cad 且无 readback 时标记 deferred）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| route audit report schema + orchestrate 附带写入 | unit_test | **否** |
+
+---
+
+## B-ORCH-04（Workflow dispatch）
+
+**日期**：2026-05-26  
+**性质**：中控 workflow 分派，复用既有 Core runners。
+
+### 1. 开发包名
+
+`B-ORCH-04-WORKFLOW-DISPATCH`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_workflow_dispatch -v
+# 7 tests OK（含 non_cad_pipeline 与 symbol_glyph 执行）
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（CAD 路由默认 deferred，除非 `include_cad=true`）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| orchestrator non-CAD dispatch | unit_test | **否** |
+
+---
+
+## B-ORCH-03（Activation policy）
+
+**日期**：2026-05-26  
+**性质**：场景启用策略，默认 `no_scene`，模糊时追问。
+
+### 1. 开发包名
+
+`B-ORCH-03-ACTIVATION-POLICY`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_activation_policy -v
+# 7 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| no_scene / manifest / trigger / clarification 路由 | unit_test | **否** |
+
+---
+
+## B-ORCH-02（Scene registry）
+
+**日期**：2026-05-26  
+**性质**：Scene Registry fixture，可被 orchestrator / router 读取。
+
+### 1. 开发包名
+
+`B-ORCH-02-SCENE-REGISTRY`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_scene_registry -v
+# 7 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 7 场景 registry 可读且语义校验通过 | unit_test | **否** |
+
+---
+
+## B-ORCH-01（Request context）
+
+**日期**：2026-05-26  
+**性质**：统一请求上下文与门禁，缺输入时不 dispatch / 不落图。
+
+### 1. 开发包名
+
+`B-ORCH-01-REQUEST-CONTEXT`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_request_context -v
+# 6 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| REQUEST_CONTEXT gate（ready/blocked/clarify） | unit_test | **否** |
+
+---
+
+## D-SYMBOL-07（Block fallback policy）
+
+**日期**：2026-05-26  
+**性质**：OBJECT_SPEC 渲染路径解析与反静默退化门禁。
+
+### 1. 开发包名
+
+`D-SYMBOL-07-BLOCK-FALLBACK-POLICY`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_symbol_fallback_policy -v
+# 6 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（non-CAD 路径解析 + dry-run 证据）。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| block/symbol/component/bbox/deferred 分层 evidence | unit_test | **否** |
+| 受控 block 优先于 symbol（cad_insertion_verified） | unit_test | **否** |
+
+---
+
+## D-SYMBOL-06（CAD readback smoke）
+
+**日期**：2026-05-26  
+**性质**：代表 desk glyph 真实 CAD 写入 + created handles readback（FakeCad 已验证契约）。
+
+### 1. 开发包名
+
+`D-SYMBOL-06-CAD-READBACK-SMOKE`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_symbol_glyph_cad_smoke -v
+# 5 tests OK
+
+& $py scripts/run_symbol_glyph_cad_smoke.py --no-cad --output-dir output/validation_runs/symbol-glyph-deferred-cli
+# status=deferred（无 AutoCAD 连接）
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（本轮 CI/单元测试使用 `FakeCadDriver`）。本机有 AutoCAD 时可运行：
+
+```powershell
+& $py scripts/run_symbol_glyph_cad_smoke.py --output-dir output/validation_runs/symbol-glyph-real
+```
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| desk glyph execute + readback 契约 | unit_test / FakeCadDriver | **是**（fake readback） |
+| 真实 AutoCAD COM 落图 | 待本机 smoke | 待跑 |
+
+---
+
+## D-SYMBOL-05（Readability gate）
+
+**日期**：2026-05-26  
+**性质**：符号可读性报告，补充而非替代 `geometry_verified`。
+
+### 1. 开发包名
+
+`D-SYMBOL-05-READABILITY-GATE`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_symbol_readability tests.core.test_object_to_symbol -v
+# 11 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| symbol_readability_report 五态区分 | non_cad_only / unit_test | **否** |
+
+---
+
+## D-SYMBOL-04（Object to symbol）
+
+**日期**：2026-05-26  
+**性质**：`OBJECT_SPEC` → `SYMBOL_SPEC` 统一映射与显式 fallback。
+
+### 1. 开发包名
+
+`D-SYMBOL-04-OBJECT-TO-SYMBOL`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_object_to_symbol tests.core.test_symbol_archetypes -v
+# 11 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 6 类对象 symbol 映射 + validate/dry-run | non_cad_only / unit_test | **否** |
+
+---
+
+## D-SYMBOL-03（Archetype grammar）
+
+**日期**：2026-05-26  
+**性质**：6 类 archetype 必备符号部件与相对位置约束。
+
+### 1. 开发包名
+
+`D-SYMBOL-03-ARCHETYPE-GRAMMAR`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/symbol_engine/archetypes.py` | grammar + position rules |
+| `core/symbol_engine/symbol_spec.py` | 接入 archetype 校验 |
+| `core/symbol_engine/primitives.py` | seat_split / drawer_line / door_swing |
+| `examples/symbol_specs/*.json` | 6 archetype 示例 |
+| `tests/core/test_symbol_archetypes.py` | 新增 |
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_symbol_archetypes tests.core.test_symbol_spec tests.core.test_symbol_primitives -v
+# 18 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 6 archetype grammar + validate/dry-run | non_cad_only / unit_test | **否** |
+
+### 9. 剩余风险
+
+- `OBJECT_SPEC` → `SYMBOL_SPEC` 自动映射尚未实现（`D-SYMBOL-04`）。
+
+---
+
+## D-SYMBOL-02（Primitives）
+
+**日期**：2026-05-26  
+**性质**：符号 primitive 渲染与 `draw_symbol_glyph` CAD_PLAN 入口。
+
+### 1. 开发包名
+
+`D-SYMBOL-02-PRIMITIVES`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/symbol_engine/primitives.py` | part → glyph 几何 |
+| `core/plan_engine/symbol_glyph_plan.py` | validate / dry-run |
+| `core/plan_engine/validate_plan.py` | `draw_symbol_glyph` intent |
+| `core/plan_engine/dry_run_report.py` | glyph dry-run |
+| `core/schemas/cad_plan.schema.json` | intent 枚举 |
+| `tests/core/test_symbol_primitives.py` | 新增 |
+
+### 3. 关键设计说明
+
+- `symbol_spec_to_cad_plan()` 输出 `draw_symbol_glyph`，默认禁止 label/dimension。
+- glyph primitive 支持 rectangle / line / polyline / circle / arc；拒绝 text/dimension。
+- 真实 CAD 执行（`execute_plan`）尚未接线，留给后续 readback 包。
+
+### 4. 新增/修改测试
+
+- `tests.core.test_symbol_primitives`（5 tests）+ `test_symbol_spec`（12 tests OK）
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_symbol_primitives tests.core.test_symbol_spec -v
+# 12 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| symbol glyph CAD_PLAN validate + dry-run | non_cad_only / unit_test | **否** |
+
+### 9. 剩余风险
+
+- `execute_plan` 未支持 `draw_symbol_glyph`；archetype 必备部件规则未建立。
+
+---
+
+## D-SYMBOL-01（Spec schema）
+
+**日期**：2026-05-26  
+**性质**：SYMBOL-CORE 第 1 子包；`SYMBOL_SPEC` / `SYMBOL_GRAPH` 数据模型与反静默 bbox 门禁。
+
+### 1. 开发包名
+
+`D-SYMBOL-01-SPEC-SCHEMA`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/schemas/symbol_spec.schema.json` | SYMBOL_SPEC schema |
+| `core/schemas/symbol_graph.schema.json` | SYMBOL_GRAPH schema |
+| `core/schemas/registry.py` | 注册与 infer |
+| `core/symbol_engine/symbol_spec.py` | 语义校验 |
+| `examples/symbol_specs/surface_desk_plan.json` | 合法示例 |
+| `examples/symbol_graphs/single_desk_placement.json` | 合法示例 |
+| `tests/fixtures/invalid_models/symbol_*.invalid.json` | 非法 fixture |
+| `tests/core/test_symbol_spec.py` | 新增 |
+
+### 3. 关键设计说明
+
+- `fallback_policy.mode` 必须显式声明；`symbol_readable` 禁止 outline-only parts。
+- `fallback_bbox_placeholder` 要求 `bbox_fallback_declared=true` 与 `reason`。
+- 尚未实现 primitive 渲染或真实 CAD readback（留给 `D-SYMBOL-02`~`06`）。
+
+### 4. 新增/修改测试
+
+- `tests.core.test_symbol_spec`（7 tests）+ `test_schema_validation`（17 tests OK）
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_symbol_spec tests.core.test_schema_validation -v
+# 17 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 7. 机器可读证据路径
+
+- 示例：`examples/symbol_specs/surface_desk_plan.json`
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| SYMBOL_SPEC / SYMBOL_GRAPH schema + 反静默 bbox 门禁 | non_cad_only / unit_test | **否** |
+
+### 9. 剩余风险
+
+- primitive 层、archetype grammar、object 映射与 CAD readback 尚未实现。
+
+---
+
+## A-LCAD-04-TO-06（Smoke and plan matrix）
+
+**日期**：2026-05-26  
+**性质**：LCAD 扩样合并包；primitive matrix + 批量 `CAD_PLAN` fixture suite + manifest 接线。
+
+### 1. 开发包名
+
+`A-LCAD-04-TO-06-SMOKE-AND-PLAN-MATRIX`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/verification/primitive_matrix.py` | 图元矩阵 wrapper |
+| `core/verification/cad_plan_fixture_suite.py` | validate / dry-run / 可选执行 |
+| `core/verification/local_cad_regression.py` | 新 manifest case 接线 |
+| `core/verification/fake_cad_driver.py` | `insert_block_alpha` |
+| `examples/cad_regression/cad_plan_fixture_manifest.json` | 3 fixture |
+| `examples/cad_regression/fixtures/*.json` | cabinet / desk / block preview |
+| `examples/cad_regression/local_cad_regression_manifest.json` | +3 case |
+| `scripts/run_primitive_matrix.py` | CLI |
+| `scripts/run_cad_plan_fixture_suite.py` | CLI |
+| `tests/core/test_primitive_matrix.py` | 新增 |
+| `tests/core/test_cad_plan_fixture_suite.py` | 新增 |
+| `tests/core/test_local_cad_regression.py` | manifest 7 case |
+
+### 3. 关键设计说明
+
+- no-CAD 路径：fixture 只做 validate + dry-run；primitive matrix 用 `FakeCadDriver`。
+- 有 CAD 路径：`cad_plan_fixture_suite_cad` 在 `--no-cad` 矩阵中 deferred；`--strict` 要求 `geometry_verified` 或 `pass`。
+- 失败 fixture 在 suite 报告里按 `status=fail` 汇总，不静默 pass。
+
+### 4. 新增/修改测试
+
+- `tests.core.test_cad_plan_fixture_suite`（2 tests）
+- `tests.core.test_primitive_matrix`（1 test）
+- `tests.core.test_local_cad_regression` + `test_schema_validation`（23 tests OK）
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_cad_plan_fixture_suite tests.core.test_primitive_matrix tests.core.test_local_cad_regression tests.core.test_schema_validation -v
+# 23 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（`self_check` 显示 `autocad_window.status=unavailable`）。
+
+### 7. 机器可读证据路径
+
+- `output/test_artifacts/cad_plan_fixture_suite/no_cad/cad_plan_fixture_suite_report.json`
+- `output/test_artifacts/primitive_matrix/no_cad/primitive_matrix_report.json`
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| primitive matrix + 3 fixture validate/dry-run + fake 执行 | non_cad_only / unit_test | **否** |
+
+### 9. 剩余风险
+
+- `cad_plan_fixture_suite_cad`、`primitive_matrix`（无 `--no-cad`）的真实 CAD readback 待用户在 AutoCAD 可用时补跑 strict matrix。
+
+---
+
+## A-LCAD-03.4（Created-handle scope）
+
+**日期**：2026-05-26  
+**性质**：几何验证只认本轮 created handles；readback 报告记录 scope 统计。
+
+### 1. 开发包名
+
+`A-LCAD-03.4-CREATED-HANDLE-SCOPE`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/verification/created_handle_scope.py` | scope 分析与 check |
+| `core/verification/verification_report.py` | `actual.created_handle_scope` |
+| `core/verification/evidence_contract.py` | geometry_verified 门禁 |
+| `core/verification/cad_capability_probe.py` | probe 报告字段 |
+| `core/verification/complex_cad_smoke.py` | smoke 报告字段 |
+| `tests/core/test_created_handle_scope.py` | 新增 |
+
+### 3. 关键设计说明
+
+- `geometry_verified` 要求 `miss_count=0` 且 `extra_entity_count=0`。
+- `created_handles_scope` check 从 warning 升级为 fail。
+
+### 4. 新增/修改测试
+
+- `tests.core.test_created_handle_scope`（3 tests）+ 相关回归 47 tests OK
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_created_handle_scope tests.core.test_verification_report tests.core.test_cad_capability_probe tests.core.test_complex_cad_smoke tests.core.test_cad_validation_runner tests.core.test_block_alpha_validation -v
+# 47 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。
+
+### 7. 机器可读证据路径
+
+- readback / probe 报告的 `actual.created_handle_scope` 或顶层 `created_handle_scope`
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| created-handle scope 统计与门禁 | non_cad_only / unit_test | **否** |
+
+### 9. 剩余风险
+
+- 真实大图里历史实体 before/after 差分仍未作为默认门禁；留给后续 LCAD 扩样。
+
+---
+
+## A-LCAD-03.3（No-save / no-delete guard）
+
+**日期**：2026-05-26  
+**性质**：CAD 安全 A 路线第 3 子包；运行时拦截 save/delete/formal-layer 写入。
+
+### 1. 开发包名
+
+`A-LCAD-03.3-NO-SAVE-NO-DELETE-GUARD`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/safety/write_guard.py` | 新增写入守卫与负向探针 |
+| `core/cad_io/autocad_com.py` | 图层守卫 + save/delete 入口 |
+| `core/verification/fake_cad_driver.py` | 同步守卫 |
+| `core/verification/cad_capability_probe.py` | `write_guard` 报告与 check |
+| `tests/core/test_cad_write_guard.py` | 新增 |
+
+### 3. 关键设计说明
+
+- 默认 preview-only 会话禁止 `WALL` 等正式图层写入、`Save`、覆盖、删除。
+- capability probe 在真实写入后跑负向自检，确认被拦截且无新增正式实体。
+
+### 4. 新增/修改测试
+
+- `tests.core.test_cad_write_guard`（4 tests）
+- `tests.core.test_cad_capability_probe` 扩展 `write_guard_negative`
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_cad_write_guard tests.core.test_cad_capability_probe tests.core.test_autocad_com_driver tests.core.test_execute_plan tests.core.test_complex_cad_smoke -v
+# 35 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**（fake-driver / no-CAD）。
+
+### 7. 机器可读证据路径
+
+- 单测 artifact 目录；真实 CAD 跑 probe 时写入 `cad_capability_probe.json` 的 `write_guard` 字段。
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| save/delete/formal-layer 负向守卫可用 | non_cad_only / unit_test | **否** |
+
+### 9. 剩余风险
+
+- 真实 CAD 会话下 COM 若绕过 driver 直接 `doc.Save()` 仍依赖 AutoCAD 侧纪律；`03.4` 继续收紧 readback scope。
+
+---
+
+## A-LCAD-03.1（ActiveDocument snapshot）
+
+**日期**：2026-05-26  
+**性质**：CAD 安全与证据链 A 路线第 1 子包；记录连接前后 ActiveDocument 与 modelspace 摘要，不新增真实 CAD 几何结论。
+
+### 1. 开发包名
+
+`A-LCAD-03.1-ACTIVE-DOC-SNAPSHOT`
+
+### 2. 修改文件列表
+
+| 路径 | 变更 |
+| --- | --- |
+| `core/verification/cad_session_guard.py` | 新增 snapshot / compare / session guard report |
+| `core/verification/cad_capability_probe.py` | 接入 `active_document_guard` 与 `active_document_snapshot.json` |
+| `core/verification/fake_cad_driver.py` | 补 `FullName`、`Documents.Count` 供单测 |
+| `tests/core/test_cad_session_guard.py` | 新增 6 项 session guard 单测 |
+| `tests/core/test_cad_capability_probe.py` | 断言 guard 字段与 snapshot 文件 |
+| `docs/planning/一键推进.md` 等状态文档 | 移出已完成包，下一包改为 03.2 |
+
+### 3. 关键设计说明
+
+- 连接前固定 `before_connect=blocked(cad_not_connected)`；连接后、写入后各采一次 snapshot。
+- snapshot 含文档 `name` / `full_name` / `fingerprint`、preview 层实体计数、modelspace `type_counts` / `layer_counts` 摘要。
+- `Documents.Count > 1` 时 session guard 状态为 `blocked`（多文档不确定）。
+- 本包只做记录与比对，preview-only / no-save 硬门禁留给 `A-LCAD-03.2`~`03.3`。
+
+### 4. 新增/修改测试
+
+- `tests.core.test_cad_session_guard`（6 tests）
+- `tests.core.test_cad_capability_probe`（扩展 guard 断言）
+
+### 5. 实际运行的命令和结果
+
+```powershell
+& $py -m unittest tests.core.test_cad_session_guard tests.core.test_cad_capability_probe -v
+# 9 tests OK
+```
+
+### 6. 是否运行真实 CAD
+
+**否**。本轮仅 fake-driver / no-CAD 单测；未声明新的 `geometry_verified`。
+
+### 7. 机器可读证据路径
+
+- 单测产物目录：`output/test_artifacts/`（由 `artifact_path` 生成）
+- 真实 CAD 运行 capability probe 时，同目录会额外写出 `active_document_snapshot.json`
+
+### 8. 结论分类表
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| ActiveDocument 前后 snapshot 可写入 report | non_cad_only / unit_test | **否** |
+| capability probe 已携带 `active_document_guard` | non_cad_only | **否** |
+
+### 9. 剩余风险
+
+- preview-only audit、no-save/no-delete 负向守卫仍未完成（`A-LCAD-03.2`~`03.3`）。
+- 真实 CAD 会话下 multi-document / 文档切换行为尚未实跑验证。
 
 ---
 
@@ -3686,9 +5162,9 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 ## 进度估算（交接时快照）
 
 ```text
-总进度：约 95%
-Core 底座开发进度：约 99%
-Agent 多场景实现进度：约 85%
+总进度：约 59%
+Core 底座开发进度：约 73%
+Agent 多场景实现进度：约 25%
 ```
 
-*百分比仅作节奏参考，以测试与 `output/validation_runs` 证据为准。*
+*百分比仅作节奏参考，以测试与 `output/validation_runs` 证据为准。当前百分比按“真实工程可用度 / 场景产品化成熟度”估算，不把 non-CAD scene benchmark 直接算作 Scene Product 完成。*

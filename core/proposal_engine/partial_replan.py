@@ -180,7 +180,6 @@ def recompute_cad_plans_from_pipeline_artifacts(
     cad_plan_items_dir = artifact_dir / "cad_plan_items"
     cad_plan_items_dir.mkdir(parents=True, exist_ok=True)
     cad_plan_paths = [cad_plan_items_dir / f"cad_plan_{index + 1:03d}.json" for index in range(len(cad_plans))]
-    verification_reports = [build_verification_report(plan_path=path) for path in cad_plan_paths]
 
     _write_json(required["placements"], placements)
     _write_json(required["layout_proposal"], layout)
@@ -189,6 +188,7 @@ def recompute_cad_plans_from_pipeline_artifacts(
     _write_json(artifact_dir / "cad_plans.json", cad_plans)
     for path, plan in zip(cad_plan_paths, cad_plans):
         _write_json(path, plan)
+    verification_reports = [build_verification_report(plan_path=path) for path in cad_plan_paths]
     _write_json(artifact_dir / "dry_run_report.json", dry_run_reports[0])
     _write_json(artifact_dir / "dry_run_reports.json", dry_run_reports)
     _write_json(artifact_dir / "verification_report.json", verification_reports[0])

@@ -62,19 +62,34 @@
 
 后续每次完成 CAD Agent 相关改动后，Codex 都要顺手模拟估算一次开发进度，并在最终回复中给出大概百分比。该百分比是产品和工程节奏判断工具，不是严格项目管理 KPI，允许有 5-10 个百分点的主观误差。
 
-固定按三项汇报：
+固定按 **表 A + 表 B** 汇报（格式见 `AGENTS.md`）：
 
-- `Core 底座开发进度`：把 Core 通用计划按 100% 估算，包含 schema、workflow、CAD IO、执行、验证、安全、benchmark、真实样本、维护治理和可迁移性。
-- `Agent 多场景实现进度`：把场景扩展层按 100% 估算，包含 `agents/<scenario>` manifest、preferences、场景 workflow、场景 benchmark、场景语义、真实样本和不得复制 Core 的边界。
-- `总进度`：默认按 `Core 底座开发 70% + Agent 多场景实现 30%` 加权估算。除非用户另行指定权重，否则使用这个口径。
+**表 A — 工程节奏**
+
+- `Core 底座开发进度`、`Agent 多场景实现进度`、`总进度`（默认 Core 70% + Agent 30%）。
+
+**表 B — 任务清单三指令执行进度**（`docs/planning/任务清单.md` §0）
+
+- `能力证明`（§3）、`一键推进`（§4 代码轨）、`CAD 补验`（§5）。
+- 口径：`done 包数 ÷ 该板块任务包总量`；新增需求入表时分母变大，百分比可能下降。
 
 当前基准估算见 `CORE_STATUS.md` 与 `CAD_AGENT_STATUS.md`。截至 2026-05-26 的同步口径为：
 
 ```text
-总进度：约 59% = 70% * 0.70 + 34% * 0.30
-Core 底座开发进度：约 70%
-Agent 多场景实现进度：约 34%
+总进度：约 86% = 96% * 0.70 + 52% * 0.30（工程节奏）
+Core 底座开发进度：约 96%（工程完备度）
+Agent 多场景实现进度：约 52%
+CAD 证明覆盖率：待 V-PROOF-02（定性 <10%）
+展示等级 Ladder：约 L3~L4 边缘
 ```
+
+## 0.5 能力证明体系（路线 F）
+
+- 架构：`docs/planning/capability-proof-architecture.md`；任务包：`docs/planning/任务清单.md` §3（`V-PROOF-00`~`79`）。
+- 每个可声称能力须在 `cad_capability_registry.json` 占一行，含 `claim_level`（`none` / `deferred` / `smoke` / `verified` / `showcase`）。
+- **路线 E / RCAD** 只负责真实 CAD 执行；通过后须回写 registry，不得只留报告不入表。
+- 新能力：**先登记（V-PROOF-01）再开发或 RCAD**，禁止「只写代码不登记」。
+- 对外声称 CAD 已通过：仅当对应行 `claim_level` 为 `verified` 或 `showcase`，且有可复跑 `cad_case` 与 `geometry_verified` 路径。
 
 估算规则：
 
@@ -82,6 +97,28 @@ Agent 多场景实现进度：约 34%
 - 发现回归、验证缺口或之前结论夸大时，可以下调百分比。
 - 百分比变化达到约 2 个百分点以上，或用户要求状态汇报时，同步 `CORE_STATUS.md` / `CAD_AGENT_STATUS.md`。
 - 任何百分比都不得替代真实验证证据；涉及 CAD 几何准确仍必须看 `readback_report.json`、`cad_capability_probe.json` 和关键 checks。
+
+## 0.5 Core / 场景 Agent 边界
+
+当前仓库存在多个 `agents/<scenario>/` 目录和 scene benchmark，但它们的成熟度必须分级表达：
+
+- `Core 底座`：通用 schema、workflow、`CAD_PLAN`、CAD IO、验证、benchmark、读图、对象、图块和安全门禁。
+- `Scene Alpha 壳层`：场景 preferences、词汇、默认参数、排序权重、解释模板和边界扫描，只证明多场景可复用同一 Core。
+- `Scene Beta 能力包`：某个场景有对象体系、微场景、失败样本和 non-CAD benchmark，可证明场景语义可跑通。
+- `Scene Product 场景产品`：某个真实业务场景有脱敏样本、图块策略、真实 CAD smoke、用户确认流和交付边界，才可接近可用 Agent。
+
+因此，不得把 `office/residential/restaurant` 的 preferences、rules、Alpha 验收或 scene beta non-CAD benchmark 写成“多场景 Agent 已产品化完成”。真正的场景开发要进入该场景的对象体系、业务规则、图块 metadata、项目样本、失败样本、真实 CAD readback 和用户确认闭环。
+
+以工装为例，只有当开放办公、会议室、前台接待等子场景的办公桌 / 工位组 / 会议桌 / 文件柜 / 前台等对象、规则、图块和真实 CAD smoke 都有证据后，才可以提升为工装 Scene Product。详细边界见 `docs/architecture/core-scene-agent-boundaries.md`。
+
+未来场景能力采用“主底座中控按需调用”的架构：
+
+- `Core Orchestrator` 是唯一主中控。
+- `Scene Router` 只在用户明确场景或项目 manifest 指定场景时启用场景。
+- 没有明确场景时必须返回 `no_scene`，只调用通用 Core。
+- 场景能力以 `Scene Capability Module` 形式独立放在 `agents/<scenario>/`，可包含 registry、preferences、对象清单、微场景、图块映射和解释模板。
+- 场景模块不得直接执行 CAD、做通用几何、碰撞、回读或验证；这些仍归 Core。
+- 如果未来允许场景专属 adapter 函数，必须先在 `CORE_RESTRUCTURE_PLAN.md` 登记接口、边界扫描和测试，不能直接绕开当前 `agents/` 无 `.py` 的 Alpha 规则。
 
 ## 1. 不直接从白话画 CAD
 
@@ -100,6 +137,16 @@ Agent 多场景实现进度：约 34%
 - 不默认修改正式图层。
 - 默认画到 `CODEX_PREVIEW` 图层。
 - 大批量绘制前必须先 dry-run。
+
+## 2.1 默认不落文字和尺寸标注
+
+面向用户生产或交付的 CAD 输出，默认不生成中文文字标注、不生成英文文字标注，也不默认生成尺寸标注。
+
+这不是删除能力。`include_label`、`include_dimensions`、`draw_text`、`add_dimension` 等文字和尺寸能力必须保留；只有在用户明确要求加名称、编号、说明、文字、尺寸、尺寸线或标注时，才在对应 `CAD_PLAN` 中显式启用。
+
+能力探针、回归测试、benchmark 或专门验证文字 / 尺寸能力时可以启用这些开关，但必须把它们标记为测试或能力证据，不能当成普通生产出图默认值。
+
+对话、dry-run 报告和验证报告仍应说明对象、尺寸、基点、图层和允许误差；这类说明不等于在 DWG 中落文字实体或尺寸实体。
 
 ## 3. 每个 CAD 动作都要可解释
 

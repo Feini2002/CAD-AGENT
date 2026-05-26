@@ -176,6 +176,15 @@ def _layout_from_placements(
     }
 
 
+def _is_confirmation_only_plan_block(plan_result: dict[str, Any]) -> bool:
+    if plan_result.get("status") != "blocked":
+        return False
+    errors = plan_result.get("errors", [])
+    if not isinstance(errors, list):
+        return False
+    return any("needs confirmation" in str(item).lower() for item in errors)
+
+
 def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[str, Any]:
     workflow_path = workflow_path.resolve()
     root = _find_project_root(workflow_path)
@@ -262,6 +271,59 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
         confirmed=not proposal.get("needs_confirmation", False),
     )
     if plan_result["status"] != "ok":
+        if _is_confirmation_only_plan_block(plan_result):
+            paths = {
+                "shell_model": output_dir / "shell_model.json",
+                "project_model": output_dir / "project_model.json",
+                "circulation_candidates": output_dir / "circulation_candidates.json",
+                "candidate_sets": output_dir / "candidate_sets.json",
+                "function_zones": output_dir / "function_zones.json",
+                "placements": output_dir / "placements.json",
+                "layout_proposal": output_dir / "layout_proposal.json",
+                "design_proposal": output_dir / "design_proposal.json",
+            }
+            proposal_summary = proposal.get("proposal_comparison_summary")
+            _write_json(paths["shell_model"], shell)
+            _write_json(paths["project_model"], project_model)
+            _write_json(paths["circulation_candidates"], circulation_candidates)
+            _write_json(paths["candidate_sets"], candidate_sets)
+            _write_json(paths["function_zones"], zones)
+            _write_json(paths["placements"], placements)
+            _write_json(paths["layout_proposal"], layout)
+            _write_json(paths["design_proposal"], proposal)
+            if isinstance(proposal_summary, dict):
+                paths["proposal_comparison_summary"] = output_dir / "proposal_comparison_summary.json"
+                _write_json(paths["proposal_comparison_summary"], proposal_summary)
+            metrics = {
+                "circulation_candidates": len(circulation_candidates),
+                "zone_placement_candidates": candidate_sets["counts"]["zone_placement_candidates"],
+                "candidate_sets": candidate_sets["counts"],
+                "zones": len(zones),
+                "placements": len(placements),
+                "selected_zone_id": str(target_zone.get("zone_id", "")),
+                "selected_circulation_strategy": str(circulation_for_zones.get("strategy", "")),
+                "preferences_scenario": str(preferences.get("scenario", "")),
+                "preferences_path": str(inputs.get("preferences", "")),
+                "object_types": sorted(
+                    {str(placement.get("object_type")) for placement in placements if placement.get("object_type")}
+                ),
+                "cad_plans": 0,
+                "failed_checks": sum(1 for check in layout["candidates"][0]["checks"] if check["status"] == "fail"),
+                "no_place_zone_count": len(shell.get("no_place_zones", [])),
+                "fixed_obstacle_count": len(shell.get("fixed_obstacles", [])),
+                "shell_id": str(shell.get("shell_id", "")),
+                "needs_confirmation": True,
+            }
+            return {
+                "status": "confirmation_pending",
+                "artifacts": {key: str(path) for key, path in paths.items()},
+                "metrics": metrics,
+                "confirmation_gate": {
+                    "cad_plan_generation": "blocked",
+                    "blocked_reasons": list(plan_result.get("errors", [])),
+                    "needs_confirmation": bool(proposal.get("needs_confirmation", False)),
+                },
+            }
         return {"status": "blocked", "errors": plan_result["errors"], "artifacts": {}, "metrics": {}}
     cad_plans = [item["cad_plan"] for item in plan_result["plans"]]
     dry_run_reports = [create_dry_run_report(cad_plan) for cad_plan in cad_plans]

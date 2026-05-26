@@ -1,0 +1,131 @@
+{
+  "version": "0.1",
+  "scene_id": "commercial_fitout",
+  "catalog_id": "commercial-fitout-object-catalog-v1",
+  "objects": [
+    {
+      "catalog_object_id": "workstation_cluster",
+      "display_name": "工位组",
+      "core_object_type": "desk",
+      "subscenes": ["open_office"],
+      "default_size": { "width": 1400, "depth": 1400, "height": 750 },
+      "placement_role": "workstation_cluster",
+      "bundle_members": [
+        {
+          "member_role": "desk",
+          "core_object_type": "desk",
+          "default_size": { "width": 1400, "depth": 700, "height": 750 }
+        },
+        {
+          "member_role": "chair",
+          "core_object_type": "chair",
+          "default_size": { "width": 520, "depth": 520, "height": 850 }
+        }
+      ]
+    },
+    {
+      "catalog_object_id": "desk",
+      "display_name": "办公桌",
+      "core_object_type": "desk",
+      "subscenes": ["open_office"],
+      "default_size": { "width": 1400, "depth": 700, "height": 750 },
+      "placement_role": "work_surface"
+    },
+    {
+      "catalog_object_id": "office_chair",
+      "display_name": "办公椅",
+      "core_object_type": "chair",
+      "subscenes": ["open_office"],
+      "default_size": { "width": 520, "depth": 520, "height": 850 },
+      "placement_role": "task_seating"
+    },
+    {
+      "catalog_object_id": "file_cabinet",
+      "display_name": "文件柜",
+      "core_object_type": "cabinet",
+      "subscenes": ["open_office"],
+      "default_size": { "width": 900, "depth": 450, "height": 1100 },
+      "placement_role": "document_storage"
+    },
+    {
+      "catalog_object_id": "printer_station",
+      "display_name": "打印区",
+      "core_object_type": "counter",
+      "subscenes": ["open_office"],
+      "default_size": { "width": 1600, "depth": 700, "height": 900 },
+      "placement_role": "shared_equipment"
+    },
+    {
+      "catalog_object_id": "equipment_cabinet",
+      "display_name": "设备柜",
+      "core_object_type": "cabinet",
+      "subscenes": ["open_office"],
+      "default_size": { "width": 600, "depth": 600, "height": 2000 },
+      "placement_role": "equipment_storage"
+    },
+    {
+      "catalog_object_id": "meeting_table",
+      "display_name": "会议桌",
+      "core_object_type": "table",
+      "subscenes": ["meeting_room"],
+      "default_size": { "width": 3200, "depth": 1400, "height": 750 },
+      "placement_role": "meeting_surface"
+    },
+    {
+      "catalog_object_id": "meeting_chair",
+      "display_name": "会议椅",
+      "core_object_type": "chair",
+      "subscenes": ["meeting_room"],
+      "default_size": { "width": 520, "depth": 520, "height": 850 },
+      "placement_role": "meeting_seating"
+    },
+    {
+      "catalog_object_id": "side_cabinet",
+      "display_name": "会议边柜",
+      "core_object_type": "cabinet",
+      "subscenes": ["meeting_room"],
+      "default_size": { "width": 1200, "depth": 450, "height": 1100 },
+      "placement_role": "meeting_storage"
+    },
+    {
+      "catalog_object_id": "av_console",
+      "display_name": "AV 控制台",
+      "core_object_type": "counter",
+      "subscenes": ["meeting_room"],
+      "default_size": { "width": 1800, "depth": 600, "height": 900 },
+      "placement_role": "av_equipment"
+    },
+    {
+      "catalog_object_id": "reception_desk",
+      "display_name": "前台",
+      "core_object_type": "counter",
+      "subscenes": ["reception"],
+      "default_size": { "width": 2400, "depth": 900, "height": 1100 },
+      "placement_role": "reception_counter"
+    },
+    {
+      "catalog_object_id": "waiting_sofa",
+      "display_name": "等候沙发",
+      "core_object_type": "sofa",
+      "subscenes": ["reception"],
+      "default_size": { "width": 2200, "depth": 900, "height": 850 },
+      "placement_role": "waiting_seating"
+    },
+    {
+      "catalog_object_id": "feature_wall",
+      "display_name": "形象墙",
+      "core_object_type": "display_unit",
+      "subscenes": ["reception"],
+      "default_size": { "width": 3600, "depth": 200, "height": 2800 },
+      "placement_role": "brand_feature"
+    },
+    {
+      "catalog_object_id": "storage_cabinet",
+      "display_name": "接待储物柜",
+      "core_object_type": "cabinet",
+      "subscenes": ["reception"],
+      "default_size": { "width": 1200, "depth": 450, "height": 2000 },
+      "placement_role": "reception_storage"
+    }
+  ]
+}

@@ -1,26 +1,29 @@
 # Planning Docs（Phase 执行剧本）
 
-本目录存放 Phase 执行剧本。唯一 `PlanMD` / 开发主线仍是根目录 `CORE_RESTRUCTURE_PLAN.md`：优先级、Phase 顺序、退出标准和“下一步”只以主计划为准；本目录文件只在执行某个 Phase 时展开。
+本目录存放 **Phase 执行剧本** 与 **任务清单**（三板块执行台账）。唯一 PlanMD 仍是根目录 `CORE_RESTRUCTURE_PLAN.md`。
 
-> 兼容说明：部分文件名仍包含 `plan`，但这些文件不是独立 PlanMD。它们是主计划的辅助 playbook；若内容与 `CORE_RESTRUCTURE_PLAN.md` 冲突，以主计划为准。
+## 先读哪份
 
-当前执行剧本：
+| 你想… | 读 |
+| --- | --- |
+| 连续开发下一个最小包 | [`任务清单.md`](任务清单.md)（§3 能力证明 / §4 代码 / §5 CAD） |
+| 能力证明 / 覆盖率 / Ladder | [`capability-proof-architecture.md`](capability-proof-architecture.md)、任务清单 §3 |
+| 查优先级与退出标准 | [`../../CORE_RESTRUCTURE_PLAN.md`](../../CORE_RESTRUCTURE_PLAN.md) |
+| 查能力/证据/风险 | [`../../CORE_STATUS.md`](../../CORE_STATUS.md)、[`../../CAD_AGENT_STATUS.md`](../../CAD_AGENT_STATUS.md) |
+| 恢复短上下文 | [`../../CORE_CONTEXT_BRIEF.md`](../../CORE_CONTEXT_BRIEF.md) |
+
+## 当前执行剧本
 
 | 文档 | 用途 |
 | --- | --- |
-| `phase-r-fresh-perspective-rebirth-plan.md` | Phase R 总入口：新鲜视角评审与重生式开发校准 |
-| `phase-r-rebirth-implementation-plan.md` | Phase R 执行总表：R0-R5 任务编号、证据状态和同步清单 |
-| `phase-r-cad-capability-contract.md` | Phase R 子剧本：CAD 实体能力契约与 block insertion alpha |
-| `phase-r-block-library-roadmap.md` | Phase R 子剧本：图块库、对象语义和制图标准路线 |
-| `phase-r-office-benchmark-cases.md` | Phase R 子剧本：办公基础闭环 Alpha benchmark cases |
-| `../../examples/benchmarks/interior_delivery_benchmark.json` | Phase R 角色驱动组合交付 self-check benchmark（卧室/餐桌/办公桌） |
-| `phase-w-cad-validation-plan.md` | Phase W 真实 CAD 回读闭环执行剧本 |
-| `phase-x-scene-agent-alpha-plan.md` | Phase X 场景 Agent Alpha 验收执行剧本 |
-| `phase-y-blank-shell-hardening-plan.md` | Phase Y 空壳布局硬化执行剧本 |
-| `phase-z-doc-governance-plan.md` | Phase Z 文档治理与回归基线执行剧本 |
+| [`任务清单.md`](任务清单.md) | §0 三指令进度 + 三口径；§3 **V-PROOF**；§4 代码轨；§5 **RCAD** |
+| [`capability-proof-architecture.md`](capability-proof-architecture.md) | 路线 F 架构：四层模型、Ladder、claim_level |
+| `phase-w-cad-validation-plan.md` | 真实 CAD 回读闭环步骤 |
+| `phase-x-scene-agent-alpha-plan.md` | 三场景 Alpha 验收 |
+| `phase-r-*.md` | Phase R 图块/能力契约（历史剧本，按需查阅） |
 
-已完成历史计划：
+## 已完成历史
 
-| 文档 | 状态 |
+| 文档 | 说明 |
 | --- | --- |
-| `../history/core-platform-md-split-plan-2026-05-25.md` | 已执行的主平台 Markdown 精细化拆分记录，不再作为当前计划入口 |
+| `../history/core-platform-md-split-plan-2026-05-25.md` | 主平台 MD 拆分记录 |

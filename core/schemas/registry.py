@@ -26,6 +26,7 @@ MODEL_SCHEMAS = {
     "proposal_comparison_summary": "proposal_comparison_summary.schema.json",
     "proposal_user_confirmation": "proposal_user_confirmation.schema.json",
     "confirmed_cad_plan_bundle": "confirmed_cad_plan_bundle.schema.json",
+    "cad_regression_manifest": "cad_regression_manifest.schema.json",
     "cad_plan": "cad_plan.schema.json",
     "verification_report": "verification_report.schema.json",
     "shell_model": "shell_model.schema.json",
@@ -36,6 +37,20 @@ MODEL_SCHEMAS = {
     "dwg_geometry_candidates": "dwg_geometry_candidates.schema.json",
     "shell_candidate_confidence_report": "shell_candidate_confidence_report.schema.json",
     "shell_drawing_read_confirmation": "shell_drawing_read_confirmation.schema.json",
+    "symbol_spec": "symbol_spec.schema.json",
+    "symbol_graph": "symbol_graph.schema.json",
+    "request_context": "request_context.schema.json",
+    "scene_registry": "scene_registry.schema.json",
+    "route_audit_report": "route_audit_report.schema.json",
+    "commercial_fitout_scope": "commercial_fitout_scope.schema.json",
+    "commercial_fitout_object_catalog": "commercial_fitout_object_catalog.schema.json",
+    "commercial_fitout_block_mapping": "commercial_fitout_block_mapping.schema.json",
+    "commercial_fitout_sample_confirmation_bundle": "commercial_fitout_sample_confirmation_bundle.schema.json",
+    "commercial_fitout_cad_smoke_report": "commercial_fitout_cad_smoke_report.schema.json",
+    "commercial_fitout_product_alpha_boundary": "commercial_fitout_product_alpha_boundary.schema.json",
+    "cad_block_attribute_hatch_boundary": "cad_block_attribute_hatch_boundary.schema.json",
+    "project_sample_cad_rollup": "project_sample_cad_rollup.schema.json",
+    "project_sample_cad_rollup_report": "project_sample_cad_rollup_report.schema.json",
 }
 
 
@@ -77,6 +92,8 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "proposal_user_confirmation"
     if "confirmed_cad_plans" in data and "unselected_candidate_evidence" in data:
         return "confirmed_cad_plan_bundle"
+    if "suite_id" in data and "cases" in data and "safety" in data:
+        return "cad_regression_manifest"
     if "proposal_id" in data:
         return "design_proposal"
     if "intent" in data and "placement" in data and "drawing" in data:
@@ -99,4 +116,14 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "shell_candidate_confidence_report"
     if "confirmation_id" in data and "report_ref" in data and "confirmed_items" in data:
         return "shell_drawing_read_confirmation"
+    if "graph_id" in data and "nodes" in data and "view" in data:
+        return "symbol_graph"
+    if "symbol_id" in data and "archetype" in data and "parts" in data and "fallback_policy" in data:
+        return "symbol_spec"
+    if "context_id" in data and "request_kind" in data and "cad_policy" in data:
+        return "request_context"
+    if "registry_id" in data and "default_scene_id" in data and "scenes" in data:
+        return "scene_registry"
+    if "routing_summary" in data and "deferred_items" in data and "human_summary" in data:
+        return "route_audit_report"
     raise ValueError("Cannot infer model type.")

@@ -4,6 +4,8 @@
 
 > 机器清单：`agents/scene_alpha_manifest.json`；校验逻辑：`core/agents/scene_alpha.py`；测试：`tests/agents/test_scene_preferences.py`。
 
+本文只定义 **Scene Alpha 壳层** 的 preferences 契约。它证明场景差异可以作为数据输入驱动 Core，不证明具体场景产品完成。
+
 ## 锁定的 3 个 Alpha 场景
 
 | 场景 | `preferences.json` | 可观察差异（摘要） |
@@ -24,6 +26,7 @@
 
 - Scene Agent **不是** Core 算法副本；`agents/` 不得含 CAD 执行、碰撞、几何库调用（见 `SCENE_AGENT_RULES.md` 与 `scene_alpha_agent_boundaries.md`，**X-SCENE-03 已完成**）。
 - preferences 差异 **不等于** 真实项目已验证或几何准确。
+- preferences 差异 **不等于** 工装、办公、住宅或餐饮 Scene Product 已完成。
 - `commercial_fitout`、`exhibition` 等仍存在于仓库，但 **不在** Scene Alpha 三场景契约内。
 
 ## 子校验

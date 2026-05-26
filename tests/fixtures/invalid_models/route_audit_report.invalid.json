@@ -1,0 +1,29 @@
+{
+  "model_type": "route_audit_report",
+  "data": {
+    "version": "0.1",
+    "report_id": "bad-audit",
+    "context_id": "req-bad",
+    "routing_summary": {
+      "request_kind": "draw",
+      "activated_scene_id": "no_scene",
+      "scene_module_enabled": false,
+      "selected_workflow_id": "",
+      "workflow_selection_reason": "",
+      "orchestrator_status": "ready"
+    },
+    "scene": {
+      "activation_status": "no_scene",
+      "maturity": "core_only",
+      "match_reason": ""
+    },
+    "evidence": {
+      "available": [],
+      "deferred": [],
+      "not_claimable": []
+    },
+    "deferred_items": [],
+    "human_summary": "",
+    "extra_field": true
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "version": "0.1",
+  "symbol_id": "symbol-workstation-plan",
+  "object_type": "workstation",
+  "archetype": "workstation",
+  "view": "plan",
+  "footprint": { "width_mm": 1600, "depth_mm": 800, "height_mm": 750 },
+  "orientation": { "rotation_deg": 0, "facing": "north" },
+  "parts": [
+    { "part_id": "ws-outline", "kind": "outline", "role": "primary_shell" },
+    { "part_id": "ws-desktop", "kind": "inner_offset", "role": "desktop", "params": { "inset_mm": 50 } },
+    { "part_id": "ws-zone", "kind": "split_line", "role": "keyboard_zone", "params": { "axis": "y" } },
+    { "part_id": "ws-facing", "kind": "orientation_marker", "role": "facing", "params": { "span_ratio": 0.35, "axis": "y" } }
+  ],
+  "readability_constraints": {
+    "min_part_count": 4,
+    "requires_non_bbox_parts": true,
+    "allows_text_labels": false,
+    "allows_dimensions": false
+  },
+  "fallback_policy": { "mode": "symbol_readable", "reason": "workstation glyph" }
+}

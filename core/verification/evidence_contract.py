@@ -347,6 +347,16 @@ def validate_readback_report_evidence(report: dict[str, Any]) -> str:
         entity_handles = {str(entity.get("handle")) for entity in entities if isinstance(entity, dict) and entity.get("handle")}
         if not handle_set or not handle_set <= entity_handles:
             return "readback_report geometry_verified actual.entities must cover actual.created_handles"
+        scope = actual.get("created_handle_scope")
+        if not isinstance(scope, dict):
+            return "readback_report geometry_verified requires actual.created_handle_scope"
+        for field in ("input_handle_count", "hit_count", "miss_count", "extra_entity_count"):
+            if field not in scope:
+                return f"readback_report geometry_verified requires created_handle_scope.{field}"
+        if int(scope.get("miss_count", 0)) != 0 or int(scope.get("extra_entity_count", 0)) != 0:
+            return "readback_report geometry_verified requires zero miss_count and extra_entity_count"
+        if int(scope.get("hit_count", 0)) != len(handle_set):
+            return "readback_report geometry_verified requires hit_count to match input handles"
 
     if status != "geometry_verified" and report.get("geometry_accuracy") == GEOMETRY_VERIFIED_BY_READBACK:
         return "readback_report must not claim verified_by_cad_readback without geometry_verified status"

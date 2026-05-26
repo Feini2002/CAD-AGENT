@@ -1,0 +1,22 @@
+{
+  "version": "0.1",
+  "rollup_id": "lcad-08-project-sample-cad-2026-05-26",
+  "package_id": "LCAD-08-PROJECT-SAMPLE-CAD",
+  "preview_layer": "CODEX_PREVIEW",
+  "samples": [
+    {
+      "sample_id": "sample_blank_shell",
+      "runner": "blank_shell_workflow",
+      "workflow_path": "examples/workflows/sample_blank_shell_project_loop.json",
+      "cad_offset": [28000, 12000, 0],
+      "report_filename": "project_sample_cad_check_report.json"
+    },
+    {
+      "sample_id": "commercial_fitout_sample",
+      "runner": "fitout_confirmation_workflow",
+      "workflow_path": "examples/workflows/commercial_fitout_sample_confirmation_loop.json",
+      "cad_offset": [64000, 36000, 0],
+      "report_filename": "commercial_fitout_cad_smoke_report.json"
+    }
+  ]
+}

@@ -19,6 +19,7 @@ from core.verification.evidence_contract import (
 from tests.core.cad_validation_payloads import (
     block_alpha_geometry_verified_payload as _block_alpha_geometry_verified_payload,
     cad_capability_verified_probe_payload as _cad_capability_verified_probe_payload,
+    execution_summary_payload as _execution_summary_payload,
     readback_geometry_verified_payload as _readback_geometry_verified_payload,
 )
 
@@ -154,9 +155,17 @@ class CadValidationRunnerTests(unittest.TestCase):
         def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
             command_text = " ".join(command)
             if "insert_block_alpha_test.json" in command_text and "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["BR1"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["BR1"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["ABCD"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["ABCD"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "inspect_dwg.py" in command_text:
                 return CommandResult(
                     returncode=0,
@@ -197,13 +206,37 @@ class CadValidationRunnerTests(unittest.TestCase):
         self.assertEqual(report["evidence_summary"]["cad_capability_verified_count"], 1)
         self.assertFalse(report["evidence_summary"]["non_cad_only"])
 
+    def test_execute_sample_plan_fails_when_execution_summary_missing_preview_audit(self) -> None:
+        output_dir = artifact_path("cad_validation", "missing_preview_audit")
+
+        def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
+            command_text = " ".join(command)
+            if "execute_plan.py" in command_text:
+                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["H1"]}', stderr="")
+            return CommandResult(returncode=0, stdout='{"status": "ok"}', stderr="")
+
+        report = run_cad_validation(
+            root=Path(__file__).resolve().parents[2],
+            output_dir=output_dir,
+            include_cad=True,
+            command_runner=fake_runner,
+        )
+
+        steps = {step["id"]: step for step in report["steps"]}
+        self.assertEqual(steps["execute_sample_plan"]["status"], "fail")
+        self.assertIn("preview-only audit failed", steps["execute_sample_plan"]["stderr_excerpt"])
+
     def test_top_level_pass_downgraded_when_readback_evidence_state_invalid(self) -> None:
         output_dir = artifact_path("cad_validation", "readback_invalid_evidence_state")
 
         def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
             command_text = " ".join(command)
             if "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["H1"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["H1"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "inspect_dwg.py" in command_text:
                 return CommandResult(
                     returncode=0,
@@ -256,7 +289,11 @@ class CadValidationRunnerTests(unittest.TestCase):
         def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
             command_text = " ".join(command)
             if "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["H1"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["H1"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "inspect_dwg.py" in command_text:
                 return CommandResult(
                     returncode=0,
@@ -294,7 +331,11 @@ class CadValidationRunnerTests(unittest.TestCase):
         def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
             command_text = " ".join(command)
             if "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["H1"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["H1"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "inspect_dwg.py" in command_text:
                 return CommandResult(
                     returncode=0,
@@ -346,7 +387,11 @@ class CadValidationRunnerTests(unittest.TestCase):
             if "AutoCADComDriver" in command_text:
                 return CommandResult(returncode=0, stdout="COM OK: TEST.dwg", stderr="")
             if "insert_block_alpha_test.json" in command_text and "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["BR1"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["BR1"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "run_block_alpha_validation.py" in command_text:
                 payload = _block_alpha_geometry_verified_payload()
                 payload.pop("created_handles")
@@ -373,7 +418,11 @@ class CadValidationRunnerTests(unittest.TestCase):
         def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
             command_text = " ".join(command)
             if "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["H1"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["H1"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "inspect_dwg.py" in command_text:
                 return CommandResult(
                     returncode=0,
@@ -414,7 +463,11 @@ class CadValidationRunnerTests(unittest.TestCase):
         def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
             command_text = " ".join(command)
             if "execute_plan.py" in command_text:
-                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["H1"]}', stderr="")
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(_execution_summary_payload(handles=["H1"]), ensure_ascii=False),
+                    stderr="",
+                )
             if "inspect_dwg.py" in command_text:
                 return CommandResult(
                     returncode=0,

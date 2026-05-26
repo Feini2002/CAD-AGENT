@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "commercial_fitout_object_catalog.schema.json",
+  "title": "COMMERCIAL_FITOUT_OBJECT_CATALOG",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "scene_id", "catalog_id", "objects"],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "scene_id": { "type": "string", "const": "commercial_fitout" },
+    "catalog_id": { "type": "string", "minLength": 1 },
+    "objects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "catalog_object_id",
+          "display_name",
+          "core_object_type",
+          "subscenes",
+          "default_size"
+        ],
+        "properties": {
+          "catalog_object_id": { "type": "string", "minLength": 1 },
+          "display_name": { "type": "string", "minLength": 1 },
+          "core_object_type": {
+            "type": "string",
+            "enum": ["cabinet", "shelf", "table", "desk", "chair", "sofa", "counter", "display_unit"]
+          },
+          "subscenes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": ["open_office", "meeting_room", "reception"]
+            }
+          },
+          "default_size": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["width", "depth", "height"],
+            "properties": {
+              "width": { "type": "number", "exclusiveMinimum": 0 },
+              "depth": { "type": "number", "exclusiveMinimum": 0 },
+              "height": { "type": "number", "exclusiveMinimum": 0 }
+            }
+          },
+          "placement_role": { "type": "string" },
+          "bundle_members": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["member_role", "core_object_type", "default_size"],
+              "properties": {
+                "member_role": { "type": "string", "minLength": 1 },
+                "core_object_type": {
+                  "type": "string",
+                  "enum": ["cabinet", "shelf", "table", "desk", "chair", "sofa", "counter", "display_unit"]
+                },
+                "default_size": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["width", "depth", "height"],
+                  "properties": {
+                    "width": { "type": "number", "exclusiveMinimum": 0 },
+                    "depth": { "type": "number", "exclusiveMinimum": 0 },
+                    "height": { "type": "number", "exclusiveMinimum": 0 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

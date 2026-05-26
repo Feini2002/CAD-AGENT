@@ -9,6 +9,8 @@
 
 目标：证明场景 Agent 是轻量复用层，而不是复制 Core 算法。至少 3 个场景应复用同一 `workflow.blank_shell_pipeline`，并通过 preferences 改变候选排序、对象组合或约束解释。
 
+边界：Phase X 只到 **Scene Alpha 壳层**。它不开发完整工装、办公、住宅或餐饮 Scene Product；真正的场景产品需要另有对象体系、图块 metadata、真实项目样本、真实 CAD smoke 和用户确认流。边界说明见 `../architecture/core-scene-agent-boundaries.md`。
+
 ### 当前前置事实
 
 - `agents/commercial_fitout/`、`agents/residential/`、`agents/office/`、`agents/restaurant/` 已有 preferences 或工作流基础。
@@ -50,6 +52,7 @@
 - preferences 差异在测试或 benchmark 中可观察。✅ `test_scene_preferences` + benchmark 动线断言
 - 场景层没有复制 Core 几何、CAD 执行或验证算法。✅ `scene_boundary_scan` + `test_scene_agent_boundaries`
 - 仍明确标注：这是 non-CAD Alpha，不证明真实项目图纸、块库或 `geometry_verified`。✅ `scene_alpha_acceptance.md`
+- 仍明确标注：这不是 Scene Product。✅ `core-scene-agent-boundaries.md`
 
 总验收文档：`docs/verification/scene_alpha_acceptance.md`；子校验 `tests/agents/test_scene_alpha_acceptance.py`。
 

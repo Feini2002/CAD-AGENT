@@ -1,0 +1,19 @@
+{
+  "version": "0.1",
+  "context_id": "req-blocked-empty",
+  "request_kind": "draw",
+  "user_request": "",
+  "scene_hint": "no_scene",
+  "inputs": {
+    "available": [],
+    "paths": {}
+  },
+  "cad_policy": {
+    "allow_cad": true,
+    "preview_only": true
+  },
+  "clarification": {
+    "needs_clarification": false,
+    "questions": []
+  }
+}

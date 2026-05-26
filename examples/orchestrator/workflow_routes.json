@@ -1,0 +1,78 @@
+{
+  "version": "0.1",
+  "routes_id": "core-workflow-routes",
+  "description": "Orchestrator workflow dispatch table. Entrypoints reference existing Core runners only.",
+  "routes": [
+    {
+      "workflow_id": "object_symbol_glyph",
+      "title": "Object to symbol glyph (non-CAD)",
+      "request_kinds": ["draw"],
+      "required_any_inputs": ["object_spec"],
+      "default_workflow_path": null,
+      "entrypoint": "core.symbol_engine.fallback_policy:resolve_symbol_render_resolution",
+      "followup": ["core.plan_engine.validate_plan", "core.plan_engine.dry_run_report.create_dry_run_report"],
+      "requires_cad": false,
+      "priority": 10
+    },
+    {
+      "workflow_id": "object_cad_plan_execute",
+      "title": "Execute existing CAD_PLAN",
+      "request_kinds": ["draw", "cad_validation"],
+      "required_any_inputs": ["cad_plan"],
+      "default_workflow_path": null,
+      "entrypoint": "core.execution.execute_plan:execute_plan_file",
+      "requires_cad": true,
+      "priority": 20
+    },
+    {
+      "workflow_id": "layout_blank_shell",
+      "title": "Blank shell layout pipeline",
+      "request_kinds": ["layout"],
+      "required_any_inputs": ["shell_model", "project_model"],
+      "default_workflow_path": "examples/workflows/blank_shell_layout_loop.json",
+      "entrypoint": "core.workflows.blank_shell_pipeline:run_blank_shell_pipeline",
+      "requires_cad": false,
+      "priority": 30
+    },
+    {
+      "workflow_id": "proposal_non_cad_loop",
+      "title": "Full non-CAD core loop",
+      "request_kinds": ["proposal", "general"],
+      "required_any_inputs": ["design_brief", "layout_proposal", "design_proposal", "project_model"],
+      "default_workflow_path": "examples/workflows/full_non_cad_core_loop.json",
+      "entrypoint": "core.workflows.non_cad_pipeline:run_non_cad_pipeline",
+      "requires_cad": false,
+      "priority": 40
+    },
+    {
+      "workflow_id": "project_sample_blank_shell",
+      "title": "Project sample blank-shell workflow",
+      "request_kinds": ["project_sample"],
+      "required_any_inputs": ["project_sample_manifest"],
+      "default_workflow_path": "examples/workflows/sample_blank_shell_project_loop.json",
+      "entrypoint": "core.project_samples.workflow:run_sample_blank_shell_workflow",
+      "requires_cad": false,
+      "priority": 50
+    },
+    {
+      "workflow_id": "cad_validation_runner",
+      "title": "CAD validation suite",
+      "request_kinds": ["cad_validation"],
+      "required_any_inputs": ["cad_plan", "project_sample_manifest"],
+      "default_workflow_path": null,
+      "entrypoint": "core.verification.cad_validation_runner:run_cad_validation",
+      "requires_cad": true,
+      "priority": 60
+    },
+    {
+      "workflow_id": "read_drawing_benchmark",
+      "title": "Drawing read benchmark",
+      "request_kinds": ["read_drawing"],
+      "required_any_inputs": ["shell_model", "project_sample_manifest"],
+      "default_workflow_path": null,
+      "entrypoint": "core.drawing_analysis.drawing_read_benchmark:run_drawing_read_benchmark",
+      "requires_cad": false,
+      "priority": 70
+    }
+  ]
+}

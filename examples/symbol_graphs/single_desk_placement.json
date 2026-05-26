@@ -1,0 +1,17 @@
+{
+  "version": "0.1",
+  "graph_id": "graph-single-desk-01",
+  "view": "plan",
+  "nodes": [
+    {
+      "node_id": "desk-main",
+      "symbol_id": "symbol-desk-1400-plan",
+      "symbol_spec_path": "examples/symbol_specs/surface_desk_plan.json",
+      "placement": {
+        "base_point": [5000, 5000, 0],
+        "rotation_deg": 0
+      }
+    }
+  ],
+  "edges": []
+}

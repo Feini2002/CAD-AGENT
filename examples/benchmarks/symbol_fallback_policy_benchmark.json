@@ -1,0 +1,42 @@
+{
+  "version": "0.1",
+  "benchmark_id": "symbol-fallback-policy-01",
+  "description": "Non-CAD resolution cases for block / symbol / component / bbox fallback evidence.",
+  "cases": [
+    {
+      "case_id": "desk-symbol-glyph",
+      "object_spec_path": "examples/object_specs/desk_1400x700.json",
+      "expected": {
+        "selected_render_path": "symbol_glyph",
+        "selected_evidence_state": "dry_run_valid_plan_only",
+        "silent_degradation": false
+      }
+    },
+    {
+      "case_id": "desk-elevation-component-preview",
+      "object_spec_path": "examples/object_specs/desk_1400x700.json",
+      "object_spec_overrides": { "drawing_intent": "elevation_preview" },
+      "expected": {
+        "selected_render_path": "component_preview",
+        "declared_fallback_mode": "fallback_component_preview",
+        "silent_degradation": false
+      }
+    },
+    {
+      "case_id": "counter-deferred",
+      "object_spec": {
+        "version": "0.1",
+        "object_id": "object-counter-benchmark",
+        "type": "counter",
+        "name": "Counter",
+        "size": { "width": 2400, "depth": 600, "height": 900 },
+        "drawing_intent": "plan_preview"
+      },
+      "expected": {
+        "selected_render_path": "deferred",
+        "selected_evidence_state": "deferred_cad_readback",
+        "silent_degradation": false
+      }
+    }
+  ]
+}

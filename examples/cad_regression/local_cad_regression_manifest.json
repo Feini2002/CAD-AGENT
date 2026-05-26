@@ -1,0 +1,165 @@
+{
+  "version": "0.1",
+  "suite_id": "local_cad_regression",
+  "description": "Manifest for local CODEX_PREVIEW CAD regression cases. Each case declares whether real AutoCAD readback is required before any geometry claim can be made.",
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false
+  },
+  "cases": [
+    {
+      "id": "baseline_cad_validation",
+      "title": "Baseline CAD validation runner",
+      "entrypoint": "scripts/run_cad_validation.py",
+      "requires_real_cad": true,
+      "expected_evidence_state": "readback_geometry_verified",
+      "output_path": "baseline_cad_validation/report.json",
+      "command": [
+        "scripts/run_cad_validation.py",
+        "--output-dir",
+        "{output_dir}/baseline_cad_validation"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    },
+    {
+      "id": "project_sample_cad_check",
+      "title": "Project sample CODEX_PREVIEW CAD check",
+      "entrypoint": "scripts/run_project_sample_cad_check.py",
+      "requires_real_cad": true,
+      "expected_evidence_state": "geometry_verified",
+      "output_path": "project_sample_cad/project_sample_cad_check_report.json",
+      "command": [
+        "scripts/run_project_sample_cad_check.py",
+        "--workflow-output-dir",
+        "{output_dir}/project_sample_workflow",
+        "--output-dir",
+        "{output_dir}/project_sample_cad",
+        "--start-x",
+        "34000",
+        "--start-y",
+        "18000"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    },
+    {
+      "id": "composition_cad_check",
+      "title": "Interior composition CODEX_PREVIEW CAD batch check",
+      "entrypoint": "scripts/run_composition_cad_check.py",
+      "requires_real_cad": true,
+      "expected_evidence_state": "geometry_verified",
+      "output_path": "composition_cad/composition_cad_check_report.json",
+      "command": [
+        "scripts/run_composition_cad_check.py",
+        "--benchmark-output-root",
+        "{output_dir}/interior_delivery_benchmark",
+        "--output-dir",
+        "{output_dir}/composition_cad",
+        "--start-x",
+        "38000",
+        "--start-y",
+        "22000",
+        "--spacing-x",
+        "4200"
+      ],
+      "prerequisites": [
+        "interior_delivery_benchmark"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    },
+    {
+      "id": "primitive_matrix_no_cad",
+      "title": "Primitive capability matrix (no-CAD)",
+      "entrypoint": "scripts/run_primitive_matrix.py",
+      "requires_real_cad": false,
+      "expected_evidence_state": "deferred_cad_readback_required",
+      "output_path": "primitive_matrix/primitive_matrix_report.json",
+      "command": [
+        "scripts/run_primitive_matrix.py",
+        "--no-cad",
+        "--output-dir",
+        "{output_dir}/primitive_matrix"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    },
+    {
+      "id": "cad_plan_fixture_suite_no_cad",
+      "title": "CAD_PLAN fixture suite validate and dry-run",
+      "entrypoint": "scripts/run_cad_plan_fixture_suite.py",
+      "requires_real_cad": false,
+      "expected_evidence_state": "deferred_cad_readback_required",
+      "output_path": "cad_plan_fixture_suite/cad_plan_fixture_suite_report.json",
+      "command": [
+        "scripts/run_cad_plan_fixture_suite.py",
+        "--no-cad",
+        "--output-dir",
+        "{output_dir}/cad_plan_fixture_suite"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    },
+    {
+      "id": "cad_plan_fixture_suite_cad",
+      "title": "CAD_PLAN fixture suite CODEX_PREVIEW execution",
+      "entrypoint": "scripts/run_cad_plan_fixture_suite.py",
+      "requires_real_cad": true,
+      "expected_evidence_state": "geometry_verified",
+      "output_path": "cad_plan_fixture_suite_cad/cad_plan_fixture_suite_report.json",
+      "command": [
+        "scripts/run_cad_plan_fixture_suite.py",
+        "--output-dir",
+        "{output_dir}/cad_plan_fixture_suite_cad"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    },
+    {
+      "id": "complex_cad_smoke",
+      "title": "Complex mixed-primitive CODEX_PREVIEW CAD smoke",
+      "entrypoint": "scripts/run_complex_cad_smoke.py",
+      "requires_real_cad": true,
+      "expected_evidence_state": "geometry_verified",
+      "output_path": "complex_cad_smoke/complex_cad_smoke_report.json",
+      "command": [
+        "scripts/run_complex_cad_smoke.py",
+        "--output-dir",
+        "{output_dir}/complex_cad_smoke"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    }
+  ]
+}

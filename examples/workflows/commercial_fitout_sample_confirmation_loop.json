@@ -1,0 +1,13 @@
+{
+  "version": "0.1",
+  "workflow_id": "commercial-fitout-sample-confirmation-loop",
+  "description": "C-CFIT-05: de-identified commercial fitout sample -> DESIGN_PROPOSAL gate -> user confirmation -> confirmed CAD_PLAN bundle.",
+  "inputs": {
+    "design_brief": "projects/commercial_fitout_sample/fixtures/design_brief.json",
+    "drawing_model": "projects/commercial_fitout_sample/fixtures/drawing_model.json",
+    "shell_model": "projects/commercial_fitout_sample/input/shell.manual.json",
+    "preferences": "agents/commercial_fitout/preferences.json",
+    "block_library": "libraries/blocks/commercial_fitout_block_library.json"
+  },
+  "object_types": ["desk", "chair", "cabinet"]
+}

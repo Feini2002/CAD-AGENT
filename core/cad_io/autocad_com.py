@@ -10,6 +10,7 @@ from __future__ import annotations
 import math
 from typing import Any
 
+from core.safety.write_guard import CadWriteGuard
 from core.cad_io.autocad_block_alpha import (
     CONTROLLED_BLOCK_DEFINITION_LAYER,
     CONTROLLED_BLOCK_ID,
@@ -54,7 +55,7 @@ def driver_status() -> str:
 
 
 class AutoCADComDriver(AutoCADBlockAlphaMixin):
-    def __init__(self, *, connect_existing_only: bool = False) -> None:
+    def __init__(self, *, connect_existing_only: bool = False, preview_only: bool = True) -> None:
         try:
             import win32com.client
             import pythoncom
@@ -87,8 +88,33 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
                 raise RuntimeError(f"Unable to dispatch AutoCAD.Application. COM detail: {detail}")
         self.doc = self.app.ActiveDocument
         self.model_space = self.doc.ModelSpace
+        self.write_guard = CadWriteGuard(enabled=preview_only, preview_layer=PREVIEW_LAYER)
+
+    def _guard_layer(self, layer: str | None) -> None:
+        self._active_write_guard().assert_preview_layer_write(layer)
+
+    def _active_write_guard(self) -> CadWriteGuard:
+        guard = getattr(self, "write_guard", None)
+        if guard is None:
+            guard = CadWriteGuard(enabled=True, preview_layer=PREVIEW_LAYER)
+            self.write_guard = guard
+        return guard
+
+    def save_document(self) -> None:
+        self._active_write_guard().assert_save_allowed()
+        self.doc.Save()
+
+    def overwrite_document(self) -> None:
+        self._active_write_guard().assert_overwrite_allowed()
+        self.doc.Save()
+
+    def delete_entity_by_handle(self, handle: str) -> None:
+        self._active_write_guard().assert_delete_allowed()
+        entity = self.doc.HandleToObject(str(handle))
+        entity.Delete()
 
     def ensure_layer(self, layer: str) -> None:
+        self._guard_layer(layer)
         try:
             self.doc.Layers.Item(layer)
         except Exception:
@@ -132,6 +158,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
         color: str | None = None,
         **_: object,
     ) -> dict[str, str]:
+        self._guard_layer(layer)
         entity = self.model_space.AddLine(self._point(start_point), self._point(end_point))
         self._apply_common(entity, layer=layer, color=color)
         return {"handle": self._handle(entity)}
@@ -145,6 +172,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
         color: str | None = None,
         **_: object,
     ) -> dict[str, list[str]]:
+        self._guard_layer(layer)
         x1, y1, z1 = corner1
         x2, y2, _z2 = corner2
         points = [
@@ -171,6 +199,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
         color: str | None = None,
         **_: object,
     ) -> dict[str, str]:
+        self._guard_layer(layer)
         entity = self.model_space.AddCircle(self._point(center), float(radius))
         self._apply_common(entity, layer=layer, color=color)
         return {"handle": self._handle(entity)}
@@ -186,6 +215,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
         color: str | None = None,
         **_: object,
     ) -> dict[str, str]:
+        self._guard_layer(layer)
         entity = self.model_space.AddArc(
             self._point(center),
             float(radius),
@@ -204,6 +234,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
         color: str | None = None,
         **_: object,
     ) -> dict[str, str]:
+        self._guard_layer(layer)
         entity = self.model_space.AddLightWeightPolyline(self._point2d_array(points))
         entity.Closed = bool(closed)
         self._apply_common(entity, layer=layer, color=color)
@@ -220,6 +251,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
         rotation: float | int = 0,
         **_: object,
     ) -> dict[str, str]:
+        self._guard_layer(layer)
         entity = self.model_space.AddText(text, self._point(position), height)
         entity.Rotation = rotation
         self._apply_common(entity, layer=layer, color=color)
@@ -236,6 +268,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin):
         textheight: float | int | None = None,
         **_: object,
     ) -> dict[str, str]:
+        self._guard_layer(layer)
         if text_position is None:
             text_position = [
                 (start_point[0] + end_point[0]) / 2,

@@ -23,6 +23,7 @@ from core.verification.cad_validation_gates import (
     created_handles_from_artifact,
     readback_gate_failure,
 )
+from core.verification.preview_only_audit import execution_summary_gate_failure
 from core.verification.cad_validation_evidence import (
     apply_screenshot_step_evidence,
     build_cad_validation_evidence_summary,
@@ -173,6 +174,14 @@ def _step_record(step: ValidationStep, result: CommandResult, output_dir: Path) 
     stderr = result.stderr
 
     status = "pass" if result.returncode == 0 else "fail"
+    if status == "pass" and step.id == "execute_sample_plan":
+        gate_failure = execution_summary_gate_failure(
+            stdout=stdout,
+            path=Path(step.stdout_artifact) if step.stdout_artifact else output_dir / "execution_summary.json",
+        )
+        if gate_failure:
+            status = "fail"
+            stderr = f"{stderr.rstrip()}\n{gate_failure}\n" if stderr else f"{gate_failure}\n"
     if status == "pass" and step.id == "inspect_readback":
         gate_failure = readback_gate_failure(
             stdout,

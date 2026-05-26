@@ -1,0 +1,14 @@
+{
+  "model_type": "commercial_fitout_scope",
+  "data": {
+    "version": "0.1",
+    "scene_id": "commercial_fitout",
+    "product_alpha_status": "scope_defined",
+    "primary_subscenes": ["open_office"],
+    "delivery_commitments": {
+      "provides": ["preferences"],
+      "explicitly_not": ["full_construction_documents"]
+    },
+    "subscenes": []
+  }
+}

@@ -21,14 +21,14 @@
 
 ## 当前一句话
 
-当前仓库是通用 CAD Agent Core Lab：非 CAD blank-shell pipeline 已跑通，Phase W baseline 真实 CAD readback 已通过，但不能扩大到真实项目图纸、真实块库、块插入或任意 CAD_PLAN 全量准确。
+当前仓库是通用 CAD Agent Core Lab：非 CAD blank-shell pipeline 已跑通，Phase W baseline 真实 CAD readback 已通过；场景层已有 Alpha / Beta 验证壳，但还没有完成具体 Scene Product。不能扩大到真实项目图纸、真实块库、块插入、任意 CAD_PLAN 或具体工装 / 办公 / 住宅 / 餐饮 Agent 全量准确。
 
 ## 不能声称
 
 - 不能说任意 CAD_PLAN、真实项目图纸、块库或块插入都已准确。
 - 不能说截图、dry-run 或 no-CAD benchmark 证明几何准确。
 - 不能说 blank-shell pipeline 是完整自动设计大脑。
-- 不能说场景 Agent **产品**已完整完成（`X-SCENE-ALPHA` 父包 01–05 已收口，仅证明三场景 non-CAD Alpha；见 `scene_alpha_acceptance.md`）。
+- 不能说场景 Agent **产品**已完整完成（`X-SCENE-ALPHA` 父包 01–05 已收口，仅证明三场景 non-CAD Alpha；scene beta 也只是能力包；见 `scene_alpha_acceptance.md` 和 `../architecture/core-scene-agent-boundaries.md`）。
 - 不能把 `scene_alpha_benchmark` 的 `benchmark_pass_non_cad` 说成 `geometry_verified`。
 - 不能默认保存、覆盖、删除 DWG 或修改正式图层。
 - 不能把场景 Agent 写成独立算法系统。
@@ -58,7 +58,18 @@
 & $py -m unittest tests.agents.test_scene_alpha_acceptance -v
 ```
 
-父包 **`X-SCENE-ALPHA` 5/5 收口**（2026-05-26）：可声称三场景复用同一 Core blank-shell pipeline；不可声称 `geometry_verified` 或 Scene Agent 全能力完成。
+父包 **`X-SCENE-ALPHA` 5/5 收口**（2026-05-26）：可声称三场景复用同一 Core blank-shell pipeline；不可声称 `geometry_verified`、Scene Product 或 Scene Agent 全能力完成。
+
+## Core / Scene Product 边界
+
+新接手时尤其要区分：
+
+- `Core 底座`：通用算法、CAD_PLAN、执行、验证、benchmark、读图、对象和图块能力。
+- `Scene Alpha 壳层`：preferences、词汇、排序权重和解释模板。
+- `Scene Beta 能力包`：对象 / 微场景 / failure benchmark，多数仍是 non-CAD。
+- `Scene Product`：真实业务场景闭环，需要项目样本、图块策略、真实 CAD smoke 和用户确认流。
+
+当前建议未来首个 Scene Product Alpha 从 `commercial_fitout` / 工装开始，但要等 `LCAD-*` 真实 CAD 校验扩样基础更稳后推进。
 
 ## 第一天可以做的 3 件事
 

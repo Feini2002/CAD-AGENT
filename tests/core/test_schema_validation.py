@@ -28,6 +28,15 @@ SCHEMA_EXAMPLES = {
     "project_sample_manifest.schema.json": "projects/sample_blank_shell/sample.manifest.json",
     "proposal_user_confirmation.schema.json": "examples/confirmations/minimal_cabinet_confirmation.json",
     "shell_drawing_read_confirmation.schema.json": "examples/drawing_read/sample_shell_drawing_read_confirmation.json",
+    "cad_regression_manifest.schema.json": "examples/cad_regression/local_cad_regression_manifest.json",
+    "symbol_spec.schema.json": "examples/symbol_specs/surface_desk_plan.json",
+    "symbol_graph.schema.json": "examples/symbol_graphs/single_desk_placement.json",
+    "request_context.schema.json": "examples/orchestrator/draw_desk_request_context.json",
+    "scene_registry.schema.json": "examples/orchestrator/scene_registry.json",
+    "route_audit_report.schema.json": "examples/orchestrator/sample_route_audit_report.json",
+    "commercial_fitout_scope.schema.json": "agents/commercial_fitout/subscenes.json",
+    "commercial_fitout_object_catalog.schema.json": "agents/commercial_fitout/capabilities/object_catalog.json",
+    "commercial_fitout_block_mapping.schema.json": "agents/commercial_fitout/capabilities/block_mapping.json",
 }
 
 

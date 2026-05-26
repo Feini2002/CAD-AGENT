@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "commercial_fitout_cad_smoke_report.schema.json",
+  "title": "COMMERCIAL_FITOUT_CAD_SMOKE_REPORT",
+  "type": "object",
+  "required": [
+    "version",
+    "sample_id",
+    "status",
+    "evidence_state",
+    "geometry_accuracy",
+    "screenshot_role",
+    "geometry_verified",
+    "workflow_output_dir",
+    "output_dir",
+    "plan_count",
+    "created_handle_count",
+    "safety",
+    "product_claim_boundary"
+  ],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "sample_id": { "type": "string" },
+    "status": { "type": "string" },
+    "evidence_state": { "type": "string" },
+    "geometry_accuracy": { "type": "string" },
+    "screenshot_role": { "type": "string" },
+    "geometry_verified": { "type": "boolean" },
+    "workflow_output_dir": { "type": "string" },
+    "output_dir": { "type": "string" },
+    "plan_count": { "type": "integer", "minimum": 0 },
+    "created_handle_count": { "type": "integer", "minimum": 0 },
+    "deferred_reason": { "type": "string" },
+    "created_handles": { "type": "array", "items": { "type": "string" } },
+    "batch_execution": { "type": "object" },
+    "safety": { "type": "object" },
+    "product_claim_boundary": {
+      "type": "object",
+      "required": [
+        "declares_scene_product",
+        "declares_full_fitout_delivery",
+        "geometry_verified_scope",
+        "sample_id"
+      ],
+      "properties": {
+        "declares_scene_product": { "type": "boolean" },
+        "declares_full_fitout_delivery": { "type": "boolean" },
+        "geometry_verified_scope": { "type": "string" },
+        "sample_id": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

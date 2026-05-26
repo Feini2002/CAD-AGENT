@@ -12,10 +12,17 @@ from typing import Any
 
 from core.path_safety import resolve_under_project_output
 from core.verification.cad_validation_types import CommandResult, CommandRunner
+from core.verification.local_cad_regression_manifest import (
+    DEFAULT_MANIFEST_RELATIVE_PATH,
+    PREVIEW_LAYER,
+    load_regression_manifest,
+    manifest_case_ids,
+    manifest_summary,
+    select_manifest_case_ids,
+)
 
 
 DEFAULT_TIMEOUT_SECONDS = 600
-PREVIEW_LAYER = "CODEX_PREVIEW"
 
 
 def default_command_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
@@ -179,13 +186,24 @@ def _created_handle_count(step: dict[str, Any]) -> int:
     return 0
 
 
-def _build_summary(steps: list[dict[str, Any]], *, include_cad: bool) -> dict[str, Any]:
+def _build_summary(
+    steps: list[dict[str, Any]],
+    *,
+    include_cad: bool,
+    selected_case_ids: list[str],
+    manifest_case_count: int,
+    strict: bool,
+) -> dict[str, Any]:
     failed = [step for step in steps if step["status"] == "fail"]
     external = [step for step in steps if step["status"] == "external_blocker"]
     deferred = [step for step in steps if step["status"] == "deferred"]
     geometry_count = sum(_geometry_verified_count(step) for step in steps)
     return {
         "include_cad": include_cad,
+        "strict": strict,
+        "manifest_case_count": manifest_case_count,
+        "selected_case_count": len(selected_case_ids),
+        "selected_case_ids": selected_case_ids,
         "non_cad_only": geometry_count == 0,
         "step_count": len(steps),
         "failed_case_count": len(failed),
@@ -230,11 +248,19 @@ def run_local_cad_regression(
     output_dir: Path,
     include_cad: bool,
     require_cad_verified: bool = False,
+    manifest_path: Path | None = None,
+    selected_case_ids: list[str] | None = None,
     command_runner: CommandRunner = default_command_runner,
 ) -> dict[str, Any]:
     """Run a local CAD regression matrix and aggregate machine-readable evidence."""
 
     project_root = root.resolve()
+    resolved_manifest_path = manifest_path or project_root / DEFAULT_MANIFEST_RELATIVE_PATH
+    if not resolved_manifest_path.is_absolute():
+        resolved_manifest_path = project_root / resolved_manifest_path
+    manifest = load_regression_manifest(resolved_manifest_path)
+    active_case_ids = select_manifest_case_ids(manifest, selected_case_ids)
+
     output_dir = resolve_under_project_output(project_root, output_dir, label="output_dir")
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -248,17 +274,20 @@ def run_local_cad_regression(
     if not include_cad:
         baseline_command.append("--no-cad")
 
-    steps = [
-        _run_step(
-            step_id="baseline_cad_validation",
-            title="Baseline CAD validation runner",
-            command=baseline_command,
-            output_dir=output_dir,
-            root=project_root,
-            command_runner=command_runner,
-            failure_category="baseline_cad_validation_failed",
+    steps: list[dict[str, Any]] = []
+
+    if "baseline_cad_validation" in active_case_ids:
+        steps.append(
+            _run_step(
+                step_id="baseline_cad_validation",
+                title="Baseline CAD validation runner",
+                command=baseline_command,
+                output_dir=output_dir,
+                root=project_root,
+                command_runner=command_runner,
+                failure_category="baseline_cad_validation_failed",
+            )
         )
-    ]
 
     project_sample_command = [
         _python(),
@@ -278,57 +307,138 @@ def run_local_cad_regression(
     else:
         project_sample_command.append("--no-cad")
 
-    steps.append(
-        _run_step(
-            step_id="project_sample_cad_check",
-            title="Project sample CODEX_PREVIEW CAD check",
-            command=project_sample_command,
-            output_dir=output_dir,
-            root=project_root,
-            command_runner=command_runner,
-            failure_category="cad_geometry_not_verified",
-            strict_geometry=include_cad and require_cad_verified,
-        )
-    )
-
-    if include_cad:
-        benchmark_output = output_dir / "interior_delivery_benchmark"
+    if "project_sample_cad_check" in active_case_ids:
         steps.append(
             _run_step(
-                step_id="interior_delivery_benchmark",
-                title="Prepare interior delivery CAD_PLAN artifacts",
-                command=[
-                    _python(),
-                    "scripts/run_benchmark_suite.py",
-                    "examples/benchmarks/interior_delivery_benchmark.json",
-                    "--output-root",
-                    str(benchmark_output),
-                ],
+                step_id="project_sample_cad_check",
+                title="Project sample CODEX_PREVIEW CAD check",
+                command=project_sample_command,
                 output_dir=output_dir,
                 root=project_root,
                 command_runner=command_runner,
-                failure_category="benchmark_failed",
+                failure_category="cad_geometry_not_verified",
+                strict_geometry=include_cad and require_cad_verified,
             )
         )
-        if steps[-1]["status"] == "pass":
+
+    if "composition_cad_check" in active_case_ids:
+        if include_cad:
+            benchmark_output = output_dir / "interior_delivery_benchmark"
             steps.append(
                 _run_step(
-                    step_id="composition_cad_check",
-                    title="Interior composition CODEX_PREVIEW CAD batch check",
+                    step_id="interior_delivery_benchmark",
+                    title="Prepare interior delivery CAD_PLAN artifacts",
                     command=[
                         _python(),
-                        "scripts/run_composition_cad_check.py",
-                        "--benchmark-output-root",
+                        "scripts/run_benchmark_suite.py",
+                        "examples/benchmarks/interior_delivery_benchmark.json",
+                        "--output-root",
                         str(benchmark_output),
-                        "--output-dir",
-                        str(output_dir / "composition_cad"),
-                        "--start-x",
-                        "38000",
-                        "--start-y",
-                        "22000",
-                        "--spacing-x",
-                        "4200",
                     ],
+                    output_dir=output_dir,
+                    root=project_root,
+                    command_runner=command_runner,
+                    failure_category="benchmark_failed",
+                )
+            )
+            if steps[-1]["status"] == "pass":
+                steps.append(
+                    _run_step(
+                        step_id="composition_cad_check",
+                        title="Interior composition CODEX_PREVIEW CAD batch check",
+                        command=[
+                            _python(),
+                            "scripts/run_composition_cad_check.py",
+                            "--benchmark-output-root",
+                            str(benchmark_output),
+                            "--output-dir",
+                            str(output_dir / "composition_cad"),
+                            "--start-x",
+                            "38000",
+                            "--start-y",
+                            "22000",
+                            "--spacing-x",
+                            "4200",
+                        ],
+                        output_dir=output_dir,
+                        root=project_root,
+                        command_runner=command_runner,
+                        failure_category="cad_geometry_not_verified",
+                        strict_geometry=require_cad_verified,
+                    )
+                )
+            else:
+                steps.append(
+                    _not_run_step(
+                        step_id="composition_cad_check",
+                        title="Interior composition CODEX_PREVIEW CAD batch check",
+                        blocked_by="interior_delivery_benchmark",
+                    )
+                )
+        else:
+            steps.append(
+                _deferred_step(
+                    step_id="composition_cad_check",
+                    title="Interior composition CODEX_PREVIEW CAD batch check",
+                    reason="real CAD batch readback is intentionally skipped in --no-cad mode",
+                )
+            )
+
+    if "primitive_matrix_no_cad" in active_case_ids:
+        primitive_command = [
+            _python(),
+            "scripts/run_primitive_matrix.py",
+            "--output-dir",
+            str(output_dir / "primitive_matrix"),
+        ]
+        if not include_cad:
+            primitive_command.append("--no-cad")
+        steps.append(
+            _run_step(
+                step_id="primitive_matrix_no_cad",
+                title="Primitive capability matrix (no-CAD)",
+                command=primitive_command,
+                output_dir=output_dir,
+                root=project_root,
+                command_runner=command_runner,
+                failure_category="primitive_matrix_failed",
+                strict_geometry=include_cad and require_cad_verified,
+            )
+        )
+
+    if "cad_plan_fixture_suite_no_cad" in active_case_ids:
+        fixture_no_cad_command = [
+            _python(),
+            "scripts/run_cad_plan_fixture_suite.py",
+            "--no-cad",
+            "--output-dir",
+            str(output_dir / "cad_plan_fixture_suite"),
+        ]
+        steps.append(
+            _run_step(
+                step_id="cad_plan_fixture_suite_no_cad",
+                title="CAD_PLAN fixture suite validate and dry-run",
+                command=fixture_no_cad_command,
+                output_dir=output_dir,
+                root=project_root,
+                command_runner=command_runner,
+                failure_category="cad_plan_fixture_suite_failed",
+            )
+        )
+
+    if "cad_plan_fixture_suite_cad" in active_case_ids:
+        if include_cad:
+            fixture_cad_command = [
+                _python(),
+                "scripts/run_cad_plan_fixture_suite.py",
+                "--output-dir",
+                str(output_dir / "cad_plan_fixture_suite_cad"),
+            ]
+            steps.append(
+                _run_step(
+                    step_id="cad_plan_fixture_suite_cad",
+                    title="CAD_PLAN fixture suite CODEX_PREVIEW execution",
+                    command=fixture_cad_command,
                     output_dir=output_dir,
                     root=project_root,
                     command_runner=command_runner,
@@ -338,22 +448,42 @@ def run_local_cad_regression(
             )
         else:
             steps.append(
-                _not_run_step(
-                    step_id="composition_cad_check",
-                    title="Interior composition CODEX_PREVIEW CAD batch check",
-                    blocked_by="interior_delivery_benchmark",
+                _deferred_step(
+                    step_id="cad_plan_fixture_suite_cad",
+                    title="CAD_PLAN fixture suite CODEX_PREVIEW execution",
+                    reason="real CAD fixture execution is intentionally skipped in --no-cad mode",
                 )
             )
-    else:
+
+    if "complex_cad_smoke" in active_case_ids:
+        complex_command = [
+            _python(),
+            "scripts/run_complex_cad_smoke.py",
+            "--output-dir",
+            str(output_dir / "complex_cad_smoke"),
+        ]
+        if not include_cad:
+            complex_command.append("--no-cad")
         steps.append(
-            _deferred_step(
-                step_id="composition_cad_check",
-                title="Interior composition CODEX_PREVIEW CAD batch check",
-                reason="real CAD batch readback is intentionally skipped in --no-cad mode",
+            _run_step(
+                step_id="complex_cad_smoke",
+                title="Complex mixed-primitive CODEX_PREVIEW CAD smoke",
+                command=complex_command,
+                output_dir=output_dir,
+                root=project_root,
+                command_runner=command_runner,
+                failure_category="cad_geometry_not_verified",
+                strict_geometry=include_cad and require_cad_verified,
             )
         )
 
-    summary = _build_summary(steps, include_cad=include_cad)
+    summary = _build_summary(
+        steps,
+        include_cad=include_cad,
+        selected_case_ids=active_case_ids,
+        manifest_case_count=len(manifest_case_ids(manifest)),
+        strict=require_cad_verified,
+    )
     report = {
         "version": "0.1",
         "status": _overall_status(summary),
@@ -361,7 +491,9 @@ def run_local_cad_regression(
         "output_dir": str(output_dir),
         "include_cad": include_cad,
         "require_cad_verified": require_cad_verified,
+        "selected_case_ids": active_case_ids,
         "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "manifest": manifest_summary(manifest),
         "safety": {
             "layer": PREVIEW_LAYER,
             "saved_dwg": False,
@@ -390,15 +522,36 @@ def main() -> int:
         action="store_true",
         help="Return non-zero unless real CAD checks produce geometry_verified evidence.",
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Alias for --require-cad-verified.",
+    )
+    parser.add_argument(
+        "--case",
+        dest="selected_case_ids",
+        action="append",
+        default=None,
+        help="Run only a selected manifest case id. Repeat to run multiple cases. Default runs all manifest cases.",
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=None,
+        help="Optional local CAD regression manifest path. Relative paths are resolved under --root.",
+    )
     args = parser.parse_args()
 
     root = args.root.resolve()
     output_dir = args.output_dir if args.output_dir.is_absolute() else root / args.output_dir
+    require_cad_verified = args.require_cad_verified or args.strict
     report = run_local_cad_regression(
         root=root,
         output_dir=output_dir,
         include_cad=not args.no_cad,
-        require_cad_verified=args.require_cad_verified,
+        require_cad_verified=require_cad_verified,
+        manifest_path=args.manifest,
+        selected_case_ids=args.selected_case_ids,
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if report["status"] == "pass":

@@ -1,0 +1,20 @@
+{
+  "version": "0.1",
+  "symbol_id": "symbol-cabinet-plan",
+  "object_type": "cabinet",
+  "archetype": "storage",
+  "view": "plan",
+  "footprint": { "width_mm": 900, "depth_mm": 450, "height_mm": 1800 },
+  "orientation": { "rotation_deg": 0, "facing": "north" },
+  "parts": [
+    { "part_id": "cabinet-outline", "kind": "outline", "role": "primary_shell" },
+    { "part_id": "cabinet-drawers", "kind": "drawer_line", "role": "drawer_front", "params": { "line_spacing_mm": 280 } }
+  ],
+  "readability_constraints": {
+    "min_part_count": 2,
+    "requires_non_bbox_parts": true,
+    "allows_text_labels": false,
+    "allows_dimensions": false
+  },
+  "fallback_policy": { "mode": "symbol_readable", "reason": "storage cabinet glyph" }
+}

@@ -57,6 +57,12 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 - [x] suite 输出 `benchmark_summary.json` 可机器读取证据计数。
 - [ ] 真实 AutoCAD office 布局 readback（**不在本 Alpha 范围**；见 `R4-EVIDENCE-GATES` / 后续 CAD 包）。
 
+## 与具体场景产品的边界
+
+Office Alpha / Beta 主要是为了验证 Core 可以处理办公相关对象、微场景、blank-shell 和失败样本。它可以作为后续工装 Scene Product 的素材来源，但本身还不是工装产品化开发。
+
+工装或办公 Scene Product 还需要：真实或脱敏项目样本、工装子场景拆分、正式对象体系、图块 metadata、真实 CAD smoke、用户确认流和交付边界。
+
 ## 可声称 / 不可声称
 
 **可声称**
@@ -69,6 +75,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 - 办公布局几何已在真实 AutoCAD 中 `geometry_verified`。
 - 已有完整碰撞、通道、多边形净空或最优布局算法。
+- 工装或办公场景 Agent 已经产品化完成。
 - 截图、SVG 预览或 dry-run valid 等同于 CAD 回读几何准确。
 - `benchmark_pass_non_cad` 等同于 `readback_geometry_verified`。
 

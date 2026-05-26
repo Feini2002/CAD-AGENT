@@ -1,0 +1,83 @@
+{
+  "version": "0.1",
+  "boundary_id": "lcad-07-block-attribute-hatch-2026-05-26",
+  "package_id": "LCAD-07-BLOCK-ATTRIBUTE-HATCH",
+  "preview_layer": "CODEX_PREVIEW",
+  "capabilities": [
+    {
+      "id": "insert_block_alpha_controlled",
+      "primitive": "block_reference",
+      "intent": "insert_block_alpha",
+      "status": "verified",
+      "geometry_verified": true,
+      "scope": "CODEX_TEST_BLOCK_001 on CODEX_PREVIEW with created-handle readback",
+      "evidence": [
+        "examples/plans/insert_block_alpha_test.json",
+        "core/verification/block_alpha_validation.py",
+        "scripts/run_block_alpha_validation.py"
+      ],
+      "tests": [
+        "tests.core.test_block_alpha_validation",
+        "tests.core.test_autocad_block_alpha_hardening"
+      ],
+      "non_declarable": [
+        "arbitrary_block_name",
+        "company_block_library",
+        "all_insert_block_alpha_plans"
+      ]
+    },
+    {
+      "id": "block_attribute_tags_probe",
+      "primitive": "block_reference",
+      "intent": "insert_block_alpha",
+      "status": "verified",
+      "geometry_verified": true,
+      "scope": "Plans with attribute_readback_probe and matching tag readback",
+      "evidence": [
+        "examples/plans/insert_block_alpha_attribute_probe.json",
+        "core/verification/block_attribute_probe.py"
+      ],
+      "tests": ["tests.core.test_block_attribute_probe"],
+      "requires_plan_flag": "object.attribute_readback_probe",
+      "deferred_when": "expected attributes missing from readback entity"
+    },
+    {
+      "id": "hatch_write_readback",
+      "primitive": "hatch",
+      "intent": "draw_hatch",
+      "status": "deferred",
+      "geometry_verified": false,
+      "scope": "Entity-level slot reserved; COM write/readback not implemented",
+      "evidence": [
+        "core/verification/entity_level_evidence.py",
+        "core/verification/cad_capability_probe.py"
+      ],
+      "tests": ["tests.core.test_cad_capability_probe"],
+      "failure_category": "hatch_unverified",
+      "deferred_reason": "BETA-CAD-BLOCK-03 hatch COM path deferred"
+    }
+  ],
+  "explicitly_not_supported": [
+    {
+      "id": "arbitrary_block_insertion",
+      "reason": "Only allowlisted block names via block alpha / fitout mapping"
+    },
+    {
+      "id": "attribute_without_probe_flag",
+      "reason": "validate_plan rejects attributes without attribute_readback_probe"
+    },
+    {
+      "id": "hatch_geometry_verified",
+      "reason": "No hatch readback implementation; capability probe marks deferred"
+    },
+    {
+      "id": "formal_layer_block_insert",
+      "reason": "preview-only policy; formal layers blocked unless explicit approval"
+    }
+  ],
+  "verification_commands": [
+    "python -m unittest tests.core.test_block_attribute_probe tests.core.test_cad_block_attribute_hatch_boundary -v",
+    "python scripts/run_block_alpha_validation.py --no-cad",
+    "python scripts/run_cad_validation.py --block-alpha-only"
+  ]
+}

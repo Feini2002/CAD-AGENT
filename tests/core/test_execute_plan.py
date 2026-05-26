@@ -179,6 +179,8 @@ class ExecutePlanTests(unittest.TestCase):
         result = execute_plan_file(plan_path, driver=HandleRecordingDriver())
 
         self.assertEqual(result["created_handles"], ["H1", "H2", "H3", "H4"])
+        self.assertEqual(result["safety"]["layer"], "CODEX_PREVIEW")
+        self.assertFalse(result["safety"]["saved_dwg"])
 
     def test_insert_block_alpha_records_fake_driver_call_without_touching_cad(self) -> None:
         plan_path = PROJECT_ROOT / "examples/plans/insert_block_alpha_test.json"

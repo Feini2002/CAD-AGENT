@@ -11,7 +11,17 @@
 场景 Agent 轻量复用
 真实 CAD 证据优先于口头完成声明
 非 CAD benchmark 不能替代真实 CAD readback
+Scene Alpha / Beta 不能替代 Scene Product
 ```
+
+## 场景成熟度口径
+
+| 层级 | 路线含义 | 当前状态 |
+| --- | --- | --- |
+| Core 底座 | 先把通用 CAD_PLAN、执行、验证、benchmark、读图、对象和图块能力打稳 | Alpha 原型较厚，真实 CAD 扩样仍需继续 |
+| Scene Alpha 壳层 | 用 preferences 和解释模板证明多个场景可以复用同一 Core | 已完成三场景 Alpha 验收 |
+| Scene Beta 能力包 | 给单场景补对象、微场景、failure benchmark 和 non-CAD 证据 | office / residential / restaurant 已有 beta benchmark |
+| Scene Product 场景产品 | 面向真实业务场景闭环：项目样本、图块策略、真实 CAD smoke、用户确认流 | `commercial_fitout` 为 Scene Product **Alpha**（C-CFIT 已收口）；其他场景仍为 Alpha/Beta |
 
 ## 已完成路线
 
@@ -42,9 +52,9 @@
 
 ### Phase X：场景 Agent Alpha
 
-目标：让 commercial / residential / office / restaurant 等场景通过 preferences 复用同一 Core pipeline。
+目标：让 office / residential / restaurant 等场景通过 preferences 复用同一 Core pipeline，证明场景层是轻量差异层。
 
-为什么重要：证明场景 Agent 是轻量差异层，不是复制 Core 算法。
+为什么重要：证明场景 Agent 是轻量差异层，不是复制 Core 算法。该阶段只到 Scene Alpha，不代表具体场景产品完成。
 
 入口：
 
@@ -107,11 +117,13 @@
 | 真实块库 | prototype | 是否接入公司块库，如何处理隐私和路径迁移 |
 | 多方案设计推理 | prototype | 何时从可解释候选进入更复杂设计策略 |
 | 真实项目回归集 | not_started | 哪些项目可作为可提交样本，哪些只能留本机 |
+| 工装 Scene Product Alpha | not_started | 是否确认工装为首个真实业务场景；先做开放办公、会议室、前台接待 |
 | 换机验收 | blocked_by_cad | 用 `run_cad_validation.py` 在新机器上跑完整 CAD 验证 |
 
 ## 路线约束
 
 - 不把工装、家装、办公、餐饮、展陈的通用能力重复写进各自 Agent。
+- 不把 Scene Alpha / Beta 的 preferences、rules 或 non-CAD benchmark 当成 Scene Product。
 - 不从白话直接跳到 CAD；必须先结构化为 `CAD_PLAN` 或更高层模型。
 - 不把截图当作几何准确证据。
 - 不保存、覆盖、删除或修改正式图层，除非用户明确批准。

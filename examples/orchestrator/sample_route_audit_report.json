@@ -1,0 +1,52 @@
+{
+  "version": "0.1",
+  "report_id": "route-audit-req-audit-schema",
+  "context_id": "req-audit-schema",
+  "generated_at": "2026-05-27T00:22:24",
+  "routing_summary": {
+    "request_kind": "proposal",
+    "activated_scene_id": "no_scene",
+    "scene_module_enabled": false,
+    "selected_workflow_id": "proposal_non_cad_loop",
+    "workflow_selection_reason": "request gate status=blocked",
+    "orchestrator_status": "blocked",
+    "entrypoint": "core.workflows.non_cad_pipeline:run_non_cad_pipeline",
+    "may_execute": false
+  },
+  "scene": {
+    "activation_status": "no_scene",
+    "maturity": "core_only",
+    "match_reason": "no scene trigger match; default no_scene",
+    "scene_capabilities": [
+      "generic_core_workflows",
+      "cad_plan_validate_dry_run",
+      "object_engine",
+      "layout_engine",
+      "verification"
+    ],
+    "disabled_conditions": []
+  },
+  "evidence": {
+    "available": [],
+    "deferred": [],
+    "not_claimable": [
+      "scene_module_preferences",
+      "scene_product_delivery",
+      "scene_specific_delivery"
+    ]
+  },
+  "deferred_items": [
+    {
+      "item": "workflow_dispatch",
+      "reason": "request gate status=blocked"
+    },
+    {
+      "item": "workflow_execution",
+      "reason": "request gate status=blocked"
+    }
+  ],
+  "request_gate_status": "blocked",
+  "workflow_dispatch_status": "blocked",
+  "execution_status": "not_run",
+  "human_summary": "request_kind=proposal; scene=no_scene (no_scene); workflow=proposal_non_cad_loop; status=blocked; evidence_available=0; deferred=0"
+}

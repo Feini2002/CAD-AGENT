@@ -31,6 +31,11 @@ def create_dry_run_report(plan: dict[str, Any] | Path) -> dict[str, Any]:
 
         return create_insert_block_alpha_dry_run_report(plan)
 
+    if plan["intent"] == "draw_symbol_glyph":
+        from core.plan_engine.symbol_glyph_plan import create_draw_symbol_glyph_dry_run_report
+
+        return create_draw_symbol_glyph_dry_run_report(plan)
+
     obj = plan["object"]
     drawing = plan["drawing"]
     base = _point3(plan["placement"]["base_point"])
