@@ -2,6 +2,12 @@
   "version": "0.1",
   "suite_id": "interior-delivery-benchmark",
   "description": "Persona-driven non-CAD delivery benchmark for reusable interior object compositions.",
+  "expected_evidence_summary": {
+    "case_count": 3,
+    "benchmark_pass_non_cad_count": 3,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
   "cases": [
     {
       "case_id": "interior_designer_bedroom_bed_rug",

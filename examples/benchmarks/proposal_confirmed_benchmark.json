@@ -1,0 +1,53 @@
+{
+  "version": "0.1",
+  "suite_id": "proposal-confirmed-benchmark",
+  "description": "BETA-PROPOSAL-05: user-confirmed controlled CAD_PLAN bundle with unselected candidate evidence.",
+  "expected_evidence_summary": {
+    "case_count": 2,
+    "benchmark_pass_non_cad_count": 2,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
+  "cases": [
+    {
+      "case_id": "retail_confirmed_finalize",
+      "workflow": "examples/workflows/blank_shell_layout_loop.json",
+      "generate_confirmation": true,
+      "confirmation_action": "accept_with_risks",
+      "expected": {
+        "pipeline_status": "ok",
+        "finalize_status": "ok",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "minimums": {
+          "cad_plan_count": 5,
+          "unselected_candidate_count": 1,
+          "dry_run_valid_count": 5
+        },
+        "requires_unselected_evidence": true,
+        "validation_all_valid": true
+      }
+    },
+    {
+      "case_id": "residential_confirmed_finalize",
+      "workflow": "examples/workflows/blank_shell_residential_layout_loop.json",
+      "generate_confirmation": true,
+      "confirmation_action": "accept",
+      "expected": {
+        "pipeline_status": "ok",
+        "finalize_status": "ok",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "minimums": {
+          "cad_plan_count": 5,
+          "unselected_candidate_count": 1,
+          "dry_run_valid_count": 5
+        },
+        "requires_unselected_evidence": true,
+        "validation_all_valid": true
+      }
+    }
+  ]
+}

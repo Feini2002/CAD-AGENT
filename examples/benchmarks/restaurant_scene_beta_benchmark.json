@@ -1,0 +1,158 @@
+{
+  "version": "0.1",
+  "suite_id": "restaurant-scene-beta-benchmark",
+  "description": "BETA-SCENE-03: restaurant/commercial entrance, seating, back-of-house and failure samples in one suite.",
+  "scene_beta": {
+    "scenario": "restaurant",
+    "preferences_path": "agents/restaurant/preferences.json"
+  },
+  "expected_evidence_summary": {
+    "case_count": 8,
+    "benchmark_pass_non_cad_count": 7,
+    "blocked_expected_non_cad_count": 1,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
+  "cases": [
+    {
+      "case_id": "beta_restaurant_table_object",
+      "case_tier": "object",
+      "pipeline": "object_spec",
+      "object_type": "table",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "table"
+      }
+    },
+    {
+      "case_id": "beta_restaurant_chair_object",
+      "case_tier": "object",
+      "pipeline": "object_spec",
+      "object_type": "chair",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "chair"
+      }
+    },
+    {
+      "case_id": "beta_restaurant_counter_entrance",
+      "case_tier": "entrance",
+      "pipeline": "object_spec",
+      "object_type": "counter",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "counter",
+        "contains_component_roles": ["worktop", "front_panel"]
+      }
+    },
+    {
+      "case_id": "beta_restaurant_entry_clearance_combo",
+      "case_tier": "entrance",
+      "pipeline": "composition_spec",
+      "composition_id": "entry_reception_clearance",
+      "persona_role": "restaurant_host",
+      "request_text": "入口接待桌与入口前净空",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "entry_reception_clearance",
+        "contains_clearance_refs": ["entry_clearance"]
+      }
+    },
+    {
+      "case_id": "beta_restaurant_dining_seating_combo",
+      "case_tier": "seating",
+      "pipeline": "composition_spec",
+      "composition_id": "dining_table_set",
+      "persona_role": "restaurant_host",
+      "request_text": "堂食桌椅组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "dining_table_set",
+        "object_count": 5,
+        "contains_object_types": ["table", "chair"]
+      }
+    },
+    {
+      "case_id": "beta_restaurant_back_of_house_storage",
+      "case_tier": "back_of_house",
+      "pipeline": "object_spec",
+      "object_type": "storage_cabinet",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "storage_cabinet",
+        "placement_role": "general_storage"
+      }
+    },
+    {
+      "case_id": "beta_restaurant_front_blank_shell",
+      "case_tier": "blank_shell",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_restaurant_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "restaurant",
+        "preferences_path_contains": "agents/restaurant/preferences.json",
+        "selected_circulation_strategy": "l_spine",
+        "shell_id": "shell-restaurant-small-front",
+        "minimums": {
+          "candidate_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5,
+          "no_place_zone_count": 1
+        },
+        "contains_object_types": ["table", "chair", "counter"]
+      }
+    },
+    {
+      "case_id": "beta_restaurant_entry_conflict_failure",
+      "case_tier": "failure",
+      "pipeline": "composition_spec",
+      "composition_id": "door_clearance_conflict",
+      "persona_role": "restaurant_host",
+      "request_text": "入口净空冲突（预期 blocked）",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "entry_clearance_conflict",
+        "contains_blocked_reason": "entry_clearance_conflict"
+      }
+    }
+  ]
+}

@@ -28,7 +28,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["candidate_id", "layout_candidate_id", "score", "summary", "strengths", "risks", "failed_checks", "applicable_scenarios", "confirmation_questions"],
+        "required": ["candidate_id", "layout_candidate_id", "score", "summary", "strengths", "risks", "failed_checks", "applicable_scenarios", "confirmation_questions", "score_breakdown", "ranking_reasons"],
         "properties": {
           "candidate_id": { "type": "string" },
           "layout_candidate_id": { "type": "string" },
@@ -38,13 +38,88 @@
           "risks": { "type": "array", "items": { "type": "string" } },
           "failed_checks": { "type": "array", "items": { "type": "string" } },
           "applicable_scenarios": { "type": "array", "items": { "type": "string" } },
-          "confirmation_questions": { "type": "array", "items": { "type": "string" } }
+          "confirmation_questions": { "type": "array", "items": { "type": "string" } },
+          "score_breakdown": {
+            "type": "object",
+            "required": ["version", "rank", "base_score", "scene_weight", "weighted_score", "weight_source", "components"],
+            "properties": {
+              "version": { "type": "string", "enum": ["0.1"] },
+              "rank": { "type": "integer", "minimum": 1 },
+              "base_score": { "type": "number" },
+              "scene_weight": { "type": "number" },
+              "weighted_score": { "type": "number" },
+              "weight_source": { "type": "string" },
+              "components": {
+                "type": "object",
+                "required": ["layout_base", "check_penalty", "preference_boost"],
+                "properties": {
+                  "layout_base": { "type": "number" },
+                  "check_penalty": { "type": "number" },
+                  "preference_boost": { "type": "number" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "ranking_reasons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["code", "message"],
+              "properties": {
+                "code": { "type": "string" },
+                "message": { "type": "string" },
+                "component": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          }
         },
         "additionalProperties": false
       }
     },
     "confirmed_candidate_id": { "type": "string" },
+    "user_confirmation": { "type": "object" },
     "comparison_summary": { "type": "string" },
+    "proposal_comparison_summary": {
+      "type": "object",
+      "required": [
+        "version",
+        "object_coverage",
+        "circulation",
+        "conflicts",
+        "failure_reasons",
+        "ranking_reason_codes",
+        "narrative"
+      ],
+      "properties": {
+        "version": { "type": "string", "enum": ["0.1"] },
+        "object_coverage": { "type": "object" },
+        "circulation": { "type": "object" },
+        "conflicts": { "type": "object" },
+        "failure_reasons": { "type": "object" },
+        "ranking_reason_codes": { "type": "array", "items": { "type": "string" } },
+        "narrative": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "comparison_detail": {
+      "type": "object",
+      "required": ["version", "layout_comparison", "selected", "metrics", "circulation_continuity", "ranking_reasons", "ranked_circulation_branches", "narrative"],
+      "properties": {
+        "version": { "type": "string", "enum": ["0.1"] },
+        "layout_comparison": { "type": "object" },
+        "selected": { "type": "object" },
+        "metrics": { "type": "object" },
+        "circulation_continuity": { "type": "object" },
+        "ranking_reasons": { "type": "array", "items": { "type": "string" } },
+        "ranked_circulation_branches": { "type": "array", "items": { "type": "object" } },
+        "narrative": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
     "needs_confirmation": { "type": "boolean" },
     "next_cad_plans": { "type": "array", "items": { "type": "string" } }
   },

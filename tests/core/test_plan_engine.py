@@ -108,6 +108,14 @@ class PlanEngineTests(unittest.TestCase):
         missing_block_name["object"]["cad_identity"] = {}
         self.assertIn("block_name", "; ".join(validate_plan(missing_block_name)))
 
+        arbitrary_block_id = json.loads(json.dumps(base))
+        arbitrary_block_id["object"]["block_id"] = "project-block-999"
+        self.assertIn("controlled-test-block-001", "; ".join(validate_plan(arbitrary_block_id)))
+
+        arbitrary_block_name = json.loads(json.dumps(base))
+        arbitrary_block_name["object"]["cad_identity"]["block_name"] = "PROJECT_REAL_BLOCK"
+        self.assertIn("CODEX_TEST_BLOCK_001", "; ".join(validate_plan(arbitrary_block_name)))
+
         formal_layer = json.loads(json.dumps(base))
         formal_layer["drawing"]["layer"] = "A-FURN"
         self.assertIn("CODEX_PREVIEW", "; ".join(validate_plan(formal_layer)))
@@ -115,6 +123,10 @@ class PlanEngineTests(unittest.TestCase):
         illegal_scale = json.loads(json.dumps(base))
         illegal_scale["placement"]["scale"] = [1, 0, 1]
         self.assertIn("scale", "; ".join(validate_plan(illegal_scale)))
+
+        non_uniform_scale = json.loads(json.dumps(base))
+        non_uniform_scale["placement"]["scale"] = [1, 2, 1]
+        self.assertIn("uniform scale", "; ".join(validate_plan(non_uniform_scale)))
 
         missing_base_point = json.loads(json.dumps(base))
         missing_base_point["placement"].pop("base_point")
@@ -132,6 +144,15 @@ class PlanEngineTests(unittest.TestCase):
         self.assertEqual(report["entities"][0]["type"], "block_reference")
         self.assertEqual(report["entities"][0]["block_name"], "CODEX_TEST_BLOCK_001")
         self.assertIn("bbox", report)
+
+    def test_insert_block_alpha_dry_run_applies_uniform_scale_to_bbox(self) -> None:
+        plan = load_example("examples/plans/insert_block_alpha_test.json")
+        plan["placement"]["scale"] = [2, 2, 2]
+
+        report = create_dry_run_report(plan)
+
+        self.assertEqual(report["status"], "valid")
+        self.assertEqual(report["bbox"], {"min": [1200, 800], "max": [3000.0, 1700.0]})
 
     def test_dry_run_report_is_machine_readable(self) -> None:
         plan = load_example("examples/plans/draw_test_cabinet.json")

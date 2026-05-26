@@ -2,6 +2,14 @@
   "version": "0.1",
   "suite_id": "office-alpha-benchmark",
   "description": "Phase R non-CAD benchmark for office desk, chair, cabinet and aisle baseline assertions.",
+  "expected_evidence_summary": {
+    "case_count": 18,
+    "benchmark_pass_non_cad_count": 14,
+    "blocked_expected_non_cad_count": 3,
+    "invalid_configuration_count": 1,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
   "cases": [
     {
       "case_id": "office_desk_default_spec",
@@ -58,6 +66,227 @@
       }
     },
     {
+      "case_id": "computer_desk_default_spec",
+      "pipeline": "object_spec",
+      "object_type": "computer_desk",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "computer_desk",
+        "width": 1200,
+        "depth": 700,
+        "height": 750,
+        "placement_role": "screen_workstation",
+        "contains_component_roles": ["worktop", "clearance_zone", "monitor_zone", "cable_side_hint"]
+      }
+    },
+    {
+      "case_id": "storage_cabinet_front_clearance",
+      "pipeline": "object_spec",
+      "object_type": "storage_cabinet",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "storage_cabinet",
+        "width": 1200,
+        "depth": 450,
+        "height": 2000,
+        "placement_role": "general_storage",
+        "contains_component_roles": ["body", "front_panel", "shelf", "cabinet_front_clearance"],
+        "contains_clearance_refs": ["cabinet_front_clearance"]
+      }
+    },
+    {
+      "case_id": "file_cabinet_default_spec",
+      "pipeline": "object_spec",
+      "object_type": "file_cabinet",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "file_cabinet",
+        "width": 900,
+        "depth": 450,
+        "height": 1100,
+        "placement_role": "document_storage",
+        "contains_component_roles": ["body", "drawer_stack", "cabinet_front_clearance"],
+        "contains_clearance_refs": ["cabinet_front_clearance"]
+      }
+    },
+    {
+      "case_id": "single_desk_chair_pair",
+      "pipeline": "composition_spec",
+      "composition_id": "single_desk_chair_pair",
+      "persona_role": "office_planner",
+      "request_text": "生成一张办公桌和一把椅子的工位组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "persona_role": "office_planner",
+        "composition_id": "single_desk_chair_pair",
+        "object_count": 2,
+        "cad_plan_count": 2,
+        "visual_preview_status": "written",
+        "contains_object_types": ["desk", "chair"],
+        "contains_object_roles": ["work_surface", "seating_for_desk"],
+        "contains_binding_relations": ["seating_for_desk"],
+        "contains_clearance_refs": ["chair_pullback_clearance"]
+      }
+    },
+    {
+      "case_id": "desk_with_back_cabinet",
+      "pipeline": "composition_spec",
+      "composition_id": "desk_with_back_cabinet",
+      "persona_role": "office_planner",
+      "request_text": "生成办公桌、椅子和背柜组合，并保留椅后与柜前净空语义",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "persona_role": "office_planner",
+        "composition_id": "desk_with_back_cabinet",
+        "object_count": 3,
+        "cad_plan_count": 3,
+        "visual_preview_status": "written",
+        "contains_object_types": ["desk", "chair", "cabinet"],
+        "contains_object_roles": ["work_surface", "seating_for_desk", "general_storage"],
+        "contains_binding_relations": ["seating_for_desk", "storage_behind_desk"],
+        "contains_clearance_refs": ["chair_pullback_clearance", "cabinet_front_clearance"]
+      }
+    },
+    {
+      "case_id": "two_workstations_shared_aisle",
+      "pipeline": "composition_spec",
+      "composition_id": "two_workstations_shared_aisle",
+      "persona_role": "office_planner",
+      "request_text": "生成两个工位并保留共用主通道语义",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "persona_role": "office_planner",
+        "composition_id": "two_workstations_shared_aisle",
+        "object_count": 4,
+        "cad_plan_count": 4,
+        "visual_preview_status": "written",
+        "contains_object_types": ["desk", "chair"],
+        "contains_binding_relations": ["seating_for_desk"],
+        "contains_circulation_roles": ["main_aisle"]
+      }
+    },
+    {
+      "case_id": "entry_reception_clearance",
+      "pipeline": "composition_spec",
+      "composition_id": "entry_reception_clearance",
+      "persona_role": "office_planner",
+      "request_text": "生成入口附近接待桌，并保留入口前净空语义",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "persona_role": "office_planner",
+        "composition_id": "entry_reception_clearance",
+        "object_count": 1,
+        "cad_plan_count": 1,
+        "visual_preview_status": "written",
+        "contains_object_types": ["desk"],
+        "contains_object_roles": ["reception_surface"],
+        "contains_clearance_refs": ["entry_clearance"]
+      }
+    },
+    {
+      "case_id": "long_narrow_office_main_aisle",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_long_narrow_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "shell_id": "shell-office-long-narrow",
+        "minimums": {
+          "candidate_count": 3,
+          "zone_count": 2,
+          "placement_count": 4,
+          "cad_plan_count": 4,
+          "failed_check_count": 0
+        },
+        "contains_object_types": ["desk", "chair"]
+      }
+    },
+    {
+      "case_id": "office_obstacle_avoidance_riser",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_obstacle_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "shell_id": "shell-office-obstacle-riser",
+        "minimums": {
+          "candidate_count": 2,
+          "zone_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5,
+          "no_place_zone_count": 2,
+          "fixed_obstacle_count": 2,
+          "failed_check_count": 0
+        },
+        "contains_object_types": ["desk", "chair"]
+      }
+    },
+    {
+      "case_id": "meeting_computer_mixed_zone",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_mixed_zone_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "shell_id": "shell-office-mixed-zone",
+        "minimums": {
+          "candidate_count": 2,
+          "zone_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5,
+          "failed_check_count": 0
+        },
+        "contains_object_types": ["desk", "chair", "table", "computer_desk"]
+      }
+    },
+    {
       "case_id": "office_small_suite_alpha",
       "pipeline": "blank_shell",
       "workflow": "examples/workflows/blank_shell_office_layout_loop.json",
@@ -75,6 +304,68 @@
           "cad_plan_count": 1
         },
         "contains_object_types": ["desk", "chair", "cabinet"]
+      }
+    },
+    {
+      "case_id": "too_small_room_for_workstation",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_too_small_workstation_layout_loop.json",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "insufficient_space",
+        "shell_id": "shell-office-too-small-workstation",
+        "contains_blocked_reason": "insufficient",
+        "maximums": {
+          "cad_plan_count": 0,
+          "placement_count": 4
+        }
+      }
+    },
+    {
+      "case_id": "office_invalid_workflow_input",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_invalid_input_layout_loop.json",
+      "expected": {
+        "pipeline_status": "invalid",
+        "evidence_state": "invalid_configuration",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "contains_blocked_reason": "shell_model"
+      }
+    },
+    {
+      "case_id": "door_clearance_conflict",
+      "pipeline": "composition_spec",
+      "composition_id": "door_clearance_conflict",
+      "persona_role": "office_planner",
+      "request_text": "在入口净空内放置办公桌（预期 blocked）",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "door_clearance_conflict",
+        "failure_category": "entry_clearance_conflict",
+        "contains_blocked_reason": "entry_clearance_conflict"
+      }
+    },
+    {
+      "case_id": "cabinet_pullback_conflict",
+      "pipeline": "composition_spec",
+      "composition_id": "cabinet_pullback_conflict",
+      "persona_role": "office_planner",
+      "request_text": "背柜与椅后净空硬冲突样本（预期 blocked）",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "cabinet_pullback_conflict",
+        "failure_category": "clearance_conflict",
+        "contains_blocked_reason": "clearance_conflict"
       }
     }
   ]

@@ -12,6 +12,7 @@ from core.layout_engine.path_generation import generate_circulation_candidates
 from core.layout_engine.placement import create_zone_placements
 from core.layout_engine.zone_splitter import split_zones
 from core.object_engine.object_explainer import explain_object_spec
+from core.path_safety import resolve_under_project_output, resolve_under_project_root
 from core.plan_engine.model_to_plan import model_to_plans
 from core.project_model.project_builder import build_project_model
 from core.proposal_engine.proposal_comparison import compare_layout_candidates
@@ -23,32 +24,12 @@ from core.workflows.blank_shell_pipeline import run_blank_shell_pipeline
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
-def _is_relative_to(path: Path, root: Path) -> bool:
-    try:
-        path.relative_to(root)
-    except ValueError:
-        return False
-    return True
-
-
 def _resolve_under_project_root(value: str, label: str) -> Path:
-    path = Path(value)
-    if not path.is_absolute():
-        path = PROJECT_ROOT / path
-    resolved = path.resolve()
-    if not _is_relative_to(resolved, PROJECT_ROOT.resolve()):
-        raise ValueError(f"{label} must stay under project root")
-    return resolved
+    return resolve_under_project_root(PROJECT_ROOT, Path(value), label=label)
 
 
 def _resolve_under_output_root(value: str, label: str) -> Path:
-    path = Path(value)
-    if not path.is_absolute():
-        path = PROJECT_ROOT / path
-    resolved = path.resolve()
-    if not _is_relative_to(resolved, (PROJECT_ROOT / "output").resolve()):
-        raise ValueError(f"{label} must stay under project output directory")
-    return resolved
+    return resolve_under_project_output(PROJECT_ROOT, Path(value), label=label)
 
 
 def _project_model_build(payload: dict[str, Any]) -> dict[str, Any]:

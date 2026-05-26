@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "confirmation_id": "confirm-proposal-minimal-cabinet",
+  "proposal_id": "proposal-minimal-cabinet",
+  "action": "accept",
+  "selected_candidate_id": "candidate-origin-wall",
+  "rejected_candidates": [],
+  "local_preferences": {
+    "candidate_weights": {},
+    "weight_source": "user_confirmation",
+    "placement_offsets": {},
+    "notes": ["User accepted baseline preview candidate."]
+  },
+  "confirmed_by": "user"
+}

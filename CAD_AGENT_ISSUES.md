@@ -1,5 +1,233 @@
 # CAD Agent 问题与修复记录
 
+### 问题：本地真实 CAD 校验样本数量仍明显不足
+
+日期：2026-05-26
+
+现象：当前 non-CAD 单测、benchmark、no-CAD validation 和本地 CAD 回归矩阵入口已经较厚，但真实 AutoCAD 用户会话下的 `geometry_verified` 样本仍是小样本：baseline、受控 block alpha 和少量 composition cases。缺少大量 CAD_PLAN fixtures、真实项目样本、多场景组合、block / attribute / hatch、负向安全和趋势审计层面的真实 CAD 回归。
+
+影响：系统可以证明“入口、证据词表、deferred 门禁和少量真实 CAD 样本可用”，但还不能证明“本地真实 CAD 校验层覆盖充分”。如果继续扩场景或能力声明，容易把 non-CAD benchmark、截图或 fake driver 误扩大为真实几何准确。
+
+修复 / 计划：已在 `CORE_RESTRUCTURE_PLAN.md` 写入“本地真实 CAD 校验扩样主线”，拆分 `LCAD-01` 到 `LCAD-11`，从 regression manifest、strict matrix runner、ActiveDocument guard 开始，逐步扩展 baseline、primitive、CAD_PLAN fixture、block / attribute / hatch、project sample、scene composition、negative safety 和 evidence trend rollup。
+
+以后规则：进入能力扩张前，优先补本地真实 CAD 校验扩样；任何新 CAD 能力若没有 created handles readback 和 `geometry_verified`，只能写成 deferred / non-CAD / fake-driver evidence，不得写成真实 CAD 几何通过。
+
+相关文件：`CORE_RESTRUCTURE_PLAN.md`
+
+### 问题：本地真实 CAD 校验入口曾分散，缺少一键回归矩阵
+
+日期：2026-05-26
+
+现象：baseline CAD validation、project sample CAD check、interior composition CAD check 各自已有入口，但没有一个本地矩阵把它们统一汇总为“哪些只是 no-CAD deferred、哪些必须真实 `geometry_verified`”的机器可读报告。
+
+影响：进入下一阶段前，维护者需要分别记住多个命令和证据口径；容易把某个子 runner 的顶层 pass、no-CAD deferred 或旧 artifact 误读为真实 CAD 几何通过。
+
+修复：新增 `core/verification/local_cad_regression.py` 和 `scripts/run_local_cad_regression.py`。`--no-cad` 模式只记录 deferred / non-CAD 证据；真实 CAD 严格模式可用 `--require-cad-verified`，子项不是 `geometry_verified` 时顶层失败。composition CAD check 受前置 `interior_delivery_benchmark` 门禁保护，benchmark 失败时跳过 CAD 写入并记录 `blocked_by`。
+
+以后规则：进入下一阶段或做本地 CAD 回归时，优先跑 `run_local_cad_regression.py` 汇总矩阵；只有矩阵子项中真实 CAD report 明确 `geometry_verified` 且可追溯 created handles，才允许扩大为对应 CAD 几何通过。`--no-cad` pass 只能证明门禁和 deferred 口径正确。
+
+相关文件：`core/verification/local_cad_regression.py`、`scripts/run_local_cad_regression.py`、`tests/core/test_local_cad_regression.py`
+
+### 问题：活跃排障手册曾写死 `C:\Users\User` 的 CAD-MCP Python 路径
+
+日期：2026-05-26
+
+现象：`CAD_AGENT_BLOCKER_PLAYBOOK.md` 的当前工具入口使用 `C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe`，但当前机器实际 CAD-MCP Python 位于当前用户目录下，固定路径不可用。
+
+影响：卡壳自查命令会在换用户、换机或当前 `C:\Users\123235` 环境中直接失败，和“可迁移 CAD Agent 开发包”的定位冲突。
+
+修复：活跃手册改为先设置 `$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"`，再运行 `self_check.py`、`render_preview.py --check` 和窗口截图命令；新增文档治理测试防止活跃手册重新写死 `C:\Users\User`。
+
+以后规则：活跃命令文档优先用 `$env:USERPROFILE` 或项目相对路径，不要写死某个 Windows 用户名；历史问题记录里的旧路径可以保留为当时证据。
+
+相关文件：`CAD_AGENT_BLOCKER_PLAYBOOK.md`、`tests/core/test_planmd_governance.py`
+
+### 问题：scene beta wrapper 的输出参数与通用 benchmark runner 不一致
+
+日期：2026-05-26
+
+现象：`run_office_scene_beta_benchmark.py`、`run_residential_scene_beta_benchmark.py`、`run_restaurant_scene_beta_benchmark.py` 只支持 `--output`，而通用 benchmark runner 和多数组件复验习惯使用 `--output-root`。维护复验时按通用习惯运行三者会得到 `unrecognized arguments: --output-root`。
+
+影响：功能逻辑没有失败，但复验脚本不够顺手，容易让后续维护者把 CLI 参数错误误判成 scene beta 回归。
+
+修复：三个 wrapper 都把 `--output-root` 作为 `--output` 的兼容别名；新增 CLI 测试直接用 `--output-root` 跑三套 scene beta benchmark 并断言 `status=pass`。
+
+以后规则：新增 benchmark wrapper 时优先兼容通用 runner 的 `--output-root`，如保留历史 `--output`，应作为别名而不是割裂接口。
+
+相关文件：`scripts/run_office_scene_beta_benchmark.py`、`scripts/run_residential_scene_beta_benchmark.py`、`scripts/run_restaurant_scene_beta_benchmark.py`、`tests/core/test_benchmark_cli.py`
+
+### 问题：路径边界校验曾分散在多个 runner 中，真实 CAD 入口也可过早连接
+
+日期：2026-05-26
+
+现象：project sample CAD check、composition CAD check、beta suite、proposal confirmed、drawing-read、blank-shell / non-CAD pipeline 等入口分别维护自己的 output root / case_id / workflow path 判断，部分入口会在路径合法性完全确认前进入后续流程或连接 CAD。
+
+影响：后续新增 runner 时容易遗漏边界校验；恶意或错误参数可能把 artifact 写到仓库 `output/` 之外，或让真实 CAD check 在本应立即拒绝的参数下继续推进。
+
+修复：新增 `core/path_safety.py`，统一 project root、output root、safe path segment 和相对路径判断；相关 runner 改为复用公共 helper。composition CAD check 在导入 / 连接 `AutoCADComDriver` 前先验证 benchmark output root 和 output dir；non-CAD pipeline 对越界和缺输入返回结构化 invalid。
+
+以后规则：任何 CLI 参数、manifest、workflow、suite case 或 benchmark 派生的读写路径，都必须先走 `core.path_safety` 公共入口；涉及真实 CAD 的脚本要在连接 CAD 前完成路径和证据目录预检。
+
+### 问题：Schema 文件曾存在但未全部纳入 registry
+
+日期：2026-05-26
+
+现象：部分 `core/schemas/*.schema.json` 已存在，但 `core/schemas/registry.py` 没有登记，invalid fixture 也没有覆盖到每个 schema。
+
+影响：新增 schema 可能只在文档或示例中存在，实际 validator / benchmark / 回归测试并不知道它，容易形成“看起来有协议、运行时没门禁”的假安全。
+
+修复：`MODEL_SCHEMAS` 覆盖所有 `core/schemas/*.schema.json`，`infer_model_type()` 补齐对应模型识别；新增 `test_every_core_schema_file_is_registered` 和每个新增 schema 的 invalid fixture。
+
+以后规则：新增 schema 必须同步 registry、example / invalid fixture 和 schema validation tests；schema 文件不能只作为静态文档存在。
+
+### 问题：交接文档和状态页曾再次出现第二套下一步口径
+
+日期：2026-05-26
+
+现象：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` 曾保留“下一包建议 / 剩余开发包细分索引”，状态页也有容易被理解为后续执行清单的历史表述。
+
+影响：后续 agent 可能绕过唯一 `PlanMD`，按 handoff 或状态页里的旧表继续排队，导致 Phase 顺序、退出门槛和 Backlog 来源分裂。
+
+修复：handoff 汇总只保留已交付 9 项记录和当前交接说明；`CAD_AGENT_STATUS.md` 改为历史快照口径；新增文档治理测试禁止关键副计划短语回流。
+
+以后规则：开发优先级、Phase 顺序、后置 Backlog 和退出门槛只写 `CORE_RESTRUCTURE_PLAN.md`；交接文档只能在包实际交付后追加证据记录。
+
+### 问题：项目样本 CAD check 的 deferred 证据容易被文档扩大成真实 CAD verified
+
+日期：2026-05-26
+
+现象：多 agent 维护审查发现，`BETA-PROJECT-SAMPLE-05` 的文档口径容易让人把“可选 CAD check 入口已实现”理解为“仓库已有真实 AutoCAD 样本 readback 几何证据”。实际存档 no-CAD 报告为 `status=deferred`、`geometry_verified=false`，只能证明无 CAD 时证据被正确延期。
+
+影响：交接或 CI 若只看脚本返回 0，可能把 deferred 证据当作真实 CAD 几何通过，违反 created handles readback 门槛。
+
+修复：`scripts/run_project_sample_cad_check.py` 新增 `--require-cad-verified`，报告不是 `geometry_verified` 时返回非 0；边界文档改为明确区分 fake-driver verified、no-CAD deferred 和真实 CAD 用户会话 readback。
+
+以后规则：真实项目样本只有拿到用户 AutoCAD 会话下的 `project_sample_cad_check_report.json.status=geometry_verified`，并能回溯 created handles，才允许写成样本 CAD 几何通过；`--no-cad` deferred 永远只能作为待补验或负向门禁证据。
+
+### 问题：样本路径、benchmark case_id 和验证输出目录缺少边界约束
+
+日期：2026-05-26
+
+现象：manifest input path 使用 `sample_dir / rel`，benchmark/drawing-read `case_id` 直接拼到输出路径，CAD validation 接收任意 output dir；这些形态都可能让测试或后续脚本把读写范围扩到预期目录外。
+
+影响：坏 manifest 或 suite 可以读样本目录外文件，或把生成物写到仓库 `output/` 之外；stale artifact 清理若继续扩展，也可能误删非本轮产物。
+
+修复：manifest input 必须解析在样本目录内；benchmark / drawing-read `case_id` 限制为安全 path segment；benchmark output root、drawing-read output root 和 CAD validation output dir 限制在仓库 `output/` 下；清理 stale artifact 前再次校验派生产物仍在本轮 output dir 内。
+
+以后规则：任何由 manifest、suite case、用户 CLI 参数或 workflow 派生的路径，在读写或删除前都必须先 resolve 并验证仍在该入口声明的边界内。
+
+### 问题：Cursor 新增测试曾回退到系统临时目录
+
+日期：2026-05-26
+
+现象：全量 unittest 首轮在 `tests/core/test_project_sample_protocol.py` 报 `PermissionError: WinError 5`，原因是测试使用 `tempfile.TemporaryDirectory()`，在当前 Windows / sandbox 环境下会落到系统临时目录。
+
+影响：功能代码本身没有失败，但测试会受机器权限影响，破坏可迁移开发包“只写 workspace artifact”的约定。
+
+修复：测试改用 `tests.helpers.artifact_path()` + 唯一子目录，所有临时样本目录落在 `output/test_artifacts`；复扫 `TemporaryDirectory` / `tempfile.TemporaryDirectory` 无命中。
+
+以后规则：仓库测试默认只写 workspace 内 `output/test_artifacts`，不要把系统 temp 当作可用前提。
+
+相关文件：`tests/core/test_project_sample_protocol.py`
+
+### 问题：benchmark evidence triplet 曾不完整
+
+日期：2026-05-26
+
+现象：`examples/benchmarks/non_cad_core_benchmark.json` 和 `proposal_confirmed_benchmark.json` 存在 case 缺少 `expected.evidence_state` / `geometry_accuracy` / `screenshot_role` 的情况；`proposal_confirmed_benchmark` 自定义 runner 也未输出 `evidence_summary`。
+
+影响：benchmark 可能只证明 pipeline 跑通，却没有机器可读证据边界；后续交接口径容易把 non-CAD pass 误读成 CAD 几何 verified。
+
+修复：benchmark runner 增加强制 triplet 校验；proposal confirmed runner 输出 per-case triplet 与 suite `evidence_summary`；示例 benchmark 补齐 `expected_evidence_summary` 和每 case triplet；新增回归测试覆盖缺字段失败。
+
+以后规则：任何 benchmark case 都必须携带完整 evidence triplet；父级 summary 必须能机器比对，不能只写口头 pass。
+
+相关文件：`core/benchmarks/runner.py`、`core/benchmarks/expectations.py`、`core/proposal_engine/confirmed_benchmark.py`、`examples/benchmarks/non_cad_core_benchmark.json`、`examples/benchmarks/proposal_confirmed_benchmark.json`、`tests/core/test_benchmark_validation.py`
+
+### 问题：项目样例 CAD check 与 drawing standard 曾使用非法证据词
+
+日期：2026-05-26
+
+现象：项目样例 CAD check 曾输出两个临时失败状态词和 `geometry_verified` 这类不在 evidence contract 内的状态或 accuracy；`codex_preview_beta` drawing standard profile 曾把 not-applicable 截图角色写成带截图前缀的旧词。
+
+影响：证据字段无法通过统一词表校验，失败路径和延期路径容易被上游工具误分类。
+
+修复：项目样例 CAD check 的 no-CAD / failure 路径改为 `deferred_cad_readback_required` + `not_verified_without_cad_readback` + `not_applicable`；drawing standard profile 修正为 `screenshot_role: not_applicable`；新增回归测试并全文扫掉旧坏词。
+
+以后规则：新增 evidence 字段前先接入 `core.verification.evidence_contract`，不要在场景或样本模块里临时发明状态词。
+
+相关文件：`core/project_samples/cad_check.py`、`libraries/drawing_standards/codex_preview_beta.json`、`docs/verification/beta_project_sample_05_boundaries.md`、`tests/core/test_project_sample_cad_check.py`、`tests/core/test_drawing_standard_profile.py`
+
+### 问题：Cursor 大改后部分核心文件职责过胖
+
+日期：2026-05-26
+
+现象：`run_repo_audit.py --max-python-lines 500 --fail-on-findings` 暴露 6 个 `large_python_file` finding，集中在 benchmark runner、evidence contract、composition templates、blank-shell pipeline 和两个测试文件。
+
+影响：虽然属于 low severity，但后续继续叠加功能会让证据门禁、候选集策略和测试夹具混在一起，增加误改核心安全边界的风险。
+
+修复：拆出 benchmark expected 比对、evidence vocabulary、composition preview、blank-shell candidate sets、CAD validation payload fixtures 和 benchmark validation tests；repo audit 复跑 0 findings。
+
+以后规则：无状态词表、expected 比对、候选集生成、测试 payload 等应独立模块化，核心 runner / pipeline 只保留调度和 I/O 边界。
+
+相关文件：`core/benchmarks/expectations.py`、`core/verification/evidence_vocabulary.py`、`core/composition_engine/preview.py`、`core/workflows/blank_shell_candidates.py`、`tests/core/cad_validation_payloads.py`、`tests/core/test_benchmark_validation.py`
+
+### 问题：CAD validation runner 曾未跨步骤绑定 execution summary 与 readback handles
+
+日期：2026-05-26
+
+现象：第二轮多 agent 审查发现，`readback_report` / `block_alpha_report` 即使内部 created handles 自洽，也可能与上一阶段 `execute_plan.py` 生成的 `created_handles` 不一致；伪造 stdout JSON 可带另一套 handles 并通过旧门禁。
+
+影响：如果只验证 readback 报告内部结构，不能证明回读实体就是本轮执行创建的实体，会削弱“created-handle readback”作为几何证据的可信度。
+
+处理：新增 `core/verification/cad_validation_gates.py`，runner 在 `inspect_readback` 和 `block_alpha_readback` 门禁中读取上一阶段 `execution_summary.json` / `block_alpha_execution_summary.json` 并做 handles 集合比对；新增回归测试覆盖 baseline 和 block alpha 句柄不一致必须 fail。
+
+### 问题：block alpha 失败路径曾可能先写 DWG 再失败
+
+日期：2026-05-26
+
+现象：`insert_block_alpha()` 的 attributes 检查曾发生在 `ensure_controlled_block_definition()` 之后；非法 `base_point` 也可能在块定义处理之后才暴露。此外，`InsertBlock()` 成功后若 handle 缺失，旧逻辑只抛错，不尝试删除刚插入的 block reference。
+
+影响：在当前测试 DWG 中会污染会话；若用户之后手动保存，测试块 definition 或残留 block reference 可能被写入文件。
+
+处理：将 attributes、base point、rotation、scale 等纯输入检查前置到任何 ModelSpace 写入之前；后置失败时调用 `Delete()` 尝试回滚 block reference；块定义创建失败时也尝试删除临时 block record。新增真实 COM 负向探针验证非法 identity / attributes / base point 均不增加 ModelSpace 实体。
+
+### 未完成风险：真实 COM 写入仍以当前 ActiveDocument 为目标
+
+日期：2026-05-26
+
+现象：当前安全边界主要限制写入 `CODEX_PREVIEW` 图层且默认不保存 DWG，但尚未引入 ActiveDocument allowlist 或“必须是测试 DWG”的硬门禁。
+
+影响：如果用户当前激活的是正式 DWG，合法 preview plan 仍会在该 DWG 会话中新增 `CODEX_PREVIEW` 实体或受控测试块 definition；虽然不自动保存，但用户手动保存时仍可能带入。
+
+处理建议：后续开发包应增加 document guard，例如显式测试文件 allowlist、运行前确认字段、或只允许打开临时/预览 DWG 时真实 COM 写入。当前本轮真实 CAD 复验仅在用户明确声明“当前 CAD 会话是测试文件”的前提下成立。
+
+### 问题：PowerShell 默认编码读取中文路径 JSON 时可能误报解析失败
+
+日期：2026-05-26
+
+现象：复核真实 CAD `report.json` 时，PowerShell `Get-Content -Raw | ConvertFrom-Json` 在默认编码下把 UTF-8 中文路径解码成乱码，进而触发 `ConvertFrom-Json` 解析错误；同一文件使用 Python `json.loads(path.read_text(encoding="utf-8"))` 可正常解析并读到 `status=pass`。
+
+影响：这类失败属于人工验收命令的编码问题，不代表 validation report 文件损坏。但如果后续脚本或人工审计依赖 PowerShell 默认编码，可能误判证据文件不可读。
+
+处理：验收 JSON 报告时优先使用 Python JSON parser，或在 PowerShell 中显式指定 UTF-8 编码；不要把默认编码下的乱码解析错误直接归因于 CAD validation 失败。
+
+### 问题：block alpha / readback 几何证据曾可被自报式 JSON 绕过
+
+日期：2026-05-26
+
+现象：多 agent 风险审查发现，`readback_report.status=geometry_verified` 和 `block_alpha_report.status=geometry_verified` 只要自报 evidence fields 与 checks pass，就可能让 CAD validation runner 通过；同时 `insert_block_alpha` 计划层和 driver 层曾只检查 block id/name 非空，没有锁死受控测试块 identity。
+
+影响：旧实体、伪造报告或任意块名可能冒充本轮真实 CAD created-handle readback 证据，严重时会污染当前测试 DWG 的 block table 或错误声称几何已验证。
+
+原因：R-BLOCK-CAD alpha 早期把重点放在打通受控样本，没有把 `created_handles`、实体类型和受控 identity 作为所有入口的硬门禁。
+
+修复：`insert_block_alpha` 现在只允许 `controlled-test-block-001` / `CODEX_TEST_BLOCK_001`；readback gate 要求非空 created handles、实体 payload、`created_handles_scope=pass` 和 `block_reference` 类型；standalone block alpha failed 返回非 0；新增 7 个风险回归测试。
+
+以后规则：凡是声称 `geometry_verified` 的 CAD 证据，必须能追溯到本轮执行摘要中的 `created_handles`，并且实体回读类型、handle 覆盖关系和 checks 都由机器门禁验证；截图和自报 JSON 都不能单独作为几何准确证据。
+
+相关文件：`core/plan_engine/block_alpha_plan.py`、`core/cad_io/autocad_block_alpha.py`、`core/verification/evidence_contract.py`、`core/verification/block_alpha_validation.py`、`core/verification/cad_validation_runner.py`、`scripts/run_block_alpha_validation.py`、`tests/core/test_plan_engine.py`、`tests/core/test_autocad_com_driver.py`、`tests/core/test_block_alpha_validation.py`、`tests/core/test_cad_validation_runner.py`
+
 这个文件只记录开发和测试过程中遇到的问题。它不是普通日志，而是“以后别再踩同一个坑”的记录。
 
 ## 记录模板

@@ -8,6 +8,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
+from core.verification.entity_level_evidence import (
+    assess_entity_level_evidence,
+    build_hatch_deferred_entry,
+    entity_level_evidence_allows_probe_pass,
+)
 from core.verification.evidence_contract import apply_capability_probe_contract
 
 
@@ -121,6 +126,7 @@ def _empty_report(*, layer: str, output_dir: Path | None) -> dict[str, Any]:
             "bbox": None,
         },
         "checks": [],
+        "entity_evidence": [],
         "safety": {
             "writes_only_preview_layer": layer == PREVIEW_LAYER,
             "saves_dwg": False,
@@ -168,6 +174,7 @@ def run_cad_capability_probe(
     )
     report["checks"].append(_check("layer_policy", "pass", f"Probe layer is {PREVIEW_LAYER}."))
 
+    write_records: list[dict[str, Any]] = []
     try:
         if hasattr(driver, "ensure_layer"):
             driver.ensure_layer(layer)
@@ -215,12 +222,13 @@ def run_cad_capability_probe(
         arc_handles = _collect_handles(arc)
         report["checks"].append(_check("arc_handle", "pass" if len(arc_handles) == 1 else "fail", f"{len(arc_handles)} arc handles returned."))
 
+        polyline_points = [
+            [x0 + 120, y0 + 110, z0],
+            [x0 + 220, y0 + 210, z0],
+            [x0 + 360, y0 + 110, z0],
+        ]
         polyline = driver.draw_polyline(
-            points=[
-                [x0 + 120, y0 + 110, z0],
-                [x0 + 220, y0 + 210, z0],
-                [x0 + 360, y0 + 110, z0],
-            ],
+            points=polyline_points,
             closed=True,
             layer=layer,
             color="cyan",
@@ -228,6 +236,36 @@ def run_cad_capability_probe(
         polyline_handles = _collect_handles(polyline)
         report["checks"].append(
             _check("polyline_handle", "pass" if len(polyline_handles) == 1 else "fail", f"{len(polyline_handles)} polyline handles returned.")
+        )
+        if polyline_handles:
+            write_records.append(
+                {
+                    "primitive": "polyline",
+                    "handle": polyline_handles[0],
+                    "write": {
+                        "points": [[float(point[0]), float(point[1])] for point in polyline_points],
+                        "closed": True,
+                        "layer": layer,
+                        "layer_role": "preview",
+                    },
+                }
+            )
+
+        hatch_boundary = [
+            [x0 + 420, y0 + 80, z0],
+            [x0 + 520, y0 + 80, z0],
+            [x0 + 520, y0 + 180, z0],
+            [x0 + 420, y0 + 180, z0],
+        ]
+        write_records.append(
+            build_hatch_deferred_entry(
+                {
+                    "pattern": "ANSI31",
+                    "boundary_points": [[float(point[0]), float(point[1])] for point in hatch_boundary],
+                    "layer": layer,
+                    "layer_role": "preview",
+                }
+            )
         )
 
         text = driver.draw_text(
@@ -329,6 +367,22 @@ def run_cad_capability_probe(
             "safety_preview_only",
             "pass",
             "Probe does not save DWG, delete entities, overwrite files, or target formal layers.",
+        )
+    )
+
+    entities_by_handle = {str(entity.get("handle")): entity for entity in entities}
+    report["entity_evidence"] = assess_entity_level_evidence(
+        write_records=write_records,
+        entities_by_handle=entities_by_handle,
+    )
+    entity_level_ok = entity_level_evidence_allows_probe_pass(report["entity_evidence"])
+    report["checks"].append(
+        _check(
+            "entity_level_evidence",
+            "pass" if entity_level_ok else "fail",
+            "polyline layer mapping verified; hatch deferred slot present."
+            if entity_level_ok
+            else f"entity_evidence: {report['entity_evidence']}",
         )
     )
 

@@ -10,6 +10,20 @@ from __future__ import annotations
 import math
 from typing import Any
 
+from core.cad_io.autocad_block_alpha import (
+    CONTROLLED_BLOCK_DEFINITION_LAYER,
+    CONTROLLED_BLOCK_ID,
+    CONTROLLED_BLOCK_MIN_SIZE,
+    CONTROLLED_BLOCK_NAME,
+    PREVIEW_LAYER,
+    AutoCADBlockAlphaMixin,
+    BlockAlphaInsertionError,
+    _controlled_block_footprint_mm,
+    block_definition_failure,
+    block_definition_ready,
+    block_insert_failure,
+)
+
 
 ACI_COLORS = {
     "red": 1,
@@ -39,7 +53,7 @@ def driver_status() -> str:
     return "autocad_com driver ready"
 
 
-class AutoCADComDriver:
+class AutoCADComDriver(AutoCADBlockAlphaMixin):
     def __init__(self, *, connect_existing_only: bool = False) -> None:
         try:
             import win32com.client

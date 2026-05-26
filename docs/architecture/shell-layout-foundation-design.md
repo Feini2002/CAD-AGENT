@@ -1,6 +1,6 @@
 # 空壳布局底座设计说明
 
-最后更新：2026-05-25
+最后更新：2026-05-26
 
 ## 0. 文档用途
 
@@ -21,16 +21,16 @@
 - `core/layout_engine/zone_splitter.py` 已支持基于 path surface 的功能区切分。
 - `core/layout_engine/placement.py` 已支持多类对象、block metadata 优先和 `OBJECT_SPEC` fallback。
 - `core/workflows/blank_shell_pipeline.py` 已串联到 `CAD_PLAN`、dry-run 和 `VERIFICATION_REPORT(unverified)`。
-- `examples/benchmarks/blank_shell_core_benchmark.json` 已覆盖 retail、office、residential、restaurant 四个非 CAD benchmark case。
+- `examples/benchmarks/blank_shell_core_benchmark.json` 已覆盖 **8** 个非 CAD case（含狭长/障碍 pass 与 structured blocked failure）。
+- **`Y-MULTI-CANDIDATE` 已收口（2026-05-26）**：`candidate_sets.json` 保留多 circulation/zone/placement 候选；`design_proposal.comparison_detail` 输出覆盖率、失败分布与排序原因；benchmark 硬断言见 `docs/verification/blank_shell_multi_candidate_boundaries.md`。
 
 当前仍未完成的部分：
 
 - 自动 DWG / PDF 空壳识别。
 - 复杂多边形、曲线和 CAD kernel 级几何。
-- 真实块插入和 block reference readback。
-- 完整多候选布局设计脑。
-- 真实 CAD 落图、截图和实体回读闭环。
-- 足够多的真实项目回归样本和失败基准。
+- **完整多候选布局设计脑**（当前仅为 Alpha 硬化：多候选可解释 + 单条主路线落图，非自动最终决策）。
+- 足够多的真实项目回归样本（已有 hand-authored 近真实/失败 shell，规模仍不足）。
+- 真实项目级 CAD 几何回归（Phase W baseline 仅覆盖受控样本与部分 composition cases）。
 
 因此，本文后续应作为 Phase Y 继续硬化空壳布局的设计参考，而不是重复记录每天的开发流水。
 

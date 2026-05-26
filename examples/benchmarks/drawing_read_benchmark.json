@@ -1,0 +1,69 @@
+{
+  "version": "0.1",
+  "suite_id": "drawing-read-benchmark",
+  "description": "BETA-DRAWING-READ-05: READ-01..04 chain (pass + structured blocked failure).",
+  "expected_evidence_summary": {
+    "case_count": 3,
+    "benchmark_pass_non_cad_count": 2,
+    "blocked_expected_non_cad_count": 1,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
+  "cases": [
+    {
+      "case_id": "geometry_feature_full_chain_pass",
+      "fixture": "examples/drawing_read/sample_geometry_feature_fixture.json",
+      "confirmation": "examples/drawing_read/sample_shell_drawing_read_confirmation.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "ready_for_human_confirmation_file": true,
+        "requires_shell_model": true,
+        "shell_id": "shell-drawing-read-sample-geometry",
+        "minimums": {
+          "wall_segment_count": 4,
+          "opening_count": 1,
+          "column_count": 1,
+          "no_place_zone_count": 1,
+          "shell_opening_count": 1
+        }
+      }
+    },
+    {
+      "case_id": "geometry_candidates_without_shell_export_pass",
+      "fixture": "examples/drawing_read/sample_geometry_feature_fixture.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "ready_for_human_confirmation_file": true,
+        "requires_shell_model": false,
+        "minimums": {
+          "wall_segment_count": 4,
+          "opening_count": 1,
+          "column_count": 1,
+          "no_place_zone_count": 1
+        }
+      }
+    },
+    {
+      "case_id": "walls_only_missing_opening_blocked",
+      "fixture": "examples/drawing_read/sample_geometry_walls_only_fixture.json",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "drawing_read_incomplete",
+        "ready_for_human_confirmation_file": false,
+        "contains_blocker_code": "missing_entry_opening",
+        "maximums": {
+          "opening_count": 0
+        }
+      }
+    }
+  ]
+}

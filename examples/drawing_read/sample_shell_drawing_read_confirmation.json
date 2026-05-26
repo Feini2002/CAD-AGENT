@@ -1,0 +1,22 @@
+{
+  "version": "0.1",
+  "confirmation_id": "confirm-drawing-read-sample-geometry",
+  "report_ref": {
+    "shell_candidate_id": "draft-shell-from-drawing-read",
+    "source_fixture": "examples/drawing_read/sample_geometry_feature_fixture.json"
+  },
+  "action": "accept",
+  "confirmed_items": [
+    { "item_id": "confirm-boundary-bbox", "status": "confirmed" },
+    { "item_id": "confirm-draft-obstacle-01", "status": "confirmed" },
+    { "item_id": "confirm-draft-no-place-01", "status": "confirmed" }
+  ],
+  "overrides": {
+    "shell_id": "shell-drawing-read-sample-geometry",
+    "excluded_draft_ids": []
+  },
+  "notes": [
+    "Human reviewed boundary, column obstacle, and no-place zone from drawing-read draft."
+  ],
+  "confirmed_by": "user"
+}

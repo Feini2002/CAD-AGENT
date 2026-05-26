@@ -1,0 +1,70 @@
+{
+  "version": "0.1",
+  "shell_id": "shell-office-obstacle-riser",
+  "units": "mm",
+  "boundary": {
+    "type": "bbox",
+    "min": [0, 0],
+    "max": [10000, 6500]
+  },
+  "openings": [
+    {
+      "opening_id": "entry-main",
+      "type": "entry",
+      "center": [0, 1600],
+      "width": 1000
+    }
+  ],
+  "fixed_obstacles": [
+    {
+      "obstacle_id": "column-01",
+      "bbox": {
+        "min": [3200, 2800],
+        "max": [3800, 3400]
+      }
+    },
+    {
+      "obstacle_id": "riser-01",
+      "bbox": {
+        "min": [5600, 3600],
+        "max": [6200, 4300]
+      }
+    }
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "column-01-clearance",
+      "bbox": {
+        "min": [3000, 2600],
+        "max": [4000, 3600]
+      }
+    },
+    {
+      "zone_id": "riser-01-clearance",
+      "bbox": {
+        "min": [5400, 3400],
+        "max": [6400, 4500]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "entry-to-work-zone",
+      "target": "open-office-zone",
+      "point": [8500, 1600]
+    }
+  ],
+  "building_elements": [
+    {
+      "element_id": "north-window-band",
+      "type": "window_wall"
+    }
+  ],
+  "uncertainties": [
+    "Obstacle and no-place zones are hand-authored for avoidance benchmark only."
+  ],
+  "source": {
+    "type": "manual_annotation",
+    "path": "examples/shell_models/office_obstacle_riser_shell.json"
+  }
+}

@@ -61,6 +61,16 @@
 
 本节服务根目录 `CORE_RESTRUCTURE_PLAN.md` 的“下一轮开发拆解与子校验”。执行时按包推进，不要跳过子校验；一个包没有通过前，不把后续包的能力写成已完成。
 
+每个二级小包进入实现前，必须能回答七件事：
+
+- 目标是否一句话说清楚。
+- 修改文件和测试文件是否明确。
+- 与前后小包的依赖顺序是否明确。
+- 子校验命令是否可直接运行。
+- 退出标准是否能被机器或证据文件判断。
+- evidence state 是否明确区分 non-CAD、dry-run、visual aid 和 readback。
+- 完成后要更新哪些状态文档和 handoff 是否明确。
+
 ### Package 1：`R-CAD-CONTRACT`
 
 **目标**：把已验证的基础图元能力从“探针结果”提升为稳定契约，方便后续 block alpha 复用同一套字段和 failure class。
@@ -203,6 +213,23 @@
 - [ ] 真实 CAD 验证只写 `CODEX_PREVIEW`，记录本轮 created handles，不扫描全 ModelSpace。
 - [ ] 截图只挂为视觉辅助，不参与几何通过判断。
 
+**二级小包拆解**
+
+| 小包 | 目标 | 文件范围 | 子校验 | 退出标准 |
+| --- | --- | --- | --- | --- |
+| `R-BLOCK-CAD-01` | 明确受控块定义策略：优先复用当前 DWG 中的 `CODEX_TEST_BLOCK_001`，缺失时用最小几何创建临时受控块定义 | `core/cad_io/autocad_com.py`、`tests/core/test_autocad_com_driver.py`、`docs/planning/phase-r-cad-capability-contract.md` | `& $py -m unittest tests.core.test_autocad_com_driver` | 找不到块定义时返回结构化 `definition_missing`；创建受控定义时不写正式图层、不保存 DWG | **2026-05-26 完成**：`ensure_controlled_block_definition()` + 5 项 driver 单测 |
+| `R-BLOCK-CAD-02` | 实现最小 `insert_block_alpha()` COM 路径，支持 base point、rotation、uniform scale、`CODEX_PREVIEW` layer | `core/cad_io/autocad_com.py`、`core/execution/execute_plan.py`、`tests/core/test_execute_plan.py` | `& $py -m unittest tests.core.test_autocad_com_driver tests.core.test_execute_plan` | fake driver 和 COM driver 接口一致；非 preview layer 仍被上游拒绝 | **2026-05-26 完成**：`insert_block_alpha()` + driver/execute 单测 |
+| `R-BLOCK-CAD-03` | 标准化 `block_reference` readback，输出 block name、插入点、旋转、scale、layer、bbox 和 handle | `core/verification/inspect_dwg.py`、`core/verification/geometry_checks.py`、`tests/core/test_geometry_checks.py` | `& $py -m unittest tests.core.test_geometry_checks tests.core.test_autocad_com_driver` | readback 字段可被 JSON 报告机器断言；缺字段时归类为 `readback_missing` 或 `block_name_mismatch` | **2026-05-26 完成**：normalize + `check_block_reference_readback()` |
+| `R-BLOCK-CAD-04` | 将 block alpha step 接入 CAD validation runner；无 CAD 或缺块定义时输出 deferred / external blocker，不误报 pass | `core/verification/cad_validation_runner.py`、`scripts/run_cad_validation.py`、`tests/core/test_cad_validation_runner.py` | `& $py -m unittest tests.core.test_cad_validation_runner`；`& $py scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\r-block-alpha-no-cad` | no-CAD 报告可读，含 block alpha step 状态；顶层 pass 不掩盖未验证真实 block readback | **2026-05-26 完成**：runner 接入 + `r-block-alpha-no-cad-test` no-CAD pass |
+| `R-BLOCK-CAD-05` | 运行真实 AutoCAD block alpha：插入受控块、记录 created handles、定向 readback、挂视觉辅助截图 | `docs/verification/`、`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md`、`CAD_AGENT_STATUS.md`、`CORE_STATUS.md` | `& $py scripts\run_cad_validation.py --block-alpha-only --output-dir output\validation_runs\r-block-alpha-cad` | `block_reference` checks 全 pass；报告达到 `evidence_state=readback_geometry_verified`；截图仍为 `visual_aid_only` | **2026-05-26 完成**：`created_handles=["878"]`，证据见 `docs/verification/block_alpha_cad_evidence.md` |
+
+**推荐执行顺序**
+
+1. 先完成 `R-BLOCK-CAD-01` 和 `R-BLOCK-CAD-02`，只验证接口和失败分类。
+2. 再完成 `R-BLOCK-CAD-03`，确保 readback 字段能独立测试。
+3. 然后完成 `R-BLOCK-CAD-04`，让总控无 CAD 路径稳定。
+4. 最后执行 `R-BLOCK-CAD-05`，在用户会话真实 AutoCAD 中落证据。
+
 **子校验**
 
 ```powershell
@@ -278,11 +305,60 @@
 
 **开发步骤**
 
-- [ ] 新增 `computer_desk_default_spec`、`storage_cabinet_front_clearance`、`single_desk_chair_pair`。
+- [x] 新增 `computer_desk_default_spec`、`storage_cabinet_front_clearance`、`file_cabinet_default_spec`（`R-OFFICE-MICRO-01`，2026-05-26）。
+- [x] 新增 `single_desk_chair_pair`、`desk_with_back_cabinet`、`two_workstations_shared_aisle`、`entry_reception_clearance`（`R-OFFICE-MICRO-02`，2026-05-26）。
 - [ ] 新增长条办公室、入口净空、障碍避让相关 shell / workflow 样本。
-- [ ] 新增失败样本 `too_small_room_for_workstation`、`door_clearance_conflict`、`cabinet_pullback_conflict`。
-- [ ] runner 支持断言 `blocked_reason`、`clearance_refs`、`failure_category`。
+- [x] 新增失败样本 `too_small_room_for_workstation`、`door_clearance_conflict`、`cabinet_pullback_conflict`（`R-OFFICE-MICRO-04`，2026-05-26）。
+- [x] runner 支持断言 `blocked_reason`、`clearance_refs`、`failure_category`（`R-OFFICE-MICRO-04`，2026-05-26）。
 - [ ] 所有无 CAD case 都必须输出 `geometry_accuracy=not_verified_without_cad_readback`。
+
+**二级小包拆解**
+
+| 小包 | 目标 | 文件范围 | 子校验 | 退出标准 |
+| --- | --- | --- | --- | --- |
+| `R-OFFICE-MICRO-01` | 扩展对象级 benchmark：`computer_desk_default_spec`、`storage_cabinet_front_clearance`、`file_cabinet_default_spec` | `libraries/objects/object_defaults.json`、`examples/benchmarks/office_alpha_benchmark.json`、`tests/core/test_benchmarks.py` | `& $py -m unittest tests.core.test_benchmarks`；`& $py scripts\run_benchmark_suite.py examples\benchmarks\office_alpha_benchmark.json --output-root output\test_artifacts\benchmarks\office_object_r1` | object cases pass；输出尺寸、component roles、clearance refs；证据仍为 non-CAD |
+| `R-OFFICE-MICRO-02` | 扩展微场景 benchmark：单桌椅、桌后柜、入口接待 / 等候 | `core/composition_engine/` 或 `core/benchmarks/runner.py`、`examples/benchmarks/office_alpha_benchmark.json`、`tests/core/test_benchmarks.py` | office benchmark pass；新增 micro-scene metrics 可断言 | micro-scene 输出对象角色、绑定关系、clearance refs；不要求真实 CAD |
+| `R-OFFICE-MICRO-03` | 扩展场景级样本：长条办公室、障碍柱 / 设备避让、会议与电脑桌混合 | `examples/shell_models/*.json`、`examples/workflows/*.json`、`examples/benchmarks/office_alpha_benchmark.json` | `& $py scripts\run_benchmark_suite.py examples\benchmarks\office_alpha_benchmark.json --output-root output\test_artifacts\benchmarks\office_scene_r1` | scene cases 输出 candidate_count、zone_count、placement_count、object_types 和 non-CAD evidence |
+| `R-OFFICE-MICRO-04` | 扩展失败样本：过小空间、门前净空冲突、柜前 / 椅后净空冲突 | `core/benchmarks/runner.py`、`core/workflows/blank_shell_pipeline.py`、`tests/core/test_benchmarks.py` | failure cases 必须为 `blocked_expected_non_cad` 或 `invalid` | 不允许通过少放对象伪装成功；失败原因含 `insufficient_space`、`entry_clearance_conflict` 或 `clearance_conflict` |
+| `R-OFFICE-MICRO-05` | 汇总 office alpha 报告与交接边界 | `docs/planning/phase-r-office-benchmark-cases.md`、`CAD_AGENT_STATUS.md`、`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` | 文档扫描 + office benchmark pass | 明确 office alpha 是 non-CAD benchmark；不声称办公真实 CAD 几何准确 |
+
+**推荐执行顺序**
+
+1. 先做 `R-OFFICE-MICRO-01`，对象规格最小且不会触动布局算法。
+2. 再做 `R-OFFICE-MICRO-02`，把对象组合语义跑通。
+3. 然后做 `R-OFFICE-MICRO-03`，接入 shell / workflow。
+4. 再做 `R-OFFICE-MICRO-04`，给失败样本和 runner 断言补硬门。
+5. 最后做 `R-OFFICE-MICRO-05`，同步状态与交接边界。
+
+**执行记录（2026-05-26，`R-OFFICE-MICRO-01`）**
+
+- 已完成：`computer_desk_default_spec`、`storage_cabinet_front_clearance`、`file_cabinet_default_spec`；`object_defaults.json` 与 `contains_clearance_refs` runner 断言。
+- 证据：`259 tests OK`；`output/test_artifacts/benchmarks/office_object_r1/` → office alpha **7/7 pass**（non-CAD）。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §10。
+
+**执行记录（2026-05-26，`R-OFFICE-MICRO-02`）**
+
+- 已完成：4 个 office micro-scene composition 模板与 benchmark cases；runner 支持 `contains_binding_relations`、`contains_circulation_roles`。
+- 证据：`260 tests OK`；`output/test_artifacts/benchmarks/office_micro_r2/` → office alpha **11/11 pass**（non-CAD）。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §11。
+
+**执行记录（2026-05-26，`R-OFFICE-MICRO-03`）**
+
+- 已完成：3 个 office scene shell/workflow + benchmark cases；`blank_shell_pipeline` 输出 `no_place_zone_count` / `fixed_obstacle_count` / `shell_id`。
+- 证据：`260 tests OK`；`output/test_artifacts/benchmarks/office_scene_r1/` → office alpha **14/14 pass**（non-CAD）。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §12。
+
+**执行记录（2026-05-26，`R-OFFICE-MICRO-04`）**
+
+- 已完成：3 个 failure benchmark cases；`office_layout_failure` 分类器；runner `contains_blocked_reason` / `failure_category` 断言。
+- 证据：`293 tests OK`；`output/test_artifacts/benchmarks/office_failure_r4/` → office alpha **17/17 pass**（3× `blocked_expected_non_cad`）。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §13。
+
+**执行记录（2026-05-26，`R-OFFICE-MICRO-05`）**
+
+- 已完成：`summarize_benchmark_evidence` + `benchmark_summary.json`；`docs/verification/office_alpha_benchmark_evidence.md`；Alpha 退出门槛与不可声称边界。
+- 证据：`294 tests OK`；`output/test_artifacts/benchmarks/office_alpha_r_micro/` → 17/17 pass，`non_cad_only=true`。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §14。父包 `R-OFFICE-MICRO` **5/5 完成**。
 
 **子校验**
 
@@ -312,10 +388,59 @@
 
 **开发步骤**
 
-- [ ] 固化 `benchmark_pass_non_cad`、`dry_run_valid_plan_only`、`readback_geometry_verified`、`blocked_expected_non_cad`、`deferred_cad_readback_required`。
-- [ ] 所有 benchmark actual 都输出 `evidence_state`、`geometry_accuracy`、`screenshot_role`。
-- [ ] runner 对 failure case 增加 expected blocked / invalid 断言。
-- [ ] CAD runner 顶层 `pass` 必须依赖 readback / capability 子报告硬门禁。
+- [x] 固化 `benchmark_pass_non_cad`、`dry_run_valid_plan_only`、`readback_geometry_verified`、`blocked_expected_non_cad`、`deferred_cad_readback_required`（`R4-01`，2026-05-26）。
+- [x] 所有 benchmark actual 都输出 `evidence_state`、`geometry_accuracy`、`screenshot_role`（R4-01～03）。
+- [x] runner 对 failure case 增加 expected blocked / invalid 断言（R4-02）。
+- [x] CAD runner 顶层 `pass` 必须依赖 readback / capability 子报告硬门禁（R4-04）。
+
+**二级小包拆解**
+
+| 小包 | 目标 | 文件范围 | 子校验 | 退出标准 |
+| --- | --- | --- | --- | --- |
+| `R4-01` | 抽出统一 evidence classifier，避免 benchmark、verification、CAD runner 各自拼证据词 | `core/verification/evidence_contract.py`、`core/benchmarks/runner.py`、`tests/core/test_benchmarks.py` | `& $py -m unittest tests.core.test_benchmarks tests.core.test_verification_report` | 所有 evidence_state 来自同一词表或映射；未知词触发测试失败 |
+| `R4-02` | 增加 blocked / invalid expected assertions，支持 failure benchmark 机器断言 | `core/benchmarks/runner.py`、`tests/core/test_benchmarks.py`、`examples/benchmarks/office_alpha_benchmark.json` | failure benchmark 单测 + office benchmark pass | failure case 不能用普通 pass 伪装；必须有 `failure_category` 或 `blocked_reason` |
+| `R4-03` | benchmark summary 输出证据状态计数、几何准确计数、失败分类计数 | `core/benchmarks/runner.py`、`tests/core/test_benchmarks.py` | 三组 benchmark 输出 summary 可断言 | summary 中能看出 non-CAD pass、readback verified、blocked expected 的数量 |
+| `R4-04` | CAD validation runner 与 benchmark evidence 词表对齐，禁止顶层 pass 掩盖子报告未验证 | `core/verification/cad_validation_runner.py`、`tests/core/test_cad_validation_runner.py` | `& $py -m unittest tests.core.test_cad_validation_runner`；`& $py scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\r4-no-cad` | 缺 readback evidence 或 capability evidence 时 CAD step fail；no-CAD 总控不误报真实 CAD |
+| `R4-05` | 把 evidence gate 规则写入文档和交接模板 | `docs/planning/phase-r-rebirth-implementation-plan.md`、`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md`、`CAD_AGENT_STATUS.md` | 文档扫描 | 每包交接必须写明哪些是 non-CAD、哪些是 `geometry_verified` |
+
+**推荐执行顺序**
+
+1. `R4-01` 先统一词表。（**2026-05-26 完成**）
+2. `R4-02` 再打通 failure assertion。（**2026-05-26 完成**）
+3. `R4-03` 让 suite summary 可以被机器检查。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`R4-01`）**
+
+- 已完成：`evidence_contract` 词表 + `classify_benchmark_pipeline_evidence`；runner/composition/block_alpha 对齐；`evidence_state_vocabulary.md`。
+- 证据：`299 tests OK`。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §15。
+
+**执行记录（2026-05-26，`R4-02`）**
+
+- 已完成：`validate_failure_expected_contract`、`maximums`、silent pass guard；office alpha 18 cases（+`office_invalid_workflow_input`）。
+- 证据：`302 tests OK`；`output/test_artifacts/benchmarks/r4_office_r2/`。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §16。
+
+**执行记录（2026-05-26，`R4-03`）**
+
+- 已完成：`evidence_summary_rollup`、`validate_evidence_summary`；blank-shell / interior / office 三组 `expected_evidence_summary`。
+- 证据：`304 tests OK`；`output/test_artifacts/benchmarks/r4_blank_shell/`、`r4_interior/`、`r4_office/`。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §17。
+
+4. `R4-04` 对齐 CAD runner 硬门禁。（**2026-05-26 完成**）
+5. `R4-05` 最后同步交接规范。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`R4-05`）**
+
+- 已完成：`evidence_gate_handoff_rules.md`；交接 9 项模板扩展；handoffs §18～§19。
+- 父包 `R4-EVIDENCE-GATES` **5/5 收口**。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §19。
+
+**执行记录（2026-05-26，`R4-04`）**
+
+- 已完成：`cad_validation_evidence.py`；`report.json` 增加 `evidence_summary` / `evidence_gate_failure`。
+- 证据：`308 tests OK`；`output/validation_runs/r4-no-cad/`（`--no-cad`，`non_cad_only=true`）。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §18。
 
 **子校验**
 
@@ -347,10 +472,59 @@
 
 **开发步骤**
 
-- [ ] pipeline 保留多个 circulation / zone / placement 候选，而不是只把 best candidate 写入 layout。
-- [ ] proposal 输出候选评分、失败原因、对象覆盖率、通道连续性摘要。
-- [ ] benchmark 增加 `candidate_count >= 2`、`comparison_summary`、`failed_reason_distribution` 断言。
-- [ ] 失败样本保留 blocked reason，不通过少放对象伪装成功。
+- [x] pipeline 保留多个 circulation / zone / placement 候选（`Y-MC-01`～`05`）。
+- [x] proposal 输出比较摘要（`Y-MC-02`）。
+- [x] benchmark 多候选断言（`Y-MC-03`～`04`）。
+- [x] 失败样本 structured blocked；边界文档（`Y-MC-05`）。
+
+**二级小包拆解**
+
+| 小包 | 目标 | 文件范围 | 子校验 | 退出标准 |
+| --- | --- | --- | --- | --- |
+| `Y-MC-01` | 在 pipeline artifact 中保留 circulation / zone / placement 候选明细 | `core/workflows/blank_shell_pipeline.py`、`tests/core/test_blank_shell_pipeline.py` | `& $py -m unittest tests.core.test_blank_shell_pipeline` | artifact 中有 `candidate_sets` 或等价结构；旧 benchmark 不回归 |
+| `Y-MC-02` | proposal 输出比较摘要：对象覆盖率、失败检查数、通道连续性、候选排序原因 | `core/proposal_engine/design_proposal.py`、`tests/core/test_proposal_multi_candidate.py` | `& $py -m unittest tests.core.test_proposal_multi_candidate` | `comparison_summary` 可读且可断言；不需要用户确认时仍保留候选说明 |
+| `Y-MC-03` | benchmark 增加多候选指标断言 | `core/benchmarks/runner.py`、`examples/benchmarks/blank_shell_core_benchmark.json`、`tests/core/test_benchmarks.py` | blank-shell benchmark pass | 每个 case 至少能断言候选数、对象覆盖和 failed reason 分布之一 |
+| `Y-MC-04` | 增加近真实 / 失败 shell 样本，例如狭长空间、障碍穿通道、入口冲突 | `examples/shell_models/*.json`、`examples/workflows/*.json`、`examples/benchmarks/blank_shell_core_benchmark.json` | 新 case 输出 non-CAD evidence | 成功样本不压障碍；失败样本结构化 blocked，不静默少放对象 |
+| `Y-MC-05` | 同步 Phase Y 文档，声明仍不是完整自动设计大脑 | `docs/planning/phase-y-blank-shell-hardening-plan.md`、`CAD_AGENT_STATUS.md`、`CORE_STATUS.md` | 文档扫描 + blank-shell benchmark pass | 文档写清楚多候选是 Alpha 硬化，不代表真实项目全自动设计 |
+
+**推荐执行顺序**
+
+1. 先做 `Y-MC-01`，保留中间候选 artifact。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`Y-MC-01`）**
+
+- 已完成：`build_blank_shell_candidate_sets()`；artifact `candidate_sets.json`（`circulation_branches` + `selection` + 每 zone `placements` 明细）。
+- 证据：`309 tests OK`；`output/test_artifacts/benchmarks/y_mc_01/` 4/4 pass。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §20。
+2. 再做 `Y-MC-02`，让 proposal 能解释候选。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`Y-MC-02`）**
+
+- 已完成：`build_blank_shell_comparison_detail()`；`design_proposal.comparison_detail` + narrative `comparison_summary`。
+- 证据：`310 tests OK`；`output/test_artifacts/benchmarks/y_mc_02/` 4/4 pass。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §21。
+3. 然后做 `Y-MC-03`，把解释能力纳入 benchmark。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`Y-MC-03`）**
+
+- 已完成：benchmark runner 多候选 actual 字段；`blank_shell_core_benchmark.json` 硬断言。
+- 证据：`311 tests OK`；`output/test_artifacts/benchmarks/y_mc_03/` 4/4 pass。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §22。
+4. 再做 `Y-MC-04`，扩展真实感样本和失败样本。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`Y-MC-04`）**
+
+- 已完成：blank-shell benchmark 8 cases；新增 `corridor_riser` 失败 shell/workflow。
+- 证据：`312 tests OK`；`output/test_artifacts/benchmarks/y_mc_04/`。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §23。
+5. 最后做 `Y-MC-05`，同步状态和边界。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`Y-MC-05`）**
+
+- 已完成：`docs/verification/blank_shell_multi_candidate_boundaries.md`；`phase-y-blank-shell-hardening-plan.md` 收口；架构文档映射更新。
+- 父包 **`Y-MULTI-CANDIDATE` 5/5 收口**。
+- 证据：`312 tests OK`；`output/test_artifacts/benchmarks/y_mc_05/` 8/8 pass。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §24。
 
 **子校验**
 
@@ -379,10 +553,58 @@
 
 **开发步骤**
 
-- [ ] 选择至少 3 个场景，例如 office、residential、restaurant。
+- [x] 选择至少 3 个场景：office、residential、restaurant（`X-SCENE-01`）。
 - [ ] 为每个场景定义 preferences 差异、对象排序权重和解释模板，不写算法。
 - [ ] 同一 Core pipeline 跑通多场景 benchmark。
 - [ ] agent boundary test 扫描禁止项：CAD 执行、readback、碰撞算法、几何库调用。
+
+**二级小包拆解**
+
+| 小包 | 目标 | 文件范围 | 子校验 | 退出标准 |
+| --- | --- | --- | --- | --- |
+| `X-SCENE-01` | 锁定 3 个 Alpha 场景和 preferences 差异断言，默认 office / residential / restaurant | `agents/*/preferences.json`、`tests/agents/test_scene_preferences.py` | `& $py -m unittest tests.agents.test_scene_preferences` | 每个场景有可观察差异：对象优先级、尺寸偏好或候选排序权重 |
+| `X-SCENE-02` | 为 3 个场景接同一 Core workflow / benchmark，不复制 Core 逻辑 | `examples/benchmarks/*.json`、`examples/workflows/*.json`、`tests/core/test_benchmarks.py` | multi-scene benchmark pass | 至少 3 个场景跑同一类 pipeline，输出 `benchmark_pass_non_cad`（**2026-05-26 完成**） |
+| `X-SCENE-03` | 加强场景边界扫描：禁止 CAD 执行、回读、碰撞、几何库和 pipeline 实现在 `agents/` | `tests/agents/test_scene_agent_boundaries.py`、`agents/SCENE_AGENT_RULES.md` | `& $py -m unittest tests.agents.test_scene_agent_boundaries` | boundary test 能抓出场景层算法 / CAD 执行越界（**2026-05-26 完成**） |
+| `X-SCENE-04` | 场景解释模板和交接文档，只说明偏好如何影响 Core，不写成独立 Agent 大脑 | `agents/*/rules.md`、`docs/onboarding/first-handoff.md`、`CAD_AGENT_STATUS.md` | 文档扫描 | 文档明确 Scene Alpha 不包含真实 CAD 几何、块库、自动设计全能力（**2026-05-26 完成**） |
+| `X-SCENE-05` | Scene Alpha 总验收：汇总 3 场景 benchmark、边界测试、不可声称边界 | `CORE_STATUS.md`、`CAD_AGENT_CHANGELOG.md`、`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` | agent tests + selected benchmarks + repo audit | 可以声明 3 场景复用 Core pipeline；不能声明场景 Agent 完整完成（**2026-05-26 完成**，父包收口） |
+
+**推荐执行顺序**
+
+1. `X-SCENE-01` 先固定场景和 preferences 差异。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`X-SCENE-01`）**
+
+- 已完成：`core/agents/scene_alpha.py`；三场景 `preferences.json` + `scene_alpha_manifest.json`；`scene_alpha_preferences_contract.md`。
+- 证据：`315 tests OK`。
+- 交接：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` §25。
+2. `X-SCENE-02` 再把差异接入同一 Core benchmark。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`X-SCENE-02`）**
+
+- 已完成：`examples/benchmarks/scene_alpha_benchmark.json`；`blank_shell_pipeline` 按 `circulation_strategy_weights` 选 Top-1；`runner` 导出 `preferences_scenario` / `selected_circulation_strategy`；`zone_splitter` L 形走道并集切区。
+- 证据：`317 tests OK`；`output/test_artifacts/benchmarks/x_scene_02/` 3/3 pass。
+- 不可声称：non-CAD benchmark ≠ `geometry_verified`；Scene Agent 未复制 Core 多候选算法。
+3. `X-SCENE-03` 并行加边界测试。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`X-SCENE-03`）**
+
+- 已完成：`core/agents/scene_boundary_scan.py`；`test_x_scene_03_*`；`scene_alpha_agent_boundaries.md`；`SCENE_AGENT_RULES.md` 边界扫描章节。
+- 证据：`322 tests OK`；`scan_agent_tree(agents/)` → 0 violations。
+- 不可声称：静态扫描 ≠ runtime 审计 ≠ `geometry_verified`。
+4. `X-SCENE-04` 补说明文档。（**2026-05-26 完成**）
+
+**执行记录（2026-05-26，`X-SCENE-04`）**
+
+- 已完成：`scene_explanation.py`；`scene_alpha_explanation_template.md`；三场景 `rules.md`；`first-handoff` Scene Alpha 段；`test_scene_explanation.py`。
+- 证据：`326 tests OK`；`output/test_artifacts/benchmarks/x_scene_04/` 3/3 pass。
+5. `X-SCENE-05` 做总验收和状态同步。（**2026-05-26 完成**，父包 `X-SCENE-ALPHA` **5/5 收口**）
+
+**执行记录（2026-05-26，`X-SCENE-05` / 父包收口）**
+
+- 已完成：`scene_alpha_acceptance.md`、`test_scene_alpha_acceptance.py`、`scene_alpha_manifest.json` 父包状态。
+- 证据：`332 tests OK`；`output/test_artifacts/benchmarks/x_scene_05/` 3/3 pass；`scan_agent_tree(agents/)` → 0 violations。
+- **可声称**：office / residential / restaurant 复用同一 `blank_shell` Core pipeline（non-CAD）。
+- **不可声称**：`geometry_verified`、Scene Agent 产品完成、真实项目/块库任意准确。
 
 **子校验**
 
@@ -396,6 +618,10 @@
 - 至少 3 个场景 benchmark 复用 Core pipeline。
 - preferences 差异能被测试观察到。
 - 场景层没有实现 Core 算法、CAD 执行或 readback。
+
+## 后置路线口径
+
+五大后置主线及其小包拆分已经合并到根目录 `CORE_RESTRUCTURE_PLAN.md`。本文只保留 Phase R 当前执行剧本、证据口径和已执行记录，不再复制后置 Backlog 表，避免形成第二份计划。
 
 ## 任务清单
 
@@ -418,10 +644,10 @@
 | R-BLOCK-02 | 定义 OBJECT_SPEC 到 block reference 的接口 | `phase-r-block-library-roadmap.md` | R-BLOCK-01 |
 | R-BLOCK-03 | 建立最小 `drawing_standard_profile` 路线 | `phase-r-block-library-roadmap.md` | 无 |
 | R-BLOCK-04 | 规划受控测试块，不接真实公司块库 | `phase-r-block-library-roadmap.md` | R-BLOCK-01 |
-| R-OFFICE-01 | 定义 office 最小对象字段 | `phase-r-office-benchmark-cases.md` | 无 |
-| R-OFFICE-02 | 设计 office alpha benchmark cases | `phase-r-office-benchmark-cases.md` | R-OFFICE-01 |
-| R-OFFICE-03 | 定义失败样本门槛 | `phase-r-office-benchmark-cases.md` | R-OFFICE-02 |
-| R-OFFICE-04 | 规定 office agent 禁止事项 | `phase-r-office-benchmark-cases.md` | 无 |
+| R-OFFICE-SPEC-01 | 定义 office 最小对象字段 | `phase-r-office-benchmark-cases.md` | 无 |
+| R-OFFICE-SPEC-02 | 设计 office alpha benchmark cases | `phase-r-office-benchmark-cases.md` | R-OFFICE-SPEC-01 |
+| R-OFFICE-SPEC-03 | 定义失败样本门槛 | `phase-r-office-benchmark-cases.md` | R-OFFICE-SPEC-02 |
+| R-OFFICE-SPEC-04 | 规定 office agent 禁止事项 | `phase-r-office-benchmark-cases.md` | 无 |
 | R-COMP-01 | 建立通用 composition engine，不把组合写入单一场景 agent | `core/composition_engine/` | R4 |
 | R-COMP-02 | 建立 interior delivery persona benchmark | `examples/benchmarks/interior_delivery_benchmark.json` | R-COMP-01 |
 | R-COMP-03 | 为组合输出多 CAD_PLAN、dry-run、unverified verification 与视觉辅助预览 | benchmark artifacts | R-COMP-01 |

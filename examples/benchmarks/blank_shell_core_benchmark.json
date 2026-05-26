@@ -1,7 +1,14 @@
 {
   "version": "0.1",
   "suite_id": "blank-shell-core-benchmark",
-  "description": "Repeatable non-CAD benchmark for blank-shell layout pipeline.",
+  "description": "Repeatable non-CAD blank-shell benchmark: core scenes, near-realistic shells, and structured failure cases.",
+  "expected_evidence_summary": {
+    "case_count": 8,
+    "benchmark_pass_non_cad_count": 6,
+    "blocked_expected_non_cad_count": 2,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
   "cases": [
     {
       "case_id": "retail_blank_shell",
@@ -10,7 +17,21 @@
       "expected": {
         "pipeline_status": "ok",
         "dry_run_status": "valid",
-        "verification_status": "unverified"
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "circulation_branch_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5
+        },
+        "comparison_detail_minimums": {
+          "object_coverage_rate": 0.6
+        }
       }
     },
     {
@@ -20,7 +41,20 @@
       "expected": {
         "pipeline_status": "ok",
         "dry_run_status": "valid",
-        "verification_status": "unverified"
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "circulation_branch_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5,
+          "object_coverage_rate": 0.8
+        },
+        "contains_object_types": ["desk", "chair", "cabinet"]
       }
     },
     {
@@ -30,7 +64,24 @@
       "expected": {
         "pipeline_status": "ok",
         "dry_run_status": "valid",
-        "verification_status": "unverified"
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "circulation_branch_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5,
+          "object_coverage_rate": 1.0,
+          "failed_check_count": 0
+        },
+        "maximums": {
+          "selected_placement_failed_count": 0
+        },
+        "failed_reason_distribution_empty": true
       }
     },
     {
@@ -40,7 +91,122 @@
       "expected": {
         "pipeline_status": "ok",
         "dry_run_status": "valid",
-        "verification_status": "unverified"
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "circulation_branch_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5
+        },
+        "comparison_detail_minimums": {
+          "object_coverage_rate": 0.6
+        },
+        "maximums": {
+          "selected_placement_failed_count": 0
+        }
+      }
+    },
+    {
+      "case_id": "long_narrow_office_main_aisle",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_long_narrow_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "shell_id": "shell-office-long-narrow",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 3,
+          "zone_placement_candidate_count": 2,
+          "circulation_branch_count": 3,
+          "placement_count": 4,
+          "cad_plan_count": 4,
+          "failed_check_count": 0
+        },
+        "contains_object_types": ["desk", "chair", "cabinet", "shelf"],
+        "maximums": {
+          "selected_placement_failed_count": 0
+        }
+      }
+    },
+    {
+      "case_id": "office_obstacle_avoidance_riser",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_obstacle_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "shell_id": "shell-office-obstacle-riser",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "circulation_branch_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5,
+          "no_place_zone_count": 2,
+          "fixed_obstacle_count": 2,
+          "failed_check_count": 0
+        },
+        "contains_object_types": ["desk", "chair"],
+        "maximums": {
+          "selected_placement_failed_count": 0
+        },
+        "comparison_detail_minimums": {
+          "object_coverage_rate": 0.8
+        }
+      }
+    },
+    {
+      "case_id": "too_small_room_for_workstation",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_too_small_workstation_layout_loop.json",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "insufficient_space",
+        "shell_id": "shell-office-too-small-workstation",
+        "contains_blocked_reason": "insufficient",
+        "maximums": {
+          "cad_plan_count": 0,
+          "placement_count": 4
+        }
+      }
+    },
+    {
+      "case_id": "corridor_riser_blocks_main_path",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_corridor_riser_block_layout_loop.json",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "insufficient_space",
+        "shell_id": "shell-blank-corridor-riser-block",
+        "contains_blocked_reason": "insufficient",
+        "minimums": {
+          "fixed_obstacle_count": 1,
+          "placement_count": 6
+        },
+        "maximums": {
+          "cad_plan_count": 0
+        }
       }
     }
   ]

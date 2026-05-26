@@ -1,0 +1,16 @@
+{
+  "version": "0.1",
+  "workflow_id": "blank-shell-corridor-riser-block-layout-loop",
+  "inputs": {
+    "design_brief": "examples/design_briefs/blank_shell_layout_brief.json",
+    "drawing_model": "examples/drawing_models/minimal_empty_room.json",
+    "shell_model": "examples/shell_models/blank_shell_corridor_riser_block_shell.json",
+    "preferences": "agents/office/preferences.json",
+    "block_library": "libraries/blocks/block_library.example.json"
+  },
+  "object_types": ["desk", "chair", "desk", "chair", "cabinet", "shelf"],
+  "layout_expectation": {
+    "mode": "require_all_placed",
+    "failure_category": "insufficient_space"
+  }
+}

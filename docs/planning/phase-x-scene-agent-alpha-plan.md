@@ -1,6 +1,6 @@
 ﻿# Phase X Scene Agent Alpha Plan
 
-状态：由 `CORE_RESTRUCTURE_PLAN.md` 拆分而来
+状态：**Scene Alpha 父包已收口（X-SCENE-ALPHA 01–05，2026-05-26）**
 最后同步：2026-05-26
 
 > 本文是 Phase X 辅助执行剧本，不是独立 PlanMD。执行顺序、优先级和退出标准以根目录 `CORE_RESTRUCTURE_PLAN.md` 为准；执行前仍需先读 `AGENTS.md` 与 `CORE_CONTEXT_BRIEF.md`，并遵守 `CODEX_PREVIEW`、不保存、不覆盖、不删除、不改正式图层的 CAD 安全边界。
@@ -44,12 +44,14 @@
 & $py scripts\run_benchmark_suite.py examples\benchmarks\blank_shell_core_benchmark.json --output-root output\test_artifacts\benchmarks\scene-alpha
 ```
 
-### 退出标准
+### 退出标准（**已满足，2026-05-26**）
 
-- 至少 3 个场景 Agent 可复用同一 blank-shell pipeline。
-- preferences 差异在测试或 benchmark 中可观察。
-- 场景层没有复制 Core 几何、CAD 执行或验证算法。
-- 仍明确标注：这是非 CAD Alpha，不证明真实项目图纸、块库或任意 CAD_PLAN 的真实 CAD 几何准确。
+- 至少 3 个场景 Agent 可复用同一 blank-shell pipeline。✅ `scene_alpha_benchmark.json` 3/3 pass
+- preferences 差异在测试或 benchmark 中可观察。✅ `test_scene_preferences` + benchmark 动线断言
+- 场景层没有复制 Core 几何、CAD 执行或验证算法。✅ `scene_boundary_scan` + `test_scene_agent_boundaries`
+- 仍明确标注：这是 non-CAD Alpha，不证明真实项目图纸、块库或 `geometry_verified`。✅ `scene_alpha_acceptance.md`
+
+总验收文档：`docs/verification/scene_alpha_acceptance.md`；子校验 `tests/agents/test_scene_alpha_acceptance.py`。
 
 ---
 

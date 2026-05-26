@@ -71,6 +71,65 @@ class NonCadPipelineTests(unittest.TestCase):
         self.assertEqual(validate_workflow_schemas(workflow), [])
         self.assertEqual(validate_references(workflow), [])
 
+    def test_pipeline_rejects_output_dir_outside_project_output(self) -> None:
+        result = run_non_cad_pipeline(
+            PROJECT_ROOT / "examples" / "workflows" / "full_non_cad_core_loop.json",
+            output_dir=PROJECT_ROOT / "tests" / "outside_non_cad_pipeline",
+        )
+
+        self.assertEqual(result["status"], "invalid")
+        self.assertTrue(any("output_dir" in error for error in result["errors"]))
+
+    def test_pipeline_rejects_workflow_input_outside_project_root(self) -> None:
+        workflow_path = artifact_path("non_cad_pipeline", "unsafe_workflow.json")
+        workflow_path.write_text(
+            json.dumps(
+                {
+                    "workflow_id": "unsafe-non-cad",
+                    "inputs": {
+                        "design_brief": "../outside.json",
+                        "drawing_model": "examples/drawing_models/minimal_empty_room.json",
+                        "object_spec": "examples/object_specs/minimal_cabinet_object.json",
+                    },
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
+        result = run_non_cad_pipeline(
+            workflow_path,
+            output_dir=artifact_path("non_cad_pipeline", "unsafe_workflow_out"),
+        )
+
+        self.assertEqual(result["status"], "invalid")
+        self.assertTrue(any("design_brief" in error for error in result["errors"]))
+
+    def test_pipeline_rejects_missing_required_inputs_as_invalid(self) -> None:
+        workflow_path = artifact_path("non_cad_pipeline", "missing_inputs.json")
+        workflow_path.write_text(
+            json.dumps(
+                {
+                    "workflow_id": "missing-non-cad",
+                    "inputs": {
+                        "design_brief": "examples/design_briefs/minimal_cabinet_brief.json"
+                    },
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
+        result = run_non_cad_pipeline(
+            workflow_path,
+            output_dir=artifact_path("non_cad_pipeline", "missing_inputs_out"),
+        )
+
+        self.assertEqual(result["status"], "invalid")
+        self.assertTrue(any("drawing_model" in error for error in result["errors"]))
+
 
 if __name__ == "__main__":
     unittest.main()

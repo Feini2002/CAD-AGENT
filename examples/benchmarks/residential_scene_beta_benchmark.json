@@ -1,0 +1,157 @@
+{
+  "version": "0.1",
+  "suite_id": "residential-scene-beta-benchmark",
+  "description": "BETA-SCENE-02: residential bedroom / dining / storage combos reuse Core in one benchmark.",
+  "scene_beta": {
+    "scenario": "residential",
+    "preferences_path": "agents/residential/preferences.json"
+  },
+  "expected_evidence_summary": {
+    "case_count": 8,
+    "benchmark_pass_non_cad_count": 7,
+    "blocked_expected_non_cad_count": 1,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
+  "cases": [
+    {
+      "case_id": "beta_residential_sofa_object",
+      "case_tier": "object",
+      "pipeline": "object_spec",
+      "object_type": "sofa",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "sofa"
+      }
+    },
+    {
+      "case_id": "beta_residential_bed_object",
+      "case_tier": "object",
+      "pipeline": "object_spec",
+      "object_type": "bed",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "bed"
+      }
+    },
+    {
+      "case_id": "beta_residential_bedroom_combo",
+      "case_tier": "bedroom",
+      "pipeline": "composition_spec",
+      "composition_id": "bedroom_bed_rug",
+      "persona_role": "home_designer",
+      "request_text": "卧室床铺与地毯组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "bedroom_bed_rug",
+        "object_count": 2,
+        "contains_object_types": ["bed", "rug"],
+        "contains_object_roles": ["primary_bed", "soft_zone"]
+      }
+    },
+    {
+      "case_id": "beta_residential_dining_combo",
+      "case_tier": "dining",
+      "pipeline": "composition_spec",
+      "composition_id": "dining_table_set",
+      "persona_role": "home_designer",
+      "request_text": "餐厅餐桌椅组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "dining_table_set",
+        "object_count": 5,
+        "contains_object_roles": ["dining_surface", "dining_seat"]
+      }
+    },
+    {
+      "case_id": "beta_residential_shelf_storage",
+      "case_tier": "storage",
+      "pipeline": "object_spec",
+      "object_type": "shelf",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "shelf"
+      }
+    },
+    {
+      "case_id": "beta_residential_cabinet_storage",
+      "case_tier": "storage",
+      "pipeline": "object_spec",
+      "object_type": "cabinet",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "cabinet"
+      }
+    },
+    {
+      "case_id": "beta_residential_living_room_blank_shell",
+      "case_tier": "blank_shell",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_residential_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "residential",
+        "preferences_path_contains": "agents/residential/preferences.json",
+        "selected_circulation_strategy": "along_wall",
+        "shell_id": "shell-residential-living-room",
+        "minimums": {
+          "candidate_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5
+        },
+        "contains_object_types": ["sofa", "cabinet", "chair"]
+      }
+    },
+    {
+      "case_id": "beta_residential_clearance_conflict_failure",
+      "case_tier": "failure",
+      "pipeline": "composition_spec",
+      "composition_id": "cabinet_pullback_conflict",
+      "persona_role": "home_designer",
+      "request_text": "收纳与椅后净空冲突（预期 blocked）",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "clearance_conflict",
+        "contains_blocked_reason": "clearance_conflict"
+      }
+    }
+  ]
+}

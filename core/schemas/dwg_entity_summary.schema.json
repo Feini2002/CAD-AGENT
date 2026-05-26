@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwg_entity_summary.schema.json",
+  "title": "DWG_ENTITY_SUMMARY",
+  "type": "object",
+  "required": [
+    "version",
+    "read_only",
+    "source",
+    "entity_count",
+    "handle_count",
+    "type_counts",
+    "layer_statistics",
+    "bbox_union",
+    "handles_sample"
+  ],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "read_only": { "type": "boolean" },
+    "source": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string" },
+        "path": { "type": "string" },
+        "document_name": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "entity_count": { "type": "integer", "minimum": 0 },
+    "handle_count": { "type": "integer", "minimum": 0 },
+    "type_counts": { "type": "object" },
+    "layer_statistics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["layer", "entity_count", "type_counts"],
+        "properties": {
+          "layer": { "type": "string" },
+          "entity_count": { "type": "integer", "minimum": 0 },
+          "type_counts": { "type": "object" },
+          "bbox_union": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "bbox_union": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "max": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+      },
+      "additionalProperties": false
+    },
+    "handles_sample": { "type": "array", "items": { "type": "string" } },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "drawing": {
+      "type": "object",
+      "properties": {
+        "document_name": { "type": "string" },
+        "units": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -68,6 +69,32 @@ def normalize_com_entity(entity: Any) -> dict[str, Any]:
     elif "dim" in lowered:
         result["type"] = "dimension"
         result["text"] = str(getattr(entity, "TextOverride", getattr(entity, "text", "")))
+    elif "hatch" in lowered:
+        result["type"] = "hatch"
+        result["pattern"] = str(getattr(entity, "PatternName", getattr(entity, "pattern", "")))
+        bbox = _bounding_box_from_com_entity(entity)
+        if bbox is not None:
+            result["bbox"] = bbox
+    elif "blockreference" in lowered:
+        result["type"] = "block_reference"
+        result["block_name"] = str(
+            getattr(entity, "EffectiveName", getattr(entity, "Name", getattr(entity, "block_name", "")))
+        )
+        result["insertion_point"] = _point(getattr(entity, "InsertionPoint", getattr(entity, "insertion_point", [])))
+        rotation = _float(getattr(entity, "Rotation", getattr(entity, "rotation", None)))
+        if rotation is not None:
+            result["rotation"] = math.degrees(rotation)
+        xscale = _float(getattr(entity, "XScaleFactor", getattr(entity, "xscale", None)))
+        yscale = _float(getattr(entity, "YScaleFactor", getattr(entity, "yscale", None)))
+        zscale = _float(getattr(entity, "ZScaleFactor", getattr(entity, "zscale", None)))
+        if xscale is not None and yscale is not None and zscale is not None:
+            result["scale"] = [xscale, yscale, zscale]
+        bbox = _bounding_box_from_com_entity(entity)
+        if bbox is not None:
+            result["bbox"] = bbox
+        attributes = _attributes_from_com_entity(entity)
+        if attributes:
+            result["attributes"] = attributes
     return result
 
 
@@ -101,6 +128,35 @@ def _polyline_points(value: Any) -> list[list[float]]:
     for index in range(0, len(values) - 1, 2):
         points.append([float(values[index]), float(values[index + 1]), 0.0])
     return points
+
+
+def _bounding_box_from_com_entity(entity: Any) -> dict[str, list[float]] | None:
+    try:
+        minimum, maximum = entity.GetBoundingBox()
+        min_point = _point(minimum)
+        max_point = _point(maximum)
+        if len(min_point) >= 2 and len(max_point) >= 2:
+            return {"min": min_point[:2], "max": max_point[:2]}
+    except Exception:
+        pass
+    return None
+
+
+def _attributes_from_com_entity(entity: Any) -> dict[str, str]:
+    attributes: dict[str, str] = {}
+    get_attributes = getattr(entity, "GetAttributes", None)
+    if not callable(get_attributes):
+        return attributes
+    try:
+        for attribute in get_attributes():
+            tag = str(getattr(attribute, "TagString", getattr(attribute, "Tag", ""))).strip()
+            if not tag:
+                continue
+            text = str(getattr(attribute, "TextString", getattr(attribute, "Text", "")))
+            attributes[tag] = text
+    except Exception:
+        return {}
+    return attributes
 
 
 def _bbox_from_points(points: list[list[float]]) -> dict[str, list[float]] | None:

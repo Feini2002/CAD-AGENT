@@ -1,13 +1,13 @@
 # Phase R Office Benchmark Cases
 
-状态：办公基础闭环 Alpha benchmark 对象级 + 场景级首批 case 已落地  
-最后同步：2026-05-26
+状态：办公基础闭环 Alpha benchmark 已完成（17 cases，non-CAD only）
+最后同步：2026-05-26（`R-OFFICE-MICRO-05` 收口）
 
 > 本文是 Phase R 的办公 benchmark 辅助规格，不是独立 PlanMD。它把“办公桌、办公椅、电脑桌、柜体、入口、通道、失败样本”转成可执行 benchmark 规格；是否进入实现、优先级和退出标准以 `CORE_RESTRUCTURE_PLAN.md` 为准。它不把 office agent 写成算法层，也不声称真实 CAD 几何已验证。
 
 ## 当前落地
 
-已新增 `examples/benchmarks/office_alpha_benchmark.json`，当前包含 `office_desk_default_spec`、`office_chair_default_spec`、`office_cabinet_default_spec` 与 `office_small_suite_alpha` 四个 cases。当前 runner 已支持：
+已新增 `examples/benchmarks/office_alpha_benchmark.json`，当前包含 **17 个 cases**：6 个 object spec、4 个 micro-scene composition spec、4 个 blank-shell scene、3 个 failure。当前 runner 已支持：
 
 - `evidence_state`
 - `geometry_accuracy`
@@ -15,11 +15,16 @@
 - `minimums`
 - `contains_object_types`
 - `contains_component_roles`
-- `object_spec` pipeline
+- `contains_clearance_refs`
+- `contains_binding_relations`
+- `contains_circulation_roles`
+- `object_spec` / `composition_spec` pipeline
 - suite / case 配置校验
 - 每个 CAD_PLAN 的 `dry_run_reports.json` 与 `verification_reports.json` 汇总证据
 
-当前已落地 4 个 cases 的通过证据是非 CAD：`benchmark_pass_non_cad`、`geometry_accuracy=not_verified_without_cad_readback`、`screenshot_role=visual_aid_only`。这不证明真实 CAD 几何准确。
+pass 样本证据为非 CAD：`benchmark_pass_non_cad`、`geometry_accuracy=not_verified_without_cad_readback`、`screenshot_role=visual_aid_only`。failure 样本为 `blocked_expected_non_cad`，含 `failure_category` 与 `blocked_reasons` 机器断言。这不证明真实 CAD 几何准确。
+
+**Alpha 收口证据**（`R-OFFICE-MICRO-05`）：`294 tests OK`；`output/test_artifacts/benchmarks/office_alpha_r_micro/benchmark_summary.json` → 17/17 pass，`evidence_summary.non_cad_only=true`，`geometry_verified_case_count=0`。详见 `docs/verification/office_alpha_benchmark_evidence.md`。
 
 ## 对象字段约定
 
@@ -57,14 +62,14 @@
 
 ## Benchmark Cases
 
-下表包含已落地与 planned case。当前已落地的是 `office_desk_default_spec`、`office_chair_default_spec`、`office_cabinet_default_spec` 和 `office_small_suite_alpha`；其余仍是后续扩展目标。
+下表包含已落地 case。object + micro-scene + scene + failure 四类均已落地（2026-05-26，`R-OFFICE-MICRO-04` 完成 failure 行）。
 
 | 类别 | case_id | input intent | expected assertions | evidence_state |
 | --- | --- | --- | --- | --- |
 | object | `office_desk_default_spec` | 生成 1 张办公桌 | type / size / name / component roles 合法；bbox 为 `1400x700`；CAD_PLAN dry-run valid | `benchmark_pass_non_cad` |
 | object | `office_chair_default_spec` | 生成 1 把办公椅 | type / size / component roles 合法；seat / back 语义存在；CAD_PLAN dry-run valid | `benchmark_pass_non_cad` |
 | object | `office_cabinet_default_spec` | 生成 1 组柜体 | type / size / component roles 合法；body / front_panel / shelf 语义存在；CAD_PLAN dry-run valid | `benchmark_pass_non_cad` |
-| object | `computer_desk_default_spec` | 生成电脑桌 | 默认尺寸合法；带 screen / workstation 语义标签 | `dry_run_valid_plan_only` |
+| object | `computer_desk_default_spec` | 生成电脑桌 | 默认尺寸合法；带 screen / workstation 语义标签 | `benchmark_pass_non_cad` |
 | object | `storage_cabinet_front_clearance` | 生成储物柜及柜前净空意图 | cabinet bbox 与 clearance intent 均存在 | `benchmark_pass_non_cad` |
 | object | `file_cabinet_default_spec` | 生成文件柜 | 尺寸、front side、取物净空 refs 存在 | `benchmark_pass_non_cad` |
 | micro-scene | `single_desk_chair_pair` | 1 张桌 + 1 把椅 | 椅子绑定桌；pullback clearance refs 存在 | `benchmark_pass_non_cad` |
@@ -121,7 +126,18 @@ office agent 不得写：
 | R-OFFICE-05 | 为 benchmark runner 规划业务断言字段：`object_types`、`placement_count`、`failed_check_count`、`blocked_reason`、`clearance_refs`。 |
 | R-OFFICE-06 | 定义失败样本验收门槛，禁止无声降级为 partial success。 |
 | R-OFFICE-07 | 将 evidence_state 写入报告规范，显式保留 `geometry_accuracy: not_verified_without_cad_readback`。 |
-| R-OFFICE-08 | 整理 office alpha 退出门槛：非 CAD benchmark pass、dry-run valid、真实 CAD readback deferred。 |
+| R-OFFICE-08 | 整理 office alpha 退出门槛：非 CAD benchmark pass、dry-run valid、真实 CAD readback deferred。（**2026-05-26 完成**，见 `docs/verification/office_alpha_benchmark_evidence.md`） |
+
+## Alpha 退出门槛（R-OFFICE-08）
+
+| 门槛 | 状态 | 证据 |
+| --- | --- | --- |
+| 四类 case 齐全（object / micro-scene / scene / failure） | 完成 | 17 cases in `office_alpha_benchmark.json` |
+| `run_benchmark_suite` 全 pass | 完成 | `office_alpha_r_micro/benchmark_summary.json` |
+| pass case 均为 `benchmark_pass_non_cad` | 完成 | `evidence_state_counts.benchmark_pass_non_cad = 14` |
+| failure case 均为 `blocked_expected_non_cad` | 完成 | `evidence_state_counts.blocked_expected_non_cad = 3` |
+| 无 case 声称 `geometry_verified` | 完成 | `geometry_verified_case_count = 0` |
+| 真实 CAD office readback | **未做** | 后续 `R4-EVIDENCE-GATES` / CAD 扩展包 |
 
 ## 本文不能声称
 

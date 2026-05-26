@@ -44,9 +44,9 @@
 
 - `PlanMD` 只做文档治理和开发排序，不改变本仓库“通用 CAD Agent Core Lab”的方向。
 - `CORE_RESTRUCTURE_PLAN.md` 决定当前活跃工作队列、Phase 顺序、优先级、Decision Gate 和退出标准。
-- `docs/planning/phase-*.md` 只是辅助执行剧本，可以写命令和检查表，但不能成为第二套主计划。
+- `docs/planning/phase-*.md` 只是辅助执行剧本，可以写命令和检查表，但不能成为第二套主计划，也不能保留后置 Backlog 副本。
 - `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` 只写能力、证据、风险和当前状态，不承载独立下一步。
-- 新增待办、调整优先级或改变退出标准时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD。
+- 新增待办、调整优先级、改变退出标准或拆分未来小包时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD 的引用或状态说明。
 - 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
 
 ## 交付必须带进度估算
@@ -116,3 +116,8 @@
 - `CAD_AGENT_STATUS.md`
 - `CAD_AGENT_CHANGELOG.md`
 - 如果变更源自失败、风险或调试教训，更新 `CAD_AGENT_ISSUES.md`
+
+每完成一个 PlanMD 开发包，还必须更新 Cursor 交接包汇总：
+
+- `docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md`（按固定 9 项模板追加该包章节，供 Codex 校验）
+- 索引说明见 `docs/handoffs/README.md`

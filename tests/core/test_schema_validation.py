@@ -23,6 +23,11 @@ SCHEMA_EXAMPLES = {
     "shell_model.schema.json": "examples/shell_models/minimal_shell_model.json",
     "circulation_model.schema.json": "examples/circulation_models/minimal_circulation_model.json",
     "function_zone.schema.json": "examples/function_zones/minimal_function_zone.json",
+    "layer_preset.schema.json": "libraries/layer_presets/codex_preview_beta.json",
+    "drawing_standard_profile.schema.json": "libraries/drawing_standards/codex_preview_beta.json",
+    "project_sample_manifest.schema.json": "projects/sample_blank_shell/sample.manifest.json",
+    "proposal_user_confirmation.schema.json": "examples/confirmations/minimal_cabinet_confirmation.json",
+    "shell_drawing_read_confirmation.schema.json": "examples/drawing_read/sample_shell_drawing_read_confirmation.json",
 }
 
 
@@ -38,6 +43,12 @@ class SchemaValidationTests(unittest.TestCase):
                     PROJECT_ROOT / example_path,
                 )
                 self.assertEqual(errors, [])
+
+    def test_every_core_schema_file_is_registered(self) -> None:
+        schema_files = {
+            path.name for path in (PROJECT_ROOT / "core" / "schemas").glob("*.schema.json")
+        }
+        self.assertEqual(set(MODEL_SCHEMAS.values()), schema_files)
 
     def test_each_registered_model_has_invalid_fixture(self) -> None:
         fixture_root = PROJECT_ROOT / "tests/fixtures/invalid_models"
@@ -145,6 +156,9 @@ class SchemaValidationTests(unittest.TestCase):
             "examples/shell_models/retail_blank_shell.json",
             "examples/shell_models/office_blank_shell.json",
             "examples/shell_models/office_small_suite_shell.json",
+            "examples/shell_models/office_long_narrow_shell.json",
+            "examples/shell_models/office_obstacle_riser_shell.json",
+            "examples/shell_models/office_mixed_zone_shell.json",
             "examples/shell_models/residential_living_room_shell.json",
             "examples/shell_models/restaurant_small_front_shell.json",
         ]:

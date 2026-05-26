@@ -28,9 +28,37 @@
 - 不能说任意 CAD_PLAN、真实项目图纸、块库或块插入都已准确。
 - 不能说截图、dry-run 或 no-CAD benchmark 证明几何准确。
 - 不能说 blank-shell pipeline 是完整自动设计大脑。
-- 不能说场景 Agent 已完成 Alpha。
+- 不能说场景 Agent **产品**已完整完成（`X-SCENE-ALPHA` 父包 01–05 已收口，仅证明三场景 non-CAD Alpha；见 `scene_alpha_acceptance.md`）。
+- 不能把 `scene_alpha_benchmark` 的 `benchmark_pass_non_cad` 说成 `geometry_verified`。
 - 不能默认保存、覆盖、删除 DWG 或修改正式图层。
 - 不能把场景 Agent 写成独立算法系统。
+
+## Scene Alpha 接手段（X-SCENE-04）
+
+三场景 **office / residential / restaurant** 复用同一 `blank_shell` Core pipeline，差异只在 `agents/<scenario>/preferences.json`：
+
+| 场景 | 偏好动线 | 主对象优先 | benchmark case |
+| --- | --- | --- | --- |
+| office | straight_spine | table | `scene_alpha_office_blank_shell` |
+| residential | along_wall | cabinet | `scene_alpha_residential_blank_shell` |
+| restaurant | l_spine | chair | `scene_alpha_restaurant_blank_shell` |
+
+阅读顺序：
+
+1. `docs/verification/scene_alpha_explanation_template.md` — 解释模板与不可声称
+2. `agents/<scenario>/rules.md` — 各场景「Preference → Core Mapping」
+3. `core/agents/scene_explanation.py` — `build_scene_explanation()` 机器可读结构
+4. `examples/benchmarks/scene_alpha_benchmark.json` — 三场景 non-CAD 证据
+
+子校验：
+
+```powershell
+& $py -m unittest tests.agents.test_scene_explanation tests.agents.test_scene_preferences -v
+& $py scripts\run_benchmark_suite.py examples\benchmarks\scene_alpha_benchmark.json --output-root output\test_artifacts\benchmarks\x_scene_05
+& $py -m unittest tests.agents.test_scene_alpha_acceptance -v
+```
+
+父包 **`X-SCENE-ALPHA` 5/5 收口**（2026-05-26）：可声称三场景复用同一 Core blank-shell pipeline；不可声称 `geometry_verified` 或 Scene Agent 全能力完成。
 
 ## 第一天可以做的 3 件事
 

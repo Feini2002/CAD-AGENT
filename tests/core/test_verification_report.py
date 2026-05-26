@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import unittest
 
 
@@ -60,6 +61,21 @@ class FakePolyline:
     Handle = "P1"
     Coordinates = [0, 0, 400, 0, 400, 200]
     Closed = True
+
+
+class FakeBlockReference:
+    ObjectName = "AcDbBlockReference"
+    Layer = "CODEX_PREVIEW"
+    Handle = "BR1"
+    EffectiveName = "CODEX_TEST_BLOCK_001"
+    InsertionPoint = [1200, 800, 0]
+    Rotation = math.radians(90)
+    XScaleFactor = 1.0
+    YScaleFactor = 1.0
+    ZScaleFactor = 1.0
+
+    def GetBoundingBox(self) -> tuple[list[float], list[float]]:
+        return [1200.0, 800.0, 0.0], [2100.0, 1250.0, 0.0]
 
 
 class VerificationReportTests(unittest.TestCase):
@@ -282,6 +298,14 @@ class VerificationReportTests(unittest.TestCase):
         self.assertEqual(polyline["type"], "polyline")
         self.assertEqual(polyline["points"], [[0.0, 0.0, 0.0], [400.0, 0.0, 0.0], [400.0, 200.0, 0.0]])
         self.assertTrue(polyline["closed"])
+
+        block = normalize_com_entity(FakeBlockReference())
+        self.assertEqual(block["type"], "block_reference")
+        self.assertEqual(block["block_name"], "CODEX_TEST_BLOCK_001")
+        self.assertEqual(block["insertion_point"], [1200.0, 800.0, 0.0])
+        self.assertAlmostEqual(block["rotation"], 90.0)
+        self.assertEqual(block["scale"], [1.0, 1.0, 1.0])
+        self.assertEqual(block["bbox"], {"min": [1200.0, 800.0], "max": [2100.0, 1250.0]})
 
     def test_snapshot_uses_driver_readback_when_available(self) -> None:
         class Driver:

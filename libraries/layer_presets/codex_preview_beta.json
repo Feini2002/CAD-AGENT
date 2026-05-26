@@ -1,0 +1,18 @@
+{
+  "preset_id": "codex_preview_beta",
+  "schema_version": "0.1",
+  "description": "Beta layer roles for CODEX preview CAD; formal names are semantic only until approved.",
+  "layers": {
+    "preview": "CODEX_PREVIEW",
+    "shell": "A-SHELL",
+    "wall": "A-WALL",
+    "door_window": "A-DOOR-WIND",
+    "furniture": "A-FURN",
+    "block": "A-BLOCK",
+    "clearance": "A-CLEAR",
+    "circulation": "A-PATH",
+    "annotation": "A-ANNO",
+    "dimension": "A-DIMS",
+    "hatch": "A-HATCH"
+  }
+}

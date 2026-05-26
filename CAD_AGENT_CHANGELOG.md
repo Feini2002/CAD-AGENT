@@ -4,6 +4,416 @@
 
 ## 2026-05-26
 
+### Codex 将本地真实 CAD 校验扩样主线写入 PlanMD
+
+- 按用户要求，在唯一 `PlanMD`（`CORE_RESTRUCTURE_PLAN.md`）中新增“本地真实 CAD 校验扩样主线”，明确当前缺口是大量用户会话下真实 AutoCAD `geometry_verified` 样本不足。
+- 新增测试方向矩阵：环境与安全守卫、baseline 回归、基础实体矩阵、CAD_PLAN fixture suite、block / attribute / hatch、样本项目闭环、多场景组合、负向安全、视觉辅助一致性、趋势和审计。
+- 拆分 `LCAD-01` 到 `LCAD-11` 小任务包：manifest、strict runner、ActiveDocument guard、baseline smoke、primitive matrix、CAD_PLAN fixtures、block/attribute/hatch、project sample、scene composition、negative safety、evidence trend rollup。
+- 本次只更新计划和状态记录，不运行真实 AutoCAD，不新增 `geometry_verified` 结论；下一轮若无更高优先级用户任务，默认从 `LCAD-01` 开始。
+
+### Codex 本地 CAD 回归矩阵加固
+
+- 新增 `core/verification/local_cad_regression.py` 与 `scripts/run_local_cad_regression.py`，把 baseline CAD validation、project sample CAD check、interior composition CAD check 汇总成一个本地 CAD 回归矩阵。
+- `--no-cad` 模式输出 deferred / non-CAD 证据，不连接 AutoCAD、不声称 `geometry_verified`；真实 CAD 严格模式可用 `--require-cad-verified`，任一 CAD 子项不是 `geometry_verified` 时顶层失败。
+- composition CAD check 增加前置 artifact 门禁：只有 `interior_delivery_benchmark` 成功后才运行真实 CAD 批量检查，前置失败时记录 `not_run` / `blocked_by`。
+- 新增回归测试覆盖 no-CAD deferred 矩阵、严格模式拒绝 deferred、前置 benchmark 失败跳过 composition，以及 output dir 边界。
+- 证据：focused `tests.core.test_local_cad_regression` 4 tests OK；`scripts/run_local_cad_regression.py --no-cad --output-dir output\validation_runs\local-cad-regression-no-cad` pass，`geometry_verified_case_count=0`；全量 `456 tests OK`。本轮未运行真实 AutoCAD，不新增 `geometry_verified` 结论。
+
+### Codex 进入下一阶段前雕琢：可迁移命令、CLI 兼容和全量复验
+
+- `CAD_AGENT_BLOCKER_PLAYBOOK.md` 的当前工具入口不再写死固定 Windows 用户目录下的 CAD-MCP Python 路径，改为 `$env:USERPROFILE` 派生 `$py`，保持换机 / 换用户可运行。
+- 新增文档治理回归：活跃 CAD 文档不得重新引入固定 Windows 用户目录下的 CAD-MCP 路径。
+- `run_office_scene_beta_benchmark.py`、`run_residential_scene_beta_benchmark.py`、`run_restaurant_scene_beta_benchmark.py` 新增 `--output-root` 兼容别名，同时保留原 `--output`。
+- 新增 CLI 回归测试：三组 scene beta wrapper 均可用 `--output-root` 输出 benchmark artifact。
+- 证据：全量 `452 tests OK`；repo audit 0 findings；`run_cad_validation.py --no-cad --output-dir output\validation_runs\codex-polish-final-no-cad` pass；blank-shell 8/8、office alpha 18/18、interior delivery 3/3、project sample 2/2、proposal confirmed 2/2、CAD beta rollup 5/5、scene beta 25/25 pass。本轮未运行真实 CAD，不新增 `geometry_verified` 结论。
+
+### Codex 维护 4-7 包：结构整理、路径公共化、Schema registry、文档主从治理
+
+- 新增 `core/path_safety.py`：统一 `find_project_root`、`resolve_under_project_output`、`resolve_under_project_root`、`validate_safe_path_segment` 和 `is_relative_to`，替换 benchmark、drawing-read、CAD validation、blank-shell、capability runner、proposal / beta suite 中分散的路径判断。
+- 加固真实 CAD 与 artifact 入口：project sample CAD check、composition CAD check 在连接 AutoCAD 或写报告前先验证 workflow / benchmark / output 路径留在仓库 `output/`；non-CAD pipeline 对越界 workflow、越界 output、缺输入文件返回结构化 invalid，不再抛散乱异常。
+- `core/schemas/registry.py` 现在登记所有 `core/schemas/*.schema.json`，并补齐对应 invalid fixtures，避免 schema 文件新增后未被 validator 覆盖。
+- 文档治理收口：`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` 不再承载“下一包建议 / 剩余开发包表”；`CAD_AGENT_STATUS.md` 和 `CORE_RESTRUCTURE_PLAN.md` 更新为 Phase X/Y/R 已收口但不扩大能力声称的口径。
+- 证据：focused 4-7 包测试 `46 tests OK`；全量 `450 tests OK`；repo audit 0 findings；`run_cad_validation.py --no-cad --output-dir output\validation_runs\codex-maintenance-4-7-no-cad` pass。本轮未运行真实 CAD，不新增 `geometry_verified` 结论。
+
+### Codex 维护 1-3 包：证据止血、基线同步、路径安全
+
+- `run_project_sample_cad_check.py` 新增 `--require-cad-verified`：报告不是 `geometry_verified` 时返回非 0；`--no-cad` 仍保存 `deferred_cad_readback_required` 报告，但不能被 CI / 交接误当成真实 CAD 通过。
+- `projects/` 样本 manifest 输入路径现在必须解析在样本目录内；protocol scan 新增 `manifest_input_outside_sample`，loader 同步拒绝越界读取。
+- benchmark / drawing-read benchmark 的 `case_id` 现在必须是安全 path segment；benchmark output root、drawing-read output root、CAD validation output dir 均限制在仓库 `output/` 下；CAD validation 清理 stale artifact 前会再次确认目标留在本轮 `output_dir` 内。
+- 状态文档同步口径：`BETA-PROJECT-SAMPLE-05` 当前仓库存档 no-CAD 报告是 deferred，不是真实 AutoCAD `geometry_verified`；真实样本 CAD readback 仍需用户会话单独运行。
+- 证据：focused 1-3 包测试 `48 tests OK`；全量 `432 tests OK`；repo audit 0 findings；`run_cad_validation.py --no-cad --output-dir output\validation_runs\codex-maintenance-fix-no-cad` pass；blank-shell benchmark 8/8 pass；office alpha benchmark 18/18 pass；interior delivery benchmark 3/3 pass；`run_project_sample_cad_check.py --no-cad --require-cad-verified` 按预期返回 1 并写出 deferred 报告。
+
+### Codex 深度全量安全复盘与加固
+
+- 修复 Cursor 大量改动后的 4 类回归/风险：项目样例协议测试误用系统 temp、benchmark case 缺失完整 evidence triplet、proposal confirmed benchmark 缺少 `evidence_summary`、项目样例 CAD check / drawing standard profile 使用非法证据词。
+- benchmark runner 新增强制校验：所有 case expected 必须包含 `evidence_state`、`geometry_accuracy`、`screenshot_role`；suite `expected_evidence_summary` 与实际 rollup 不一致时失败。
+- `core/project_samples/cad_check.py` 的 no-CAD / failure / fake CAD 路径统一使用 evidence contract 合法词；`libraries/drawing_standards/codex_preview_beta.json` 的 `screenshot_role` 修正为 `not_applicable`。
+- 维护性拆分：新增 `core/benchmarks/expectations.py`、`core/verification/evidence_vocabulary.py`、`core/composition_engine/preview.py`、`core/workflows/blank_shell_candidates.py`、`tests/core/cad_validation_payloads.py`、`tests/core/test_benchmark_validation.py`，使 repo audit 大文件 findings 从 6 个降为 0。
+- 静态与回归证据：`424 tests OK`；repo audit 0 findings；Python AST `248` files / 0 errors；JSON `166` files / 0 errors；坏证据词和系统 temp 回归未命中。
+- 验收脚本证据：`self_check.py` pass；`render_preview.py --check` ready；project sample protocol scan pass；project sample benchmark 2/2 pass；proposal confirmed benchmark 2/2 pass；CAD beta rollup 5/5 pass；office/residential/restaurant scene beta benchmark 分别 9/9、8/8、8/8 pass。
+
+### BETA-SCENE-03 restaurant / commercial scene beta benchmark
+
+- `restaurant_scene_beta_benchmark.json`（8 cases：入口/堂食/后场/blank-shell/failure）。
+- `restaurant/preferences.json` 增加 `scene_beta`；`restaurant_scene_beta.py`。
+- 证据：`422 tests OK`（+2）。
+
+### BETA-SCENE-02 residential scene beta benchmark
+
+- `residential_scene_beta_benchmark.json`（8 cases：卧室/餐厅/收纳/blank-shell/failure）。
+- `residential/preferences.json` 增加 `scene_beta`；`residential_scene_beta.py`。
+- 证据：`420 tests OK`（+2）。
+
+### BETA-SCENE-01 office scene beta benchmark
+
+- `scene_beta.py` + `office_scene_beta_benchmark.json`（9 cases：object / micro_scene / blank_shell / failure）。
+- `agents/office/preferences.json` 扩展 `scene_beta` 与 office 对象偏好；`run_office_scene_beta_benchmark.py`。
+- 证据：`418 tests OK`（+2）。
+
+### BETA-DRAWING-READ-05 / 父包 BETA-DRAWING-READ 收口
+
+- `drawing_read_benchmark.json`（3 cases：全链路 pass、候选 pass、缺门洞 blocked + `structured_blockers`）。
+- `drawing_read_benchmark.py` + `run_drawing_read_benchmark.py`；`beta_drawing_read_acceptance.md`。
+- 证据：`416 tests OK`（+2）。
+
+### BETA-DRAWING-READ-04 shell confirmation → SHELL_MODEL
+
+- `shell_confirmation.py`：`shell_drawing_read_confirmation` schema、对照 report 校验、`apply` → `load_manual_shell`。
+- 示例 `sample_shell_drawing_read_confirmation.json`；CLI `apply_shell_drawing_read_confirmation.py`。
+- 证据：`414 tests OK`（+4）。
+
+### BETA-DRAWING-READ-03 shell candidate confidence report
+
+- `shell_candidate_report.py`：overall/boundary/openings 置信度、`gaps`、`human_confirmation_items`、`ready_for_human_confirmation_file`。
+- `sample_geometry_walls_only_fixture.json` 负样本（缺门洞 blocker）；CLI `run_shell_candidate_report.py`。
+- 证据：`410 tests OK`（+3）。
+
+### BETA-DRAWING-READ-02 geometry feature candidates
+
+- `geometry_candidates.py`：墙线段 / 门洞 / 柱 / 禁放区启发式候选；`dwg_geometry_candidates.schema.json`。
+- Fixture `sample_geometry_feature_fixture.json`；CLI `run_geometry_candidates.py`。
+- 证据：`407 tests OK`（+3）。
+
+### BETA-DRAWING-READ-01 read-only DWG entity summary
+
+- `dwg_read_only.py`：`build_dwg_entity_summary`、fixture / active CAD / driver 入口；`dwg_entity_summary.schema.json`。
+- `FakeCadDriver.snapshot_modelspace()` 供只读汇总；CLI `run_dwg_entity_summary.py`。
+- 证据：`404 tests OK`（+4，含 READ-02 前基线）。
+
+### BETA-PROPOSAL-05 / BETA-PROPOSAL 父包收口
+
+- `finalize_confirmed_cad_plans()` 输出受控 CAD_PLAN bundle + `unselected_candidate_evidence`；validate/dry-run 全通过。
+- `proposal_confirmed_benchmark.json`（2 cases）；`beta_proposal_acceptance.md` rollup。
+- 证据：`400 tests OK`（+5）。
+
+### BETA-PROPOSAL-04 partial CAD_PLAN replan
+
+- `partial_replan.py`：`recompute_cad_plans_from_pipeline_artifacts()` 跳过上行动线，仅更新 placements/layout/CAD_PLAN/验证产物。
+- CLI `run_proposal_partial_replan.py`；`partial_replan_report.json` 记录 skipped/recomputed 模块。
+- 证据：`395 tests OK`（+2）。
+
+### BETA-PROPOSAL-03 user confirmation input schema
+
+- `proposal_user_confirmation.schema.json` + `user_confirmation.py`（validate / build / apply / round-trip）。
+- 示例 `examples/confirmations/`；CLI `apply_proposal_user_confirmation.py`。
+- 证据：`393 tests OK`（+6）。
+
+### BETA-PROPOSAL-02 proposal comparison summary benchmark
+
+- `proposal_comparison_summary`（object_coverage / circulation / conflicts / failure_reasons）；pipeline 写出 `proposal_comparison_summary.json`。
+- `proposal_comparison_benchmark.json` 4 cases；runner 新增 `requires_proposal_comparison_summary` 等断言键。
+- 证据：`387 tests OK`（+3）。
+
+### BETA-PROPOSAL-01 proposal candidate scoring fields
+
+- 新增 `candidate_scoring.py`、`proposal_candidate_scoring.schema.json`；`DESIGN_PROPOSAL.candidates[]` 要求 `score_breakdown` + `ranking_reasons[{code,message}]`。
+- `compare_layout_candidates` / `create_design_proposal` / blank-shell 分支接入；示例 proposal JSON 已更新。
+- 证据：`384 tests OK`（+3）。
+
+### BETA-PROJECT-SAMPLE-05 / BETA-PROJECT-SAMPLE 父包收口
+
+- `core/project_samples/cad_check.py` + `run_project_sample_cad_check.py`：`sample_blank_shell` 多 CAD_PLAN 批量 CODEX_PREVIEW 执行与 created-handle readback；`--no-cad` → `deferred_cad_readback_required`。
+- `beta_project_sample_acceptance.md` 记录 01–05 可声称 / 不可声称边界。
+- 证据：`381 tests OK`（+4）；fake driver `geometry_verified`；真实 CAD 需在用户 AutoCAD 会话下单独运行 CLI。
+
+### BETA-PROJECT-SAMPLE-04 project sample benchmark (pass + blocked)
+
+- 新增 `projects/sample_blank_shell_too_small/`、`sample_blank_shell_too_small_loop.json`、`project_sample_benchmark.json`（2 cases）。
+- `core/project_samples/benchmark.py` + `run_project_sample_benchmark.py`；`blocked_expected_non_cad` + `cad_plan_count=0` 硬断言。
+- 证据：`377 tests OK`（+4）；`output/test_artifacts/benchmarks/beta_project_sample_04/benchmark_summary.json`。
+
+### BETA-PROJECT-SAMPLE-03 sample workflow CAD_PLAN / dry-run / verification
+
+- `sample_blank_shell_project_loop.json` + `run_sample_blank_shell_workflow()`；产出 CAD_PLAN、`dry_run valid`、`verification unverified`。
+- CLI `run_project_sample_workflow.py`；`sample_workflow_report.json` 明确 `geometry_verified: false`。
+- 证据：`373 tests OK`（+2）。
+
+### BETA-PROJECT-SAMPLE-02 sample shell / project model fixtures
+
+- `sample_blank_shell` 增加 `fixtures/`、`expected/project_model.expected.json`；`core/project_samples/loader.py`。
+- manifest 驱动 `load_sample_inputs` / `build_sample_project_model`；金样回归测试。
+- 证据：`371 tests OK`（+5）。
+
+### BETA-PROJECT-SAMPLE-01 de-identified project sample protocol
+
+- 扩展 `projects/README.md`；新增 `project_sample_manifest.schema.json`、`core/project_samples/protocol.py`。
+- 基线样本 `sample_blank_shell/sample.manifest.json` + 样本 README；协议扫描拒绝提交 DWG。
+- 证据：`366 tests OK`（+4）。
+
+### BETA-CAD-BLOCK-05 / BETA-CAD-BLOCK 父包收口
+
+- 新增 `cad_beta_evidence_rollup.py`、`beta_cad_block_acceptance.md`、rollup CLI；`fake_cad_driver.py` 供 probe 复用。
+- rollup 汇总 01–04 non-CAD 子包 + 05 文档包；`geometry_verified_count=0`。
+- 证据：`362 tests OK`；`output/test_artifacts/cad_beta_evidence/beta_cad_block_05/`。
+
+### BETA-CAD-BLOCK-04 drawing_standard_profile
+
+- 新增 `core/drawing_standard/`、`codex_preview_beta` profile / layer preset、schema 与 6-case beta suite。
+- `preview_only` 下 CAD 执行层统一 `CODEX_PREVIEW`；语义层保留 `A-FURN` 等映射；`insert_block_alpha` dry-run 可带 `drawing_standard_profile_id`。
+- 证据：`359 tests OK`（+9）。non-CAD only。
+
+### BETA-CAD-BLOCK-03 entity-level capability probe evidence
+
+- 新增 `entity_level_evidence.py`；`cad_capability_probe` 输出 `entity_evidence[]`（polyline 写读对比、layer_role→`CODEX_PREVIEW`、hatch `deferred`）。
+- `ENTITY_CONTRACTS` 增加 `hatch`（deferred）；`inspect_dwg` 识别 Hatch；`validate_capability_probe_evidence` 在 verified 时要求 entity_evidence。
+- 证据：`350 tests OK`（+6）。hatch 非真实 CAD 验证。
+
+### BETA-CAD-BLOCK-02 block attribute / tag readback probe
+
+- 新增 `block_attribute_probe.py`；`inspect_dwg` 归一化 `GetAttributes()`；`build_block_alpha_readback_report` 合并 attribute 判定。
+- `attribute_readback_probe` 计划可声明期望 tag；缺 tag → `attribute_unverified` deferred，不误报 `geometry_verified`。
+- 证据：`344 tests OK`。
+
+### BETA-CAD-BLOCK-01 controlled block transform beta suite
+
+- 新增 `block_alpha_beta_suite.json`（8 cases）、`block_alpha_beta_suite.py`、`run_block_alpha_beta_suite.py`。
+- 多 `base_point`、rotation（45°/90°）、uniform scale（0.5/1.25/0.75）validate + dry-run。
+- 证据：`336 tests OK`；`output/test_artifacts/block_alpha_beta/beta_cad_block_01/`。non-CAD only。
+
+### X-SCENE-05 / X-SCENE-ALPHA 父包收口
+
+- 新增 `docs/verification/scene_alpha_acceptance.md`、`tests/agents/test_scene_alpha_acceptance.py`。
+- 总验收：scene alpha benchmark 3/3、`agents/` 边界扫描 0 violations、验证文档 bundle 齐全。
+- **可声称**：office / residential / restaurant 复用同一 `blank_shell` Core pipeline（non-CAD）。
+- **不可声称**：`geometry_verified`、Scene Agent 产品完成、真实项目/块库全量准确。
+- 证据：`332 tests OK`；`output/test_artifacts/benchmarks/x_scene_05/`。
+
+### X-SCENE-04 Scene Alpha explanation template
+
+- 新增 `core/agents/scene_explanation.py`、`docs/verification/scene_alpha_explanation_template.md`、`tests/agents/test_scene_explanation.py`。
+- 三场景 `rules.md` 增加 Preference→Core 映射与不可声称；`first-handoff.md` Scene Alpha 接手段。
+- `scene_boundary_scan`：`rules.md` 仅做 import 扫描，允许文档引用 Core 入口名。
+- 证据：`326 tests OK`；`output/test_artifacts/benchmarks/x_scene_04/` 3/3 pass。
+
+### X-SCENE-03 Scene Agent boundary scan
+
+- 新增 `core/agents/scene_boundary_scan.py`；扩展 `tests/agents/test_scene_agent_boundaries.py`（`test_x_scene_03_*`）。
+- 更新 `agents/SCENE_AGENT_RULES.md`、`docs/verification/scene_alpha_agent_boundaries.md`；Alpha 场景 `rules.md` 补强 Core 边界表述。
+- 证据：`322 tests OK`；`agents/` 树扫描 0 violations。
+
+### X-SCENE-02 Scene Alpha multi-scene benchmark
+
+- 新增 `examples/benchmarks/scene_alpha_benchmark.json`（office / residential / restaurant 三 case，均 `pipeline: blank_shell`）。
+- `blank_shell_pipeline`：`scene_preferences` 驱动 `_select_circulation_for_zones`；metrics 导出 `preferences_scenario` / `selected_circulation_strategy`。
+- `runner._actual_from_pipeline` + `preferences_path_contains` 断言；`zone_splitter` 用全部 `path_surface` 并集 bbox 切区（修复 along_wall 单区与走道重叠）。
+- 证据：`317 tests OK`；`output/test_artifacts/benchmarks/x_scene_02/` 3/3 pass。
+
+### X-SCENE-01 Scene Alpha preferences contract
+
+- 锁定 `office` / `residential` / `restaurant`；`circulation_strategy_weights` + `agents/scene_alpha_manifest.json`。
+- 新增 `core/agents/scene_alpha.py`；`tests/agents/test_scene_preferences.py` 扩展 X-SCENE-01 断言。
+- 证据：`315 tests OK`。
+
+### Y-MC-05 multi-candidate boundaries（Y-MULTI-CANDIDATE 收口）
+
+- 新增 `docs/verification/blank_shell_multi_candidate_boundaries.md`；更新 `phase-y-blank-shell-hardening-plan.md`、`shell-layout-foundation-design.md`。
+- 父包 `Y-MULTI-CANDIDATE` **5/5** 完成；下一主线 `X-SCENE-ALPHA`。
+- 证据：`312 tests OK`；`output/test_artifacts/benchmarks/y_mc_05/` 8/8 pass。
+
+### Y-MC-04 blank-shell near-real and failure shell cases
+
+- `blank_shell_core_benchmark.json` 扩至 8 cases：`long_narrow`、`obstacle`、 `too_small`、`corridor_riser_blocks_main_path`。
+- 新增 `blank_shell_corridor_riser_block_shell.json` + workflow；blocked 路径 metrics 含 `fixed_obstacle_count`。
+- 证据：`312 tests OK`；`output/test_artifacts/benchmarks/y_mc_04/` 8/8 pass。
+
+### Y-MC-03 benchmark multi-candidate assertions
+
+- `runner._actual_from_pipeline` 输出 `zone_placement_candidate_count`、`object_coverage_rate`、`selected_failed_reason_distribution` 等。
+- `blank_shell_core_benchmark.json` 四 case 增加 `requires_comparison_detail` 与多候选 `minimums` / `maximums`。
+- 证据：`311 tests OK`；`output/test_artifacts/benchmarks/y_mc_03/` 4/4 pass。
+
+### Y-MC-02 proposal comparison_detail
+
+- `build_blank_shell_comparison_detail()`：对象覆盖率、失败检查数/分布、通道连续性、circulation 分支排序原因。
+- `create_design_proposal()` 接入 `candidate_sets`；`comparison_summary` 为 narrative；未选中分支失败不触发 `needs_confirmation`。
+- 证据：`310 tests OK`；blank-shell benchmark `y_mc_02` 4/4 pass。
+
+### Y-MC-01 blank-shell candidate_sets artifact
+
+- `build_blank_shell_candidate_sets()`：按 circulation 分支保留 zone/placement 候选明细，写入 `candidate_sets.json`。
+- pipeline metrics 增加 `zone_placement_candidates`、`selected_circulation_strategy`、`selected_zone_id`。
+- 证据：`309 tests OK`；blank-shell benchmark `output/test_artifacts/benchmarks/y_mc_01/` 4/4 pass。
+
+### R4-05 evidence gate handoff rules（R4-EVIDENCE-GATES 收口）
+
+- 新增 `docs/verification/evidence_gate_handoff_rules.md`：每包第 8 项三列表格、Codex 校验清单、禁止声称。
+- 扩展 `docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` 标准模板与 Codex 指引；§18 R4-04、§19 R4-05。
+- 父包 `R4-EVIDENCE-GATES` **5/5** 完成；下一主线 `Y-MULTI-CANDIDATE`。
+
+### R4-04 CAD validation evidence alignment
+
+- 新增 `core/verification/cad_validation_evidence.py`：`build_cad_validation_evidence_summary`、`cad_validation_evidence_gate_failure`。
+- `cad_validation_runner` 写入 `report.json.evidence_summary`；no-CAD pass 要求 `non_cad_only`；含 CAD pass 要求 readback/capability 证据态。
+- 步骤 stdout 未知 `evidence_state` 会使步骤 fail。
+- 证据：`308 tests OK`；`output/validation_runs/r4-no-cad/report.json`。
+
+### R4-03 benchmark suite evidence summary
+
+- `summarize_benchmark_evidence` 输出 rollup 计数与 `screenshot_role_counts`；`validate_evidence_summary` 校验一致性。
+- 三组 benchmark JSON 增加 `expected_evidence_summary`；suite 跑完后写入 `benchmark_summary.json` 并比对。
+- 新增 `test_r4_three_benchmark_suites_match_expected_evidence_summary`。
+- 证据：`304 tests OK`；`output/test_artifacts/benchmarks/r4_blank_shell/`、`r4_interior/`、`r4_office/`。
+
+### R4-02 blocked / invalid failure benchmark assertions
+
+- `validate_failure_expected_contract()`：failure case 必须 `failure_category` 或 `contains_blocked_reason`；`blocked`/`invalid` 与 `evidence_state` 配对。
+- runner 支持 `maximums` 断言与 `_compare_failure_outcome_guards()` 静默 pass 防护。
+- office alpha +1：`office_invalid_workflow_input`（`invalid_configuration`）；`too_small` 增加 `maximums.cad_plan_count: 0`。
+- 证据：`302 tests OK`；`output/test_artifacts/benchmarks/r4_office_r2/`。
+
+### R4-01 evidence classifier / vocabulary
+
+- 扩展 `core/verification/evidence_contract.py`：`EVIDENCE_BLOCKED_EXPECTED_NON_CAD`、`EVIDENCE_DRY_RUN_VALID_PLAN_ONLY`、`EVIDENCE_INVALID_CONFIGURATION`、`EVIDENCE_STATE_VALUES`、`classify_benchmark_pipeline_evidence()`、校验函数。
+- `core/benchmarks/runner.py` 移除本地 `_derive_evidence_state`，expected/actual 证据字段统一走词表校验。
+- `composition_engine/templates.py`、`block_alpha_plan.py` 改用契约常量；`verification_report.schema.json` 补全 enum。
+- 新增 `docs/verification/evidence_state_vocabulary.md`、`tests/core/test_evidence_classifier.py`。
+- 证据：`299 tests OK`。
+
+### R-OFFICE-MICRO-05 office alpha 收口
+
+- `run_benchmark_suite` 写入 `benchmark_summary.json`，新增 `summarize_benchmark_evidence()`（`evidence_state` / `failure_category` 计数）。
+- 新增 `docs/verification/office_alpha_benchmark_evidence.md`：17 cases 证据汇总、Alpha 退出门槛、可声称/不可声称边界。
+- 同步 `phase-r-office-benchmark-cases.md`、`CAD_AGENT_STATUS.md`、handoff §14；`R-OFFICE-MICRO` 父包 5/5 完成。
+- 证据：`294 tests OK`；`output/test_artifacts/benchmarks/office_alpha_r_micro/`。
+
+### R-OFFICE-MICRO-04 office failure benchmark
+
+- 新增 `core/layout_engine/office_layout_failure.py`：composition 净空冲突检测与 blank-shell `layout_expectation` 硬阻断。
+- `blank_shell_pipeline` 支持 `layout_expectation.mode=require_all_placed`，过小房间样本返回 `insufficient_space`。
+- `composition_engine` 新增 `door_clearance_conflict`、`cabinet_pullback_conflict` 失败模板。
+- benchmark runner 支持 `failure_category`、`contains_blocked_reason`，blocked pipeline 映射 `evidence_state=blocked_expected_non_cad`。
+- `office_alpha_benchmark.json` 扩至 **17 cases**（+3 failure）。
+- 证据：`293 tests OK`；`output/test_artifacts/benchmarks/office_failure_r4/` → 17/17 pass（non-CAD，含 3 blocked）。
+
+### Codex 第二轮风险验收与证据门禁继续加固
+
+- 针对第二轮多 agent 挑刺审查，修复 CAD validation runner 只验证报告内部自洽、未与上一阶段 `execution_summary.json` 交叉比对 created handles 的缺口；新增 `core/verification/cad_validation_gates.py`。
+- 加固 `block_alpha_report.status=geometry_verified`：必须有 `created_handles_scope=pass`、唯一 created handle、`block_reference` 实体 payload，以及 `block_name` / `insertion_point` / `rotation` / `scale` / `layer` / `bbox` 几何字段。
+- 加固 `AutoCADComDriver.insert_block_alpha()` 失败路径：attributes、非法 base point、非受控 identity 在 COM 写入前拒绝；插入后若 handle 缺失或后置校验失败，会尝试删除刚插入的 block reference；复用同名 `CODEX_TEST_BLOCK_001` 前会校验受控 definition 形状。
+- 修正 `insert_block_alpha` plan / dry-run 与 driver 的 scale 契约：plan 层拒绝非统一 scale，dry-run bbox 应用统一 scale。
+- 测试拆分以保持 repo audit 行数门禁：新增 `tests/core/test_autocad_block_alpha_hardening.py`、`tests/core/test_cad_validation_runner_handle_scope.py`。
+- 最新证据：`290 tests OK`；repo audit 0 findings；office alpha benchmark 14/14 pass；`run_cad_validation.py --no-cad --block-alpha-only` pass with deferred evidence；standalone block alpha negative no-CAD exit 1。
+- 真实 AutoCAD 复验通过：`output/validation_runs/codex-second-gate-block-alpha-cad-final/report.json`（block handle `99B`）与 `output/validation_runs/codex-second-gate-full-cad-final/report.json`（baseline handles `99C..9E6`，block handle `ABC`）。
+- 负向 COM 探针通过：非法 `block_id`、非法 `block_name`、attributes、非法 `base_point` 均被拒绝，当前测试 DWG ModelSpace 实体数 `131 -> 131`。
+
+### Codex 风险验收与证据门禁加固
+
+- 针对多 agent 审查发现的风险，补强 `insert_block_alpha` 三层门禁：`CAD_PLAN` 校验、`execute_plan` 调用链和 `AutoCADComDriver` 现在只允许 `block_id=controlled-test-block-001` 与 `block_name=CODEX_TEST_BLOCK_001`。
+- 加固 CAD 证据契约：`readback_report.status=geometry_verified` 必须带非空 `actual.created_handles`、实体回读 payload 和 `created_handles_scope=pass`；`block_alpha_report.status=geometry_verified` 必须带非空 `created_handles` 且 `entity.type=block_reference`。
+- 修复 `run_cad_validation.py --no-cad --block-alpha-only` 漏掉 `block_alpha_deferred_evidence` 的问题；`scripts/run_block_alpha_validation.py` 在 readback failed 时现在返回非 0。
+- 为上述风险新增回归测试，当前全量 `267 tests OK`；`run_repo_audit.py --max-python-lines 500 --fail-on-findings` 为 0 findings。
+- 结构拆分：新增 `core/cad_io/autocad_block_alpha.py`、`core/verification/cad_validation_types.py`、`core/verification/cad_validation_block_alpha.py`，将 `autocad_com.py` 和 `cad_validation_runner.py` 降到 repo audit 行数限制以内。
+- 真实 AutoCAD 复验通过：`output/validation_runs/codex-review-block-alpha-cad-after-gate/report.json` 为 `status=pass`，block handle `879` 定向 readback 全 pass；`output/validation_runs/codex-review-full-cad-after-gate/report.json` 为 `status=pass`，baseline handles `87A..8C4` 与 block handle `99A` 均完成 created-handle readback。
+- 负向 COM 探针通过：直接调用 driver 写入任意 `block_id` / 任意 `block_name` 均被拒绝，当前测试 DWG 的 `CODEX_PREVIEW` 实体数保持 `111 -> 111`，没有新增实体。
+
+### PlanMD 后置拆分合并与 Markdown 架构收束
+
+- 按用户要求暂停“额外后备计划”口径，把五大后置主线的小包明细合并为 `CORE_RESTRUCTURE_PLAN.md` 的唯一承载。
+- 从 `docs/planning/phase-r-rebirth-implementation-plan.md` 移除后置 Backlog 明细副本，改为只保留 Phase R 当前执行剧本和一条主 PlanMD 引用。
+- 补强 `CORE_RESTRUCTURE_PLAN.md`、`AGENTS.md`、`docs/README.md`、`CORE_CONTEXT_BRIEF.md`、`CAD_AGENT_STATUS.md` 和 `docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` 的主从规则：后置 Backlog、未来小包、优先级和退出标准只在主 PlanMD 维护。
+- 本轮只做 Markdown 架构收束，不运行真实 CAD，不改变能力成熟度百分比。
+
+### 五大后置主线 Backlog 登记
+
+- 回答“当前小包完成后继续往哪里走”的问题，不新增第二套主计划。
+- 在 `CORE_RESTRUCTURE_PLAN.md` 增加“当前小包队列完成后的后置 Backlog”，明确只有当前活跃小包收口或用户明确切换后才启用。
+- 五大后置主线为：真实 CAD 能力扩展、真实项目样本闭环、多方案设计与交互确认、自动读图 / 空壳识别、场景 Agent Beta。
+- 当时曾在 `docs/planning/phase-r-rebirth-implementation-plan.md` 复制五大主线细化表；随后已按用户要求合并回唯一 PlanMD，不再由执行剧本承载后置小包明细。
+- 同步 `CORE_CONTEXT_BRIEF.md` 与 `CAD_AGENT_STATUS.md`，声明该 Backlog 不改变当前 Cursor / Codex 小包执行优先级，也不提升功能成熟度百分比。
+
+### R-OFFICE-MICRO-03 office 场景级 benchmark
+
+- 新增 3 个 office shell + workflow：`long_narrow`、`obstacle_riser`、`mixed_zone`。
+- `blank_shell_pipeline` metrics 增加 `no_place_zone_count`、`fixed_obstacle_count`、`shell_id`。
+- `office_alpha_benchmark.json` 扩至 **14 cases**（+3 blank_shell scene）。
+- 证据：`260 tests OK`；`output/test_artifacts/benchmarks/office_scene_r1/` → 14/14 pass（non-CAD）。
+
+### R-OFFICE-MICRO-02 office 微场景 benchmark
+
+- `composition_engine` 新增 4 个 office micro-scene 模板：`single_desk_chair_pair`、`desk_with_back_cabinet`、`two_workstations_shared_aisle`、`entry_reception_clearance`（含 `bindings`、`clearance_refs`、`circulation`）。
+- benchmark runner 支持 `contains_binding_relations`、`contains_circulation_roles`。
+- `office_alpha_benchmark.json` 扩至 **11 cases**（+4 composition_spec micro-scenes）。
+- 证据：`260 tests OK`；`output/test_artifacts/benchmarks/office_micro_r2/` → 11/11 pass（non-CAD）。
+
+### R-OFFICE-MICRO-01 office 对象级 benchmark 扩展
+
+- `object_defaults.json` 新增 `computer_desk`、`storage_cabinet`、`file_cabinet`（含 `placement_role`、`clearance_refs`、组件 roles）。
+- `create_object_spec` 透传 `placement_role` / `clearance_refs` / `assertion_hints`。
+- benchmark runner 支持 `contains_clearance_refs` 与 `clearance_ref_roles` metrics。
+- `office_alpha_benchmark.json` 由 4 cases 扩至 **7 cases**（新增 `computer_desk_default_spec`、`storage_cabinet_front_clearance`、`file_cabinet_default_spec`）。
+- 证据：`259 tests OK`；`run_benchmark_suite.py … office_alpha_benchmark.json` → **7/7 pass**（`output/test_artifacts/benchmarks/office_object_r1/`）。
+- 仍为 non-CAD；不能声称办公微场景、通道或真实 CAD 几何准确。
+
+### R-BLOCK-CAD-05 真实 AutoCAD block alpha 验收
+
+- 受控块定义 footprint 与 metadata 对齐（900×450），保证 readback bbox 与 plan 一致。
+- `run_cad_validation.py --block-alpha-only` 聚焦 block alpha CAD 步骤；新增 `block_alpha_capture_screen`。
+- 用户会话真实 CAD 验收：`output/validation_runs/r-block-alpha-cad/report.json` → `status=pass`；`block_alpha_report.json` → `geometry_verified` / `readback_geometry_verified`；`created_handles=["878"]`；截图 `block-alpha-window.png`（仅视觉辅助）。
+- 证据说明：`docs/verification/block_alpha_cad_evidence.md`。
+- 不能把受控样本 pass 扩大到任意块库或项目图纸。
+
+### R-BLOCK-CAD-04 CAD validation runner 接入 block alpha
+
+- `cad_validation_runner` 新增 `block_alpha_validate_plan` / `block_alpha_dry_run` / `block_alpha_deferred_evidence`（no-CAD）与 `block_alpha_execute` / `block_alpha_readback`（CAD）。
+- 新增 `core/verification/block_alpha_validation.py`、`scripts/run_block_alpha_validation.py`；顶层 `report.json` 含 `block_alpha` 摘要，硬门禁禁止 no-CAD 误报 `geometry_verified`。
+- no-CAD 实跑：`output/validation_runs/r-block-alpha-no-cad-test/report.json` → `status=pass`，`block_alpha.geometry_verified=false`。
+- 全量 **259 tests OK**；真实 CAD block alpha 总验收仍 deferred 至 `R-BLOCK-CAD-05`。
+
+### R-BLOCK-CAD-03 block_reference readback 标准化
+
+- `normalize_com_entity()` 识别 `AcDbBlockReference`，输出 `block_name`、`insertion_point`、`rotation`（度）、`scale`、`bbox`。
+- `geometry_checks.check_block_reference_readback()` 对照 `insert_block_alpha` plan 断言，失败分类含 `readback_missing`、`block_name_mismatch`、`anchor_mismatch`、`rotation_mismatch`。
+- `evidence_contract` 中 `block_reference.implementation_status` 更新为 `readback_normalize_baseline`。
+- 全量 **255 tests OK**；validation runner 接入仍 deferred 至 `R-BLOCK-CAD-04`。
+
+### R-BLOCK-CAD-02 insert_block_alpha COM 写入
+
+- `AutoCADComDriver.insert_block_alpha()`：先 `ensure_controlled_block_definition()`，再 `ModelSpace.InsertBlock`；仅 `CODEX_PREVIEW`、统一 scale；`definition_missing` / `insert_failed` / `attribute_unverified` 通过 `BlockAlphaInsertionError` 结构化抛出。
+- 新增 driver 与 `execute_plan` 契约单测；全量 **250 tests OK**。
+- 未运行真实 CAD；几何 readback 仍 deferred 至 `R-BLOCK-CAD-03`。
+
+### R-BLOCK-CAD-01 受控块定义解析
+
+- `AutoCADComDriver` 新增 `block_definition_exists()`、`ensure_controlled_block_definition()` 与最小矩形块定义创建路径；优先复用 DWG 内 `CODEX_TEST_BLOCK_001`，缺失时在 layer `0` 写入 100×50 临时几何，不写正式图层、不保存 DWG。
+- 查找/创建失败时返回结构化 `definition_missing`（`status` + `failure_category` + `block_name` + `message`）。
+- `docs/planning/phase-r-cad-capability-contract.md` 补充受控块定义解析说明。
+- 新增 5 项 `tests.core.test_autocad_com_driver` 用例；全量 **244 tests OK**。
+- 未运行真实 CAD；`insert_block_alpha` COM 插入仍 deferred 至 `R-BLOCK-CAD-02`。
+
+### 剩余开发包二级小包拆分
+
+- 按用户截图中的“开发包清单”继续细化当前未开始的包，不新增第二套主计划。
+- 在 `CORE_RESTRUCTURE_PLAN.md` 新增并加固“剩余开发包二级拆分索引”，把 `R-BLOCK-CAD-ALPHA`、`R-OFFICE-MICRO`、`R4-EVIDENCE-GATES`、`Y-MULTI-CANDIDATE`、`X-SCENE-ALPHA` 拆成 25 个二级小包，并补充目标、文件范围、依赖顺序、子校验、退出标准、证据状态和 handoff 更新七项完整性门槛。
+- 在 `docs/planning/phase-r-rebirth-implementation-plan.md` 为每个未开始父包补“二级小包拆解”和推荐执行顺序，明确文件范围、子校验命令和退出标准；其中 office 子包统一命名为 `R-OFFICE-MICRO-01..05`，避免与旧的 R-OFFICE 高层任务编号混淆。
+- 在 `docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md` 补齐“剩余开发包细分索引”，让 Cursor / Codex 后续按小包追加 9 项交接记录。
+- 本轮只拆分 Markdown 计划，不修改代码、不运行真实 CAD、不声称剩余小包已完成。
+
+### Cursor 开发包交接包文档
+
+- 新增 `docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md`：按开发包汇总 Cursor 交付的 9 项标准交接（含会话探针、`R-CAD-VIEW-CAPTURE`、`R-CAD-CONTRACT`、`R-BLOCK-METADATA`、`R-BLOCK-PLAN` 回填）。
+- 新增 `docs/handoffs/README.md` 索引；`AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`docs/README.md` 增加入口。
+- 约定：每完成一个 PlanMD 开发包，必须同步更新交接包文档。
+
 ### R-BLOCK-PLAN insert_block_alpha CAD_PLAN
 
 - 新增 `core/plan_engine/block_alpha_plan.py` 与 `examples/plans/insert_block_alpha_test.json`，引入受控 `insert_block_alpha` intent。

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from core.plan_engine.dry_run_report import create_dry_run_report
+from core.path_safety import resolve_under_project_output, resolve_under_project_root
 from core.plan_engine.model_to_plan import model_to_plans
 from core.project_model.project_builder import build_project_model
 from core.proposal_engine.design_proposal import create_design_proposal
@@ -28,6 +29,22 @@ def _write_json(path: Path, data: dict[str, Any]) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def _invalid(errors: list[str]) -> dict[str, Any]:
+    return {"status": "invalid", "errors": errors, "artifacts": {}}
+
+
+def _resolve_input(root: Path, inputs: dict[str, Any], key: str, *, required: bool = True) -> Path | None:
+    value = inputs.get(key)
+    if value in {None, ""} and not required:
+        return None
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"inputs.{key} must be a non-empty string")
+    path = resolve_under_project_root(root, Path(value), label=f"inputs.{key}")
+    if not path.is_file():
+        raise ValueError(f"inputs.{key} does not exist: {path}")
+    return path
+
+
 def _layout_preferences(raw_preferences: dict[str, Any]) -> dict[str, Any]:
     circulation = raw_preferences.get("circulation", {}) if isinstance(raw_preferences.get("circulation"), dict) else {}
     return {
@@ -39,14 +56,26 @@ def _layout_preferences(raw_preferences: dict[str, Any]) -> dict[str, Any]:
 
 
 def run_non_cad_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[str, Any]:
-    root = _find_project_root(workflow_path.resolve())
-    workflow = load_json(workflow_path)
-    inputs = workflow.get("inputs", {})
-    brief = load_json(root / inputs["design_brief"])
-    drawing = load_json(root / inputs["drawing_model"])
-    object_spec = load_json(root / inputs["object_spec"])
-    style_profile = load_json(root / inputs["style_profile"]) if inputs.get("style_profile") else {}
-    preferences = load_json(root / inputs["preferences"]) if inputs.get("preferences") else {}
+    try:
+        root = _find_project_root(workflow_path.resolve())
+        workflow_path = resolve_under_project_root(root, workflow_path, label="workflow_path")
+        output_dir = resolve_under_project_output(root, output_dir, label="output_dir")
+        workflow = load_json(workflow_path)
+        inputs = workflow.get("inputs", {})
+        if not isinstance(inputs, dict):
+            raise ValueError("inputs must be an object")
+        brief_path = _resolve_input(root, inputs, "design_brief")
+        drawing_path = _resolve_input(root, inputs, "drawing_model")
+        object_spec_path = _resolve_input(root, inputs, "object_spec")
+        style_profile_path = _resolve_input(root, inputs, "style_profile", required=False)
+        preferences_path = _resolve_input(root, inputs, "preferences", required=False)
+        brief = load_json(brief_path)
+        drawing = load_json(drawing_path)
+        object_spec = load_json(object_spec_path)
+        style_profile = load_json(style_profile_path) if style_profile_path else {}
+        preferences = load_json(preferences_path) if preferences_path else {}
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        return _invalid([str(exc)])
     if style_profile:
         object_spec = apply_style_to_object_spec(object_spec, style_profile)
 

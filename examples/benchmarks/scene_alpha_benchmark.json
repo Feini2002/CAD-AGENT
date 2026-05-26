@@ -1,0 +1,85 @@
+{
+  "version": "0.1",
+  "suite_id": "scene-alpha-benchmark",
+  "description": "Scene Alpha: office / residential / restaurant reuse the same blank_shell Core pipeline with distinct scene preferences.",
+  "expected_evidence_summary": {
+    "case_count": 3,
+    "benchmark_pass_non_cad_count": 3,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
+  "cases": [
+    {
+      "case_id": "scene_alpha_office_blank_shell",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_office_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "office",
+        "preferences_path_contains": "agents/office/preferences.json",
+        "selected_circulation_strategy": "straight_spine",
+        "shell_id": "shell-office-small-suite",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "cad_plan_count": 5
+        },
+        "contains_object_types": ["desk", "chair", "cabinet"]
+      }
+    },
+    {
+      "case_id": "scene_alpha_residential_blank_shell",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_residential_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "residential",
+        "preferences_path_contains": "agents/residential/preferences.json",
+        "selected_circulation_strategy": "along_wall",
+        "shell_id": "shell-residential-living-room",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "cad_plan_count": 5
+        },
+        "contains_object_types": ["sofa", "cabinet", "chair"]
+      }
+    },
+    {
+      "case_id": "scene_alpha_restaurant_blank_shell",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_restaurant_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "restaurant",
+        "preferences_path_contains": "agents/restaurant/preferences.json",
+        "selected_circulation_strategy": "l_spine",
+        "shell_id": "shell-restaurant-small-front",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "cad_plan_count": 5
+        },
+        "contains_object_types": ["table", "chair", "counter"]
+      }
+    }
+  ]
+}

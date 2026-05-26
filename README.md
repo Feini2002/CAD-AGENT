@@ -10,7 +10,7 @@ CAD Agent Core Lab 是一个可迁移的通用 CAD Agent 开发包，用结构�
 - `agents/<scenario>/` 只保留轻量场景差异，复用 Core，不复制 Core 算法。
 - `libraries/` 存放跨场景资源，例如对象默认值、块库、风格、材料、尺寸和图层标准。
 - `projects/` 存放真实或样例项目资料。
-- `docs/` 存放架构、计划、治理、交接、验证、决策和历史记录。
+- `docs/` 存放架构、计划、治理、交接、验证、决策和历史记录；Cursor 按包交付见 [`docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md`](docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md)。
 
 仓库的绘图原则是先把白话需求转成 `CAD_PLAN` 或更高层结构化意图，再做校验、dry-run、执行和回读验证。真实 CAD 输出默认只落到 `CODEX_PREVIEW`，不默认保存 DWG，不覆盖原始文件，不删除已有实体，不修改正式图层。
 
@@ -35,7 +35,7 @@ SHELL_MODEL
 
 - 当前唯一 `PlanMD` / 开发主线是 `CORE_RESTRUCTURE_PLAN.md`。
 - `CORE_CONTEXT_BRIEF.md` 是日常恢复上下文的短入口。
-- `docs/planning/phase-*.md` 是 Phase 执行剧本，不是第二套主计划。
+- `docs/planning/phase-*.md` 是 Phase 执行剧本，不是第二套主计划；后置 Backlog 和未来小包只看 `CORE_RESTRUCTURE_PLAN.md`。
 - `core.plan_engine`、benchmark runner、composition engine、CAD validation runner 已进入可运行原型状态。
 - blank-shell benchmark、office alpha benchmark、interior delivery benchmark 已有可重复运行的用例。
 - 真实 CAD 验证已覆盖 baseline、基础图元能力探针和 3 个简单 interior composition cases，并取得 `geometry_verified` 证据。

@@ -1,0 +1,36 @@
+{
+  "version": "0.1",
+  "suite_id": "scene-alpha-preferences",
+  "description": "Locked Scene Alpha scenarios, preference differences (X-SCENE-01), shared blank_shell benchmark (X-SCENE-02), and explanation template (X-SCENE-04).",
+  "benchmark_suite": "examples/benchmarks/scene_alpha_benchmark.json",
+  "explanation_template": "docs/verification/scene_alpha_explanation_template.md",
+  "acceptance_doc": "docs/verification/scene_alpha_acceptance.md",
+  "parent_package": "X-SCENE-ALPHA",
+  "parent_package_status": "complete",
+  "scenarios": [
+    {
+      "scenario": "office",
+      "preferences_path": "agents/office/preferences.json",
+      "expected": {
+        "primary_object_type": "table",
+        "preferred_circulation_strategy": "straight_spine"
+      }
+    },
+    {
+      "scenario": "residential",
+      "preferences_path": "agents/residential/preferences.json",
+      "expected": {
+        "primary_object_type": "cabinet",
+        "preferred_circulation_strategy": "along_wall"
+      }
+    },
+    {
+      "scenario": "restaurant",
+      "preferences_path": "agents/restaurant/preferences.json",
+      "expected": {
+        "primary_object_type": "chair",
+        "preferred_circulation_strategy": "l_spine"
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "version": "0.1",
+  "brief_id": "brief-sample-blank-shell-too-small",
+  "domain": "generic",
+  "user_request": "Demonstrate structured blocked layout when project sample shell is too small for required workstations.",
+  "intent": "blank_shell_layout_preview",
+  "source_language": "en",
+  "constraints": ["preview_only", "use_CODEX_PREVIEW", "manual_shell_input"],
+  "assumptions": ["failure benchmark only; not a real project"],
+  "needs_confirmation": false
+}

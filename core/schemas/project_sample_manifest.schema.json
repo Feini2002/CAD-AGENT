@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project_sample_manifest.schema.json",
+  "title": "PROJECT_SAMPLE_MANIFEST",
+  "type": "object",
+  "required": [
+    "version",
+    "sample_id",
+    "display_name",
+    "domain",
+    "deidentified",
+    "cad_policy",
+    "input_files",
+    "expected_artifacts",
+    "evidence_claim"
+  ],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "sample_id": { "type": "string", "minLength": 1 },
+    "display_name": { "type": "string", "minLength": 1 },
+    "domain": {
+      "type": "string",
+      "enum": ["generic", "residential", "retail", "office", "restaurant", "exhibition", "hotel", "education", "healthcare", "industrial", "custom"]
+    },
+    "deidentified": { "type": "boolean" },
+    "description": { "type": "string" },
+    "cad_policy": {
+      "type": "object",
+      "required": ["preview_layer_only", "allow_formal_layers", "allow_save_dwg"],
+      "properties": {
+        "preview_layer_only": { "type": "boolean" },
+        "allow_formal_layers": { "type": "boolean" },
+        "allow_save_dwg": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "input_files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["role", "path", "schema"],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["shell_model", "project_model", "design_brief", "cad_context", "drawing_model"]
+          },
+          "path": { "type": "string" },
+          "schema": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "expected_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "shell_model",
+          "project_model",
+          "circulation_model",
+          "function_zone",
+          "layout_proposal",
+          "design_proposal",
+          "cad_plan",
+          "dry_run_report",
+          "verification_report",
+          "benchmark_summary"
+        ]
+      }
+    },
+    "evidence_claim": {
+      "type": "string",
+      "enum": ["non_cad_pipeline_only", "non_cad_with_optional_cad_preview"]
+    }
+  },
+  "additionalProperties": false
+}

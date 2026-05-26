@@ -9,15 +9,20 @@ from typing import Any
 from core.block_engine.block_library import load_block_library
 from core.drawing_analysis.shell_loader import load_manual_shell
 from core.layout_engine.path_generation import generate_circulation_candidates
-from core.layout_engine.placement import create_zone_placements
-from core.layout_engine.zone_splitter import split_zones
 from core.object_engine.parametric_objects import create_object_spec
+from core.path_safety import (
+    is_relative_to,
+    resolve_under_project_output,
+    resolve_under_project_root,
+)
 from core.plan_engine.dry_run_report import create_dry_run_report
 from core.plan_engine.model_to_plan import model_to_plans
 from core.project_model.project_builder import build_project_model
 from core.proposal_engine.design_proposal import create_design_proposal
 from core.schemas.validator import load_json
+from core.layout_engine.office_layout_failure import evaluate_blank_shell_layout_expectation
 from core.verification.verification_report import build_verification_report, summarize_verification_reports
+from core.workflows.blank_shell_candidates import build_blank_shell_candidate_sets
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -30,30 +35,12 @@ def _find_project_root(path: Path) -> Path:
     return PROJECT_ROOT
 
 
-def _is_relative_to(path: Path, root: Path) -> bool:
-    try:
-        path.relative_to(root)
-    except ValueError:
-        return False
-    return True
-
-
 def _resolve_under_root(root: Path, value: str, label: str) -> Path:
-    candidate = Path(value)
-    if not candidate.is_absolute():
-        candidate = root / candidate
-    resolved = candidate.resolve()
-    if not _is_relative_to(resolved, root.resolve()):
-        raise ValueError(f"{label} must stay under project root")
-    return resolved
+    return resolve_under_project_root(root, Path(value), label=label)
 
 
 def _resolve_output_dir(root: Path, output_dir: Path) -> Path:
-    candidate = output_dir if output_dir.is_absolute() else root / output_dir
-    resolved = candidate.resolve()
-    if not _is_relative_to(resolved, (root / "output").resolve()):
-        raise ValueError("output_dir must stay under project output directory")
-    return resolved
+    return resolve_under_project_output(root, output_dir, label="output_dir")
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -189,50 +176,6 @@ def _layout_from_placements(
     }
 
 
-def _choose_zone_placements(
-    *,
-    zones: list[dict[str, Any]],
-    shell: dict[str, Any],
-    object_types: list[str],
-    block_library: dict[str, Any],
-    preferences: dict[str, Any],
-    path_surfaces: list[dict[str, Any]],
-) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    candidate_zones = zones or [
-        {
-            "zone_id": "zone-fallback",
-            "geometry": shell["boundary"],
-            "boundary": shell["boundary"],
-            "score": 0,
-        }
-    ]
-    best_zone = candidate_zones[0]
-    best_placements: list[dict[str, Any]] = []
-    best_key: tuple[bool, int, int, float] | None = None
-    for zone in candidate_zones:
-        placements = create_zone_placements(
-            [zone],
-            object_types=object_types,
-            block_library=block_library,
-            preferences=preferences,
-            path_surfaces=path_surfaces,
-            fixed_obstacles=shell.get("fixed_obstacles", []),
-        )
-        placed_count = sum(1 for placement in placements if placement.get("status") == "placed")
-        failed_count = len(placements) - placed_count
-        key = (
-            failed_count == 0,
-            placed_count,
-            -failed_count,
-            float(zone.get("score", 0)),
-        )
-        if best_key is None or key > best_key:
-            best_key = key
-            best_zone = zone
-            best_placements = placements
-    return best_zone, best_placements
-
-
 def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[str, Any]:
     workflow_path = workflow_path.resolve()
     root = _find_project_root(workflow_path)
@@ -240,7 +183,7 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
         output_dir = _resolve_output_dir(root, output_dir)
     except ValueError as exc:
         return {"status": "invalid", "errors": [str(exc)], "artifacts": {}, "metrics": {}}
-    if not _is_relative_to(workflow_path, root.resolve()):
+    if not is_relative_to(workflow_path, root.resolve()):
         return {"status": "invalid", "errors": ["workflow_path must stay under project root"], "artifacts": {}, "metrics": {}}
     if not workflow_path.exists():
         return {"status": "invalid", "errors": ["workflow file does not exist"], "artifacts": {}, "metrics": {}}
@@ -270,23 +213,36 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
 
     project_model = build_project_model(brief, drawing, shell_model=shell).project_model
     circulation_candidates = generate_circulation_candidates(project_model, preferences.get("circulation", preferences))
-    circulation_for_zones = next(
-        (candidate for candidate in circulation_candidates if candidate.get("strategy") == "straight_spine"),
-        circulation_candidates[0],
-    )
-    zones = split_zones(shell, circulation_for_zones, constraints={})
     try:
         block_library = load_block_library(resolved_inputs["block_library"]) if inputs.get("block_library") else load_block_library()
     except (OSError, json.JSONDecodeError, ValueError, KeyError, TypeError) as exc:
         return {"status": "invalid", "errors": [f"block library is invalid: {type(exc).__name__}: {exc}"], "artifacts": {}, "metrics": {}}
-    target_zone, placements = _choose_zone_placements(
-        zones=zones,
+    candidate_sets, circulation_for_zones, zones, target_zone, placements = build_blank_shell_candidate_sets(
         shell=shell,
+        circulation_candidates=circulation_candidates,
         object_types=[str(item) for item in object_types],
         block_library=block_library,
-        preferences=preferences.get("placement", {}),
-        path_surfaces=circulation_for_zones["paths"][0].get("path_surface", []),
+        placement_preferences=preferences.get("placement", {}),
+        scene_preferences=preferences,
+        constraints={},
     )
+    layout_failure = evaluate_blank_shell_layout_expectation(workflow, placements=placements)
+    if layout_failure is not None:
+        return {
+            "status": layout_failure["status"],
+            "errors": layout_failure["blocked_reasons"],
+            "artifacts": {},
+            "metrics": {
+                "failure_category": layout_failure["failure_category"],
+                "blocked_reasons": layout_failure["blocked_reasons"],
+                "placements": len(placements),
+                "shell_id": str(shell.get("shell_id", "")),
+                "fixed_obstacle_count": len(shell.get("fixed_obstacles", [])),
+                "no_place_zone_count": len(shell.get("no_place_zones", [])),
+                "circulation_candidates": len(circulation_candidates),
+            },
+        }
+
     object_specs = [_object_spec_from_placement(placement) for placement in placements]
     layout = _layout_from_placements(project_model=project_model, object_specs=object_specs, placements=placements)
     proposal = create_design_proposal(
@@ -294,7 +250,11 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
         project_model=project_model,
         object_spec=object_specs[0],
         layout_proposal=layout,
+        candidate_sets=candidate_sets,
+        object_types=[str(item) for item in object_types],
+        preferences=preferences,
     )
+    proposal_summary = proposal.get("proposal_comparison_summary")
     plan_result = model_to_plans(
         object_specs=object_specs,
         layout_proposal=layout,
@@ -312,10 +272,12 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
         "shell_model": output_dir / "shell_model.json",
         "project_model": output_dir / "project_model.json",
         "circulation_candidates": output_dir / "circulation_candidates.json",
+        "candidate_sets": output_dir / "candidate_sets.json",
         "function_zones": output_dir / "function_zones.json",
         "placements": output_dir / "placements.json",
         "layout_proposal": output_dir / "layout_proposal.json",
         "design_proposal": output_dir / "design_proposal.json",
+        "proposal_comparison_summary": output_dir / "proposal_comparison_summary.json",
         "cad_plan": output_dir / "cad_plan.json",
         "cad_plans": output_dir / "cad_plans.json",
         "dry_run_report": output_dir / "dry_run_report.json",
@@ -327,10 +289,13 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
     _write_json(paths["shell_model"], shell)
     _write_json(paths["project_model"], project_model)
     _write_json(paths["circulation_candidates"], circulation_candidates)
+    _write_json(paths["candidate_sets"], candidate_sets)
     _write_json(paths["function_zones"], zones)
     _write_json(paths["placements"], placements)
     _write_json(paths["layout_proposal"], layout)
     _write_json(paths["design_proposal"], proposal)
+    if isinstance(proposal_summary, dict):
+        _write_json(paths["proposal_comparison_summary"], proposal_summary)
     _write_json(paths["cad_plan"], cad_plans[0])
     _write_json(paths["cad_plans"], cad_plans)
     for plan_path, cad_plan in zip(cad_plan_paths, cad_plans):
@@ -343,14 +308,46 @@ def run_blank_shell_pipeline(workflow_path: Path, *, output_dir: Path) -> dict[s
     _write_json(paths["verification_report"], verification_report)
     _write_json(paths["verification_reports"], verification_reports)
 
-    metrics = {
+    metrics: dict[str, Any] = {
         "circulation_candidates": len(circulation_candidates),
+        "zone_placement_candidates": candidate_sets["counts"]["zone_placement_candidates"],
+        "candidate_sets": candidate_sets["counts"],
         "zones": len(zones),
         "placements": len(placements),
+        "selected_zone_id": str(target_zone.get("zone_id", "")),
+        "selected_circulation_strategy": str(circulation_for_zones.get("strategy", "")),
+        "preferences_scenario": str(preferences.get("scenario", "")),
+        "preferences_path": str(inputs.get("preferences", "")),
         "object_types": sorted({str(placement.get("object_type")) for placement in placements if placement.get("object_type")}),
         "cad_plans": len(cad_plans),
         "failed_checks": sum(1 for check in layout["candidates"][0]["checks"] if check["status"] == "fail"),
+        "no_place_zone_count": len(shell.get("no_place_zones", [])),
+        "fixed_obstacle_count": len(shell.get("fixed_obstacles", [])),
+        "shell_id": str(shell.get("shell_id", "")),
     }
+    comparison_detail = proposal.get("comparison_detail")
+    if isinstance(comparison_detail, dict):
+        comparison_metrics = comparison_detail.get("metrics", {})
+        continuity = comparison_detail.get("circulation_continuity", {})
+        metrics.update(
+            {
+                "has_comparison_detail": True,
+                "circulation_branch_count": int(comparison_metrics.get("circulation_branch_count", 0)),
+                "object_coverage_rate": float(comparison_metrics.get("object_coverage_rate", 0)),
+                "selected_placement_failed_count": int(comparison_metrics.get("selected_placement_failed_count", 0)),
+                "failed_reason_distribution": comparison_metrics.get("failed_reason_distribution", {}),
+                "selected_failed_reason_distribution": comparison_metrics.get("selected_failed_reason_distribution", {}),
+                "circulation_continuity": str(continuity.get("continuity", "")),
+            }
+        )
+    else:
+        metrics["has_comparison_detail"] = False
+    if isinstance(proposal_summary, dict):
+        from core.proposal_engine.comparison_summary import flatten_proposal_comparison_summary_metrics
+
+        metrics.update(flatten_proposal_comparison_summary_metrics(proposal_summary))
+    else:
+        metrics["has_proposal_comparison_summary"] = False
     return {
         "status": "ok",
         "artifacts": {key: str(path) for key, path in paths.items()},

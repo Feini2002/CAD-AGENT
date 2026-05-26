@@ -105,6 +105,12 @@
         },
         "include_dimensions": {
           "type": "boolean"
+        },
+        "layer_role": {
+          "type": "string"
+        },
+        "semantic_layer": {
+          "type": "string"
         }
       },
       "additionalProperties": true
@@ -116,6 +122,15 @@
     },
     "needs_confirmation": {
       "type": "boolean"
+    },
+    "drawing_standard_profile_id": {
+      "type": "string"
+    },
+    "object_role": {
+      "type": "string"
+    },
+    "drawing_standard_resolution": {
+      "type": "object"
     }
   },
   "additionalProperties": false

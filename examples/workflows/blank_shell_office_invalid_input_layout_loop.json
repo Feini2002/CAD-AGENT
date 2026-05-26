@@ -1,0 +1,9 @@
+{
+  "version": "0.1",
+  "workflow_id": "blank-shell-office-invalid-input-layout-loop",
+  "inputs": {
+    "design_brief": "examples/design_briefs/blank_shell_layout_brief.json",
+    "drawing_model": "examples/drawing_models/minimal_empty_room.json"
+  },
+  "object_types": ["desk", "chair"]
+}

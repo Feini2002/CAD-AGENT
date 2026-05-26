@@ -1,0 +1,35 @@
+{
+  "version": "0.1",
+  "suite_id": "scene-beta-office",
+  "description": "BETA-SCENE-01: office scene beta preferences + unified object/micro-scene/failure benchmark.",
+  "parent_package": "BETA-SCENE",
+  "active_scenarios": ["office", "residential", "restaurant"],
+  "benchmark_suite": "examples/benchmarks/office_scene_beta_benchmark.json",
+  "preferences_path": "agents/office/preferences.json",
+  "expected": {
+    "scenario": "office",
+    "tier": "beta",
+    "primary_object_type": "table",
+    "preferred_circulation_strategy": "straight_spine"
+  },
+  "residential": {
+    "preferences_path": "agents/residential/preferences.json",
+    "benchmark_suite": "examples/benchmarks/residential_scene_beta_benchmark.json",
+    "expected": {
+      "scenario": "residential",
+      "tier": "beta",
+      "primary_object_type": "cabinet",
+      "preferred_circulation_strategy": "along_wall"
+    }
+  },
+  "restaurant": {
+    "preferences_path": "agents/restaurant/preferences.json",
+    "benchmark_suite": "examples/benchmarks/restaurant_scene_beta_benchmark.json",
+    "expected": {
+      "scenario": "restaurant",
+      "tier": "beta",
+      "primary_object_type": "chair",
+      "preferred_circulation_strategy": "l_spine"
+    }
+  }
+}

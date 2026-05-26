@@ -7,7 +7,12 @@ import unittest
 from tests.bootstrap import PROJECT_ROOT
 
 from core.proposal_engine.design_proposal import create_design_proposal
-from core.proposal_engine.proposal_comparison import compare_layout_candidates
+from core.proposal_engine.proposal_comparison import build_blank_shell_comparison_detail, compare_layout_candidates
+from core.workflows.blank_shell_pipeline import build_blank_shell_candidate_sets
+from core.layout_engine.path_generation import generate_circulation_candidates
+from core.project_model.project_builder import build_project_model
+from core.drawing_analysis.shell_loader import load_manual_shell
+from core.block_engine.block_library import load_block_library
 from core.proposal_engine.proposal_to_plan import proposal_to_plans
 from core.schemas.validator import validate_value
 
@@ -67,6 +72,53 @@ class ProposalMultiCandidateTests(unittest.TestCase):
         plans = proposal_to_plans(proposal, object_spec=object_spec, layout_proposal=multi_layout(), confirmed=True)
 
         self.assertEqual(plans[0]["placement"]["base_point"], [1000, 0, 0])
+
+    def test_blank_shell_comparison_detail_is_structured_and_assertable(self) -> None:
+        workflow = load_example("examples/workflows/blank_shell_layout_loop.json")
+        inputs = workflow["inputs"]
+        brief = load_example(inputs["design_brief"])
+        drawing = load_example(inputs["drawing_model"])
+        shell = load_manual_shell(PROJECT_ROOT / inputs["shell_model"])
+        project_model = build_project_model(brief, drawing, shell_model=shell).project_model
+        circulation_candidates = generate_circulation_candidates(project_model, {})
+        candidate_sets, *_ = build_blank_shell_candidate_sets(
+            shell=shell,
+            circulation_candidates=circulation_candidates,
+            object_types=workflow.get("object_types", []),
+            block_library=load_block_library(),
+            placement_preferences={},
+        )
+        layout = {
+            "version": "0.1",
+            "layout_id": "layout-test",
+            "project_id": project_model["project_id"],
+            "candidates": [
+                {
+                    "candidate_id": "candidate-blank-shell-zone-placement",
+                    "score": 1.0,
+                    "placements": [],
+                    "checks": [{"name": "placement:desk", "status": "pass"}],
+                }
+            ],
+        }
+        proposal = create_design_proposal(
+            brief=brief,
+            project_model=project_model,
+            object_spec=load_example("examples/object_specs/minimal_cabinet_object.json"),
+            layout_proposal=layout,
+            candidate_sets=candidate_sets,
+            object_types=workflow.get("object_types", []),
+        )
+        detail = proposal["comparison_detail"]
+        self.assertGreaterEqual(detail["metrics"]["circulation_branch_count"], 2)
+        self.assertGreaterEqual(detail["metrics"]["zone_placement_candidate_count"], 2)
+        self.assertIn("object_coverage_rate", detail["metrics"])
+        self.assertIn("failed_reason_distribution", detail["metrics"])
+        self.assertIn(detail["circulation_continuity"]["continuity"], {"pass", "degraded", "blocked", "unknown"})
+        self.assertGreaterEqual(len(detail["ranking_reasons"]), 2)
+        self.assertEqual(proposal["comparison_summary"], detail["narrative"])
+        self.assertFalse(proposal["needs_confirmation"])
+        self.assertGreaterEqual(len(proposal["candidates"]), 2)
 
     def test_comparison_records_scene_weight_source(self) -> None:
         comparison = compare_layout_candidates(

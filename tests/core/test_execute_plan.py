@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
+import types
 import unittest
 
 
 from tests.bootstrap import PROJECT_ROOT
 
 from core.execution.execute_plan import execute_plan_file
-from core.cad_io.autocad_com import AutoCADComDriver
+from core.cad_io.autocad_com import CONTROLLED_BLOCK_NAME, PREVIEW_LAYER, AutoCADComDriver
 from tests.helpers import artifact_path
 
 
@@ -194,6 +195,85 @@ class ExecutePlanTests(unittest.TestCase):
         self.assertEqual(driver.calls[0][0], "insert_block_alpha")
         self.assertEqual(driver.calls[0][1]["block_name"], "CODEX_TEST_BLOCK_001")
         self.assertEqual(driver.calls[0][1]["layer"], "CODEX_PREVIEW")
+
+    def test_insert_block_alpha_autocad_driver_matches_execute_plan_contract(self) -> None:
+        class FakeBlockReference:
+            Handle = "BR-EXEC"
+
+        class FakeBlockRecord:
+            def __init__(self) -> None:
+                self.entities = []
+                width = 900.0
+                depth = 450.0
+                corners = [
+                    (0.0, 0.0, 0.0),
+                    (width, 0.0, 0.0),
+                    (width, depth, 0.0),
+                    (0.0, depth, 0.0),
+                ]
+                for index, (start, end) in enumerate(
+                    [
+                        (corners[0], corners[1]),
+                        (corners[1], corners[2]),
+                        (corners[2], corners[3]),
+                        (corners[3], corners[0]),
+                    ],
+                    start=1,
+                ):
+                    self.entities.append(
+                        types.SimpleNamespace(
+                            Handle=f"DEF-{index}",
+                            ObjectName="AcDbLine",
+                            Layer="0",
+                            StartPoint=start,
+                            EndPoint=end,
+                        )
+                    )
+
+            @property
+            def Count(self) -> int:
+                return len(self.entities)
+
+            def Item(self, index: int) -> object:
+                return self.entities[index]
+
+            def AddLine(self, *_: object) -> FakeBlockReference:
+                return FakeBlockReference()
+
+        class FakeBlocks:
+            def __init__(self) -> None:
+                self.names = {CONTROLLED_BLOCK_NAME}
+                self.record = FakeBlockRecord()
+
+            def Item(self, name: str) -> object:
+                if name not in self.names:
+                    raise KeyError(name)
+                return self.record
+
+            def Add(self, *_: object) -> FakeBlockRecord:
+                raise AssertionError("should reuse existing block definition")
+
+        class FakeModelSpace:
+            def InsertBlock(self, *_args: object, **_kwargs: object) -> FakeBlockReference:
+                return FakeBlockReference()
+
+        class FakeLayers:
+            def Item(self, _layer: str) -> object:
+                return object()
+
+        driver = object.__new__(AutoCADComDriver)
+        driver.doc = types.SimpleNamespace(Blocks=FakeBlocks(), Layers=FakeLayers())
+        driver.model_space = FakeModelSpace()
+        driver._point = lambda values: ("point", tuple(float(value) for value in values))  # type: ignore[method-assign]
+        driver._handle = AutoCADComDriver._handle  # type: ignore[method-assign]
+        driver.ensure_layer = lambda layer: None  # type: ignore[method-assign]
+        driver._apply_common = lambda entity, **kwargs: None  # type: ignore[method-assign]
+
+        plan_path = PROJECT_ROOT / "examples/plans/insert_block_alpha_test.json"
+        result = execute_plan_file(plan_path, driver=driver)
+
+        self.assertEqual(result["created_handles"], ["BR-EXEC"])
+        self.assertEqual(result["layer"], PREVIEW_LAYER)
 
     def test_insert_block_alpha_rejects_formal_layer_during_execution(self) -> None:
         plan = {

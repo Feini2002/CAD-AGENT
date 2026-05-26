@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 from core.block_engine.block_placement import create_block_insertion_intent
-from core.verification.evidence_contract import NON_CAD_GEOMETRY_ACCURACY, SCREENSHOT_NOT_APPLICABLE
+from core.verification.evidence_contract import (
+    EVIDENCE_DRY_RUN_VALID_PLAN_ONLY,
+    NON_CAD_GEOMETRY_ACCURACY,
+    SCREENSHOT_NOT_APPLICABLE,
+)
 
 
 PREVIEW_LAYER = "CODEX_PREVIEW"
 BLOCK_REFERENCE_TYPE = "block_reference"
+CONTROLLED_BLOCK_ID = "controlled-test-block-001"
+CONTROLLED_BLOCK_NAME = "CODEX_TEST_BLOCK_001"
 
 
 def _require(condition: bool, message: str, errors: list[str]) -> None:
@@ -40,13 +47,27 @@ def validate_insert_block_alpha(plan: dict[str, Any]) -> list[str]:
         return errors
 
     _require(obj.get("type") == BLOCK_REFERENCE_TYPE, "object.type must be 'block_reference'.", errors)
-    _require(bool(str(obj.get("block_id", "")).strip()), "object.block_id is required.", errors)
+    block_id = str(obj.get("block_id", "")).strip()
+    _require(bool(block_id), "object.block_id is required.", errors)
+    if block_id:
+        _require(
+            block_id == CONTROLLED_BLOCK_ID,
+            f"insert_block_alpha only allows object.block_id={CONTROLLED_BLOCK_ID}.",
+            errors,
+        )
     _require(bool(str(obj.get("name", "")).strip()), "object.name is required.", errors)
 
     cad_identity = obj.get("cad_identity")
     _require(isinstance(cad_identity, dict), "object.cad_identity is required.", errors)
     if isinstance(cad_identity, dict):
-        _require(bool(str(cad_identity.get("block_name", "")).strip()), "object.cad_identity.block_name is required.", errors)
+        block_name = str(cad_identity.get("block_name", "")).strip()
+        _require(bool(block_name), "object.cad_identity.block_name is required.", errors)
+        if block_name:
+            _require(
+                block_name == CONTROLLED_BLOCK_NAME,
+                f"insert_block_alpha only allows object.cad_identity.block_name={CONTROLLED_BLOCK_NAME}.",
+                errors,
+            )
 
     _require(placement.get("mode") == "absolute", "insert_block_alpha only supports placement.mode=absolute.", errors)
     base_point = placement.get("base_point")
@@ -64,14 +85,35 @@ def validate_insert_block_alpha(plan: dict[str, Any]) -> list[str]:
         _require(len(scale) == 3, "placement.scale must contain exactly three values.", errors)
         _require(all(isinstance(value, (int, float)) for value in scale), "placement.scale values must be numbers.", errors)
         _require(all(value > 0 for value in scale), "placement.scale values must be greater than 0.", errors)
+        if len(scale) == 3 and all(isinstance(value, (int, float)) for value in scale):
+            _require(
+                scale[0] == scale[1] == scale[2],
+                "insert_block_alpha alpha only supports uniform scale.",
+                errors,
+            )
 
     layer = drawing.get("layer")
     _require(bool(layer), "drawing.layer is required.", errors)
     _require(layer == PREVIEW_LAYER, f"insert_block_alpha only allows drawing.layer={PREVIEW_LAYER}.", errors)
 
     attributes = obj.get("attributes")
+    attribute_probe = bool(obj.get("attribute_readback_probe"))
     if attributes is not None:
         _require(isinstance(attributes, dict), "object.attributes must be an object when provided.", errors)
+        if attribute_probe and isinstance(attributes, dict):
+            _require(bool(attributes), "attribute_readback_probe requires non-empty object.attributes.", errors)
+            for tag, value in attributes.items():
+                if not str(tag).strip():
+                    errors.append("object.attributes keys must be non-empty tag names.")
+                if not isinstance(value, (str, int, float)):
+                    errors.append(f"object.attributes[{tag!r}] must be a scalar value.")
+        elif attributes and not attribute_probe:
+            errors.append(
+                "object.attributes is only allowed when object.attribute_readback_probe is true (BETA-CAD-BLOCK-02 probe plans)."
+            )
+
+    if attribute_probe and attributes is None:
+        errors.append("object.attribute_readback_probe requires object.attributes.")
 
     return errors
 
@@ -83,16 +125,39 @@ def _block_dict_from_plan(plan: dict[str, Any]) -> dict[str, Any]:
     block_id = str(obj["block_id"])
     block_name = str(cad_identity.get("block_name", block_id))
 
+    scale = placement.get("scale", [1, 1, 1])
+    scale_factor = float(scale[0])
     try:
         from core.block_engine.block_library import load_block_library, normalize_block
 
         for block in load_block_library().get("blocks", []):
             if isinstance(block, dict) and block.get("block_id") == block_id:
-                return normalize_block(block)
+                normalized = deepcopy(normalize_block(block))
+                if scale_factor != 1.0:
+                    for size_key in ("size", "footprint_2d"):
+                        size = normalized.get(size_key)
+                        if isinstance(size, dict):
+                            for axis in ("width", "depth", "height"):
+                                if isinstance(size.get(axis), (int, float)):
+                                    size[axis] = float(size[axis]) * scale_factor
+                    anchor_points = normalized.get("anchor_points")
+                    if isinstance(anchor_points, dict):
+                        for key, point in list(anchor_points.items()):
+                            if isinstance(point, list):
+                                anchor_points[key] = [
+                                    float(value) * scale_factor if isinstance(value, (int, float)) else value
+                                    for value in point
+                                ]
+                    insertion_point = normalized.get("insertion_point")
+                    if isinstance(insertion_point, list):
+                        normalized["insertion_point"] = [
+                            float(value) * scale_factor if isinstance(value, (int, float)) else value
+                            for value in insertion_point
+                        ]
+                return normalized
     except (OSError, ValueError):
         pass
 
-    scale = placement.get("scale", [1, 1, 1])
     width = 900 * float(scale[0])
     depth = 450 * float(scale[1])
     return {
@@ -127,6 +192,14 @@ def create_insert_block_alpha_dry_run_report(plan: dict[str, Any]) -> dict[str, 
             "entities": [],
             "human_summary": "INVALID CAD_PLAN",
         }
+
+    if plan.get("drawing_standard_profile_id"):
+        from core.drawing_standard.drawing_standard_profile import apply_drawing_standard_to_plan
+
+        plan = apply_drawing_standard_to_plan(
+            dict(plan),
+            object_role=str(plan.get("object_role", "block_insert")),
+        )
 
     obj = plan["object"]
     placement = plan["placement"]
@@ -211,7 +284,7 @@ def create_insert_block_alpha_dry_run_report(plan: dict[str, Any]) -> dict[str, 
             }
         ],
         "checks": checks,
-        "evidence_state": "dry_run_valid_plan_only",
+        "evidence_state": EVIDENCE_DRY_RUN_VALID_PLAN_ONLY,
         "geometry_accuracy": NON_CAD_GEOMETRY_ACCURACY,
         "screenshot_role": SCREENSHOT_NOT_APPLICABLE,
         "human_summary": human_summary,

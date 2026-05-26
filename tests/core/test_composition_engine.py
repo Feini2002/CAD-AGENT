@@ -45,6 +45,25 @@ class CompositionEngineTests(unittest.TestCase):
         self.assertTrue({"dining_surface", "dining_seat"}.issubset({item["role"] for item in dining["objects"]}))
         self.assertTrue({"work_surface", "task_seat", "screen_zone"}.issubset({item["role"] for item in office["objects"]}))
 
+    def test_office_micro_scene_compositions_expose_bindings_and_clearance(self) -> None:
+        pair = create_composition_spec("single_desk_chair_pair", persona_role="office_planner")
+        back_cabinet = create_composition_spec("desk_with_back_cabinet", persona_role="office_planner")
+        shared_aisle = create_composition_spec("two_workstations_shared_aisle", persona_role="office_planner")
+        entry = create_composition_spec("entry_reception_clearance", persona_role="office_planner")
+
+        self.assertEqual(len(pair["bindings"]), 1)
+        self.assertEqual(pair["clearance_refs"][0]["role"], "chair_pullback_clearance")
+        self.assertEqual(len(back_cabinet["clearance_refs"]), 2)
+        self.assertEqual(shared_aisle["circulation"][0]["role"], "main_aisle")
+        self.assertEqual(entry["clearance_refs"][0]["role"], "entry_clearance")
+
+        for composition in (pair, back_cabinet, shared_aisle, entry):
+            plans = composition_to_cad_plans(composition)
+            self.assertEqual(len(plans), len(composition["objects"]))
+            for plan in plans:
+                self.assertEqual(validate_plan(plan), [])
+                self.assertEqual(create_dry_run_report(plan)["status"], "valid")
+
     def test_composition_preview_svg_is_visual_aid_artifact(self) -> None:
         composition = create_composition_spec("office_desk_combo", persona_role="office_planner")
         plans = composition_to_cad_plans(composition)

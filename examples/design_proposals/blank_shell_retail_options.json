@@ -26,7 +26,32 @@
       "risks": ["Longer walking path than a straight spine."],
       "failed_checks": [],
       "applicable_scenarios": ["retail", "exhibition", "office"],
-      "confirmation_questions": ["Confirm whether the longer route is acceptable for the store concept."]
+      "confirmation_questions": ["Confirm whether the longer route is acceptable for the store concept."],
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 1,
+        "base_score": 0.82,
+        "scene_weight": 0.0,
+        "weighted_score": 0.82,
+        "weight_source": "default",
+        "components": {
+          "layout_base": 0.82,
+          "check_penalty": 0.0,
+          "preference_boost": 0.0
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "highest_weighted_score",
+          "message": "Rank 1 with weighted_score 0.8200.",
+          "component": "weighted_score"
+        },
+        {
+          "code": "no_failed_checks",
+          "message": "No failed layout checks in the current non-CAD model.",
+          "component": "layout_base"
+        }
+      ]
     },
     {
       "candidate_id": "candidate-straight-spine",
@@ -37,7 +62,27 @@
       "risks": ["Conflicts with fixed_obstacle:column-01.", "Does not connect the rear fire exit in this first pass."],
       "failed_checks": ["fixed_obstacle_overlap", "required_connection_missing"],
       "applicable_scenarios": ["quick_preview"],
-      "confirmation_questions": ["Should the spine route bend around the column instead?"]
+      "confirmation_questions": ["Should the spine route bend around the column instead?"],
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 2,
+        "base_score": 0.42,
+        "scene_weight": 0.0,
+        "weighted_score": 0.42,
+        "weight_source": "default",
+        "components": {
+          "layout_base": 0.42,
+          "check_penalty": -0.7,
+          "preference_boost": 0.0
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "failed_checks_present",
+          "message": "Failed checks: fixed_obstacle_overlap, required_connection_missing.",
+          "component": "check_penalty"
+        }
+      ]
     }
   ],
   "confirmed_candidate_id": "",

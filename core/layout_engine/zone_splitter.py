@@ -149,12 +149,38 @@ def _zone_from_rect(
     }
 
 
+def _union_path_surface_bbox(path: dict[str, Any]) -> dict[str, list[float]]:
+    """Bounding box covering every circulation strip (L-shaped paths need the union, not segment[0])."""
+
+    surfaces = path.get("path_surface", [])
+    if not surfaces:
+        raise ValueError("path.path_surface must not be empty")
+    mins_x: list[float] = []
+    mins_y: list[float] = []
+    maxs_x: list[float] = []
+    maxs_y: list[float] = []
+    for surface in surfaces:
+        if not isinstance(surface, dict):
+            continue
+        bbox = _bbox(surface, label="path_surface")
+        mins_x.append(bbox["min"][0])
+        mins_y.append(bbox["min"][1])
+        maxs_x.append(bbox["max"][0])
+        maxs_y.append(bbox["max"][1])
+    if not mins_x:
+        raise ValueError("path.path_surface must contain at least one bbox surface")
+    return {
+        "min": [min(mins_x), min(mins_y)],
+        "max": [max(maxs_x), max(maxs_y)],
+    }
+
+
 def split_zones(
     shell_model: dict[str, Any],
     circulation_model: dict[str, Any],
     constraints: Any,
 ) -> list[dict[str, Any]]:
-    """Split a bbox shell around the first circulation path surface."""
+    """Split a bbox shell around the circulation path envelope."""
 
     boundary = shell_model.get("boundary", {})
     if not isinstance(boundary, dict) or boundary.get("type", "bbox") != "bbox":
@@ -164,11 +190,11 @@ def split_zones(
         return []
     path = paths[0]
     surfaces = path.get("path_surface", [])
-    if not surfaces or not isinstance(surfaces[0], dict):
+    if not surfaces:
         return []
 
     shell_bbox = _bbox(boundary, label="shell.boundary")
-    strip = _bbox(surfaces[0], label="path_surface[0]")
+    strip = _union_path_surface_bbox(path)
     strip_width = strip["max"][0] - strip["min"][0]
     strip_depth = strip["max"][1] - strip["min"][1]
     zones: list[dict[str, Any]] = []

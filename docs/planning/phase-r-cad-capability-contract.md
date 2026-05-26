@@ -66,6 +66,20 @@
 }
 ```
 
+## 受控块定义解析（`R-BLOCK-CAD-01`）
+
+`AutoCADComDriver.ensure_controlled_block_definition()` 只服务受控测试块，不接公司块库：
+
+1. 优先复用当前活动 DWG 中已有的 `CODEX_TEST_BLOCK_001` 块表记录。
+2. 若缺失，则在块表内用 layer `0` 写入最小矩形几何（默认 100×50）创建临时定义；**不保存 DWG、不写正式项目图层**。
+3. 若查找或创建失败，返回结构化 `definition_missing`（`status` + `failure_category` + `block_name` + `message`），供后续 `insert_block_alpha` 与 validation runner 机器断言。
+
+`R-BLOCK-CAD-02` 已落地 `AutoCADComDriver.insert_block_alpha()`：先 `ensure_controlled_block_definition()`，再 `ModelSpace.InsertBlock` 写入 `CODEX_PREVIEW`；仅支持统一 scale，属性块仍 deferred。
+
+`R-BLOCK-CAD-03` 已落地 `block_reference` readback 标准化：`normalize_com_entity()` 输出 `block_name`、`insertion_point`、`rotation`（度）、`scale`、`bbox`；`check_block_reference_readback()` 可机器断言 `readback_missing` / `block_name_mismatch` / `anchor_mismatch` / `rotation_mismatch`。`R-BLOCK-CAD-04` 已把 block alpha 接入 `run_cad_validation.py`：no-CAD 输出 `deferred_cad_readback_required`，顶层 `block_alpha.geometry_verified=false`。
+
+`R-BLOCK-CAD-05` 已在真实 AutoCAD 完成受控样本验收：`output/validation_runs/r-block-alpha-cad/block_alpha_report.json` 为 `readback_geometry_verified`（`created_handles` 定向 readback 全 pass）。仅可声称受控 `CODEX_TEST_BLOCK_001` + `insert_block_alpha_test.json`；不得扩大到公司块库、属性块或任意 CAD_PLAN。
+
 ## Block Alpha 验收路径
 
 | 步骤 | 内容 | 通过条件 |

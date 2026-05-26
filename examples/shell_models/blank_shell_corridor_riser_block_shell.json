@@ -1,0 +1,51 @@
+{
+  "version": "0.1",
+  "shell_id": "shell-blank-corridor-riser-block",
+  "units": "mm",
+  "boundary": {
+    "type": "bbox",
+    "min": [0, 0],
+    "max": [9000, 4800]
+  },
+  "openings": [
+    {
+      "opening_id": "entry-main",
+      "type": "entry",
+      "center": [0, 2400],
+      "width": 1000
+    }
+  ],
+  "fixed_obstacles": [
+    {
+      "obstacle_id": "riser-through-corridor",
+      "bbox": {
+        "min": [2800, 1200],
+        "max": [5200, 3600]
+      }
+    }
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "riser-through-corridor-clearance",
+      "bbox": {
+        "min": [2600, 1000],
+        "max": [5400, 3800]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "entry-to-deep-work",
+      "target": "open-office-zone",
+      "point": [8200, 2400]
+    }
+  ],
+  "building_elements": [],
+  "uncertainties": [
+    "Hand-authored shell: riser spans the main entry corridor for structured blocked benchmark only."
+  ],
+  "source": {
+    "type": "manual_annotation",
+    "path": "examples/shell_models/blank_shell_corridor_riser_block_shell.json"
+  }
+}

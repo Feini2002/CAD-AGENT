@@ -1,0 +1,56 @@
+{
+  "version": "0.1",
+  "suite_id": "project-sample-benchmark",
+  "description": "BETA-PROJECT-SAMPLE-04: project-path blank-shell workflows (pass + structured blocked failure).",
+  "expected_evidence_summary": {
+    "case_count": 2,
+    "benchmark_pass_non_cad_count": 1,
+    "blocked_expected_non_cad_count": 1,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
+  "cases": [
+    {
+      "case_id": "sample_blank_shell_pass",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/sample_blank_shell_project_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "shell_id": "shell-sample-blank-shell",
+        "requires_comparison_detail": true,
+        "minimums": {
+          "candidate_count": 2,
+          "zone_placement_candidate_count": 2,
+          "placement_count": 5,
+          "cad_plan_count": 5
+        },
+        "comparison_detail_minimums": {
+          "object_coverage_rate": 0.6
+        }
+      }
+    },
+    {
+      "case_id": "sample_blank_shell_too_small_blocked",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/sample_blank_shell_too_small_loop.json",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "insufficient_space",
+        "shell_id": "shell-sample-blank-shell-too-small",
+        "contains_blocked_reason": "insufficient",
+        "maximums": {
+          "cad_plan_count": 0,
+          "placement_count": 4
+        }
+      }
+    }
+  ]
+}

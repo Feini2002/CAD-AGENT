@@ -74,6 +74,28 @@ class ZoneSplitterTests(unittest.TestCase):
         self.assertIn("no_place_zone", upper["uncertainties"][0])
         self.assertLess(upper["score"], lower["score"])
 
+    def test_l_shaped_path_surface_union_yields_usable_zone(self) -> None:
+        shell = load_example("examples/shell_models/residential_living_room_shell.json")
+        brief = load_example("examples/design_briefs/blank_shell_layout_brief.json")
+        drawing = load_example("examples/drawing_models/minimal_empty_room.json")
+        preferences = load_example("agents/residential/preferences.json")
+
+        from core.project_model.project_builder import build_project_model
+        from core.layout_engine.path_generation import generate_circulation_candidates
+
+        project_model = build_project_model(brief, drawing, shell_model=shell).project_model
+        circulation = next(
+            candidate
+            for candidate in generate_circulation_candidates(project_model, preferences.get("circulation", {}))
+            if candidate["strategy"] == "along_wall"
+        )
+
+        zones = split_zones(shell, circulation, constraints={})
+
+        self.assertGreaterEqual(len(zones), 1)
+        primary = max(zones, key=lambda zone: zone["area"])
+        self.assertGreater(primary["depth"], 2000)
+
     def test_function_zone_examples_validate_against_schema(self) -> None:
         schema = load_example("core/schemas/function_zone.schema.json")
 

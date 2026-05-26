@@ -1,0 +1,14 @@
+{
+  "version": "0.1",
+  "brief_id": "brief-sample-blank-shell",
+  "domain": "generic",
+  "user_request": "Build a repeatable non-CAD blank-shell layout from the sample_blank_shell project fixture.",
+  "intent": "blank_shell_layout_preview",
+  "source_language": "en",
+  "constraints": ["preview_only", "use_CODEX_PREVIEW", "manual_shell_input"],
+  "assumptions": [
+    "shell geometry comes from projects/sample_blank_shell/input/shell.manual.json",
+    "shell geometry is hand-authored until CAD readback is available"
+  ],
+  "needs_confirmation": false
+}

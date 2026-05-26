@@ -1,0 +1,12 @@
+{
+  "version": "0.1",
+  "workflow_id": "blank-shell-office-long-narrow-layout-loop",
+  "inputs": {
+    "design_brief": "examples/design_briefs/blank_shell_layout_brief.json",
+    "drawing_model": "examples/drawing_models/minimal_empty_room.json",
+    "shell_model": "examples/shell_models/office_long_narrow_shell.json",
+    "preferences": "agents/office/preferences.json",
+    "block_library": "libraries/blocks/block_library.example.json"
+  },
+  "object_types": ["desk", "chair", "cabinet", "shelf"]
+}

@@ -7,20 +7,26 @@ from pathlib import Path
 from typing import Any
 
 from core.composition_engine.templates import (
+    composition_micro_scene_metrics,
     composition_to_cad_plans,
     create_composition_spec,
     write_composition_preview_svg,
 )
+from core.benchmarks.expectations import (
+    _compare_evidence_summary,
+    _compare_expected,
+    _validate_expected_evidence_fields,
+    summarize_benchmark_evidence,
+)
 from core.object_engine.parametric_objects import create_object_spec, object_spec_to_cad_plan
 from core.plan_engine.dry_run_report import create_dry_run_report
 from core.schemas.validator import load_json
+from core.verification.evidence_contract import classify_benchmark_pipeline_evidence, validate_failure_expected_contract
 from core.verification.verification_report import build_verification_report, summarize_verification_reports
+from core.layout_engine.office_layout_failure import evaluate_composition_layout_failure
+from core.path_safety import resolve_under_project_output, validate_safe_path_segment
 from core.workflows.non_cad_pipeline import run_non_cad_pipeline
 from core.workflows.blank_shell_pipeline import run_blank_shell_pipeline
-
-
-NON_CAD_GEOMETRY_ACCURACY = "not_verified_without_cad_readback"
-SCREENSHOT_VISUAL_AID_ONLY = "visual_aid_only"
 
 
 def _find_project_root(path: Path) -> Path:
@@ -28,6 +34,14 @@ def _find_project_root(path: Path) -> Path:
         if (parent / "CORE_RESTRUCTURE_PLAN.md").exists():
             return parent
     return path.parent
+
+
+def _resolve_output_root(root: Path, output_root: Path) -> Path:
+    return resolve_under_project_output(root, output_root, label="output_root")
+
+
+def _validate_case_id(case_id: str, *, label: str) -> None:
+    validate_safe_path_segment(case_id, label=f"{label}.case_id")
 
 
 def _actual_from_pipeline(result: dict[str, Any]) -> dict[str, Any]:
@@ -40,27 +54,39 @@ def _actual_from_pipeline(result: dict[str, Any]) -> dict[str, Any]:
         result.get("verification_summary", {}) if isinstance(result.get("verification_summary"), dict) else {}
     )
     metrics = result.get("metrics", {}) if isinstance(result.get("metrics"), dict) else {}
+    errors = result.get("errors", []) if isinstance(result.get("errors"), list) else []
     pipeline_status = result.get("status", "unknown")
     dry_run_status = dry_run_summary.get("status", dry_run_report.get("status", "unknown"))
     verification_status = verification_summary.get("status", verification_report.get("status", "unknown"))
+    evidence = classify_benchmark_pipeline_evidence(
+        pipeline_status=pipeline_status,
+        dry_run_status=dry_run_status,
+        verification_status=verification_status,
+    )
     return {
         "pipeline_status": pipeline_status,
         "dry_run_status": dry_run_status,
         "verification_status": verification_status,
-        "evidence_state": _derive_evidence_state(
-            pipeline_status=pipeline_status,
-            dry_run_status=dry_run_status,
-            verification_status=verification_status,
-        ),
-        "geometry_accuracy": (
-            "verified_by_cad_readback"
-            if verification_status == "geometry_verified"
-            else NON_CAD_GEOMETRY_ACCURACY
-        ),
-        "screenshot_role": SCREENSHOT_VISUAL_AID_ONLY,
+        **evidence,
         "candidate_count": metrics.get("circulation_candidates", 0),
+        "zone_placement_candidate_count": metrics.get("zone_placement_candidates", 0),
+        "circulation_branch_count": metrics.get("circulation_branch_count", 0),
+        "object_coverage_rate": metrics.get("object_coverage_rate", 0),
+        "selected_placement_failed_count": metrics.get("selected_placement_failed_count", 0),
+        "selected_circulation_strategy": metrics.get("selected_circulation_strategy", ""),
+        "preferences_scenario": metrics.get("preferences_scenario", ""),
+        "preferences_path": metrics.get("preferences_path", ""),
+        "has_comparison_detail": bool(metrics.get("has_comparison_detail", False)),
+        "has_proposal_comparison_summary": bool(metrics.get("has_proposal_comparison_summary", False)),
+        "ranking_reason_codes": metrics.get("ranking_reason_codes", []),
+        "layout_failed_checks": metrics.get("layout_failed_checks", []),
+        "blocked_circulation_strategies": metrics.get("blocked_circulation_strategies", []),
+        "circulation_continuity": metrics.get("circulation_continuity", ""),
+        "failed_reason_distribution": metrics.get("failed_reason_distribution", {}),
+        "selected_failed_reason_distribution": metrics.get("selected_failed_reason_distribution", {}),
         "zone_count": metrics.get("zones", 0),
-        "placement_count": metrics.get("placements", 0),
+        "placed_count": metrics.get("placed_count", 0),
+        "placement_count": metrics.get("placements", metrics.get("placement_count", 0)),
         "cad_plan_count": metrics.get("cad_plans", 0),
         "failed_check_count": metrics.get("failed_checks", 0),
         "object_types": metrics.get("object_types", []),
@@ -74,55 +100,18 @@ def _actual_from_pipeline(result: dict[str, Any]) -> dict[str, Any]:
         "depth": metrics.get("depth"),
         "height": metrics.get("height"),
         "component_roles": metrics.get("component_roles", []),
+        "clearance_refs": metrics.get("clearance_refs", []),
+        "clearance_ref_roles": metrics.get("clearance_ref_roles", []),
+        "placement_role": metrics.get("placement_role"),
+        "binding_relations": metrics.get("binding_relations", []),
+        "circulation_roles": metrics.get("circulation_roles", []),
+        "no_place_zone_count": metrics.get("no_place_zone_count", 0),
+        "fixed_obstacle_count": metrics.get("fixed_obstacle_count", 0),
+        "shell_id": metrics.get("shell_id"),
+        "failed_check_count": metrics.get("failed_checks", metrics.get("failed_check_count", 0)),
+        "failure_category": metrics.get("failure_category", ""),
+        "blocked_reasons": metrics.get("blocked_reasons", errors),
     }
-
-
-def _derive_evidence_state(
-    *,
-    pipeline_status: Any,
-    dry_run_status: Any,
-    verification_status: Any,
-) -> str:
-    if verification_status == "geometry_verified":
-        return "readback_geometry_verified"
-    if pipeline_status == "ok" and dry_run_status == "valid" and verification_status == "unverified":
-        return "benchmark_pass_non_cad"
-    if dry_run_status == "valid":
-        return "dry_run_valid_plan_only"
-    return "deferred_cad_readback_required"
-
-
-def _compare_expected(actual: dict[str, Any], expected: dict[str, Any]) -> list[str]:
-    errors: list[str] = []
-    for key, expected_value in expected.items():
-        if key == "minimums" and isinstance(expected_value, dict):
-            for metric, minimum in expected_value.items():
-                actual_value = actual.get(metric)
-                if not isinstance(actual_value, (int, float)) or actual_value < minimum:
-                    errors.append(f"{metric}: expected at least {minimum}, got {actual_value}")
-            continue
-        if key == "contains_object_types" and isinstance(expected_value, list):
-            actual_types = set(actual.get("object_types", []))
-            missing = [item for item in expected_value if item not in actual_types]
-            if missing:
-                errors.append(f"object_types: missing {missing}, got {sorted(actual_types)}")
-            continue
-        if key == "contains_component_roles" and isinstance(expected_value, list):
-            actual_roles = set(actual.get("component_roles", []))
-            missing = [item for item in expected_value if item not in actual_roles]
-            if missing:
-                errors.append(f"component_roles: missing {missing}, got {sorted(actual_roles)}")
-            continue
-        if key == "contains_object_roles" and isinstance(expected_value, list):
-            actual_roles = set(actual.get("object_roles", []))
-            missing = [item for item in expected_value if item not in actual_roles]
-            if missing:
-                errors.append(f"object_roles: missing {missing}, got {sorted(actual_roles)}")
-            continue
-        actual_value = actual.get(key)
-        if actual_value != expected_value:
-            errors.append(f"{key}: expected {expected_value}, got {actual_value}")
-    return errors
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -136,9 +125,16 @@ def _validate_benchmark_case(case: Any, *, label: str = "case") -> None:
     case_id = case.get("case_id")
     if not isinstance(case_id, str) or not case_id:
         raise ValueError(f"{label}.case_id must be a non-empty string.")
+    _validate_case_id(case_id, label=label)
     expected = case.get("expected")
     if not isinstance(expected, dict) or not expected:
         raise ValueError(f"{label}.expected must be a non-empty object.")
+    evidence_errors = _validate_expected_evidence_fields(expected, label=label)
+    if evidence_errors:
+        raise ValueError("; ".join(evidence_errors))
+    failure_errors = validate_failure_expected_contract(expected, label=label)
+    if failure_errors:
+        raise ValueError("; ".join(failure_errors))
     pipeline = case.get("pipeline", "non_cad")
     if pipeline not in {"non_cad", "blank_shell", "object_spec", "composition_spec"}:
         raise ValueError(f"{label}.pipeline is not supported: {pipeline}")
@@ -188,6 +184,15 @@ def _run_object_spec_case(case: dict[str, Any], *, case_output: Path) -> dict[st
             "depth": spec["size"]["depth"],
             "height": spec["size"]["height"],
             "component_roles": sorted({str(component.get("role")) for component in spec.get("components", [])}),
+            "clearance_refs": spec.get("clearance_refs", []),
+            "clearance_ref_roles": sorted(
+                {
+                    str(ref.get("role"))
+                    for ref in spec.get("clearance_refs", [])
+                    if isinstance(ref, dict) and ref.get("role")
+                }
+            ),
+            "placement_role": spec.get("placement_role"),
         },
     }
 
@@ -252,7 +257,23 @@ def _run_composition_spec_case(case: dict[str, Any], *, case_output: Path) -> di
     verification_reports = [build_verification_report(plan_path=plan_path) for plan_path in cad_plan_paths]
     _write_json(paths["verification_report"], verification_reports[0])
     _write_json(paths["verification_reports"], verification_reports)
+    layout_failure = evaluate_composition_layout_failure(composition)
+    if layout_failure is not None:
+        return {
+            "status": layout_failure["status"],
+            "errors": layout_failure["blocked_reasons"],
+            "artifacts": {key: str(path) for key, path in paths.items()},
+            "metrics": {
+                "composition_id": composition["composition_id"],
+                "persona_role": composition["persona_role"],
+                "failure_category": layout_failure["failure_category"],
+                "blocked_reasons": layout_failure["blocked_reasons"],
+                **composition_micro_scene_metrics(composition),
+            },
+        }
+
     preview_result = write_composition_preview_svg(composition, cad_plans, paths["preview_svg"])
+    micro_metrics = composition_micro_scene_metrics(composition)
 
     return {
         "status": "ok",
@@ -271,6 +292,7 @@ def _run_composition_spec_case(case: dict[str, Any], *, case_output: Path) -> di
             "object_roles": sorted({str(item.get("role")) for item in composition["objects"]}),
             "cad_plans": len(cad_plans),
             "visual_preview_status": preview_result["status"],
+            **micro_metrics,
         },
     }
 
@@ -281,6 +303,7 @@ def run_benchmark_case(
     root: Path,
     output_root: Path,
 ) -> dict[str, Any]:
+    output_root = _resolve_output_root(root, output_root)
     _validate_benchmark_case(case)
     case_id = str(case["case_id"])
     case_output = output_root / case_id
@@ -311,6 +334,7 @@ def run_benchmark_case(
 
 def run_benchmark_suite(suite_path: Path, *, output_root: Path) -> dict[str, Any]:
     root = _find_project_root(suite_path.resolve())
+    output_root = _resolve_output_root(root, output_root)
     suite = load_json(suite_path)
     if not isinstance(suite, dict):
         raise ValueError("Benchmark suite must be a JSON object.")
@@ -326,13 +350,22 @@ def run_benchmark_suite(suite_path: Path, *, output_root: Path) -> dict[str, Any
     case_results = [run_benchmark_case(case, root=root, output_root=output_root) for case in cases]
     passed = sum(1 for case in case_results if case["status"] == "pass")
     failed = len(case_results) - passed
-    return {
-        "status": "pass" if failed == 0 else "fail",
+    evidence_summary = summarize_benchmark_evidence(case_results)
+    summary_errors = _compare_evidence_summary(
+        evidence_summary,
+        suite.get("expected_evidence_summary", {}),
+    ) if isinstance(suite.get("expected_evidence_summary"), dict) else []
+    suite_result = {
+        "status": "pass" if failed == 0 and not summary_errors else "fail",
         "suite_id": suite.get("suite_id", suite_path.stem),
         "summary": {
             "total": len(case_results),
             "passed": passed,
             "failed": failed,
         },
+        "evidence_summary": evidence_summary,
+        "evidence_summary_errors": summary_errors,
         "cases": case_results,
     }
+    _write_json(output_root / "benchmark_summary.json", suite_result)
+    return suite_result

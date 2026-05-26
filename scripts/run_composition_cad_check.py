@@ -16,6 +16,7 @@ except ModuleNotFoundError as exc:
     from scripts._bootstrap import PROJECT_ROOT
 
 from core.execution.batch_plan_runner import execute_plan_batch
+from core.path_safety import resolve_under_project_output
 
 
 DEFAULT_CASE_OFFSETS = {
@@ -64,6 +65,13 @@ def run_composition_cad_check(
     output_dir: Path,
     case_offsets: dict[str, list[float | int]] | None = None,
 ) -> dict[str, Any]:
+    benchmark_output_root = resolve_under_project_output(
+        PROJECT_ROOT,
+        benchmark_output_root,
+        label="benchmark_output_root",
+    )
+    output_dir = resolve_under_project_output(PROJECT_ROOT, output_dir, label="output_dir")
+
     from core.cad_io.autocad_com import AutoCADComDriver
 
     driver = AutoCADComDriver(connect_existing_only=True)
@@ -137,8 +145,8 @@ def main() -> int:
     args = parser.parse_args()
 
     report = run_composition_cad_check(
-        benchmark_output_root=args.benchmark_output_root.resolve(),
-        output_dir=args.output_dir.resolve(),
+        benchmark_output_root=args.benchmark_output_root,
+        output_dir=args.output_dir,
         case_offsets=build_case_offsets(start_x=args.start_x, start_y=args.start_y, spacing_x=args.spacing_x),
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))

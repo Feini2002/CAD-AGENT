@@ -57,6 +57,34 @@ class BenchmarkCliTests(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertGreaterEqual(result["metrics"]["cad_plans"], 1)
 
+    def test_scene_beta_wrappers_accept_output_root_alias(self) -> None:
+        scripts = [
+            ("run_office_scene_beta_benchmark.py", "office_scene_beta_cli"),
+            ("run_residential_scene_beta_benchmark.py", "residential_scene_beta_cli"),
+            ("run_restaurant_scene_beta_benchmark.py", "restaurant_scene_beta_cli"),
+        ]
+
+        for script_name, output_name in scripts:
+            with self.subTest(script=script_name):
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        str(PROJECT_ROOT / "scripts" / script_name),
+                        "--output-root",
+                        str(artifact_path("benchmarks", output_name)),
+                    ],
+                    cwd=PROJECT_ROOT,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    capture_output=True,
+                    check=False,
+                )
+
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                result = json.loads(completed.stdout)
+                self.assertEqual(result["status"], "pass")
+
 
 if __name__ == "__main__":
     unittest.main()

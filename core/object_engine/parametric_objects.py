@@ -49,7 +49,7 @@ def create_object_spec(
     if not components:
         components = [{"component_id": f"{object_type}-body", "role": "body", "count": 1}]
 
-    return {
+    spec: dict[str, Any] = {
         "version": "0.1",
         "object_id": f"object-{object_type}-{int(resolved_width)}x{int(resolved_depth)}",
         "type": object_type,
@@ -64,6 +64,15 @@ def create_object_spec(
         "placement_requirements": ["base point is lower-left plan corner"],
         "drawing_intent": "plan_preview",
     }
+    if defaults.get("placement_role"):
+        spec["placement_role"] = defaults["placement_role"]
+    clearance_refs = defaults.get("clearance_refs")
+    if isinstance(clearance_refs, list) and clearance_refs:
+        spec["clearance_refs"] = [dict(ref) if isinstance(ref, dict) else ref for ref in clearance_refs]
+    assertion_hints = defaults.get("assertion_hints")
+    if isinstance(assertion_hints, list) and assertion_hints:
+        spec["assertion_hints"] = list(assertion_hints)
+    return spec
 
 
 def apply_style_to_object_spec(spec: dict[str, Any], style_profile: dict[str, Any]) -> dict[str, Any]:

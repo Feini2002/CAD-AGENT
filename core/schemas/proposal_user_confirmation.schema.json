@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "proposal_user_confirmation.schema.json",
+  "title": "PROPOSAL_USER_CONFIRMATION",
+  "type": "object",
+  "required": [
+    "version",
+    "confirmation_id",
+    "proposal_id",
+    "action",
+    "selected_candidate_id",
+    "rejected_candidates",
+    "local_preferences"
+  ],
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "confirmation_id": { "type": "string" },
+    "proposal_id": { "type": "string" },
+    "action": {
+      "type": "string",
+      "enum": ["accept", "accept_with_risks", "reject_all"]
+    },
+    "selected_candidate_id": { "type": "string" },
+    "rejected_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["candidate_id", "reason_code"],
+        "properties": {
+          "candidate_id": { "type": "string" },
+          "reason_code": { "type": "string" },
+          "reason_note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "local_preferences": {
+      "type": "object",
+      "required": ["candidate_weights", "weight_source", "notes"],
+      "properties": {
+        "candidate_weights": { "type": "object" },
+        "weight_source": { "type": "string" },
+        "placement_offsets": { "type": "object" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "confirmed_by": { "type": "string" },
+    "confirmed_at": { "type": "string" }
+  },
+  "additionalProperties": false
+}

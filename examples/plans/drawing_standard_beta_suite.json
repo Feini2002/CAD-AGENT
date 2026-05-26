@@ -1,0 +1,66 @@
+{
+  "suite_id": "drawing-standard-beta-04",
+  "description": "BETA-CAD-BLOCK-04: object role and layer_role mapping via codex_preview_beta profile.",
+  "profile_id": "codex_preview_beta",
+  "cases": [
+    {
+      "case_id": "role_furniture_preview_layer",
+      "object_role": "furniture",
+      "expected": {
+        "resolved_layer": "CODEX_PREVIEW",
+        "semantic_layer": "A-FURN",
+        "text_style_id": "CAD_LABEL"
+      }
+    },
+    {
+      "case_id": "role_clearance_hatch_style",
+      "object_role": "clearance",
+      "expected": {
+        "resolved_layer": "CODEX_PREVIEW",
+        "hatch_style_id": "HATCH_CLEARANCE"
+      }
+    },
+    {
+      "case_id": "layer_role_shell_semantic_only",
+      "layer_role": "shell",
+      "semantic_only": true,
+      "expected": {
+        "semantic_layer": "A-SHELL",
+        "resolved_layer": "CODEX_PREVIEW"
+      }
+    },
+    {
+      "case_id": "block_insert_plan_resolution",
+      "plan_kind": "insert_block_alpha",
+      "object_role": "block_insert",
+      "placement": {
+        "base_point": [1800, 900, 0],
+        "rotation": 0,
+        "scale": [1, 1, 1]
+      },
+      "expected": {
+        "dry_run_status": "valid",
+        "resolved_layer": "CODEX_PREVIEW",
+        "layer_role": "preview"
+      }
+    },
+    {
+      "case_id": "primitive_text_style",
+      "primitive": "text",
+      "layer_role": "annotation",
+      "expected": {
+        "style_id": "CAD_NOTE",
+        "resolved_layer": "CODEX_PREVIEW"
+      }
+    },
+    {
+      "case_id": "primitive_dimension_style",
+      "primitive": "dimension",
+      "layer_role": "dimension",
+      "expected": {
+        "style_id": "CAD_DIM_MM",
+        "resolved_layer": "CODEX_PREVIEW"
+      }
+    }
+  ]
+}
