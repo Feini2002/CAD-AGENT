@@ -8,6 +8,13 @@ from typing import Any
 from tests.helpers import artifact_path
 
 from core.verification.cad_capability_probe import run_cad_capability_probe
+from core.verification.evidence_contract import (
+    EVIDENCE_CAD_CAPABILITY_VERIFIED,
+    EVIDENCE_DEFERRED_CAD_READBACK,
+    GEOMETRY_VERIFIED_BY_CAPABILITY_PROBE,
+    NON_CAD_GEOMETRY_ACCURACY,
+    SCREENSHOT_NOT_APPLICABLE,
+)
 
 
 class FakeCadEntity:
@@ -149,6 +156,12 @@ class CadCapabilityProbeTests(unittest.TestCase):
         report = run_cad_capability_probe(driver_factory=FakeCadDriver, output_dir=output_dir)
 
         self.assertEqual(report["status"], "cad_capability_verified")
+        self.assertEqual(report["evidence_state"], EVIDENCE_CAD_CAPABILITY_VERIFIED)
+        self.assertEqual(report["geometry_accuracy"], GEOMETRY_VERIFIED_BY_CAPABILITY_PROBE)
+        self.assertEqual(report["screenshot_role"], SCREENSHOT_NOT_APPLICABLE)
+        self.assertIn("contract_version", report)
+        self.assertIn("block_reference", report["contract"]["entities"])
+        self.assertIn("insert_block_alpha", report["contract"]["entities"]["block_reference"]["intents"])
         self.assertEqual(report["active_document"], "sample-active.dwg")
         self.assertEqual(report["layer"], "CODEX_PREVIEW")
         self.assertEqual(len(report["created_handles"]), 11)
@@ -184,6 +197,8 @@ class CadCapabilityProbeTests(unittest.TestCase):
         )
 
         self.assertEqual(report["status"], "external_blocker")
+        self.assertEqual(report["evidence_state"], EVIDENCE_DEFERRED_CAD_READBACK)
+        self.assertEqual(report["geometry_accuracy"], NON_CAD_GEOMETRY_ACCURACY)
         self.assertEqual(report["failure_category"], "cad_connection_failed")
         self.assertIn("No active AutoCAD", report["error"])
 

@@ -26,6 +26,11 @@ def create_dry_run_report(plan: dict[str, Any] | Path) -> dict[str, Any]:
             "human_summary": "INVALID CAD_PLAN",
         }
 
+    if plan["intent"] == "insert_block_alpha":
+        from core.plan_engine.block_alpha_plan import create_insert_block_alpha_dry_run_report
+
+        return create_insert_block_alpha_dry_run_report(plan)
+
     obj = plan["object"]
     drawing = plan["drawing"]
     base = _point3(plan["placement"]["base_point"])

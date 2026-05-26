@@ -4,6 +4,34 @@
 
 ## 2026-05-26
 
+### R-BLOCK-PLAN insert_block_alpha CAD_PLAN
+
+- 新增 `core/plan_engine/block_alpha_plan.py` 与 `examples/plans/insert_block_alpha_test.json`，引入受控 `insert_block_alpha` intent。
+- `validate_plan` 现拒绝正式图层、空 `cad_identity.block_name`、非法 `scale` 与缺 `base_point`；仅允许 `CODEX_PREVIEW`。
+- `create_dry_run_report` / `dry_run_plan.py` 对 block alpha 输出 bbox、anchor、rotation、layer role 检查，并标记 `evidence_state=dry_run_valid_plan_only` 与 `geometry_accuracy=not_verified_without_cad_readback`。
+- `execute_plan.py` 通过 fake driver `insert_block_alpha()` 记录执行意图，不触碰真实 AutoCAD。
+- 更新 `core/schemas/cad_plan.schema.json` 与 `schemas/cad_plan.schema.json`。
+- 复验：`239 tests OK`；`run_cad_validation.py --no-cad --output-dir output\validation_runs\r-block-plan-no-cad` pass。
+
+### R-BLOCK-METADATA 图块库 v0.2 与受控测试块
+
+- 扩展 `core/schemas/block_library.schema.json` 支持 `0.1` / `0.2`；`0.2` 块含 `source`、`cad_identity`、`anchor_points`、`footprint_2d`、`clearance_zones`、`symbol_2d`、`layer_bindings`、`validation`。
+- 升级 `libraries/blocks/block_library.example.json` 为 `0.2`，新增 `controlled-test-block-001`（`metadata_only`）与其余 `symbol_fallback` 家具元数据；侧车文件 `libraries/blocks/controlled/CODEX_TEST_BLOCK_001.metadata.json`。
+- 扩展 `core/block_engine/block_library.py`：`normalize_block()`、`validate_block_library()`、`object_spec_to_block_reference()`；`0.1` 示例仍可加载并自动补全 v0.2 派生字段。
+- 扩展 `block_selector` / `block_placement`：按 `validation.status` 过滤、`cad_identity` 与 `layer_role` 进入 preview intent。
+- 复验：`234 tests OK`；repo audit 0 findings；blank-shell benchmark pass；`run_cad_validation.py --no-cad --output-dir output\validation_runs\r-block-metadata-no-cad` pass。
+- 边界不变：不声称真实块插入、公司块库或 `geometry_verified` block readback 已完成。
+
+### R-CAD-CONTRACT 证据契约与硬门禁
+
+- 新增 `core/verification/evidence_contract.py`：集中定义 `ENTITY_CONTRACTS`、`deferred_verification`、证据状态词表，以及 capability probe / readback 报告的注解与校验函数。
+- `cad_capability_probe` 现输出 `contract_version`、`evidence_state`、`geometry_accuracy`、`screenshot_role`、`contract`、`limitations`；`cad_capability_verified` 使用 `verified_by_cad_capability_readback`，与 baseline `readback_geometry_verified` 分离。
+- `build_verification_report` 现输出 `evidence_state`、`geometry_accuracy`、`screenshot_role`；`geometry_verified` 时标记 `readback_geometry_verified` / `verified_by_cad_readback`。
+- `cad_validation_runner` 在 `inspect_readback` 与 `cad_capability_probe` 步骤增加证据字段硬门禁；步骤记录会透传子报告证据字段。
+- 更新 `core/schemas/verification_report.schema.json`、`examples/verification_reports/minimal_cabinet_verification.json`、`docs/planning/phase-r-cad-capability-contract.md` 与 Phase R 执行记录。
+- 复验：`228 tests OK`；`run_cad_validation.py --no-cad --output-dir output\validation_runs\r-cad-contract-no-cad` 与真实 CAD `r-cad-contract-cad` 均为 `status=pass`。
+- 边界不变：不声称 block insertion、真实块库或任意 CAD_PLAN 已验证；截图仍只作视觉辅助。
+
 ### 交付进度估算规则写入主入口
 
 - 按用户要求在 `README.md` 增加“交付进度规则”：后续每次 CAD Agent 相关交付，最终回复必须带 `总进度`、`Core 底座开发进度`、`Agent 多场景实现进度` 三项估算。

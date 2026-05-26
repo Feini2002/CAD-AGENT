@@ -14,9 +14,13 @@ def create_block_insertion_intent(
 ) -> dict[str, Any]:
     if rotation and not block.get("rotation_allowed", False):
         raise ValueError(f"Block {block.get('block_id')} does not allow rotation.")
-    insertion = block.get("insertion_point", [0, 0, 0])
-    width = block["size"]["width"]
-    depth = block["size"]["depth"]
+    anchors = block.get("anchor_points", {})
+    insertion = anchors.get("insert") if isinstance(anchors, dict) else None
+    if insertion is None:
+        insertion = block.get("insertion_point", [0, 0, 0])
+    footprint = block.get("footprint_2d", block.get("size", {}))
+    width = footprint["width"]
+    depth = footprint["depth"]
     normalized_rotation = int(rotation) % 360 if float(rotation).is_integer() else rotation
     warnings: list[str] = []
     if normalized_rotation in {90, 270}:
@@ -33,17 +37,22 @@ def create_block_insertion_intent(
 
     min_x = base_point[0] - anchor_x
     min_y = base_point[1] - anchor_y
+    cad_identity = block.get("cad_identity", {})
     return {
         "operation": "insert_block_preview_intent",
         "executes_cad": False,
         "block_id": block["block_id"],
         "name": block["name"],
+        "cad_identity": cad_identity,
         "base_point": base_point,
         "rotation": rotation,
         "layer": layer,
+        "layer_role": block.get("layer_bindings", {}).get("insert_layer_role", "preview"),
         "bbox": {
             "min": [min_x, min_y],
             "max": [min_x + bbox_width, min_y + bbox_depth],
         },
+        "validation_status": block.get("validation", {}).get("status", "symbol_fallback"),
+        "geometry_accuracy": "not_verified_without_cad_readback",
         "warnings": warnings,
     }

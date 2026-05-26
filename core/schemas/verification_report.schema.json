@@ -60,6 +60,29 @@
       },
       "additionalProperties": false
     },
+    "evidence_state": {
+      "type": "string",
+      "enum": [
+        "readback_geometry_verified",
+        "deferred_cad_readback_required",
+        "benchmark_pass_non_cad",
+        "dry_run_valid_plan_only",
+        "cad_capability_verified"
+      ]
+    },
+    "geometry_accuracy": {
+      "type": "string",
+      "enum": [
+        "verified_by_cad_readback",
+        "verified_by_cad_capability_readback",
+        "not_verified_without_cad_readback",
+        "not_verified_by_screenshot"
+      ]
+    },
+    "screenshot_role": {
+      "type": "string",
+      "enum": ["visual_aid_only", "not_applicable"]
+    },
     "limitations": { "type": "array", "items": { "type": "string" } },
     "requires_real_cad": { "type": "array", "items": { "type": "string" } },
     "repair_suggestions": {

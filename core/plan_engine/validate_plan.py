@@ -34,7 +34,8 @@ ALLOWED_DOMAINS = {
     "industrial",
     "custom",
 }
-ALLOWED_INTENTS = {"draw_object", "draw_annotation", "modify_object", "delete_object"}
+ALLOWED_INTENTS = {"draw_object", "draw_annotation", "modify_object", "delete_object", "insert_block_alpha"}
+PREVIEW_LAYER = "CODEX_PREVIEW"
 ALLOWED_PLACEMENT_MODES = {"absolute", "space_reference", "relative_to_object"}
 
 
@@ -69,6 +70,12 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
     require(isinstance(plan["confidence"], (int, float)), "confidence must be a number.", errors)
     if isinstance(plan["confidence"], (int, float)):
         require(0 <= plan["confidence"] <= 1, "confidence must be between 0 and 1.", errors)
+
+    if plan["intent"] == "insert_block_alpha":
+        from core.plan_engine.block_alpha_plan import validate_insert_block_alpha
+
+        errors.extend(validate_insert_block_alpha(plan))
+        return errors
 
     obj = plan["object"]
     placement = plan["placement"]

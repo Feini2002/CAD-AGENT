@@ -30,5 +30,8 @@
     "readback_source": "none"
   },
   "limitations": ["This example does not prove CAD geometry accuracy."],
-  "requires_real_cad": ["ModelSpace entity enumeration", "dimension measurement readback"]
+  "requires_real_cad": ["ModelSpace entity enumeration", "dimension measurement readback"],
+  "evidence_state": "deferred_cad_readback_required",
+  "geometry_accuracy": "not_verified_without_cad_readback",
+  "screenshot_role": "not_applicable"
 }

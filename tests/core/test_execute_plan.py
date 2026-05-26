@@ -24,6 +24,10 @@ class RecordingDriver:
     def add_dimension(self, **kwargs: object) -> None:
         self.calls.append(("add_dimension", kwargs))
 
+    def insert_block_alpha(self, **kwargs: object) -> dict[str, str]:
+        self.calls.append(("insert_block_alpha", kwargs))
+        return {"handle": "BLOCK-H1"}
+
 
 class HandleRecordingDriver(RecordingDriver):
     def __init__(self) -> None:
@@ -174,6 +178,44 @@ class ExecutePlanTests(unittest.TestCase):
         result = execute_plan_file(plan_path, driver=HandleRecordingDriver())
 
         self.assertEqual(result["created_handles"], ["H1", "H2", "H3", "H4"])
+
+    def test_insert_block_alpha_records_fake_driver_call_without_touching_cad(self) -> None:
+        plan_path = PROJECT_ROOT / "examples/plans/insert_block_alpha_test.json"
+        driver = RecordingDriver()
+
+        result = execute_plan_file(plan_path, driver=driver)
+
+        self.assertEqual(result["status"], "executed")
+        self.assertEqual(result["intent"], "insert_block_alpha")
+        self.assertEqual(result["entities"], {"insert_block_alpha": 1})
+        self.assertEqual(result["geometry_accuracy"], "not_verified_without_cad_readback")
+        self.assertEqual(result["created_handles"], ["BLOCK-H1"])
+        self.assertEqual(len(driver.calls), 1)
+        self.assertEqual(driver.calls[0][0], "insert_block_alpha")
+        self.assertEqual(driver.calls[0][1]["block_name"], "CODEX_TEST_BLOCK_001")
+        self.assertEqual(driver.calls[0][1]["layer"], "CODEX_PREVIEW")
+
+    def test_insert_block_alpha_rejects_formal_layer_during_execution(self) -> None:
+        plan = {
+            "version": "0.1",
+            "domain": "generic",
+            "intent": "insert_block_alpha",
+            "object": {
+                "type": "block_reference",
+                "name": "Controlled Test Block",
+                "block_id": "controlled-test-block-001",
+                "cad_identity": {"block_name": "CODEX_TEST_BLOCK_001"},
+            },
+            "placement": {"mode": "absolute", "base_point": [0, 0, 0], "rotation": 0, "scale": [1, 1, 1]},
+            "drawing": {"layer": "A-FURN"},
+            "confidence": 1.0,
+            "needs_confirmation": False,
+        }
+        plan_path = artifact_path("execute_plan", "block_alpha_formal_layer.json")
+        plan_path.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+
+        with self.assertRaisesRegex(ValueError, "Invalid CAD_PLAN"):
+            execute_plan_file(plan_path, driver=RecordingDriver())
 
     def test_large_object_label_height_is_capped_for_readable_previews(self) -> None:
         plan = {

@@ -29,6 +29,9 @@ class CadPreviewDriver(Protocol):
     def add_dimension(self, **kwargs: object) -> object:
         ...
 
+    def insert_block_alpha(self, **kwargs: object) -> object:
+        ...
+
 
 def point3(values: list[Any]) -> list[float | int]:
     if len(values) == 2:
@@ -72,11 +75,19 @@ def execute_plan_file(
         },
     )
 
-    if plan["intent"] != "draw_object":
-        raise ValueError("execute_plan.py currently supports intent=draw_object only.")
     if plan.get("needs_confirmation") and not allow_unconfirmed:
         raise ValueError("CAD_PLAN needs confirmation before execution.")
 
+    if plan["intent"] == "insert_block_alpha":
+        return _execute_insert_block_alpha(
+            plan,
+            plan_path=plan_path,
+            driver=driver,
+            preview_only=preview_only,
+        )
+
+    if plan["intent"] != "draw_object":
+        raise ValueError("execute_plan.py currently supports draw_object and insert_block_alpha only.")
     obj = plan["object"]
     placement = plan["placement"]
     drawing = plan["drawing"]
@@ -164,6 +175,63 @@ def execute_plan_file(
             "text": 1 if drawing.get("include_label", False) else 0,
             "dimensions": 2 if drawing.get("include_dimensions", False) else 0,
         },
+        "created_handles": created_handles,
+    }
+
+
+def _execute_insert_block_alpha(
+    plan: dict[str, Any],
+    *,
+    plan_path: Path,
+    driver: CadPreviewDriver,
+    preview_only: bool,
+) -> dict[str, object]:
+    from core.plan_engine.block_alpha_plan import _block_dict_from_plan
+
+    obj = plan["object"]
+    placement = plan["placement"]
+    drawing = plan["drawing"]
+    layer = drawing["layer"]
+    if preview_only and layer != PREVIEW_LAYER:
+        raise ValueError(f"Preview execution only allows layer={PREVIEW_LAYER}.")
+
+    if placement.get("mode") != "absolute":
+        raise ValueError("insert_block_alpha only supports absolute placement.")
+
+    base = point3(placement["base_point"])
+    rotation = placement.get("rotation", 0)
+    scale = placement.get("scale", [1, 1, 1])
+    cad_identity = obj.get("cad_identity", {})
+    block_name = str(cad_identity.get("block_name", ""))
+    block = _block_dict_from_plan(plan)
+
+    insert_result = driver.insert_block_alpha(
+        block_id=str(obj["block_id"]),
+        block_name=block_name,
+        base_point=base,
+        rotation=rotation,
+        scale=scale,
+        layer=layer,
+        attributes=obj.get("attributes"),
+        cad_identity=cad_identity,
+    )
+    created_handles = _collect_handles(insert_result)
+
+    return {
+        "status": "executed",
+        "plan": str(plan_path),
+        "intent": plan["intent"],
+        "object_type": obj.get("type", "block_reference"),
+        "object_name": obj.get("name", block_name),
+        "block_id": obj.get("block_id"),
+        "block_name": block_name,
+        "base_point": base,
+        "rotation": rotation,
+        "scale": scale,
+        "layer": layer,
+        "preview_only": preview_only,
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "entities": {"insert_block_alpha": 1},
         "created_handles": created_handles,
     }
 

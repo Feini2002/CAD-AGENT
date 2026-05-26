@@ -7,6 +7,14 @@ from pathlib import Path
 from tests.helpers import artifact_path
 
 from core.verification.cad_validation_runner import CommandResult, run_cad_validation
+from core.verification.evidence_contract import (
+    EVIDENCE_CAD_CAPABILITY_VERIFIED,
+    EVIDENCE_READBACK_GEOMETRY_VERIFIED,
+    GEOMETRY_VERIFIED_BY_CAPABILITY_PROBE,
+    GEOMETRY_VERIFIED_BY_READBACK,
+    SCREENSHOT_NOT_APPLICABLE,
+    SCREENSHOT_VISUAL_AID_ONLY,
+)
 
 
 class CadValidationRunnerTests(unittest.TestCase):
@@ -74,6 +82,10 @@ class CadValidationRunnerTests(unittest.TestCase):
                     stdout=json.dumps(
                         {
                             "status": "geometry_verified",
+                            "evidence_state": EVIDENCE_READBACK_GEOMETRY_VERIFIED,
+                            "geometry_accuracy": GEOMETRY_VERIFIED_BY_READBACK,
+                            "screenshot_role": SCREENSHOT_VISUAL_AID_ONLY,
+                            "evidence": {"screenshot": str(output_dir / "cad-validation-window.png")},
                             "checks": [
                                 {"name": "geometry_readback", "status": "pass"},
                                 {"name": "created_handles_scope", "status": "pass"},
@@ -88,6 +100,13 @@ class CadValidationRunnerTests(unittest.TestCase):
                     stdout=json.dumps(
                         {
                             "status": "cad_capability_verified",
+                            "contract_version": "phase-r-cad-v1",
+                            "evidence_state": EVIDENCE_CAD_CAPABILITY_VERIFIED,
+                            "geometry_accuracy": GEOMETRY_VERIFIED_BY_CAPABILITY_PROBE,
+                            "screenshot_role": SCREENSHOT_NOT_APPLICABLE,
+                            "contract": {"version": "phase-r-cad-v1", "entities": {}, "deferred_verification": []},
+                            "deferred_verification": [],
+                            "limitations": [],
                             "checks": [
                                 {"name": "handle_readback_count", "status": "pass"},
                                 {"name": "readback_type_counts", "status": "pass"},
@@ -108,6 +127,8 @@ class CadValidationRunnerTests(unittest.TestCase):
         self.assertEqual(report["status"], "pass")
         steps = {step["id"]: step for step in report["steps"]}
         self.assertEqual(steps["cad_capability_probe"]["status"], "pass")
+        self.assertEqual(steps["cad_capability_probe"]["evidence_state"], EVIDENCE_CAD_CAPABILITY_VERIFIED)
+        self.assertEqual(steps["inspect_readback"]["evidence_state"], EVIDENCE_READBACK_GEOMETRY_VERIFIED)
         self.assertEqual(steps["capture_screen"]["screenshot_role"], "visual_aid_only")
         self.assertIn("--capture-autocad-window", steps["capture_screen"]["command"])
         self.assertIn("cad-validation-window.png", " ".join(steps["capture_screen"]["command"]))
@@ -163,7 +184,16 @@ class CadValidationRunnerTests(unittest.TestCase):
             if "inspect_dwg.py" in command_text:
                 return CommandResult(
                     returncode=0,
-                    stdout=json.dumps({"status": "geometry_verified", "checks": [{"name": "readback_scope", "status": "pass"}]}),
+                    stdout=json.dumps(
+                        {
+                            "status": "geometry_verified",
+                            "evidence_state": EVIDENCE_READBACK_GEOMETRY_VERIFIED,
+                            "geometry_accuracy": GEOMETRY_VERIFIED_BY_READBACK,
+                            "screenshot_role": SCREENSHOT_NOT_APPLICABLE,
+                            "evidence": {},
+                            "checks": [{"name": "readback_scope", "status": "pass"}],
+                        }
+                    ),
                     stderr="",
                 )
             if "run_cad_capability_probe.py" in command_text:
@@ -193,6 +223,53 @@ class CadValidationRunnerTests(unittest.TestCase):
         self.assertEqual(steps["cad_capability_probe"]["status"], "fail")
         self.assertEqual(steps["cad_capability_probe"]["failure_category"], "cad_capability_failed")
         self.assertIn("cad_capability_verified", steps["cad_capability_probe"]["stderr_excerpt"])
+
+    def test_cad_capability_probe_missing_evidence_fields_fail_gate(self) -> None:
+        output_dir = artifact_path("cad_validation", "capability_missing_evidence")
+
+        def fake_runner(command: list[str], cwd: Path, timeout_seconds: int) -> CommandResult:
+            command_text = " ".join(command)
+            if "execute_plan.py" in command_text:
+                return CommandResult(returncode=0, stdout='{"status": "executed", "created_handles": ["H1"]}', stderr="")
+            if "inspect_dwg.py" in command_text:
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(
+                        {
+                            "status": "geometry_verified",
+                            "evidence_state": EVIDENCE_READBACK_GEOMETRY_VERIFIED,
+                            "geometry_accuracy": GEOMETRY_VERIFIED_BY_READBACK,
+                            "screenshot_role": SCREENSHOT_NOT_APPLICABLE,
+                            "evidence": {},
+                            "checks": [{"name": "readback_scope", "status": "pass"}],
+                        }
+                    ),
+                    stderr="",
+                )
+            if "run_cad_capability_probe.py" in command_text:
+                return CommandResult(
+                    returncode=0,
+                    stdout=json.dumps(
+                        {
+                            "status": "cad_capability_verified",
+                            "checks": [{"name": "handle_readback_count", "status": "pass"}],
+                        }
+                    ),
+                    stderr="",
+                )
+            return CommandResult(returncode=0, stdout='{"status": "ok"}', stderr="")
+
+        report = run_cad_validation(
+            root=Path(__file__).resolve().parents[2],
+            output_dir=output_dir,
+            include_cad=True,
+            command_runner=fake_runner,
+        )
+
+        steps = {step["id"]: step for step in report["steps"]}
+        self.assertEqual(report["status"], "fail")
+        self.assertEqual(steps["cad_capability_probe"]["status"], "fail")
+        self.assertIn("missing required field", steps["cad_capability_probe"]["stderr_excerpt"])
 
 
 if __name__ == "__main__":

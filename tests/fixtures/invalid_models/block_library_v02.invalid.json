@@ -1,0 +1,19 @@
+{
+  "model_type": "block_library",
+  "data": {
+    "version": "0.2",
+    "library_id": "invalid-v02",
+    "units": "mm",
+    "unexpected_field": true,
+    "blocks": [
+      {
+        "block_id": "missing-units-and-cad-identity",
+        "name": "Bad Block",
+        "category": "test_fixture",
+        "domain": "generic",
+        "size": { "width": 100, "depth": 100 },
+        "rotation_allowed": true
+      }
+    ]
+  }
+}

@@ -1,118 +1,269 @@
 {
-  "version": "0.1",
+  "version": "0.2",
   "library_id": "builtin-example-blocks",
+  "units": "mm",
   "blocks": [
     {
-      "block_id": "block-cabinet-1800",
-      "name": "Cabinet 1800",
-      "category": "cabinet",
+      "block_id": "controlled-test-block-001",
+      "block_version": "1",
+      "name": "Controlled Test Block",
+      "category": "test_fixture",
       "domain": "generic",
-      "size": {
-        "width": 1800,
-        "depth": 600
-      },
-      "insertion_point": [0, 0, 0],
-      "rotation_allowed": true,
-      "clearance_mm": 100,
-      "tags": ["preview", "fallback"]
-    },
-    {
-      "block_id": "block-table-1200",
-      "name": "Table 1200",
-      "category": "table",
-      "domain": "generic",
-      "size": {
-        "width": 1200,
-        "depth": 700
-      },
-      "insertion_point": [0, 0, 0],
-      "rotation_allowed": true,
-      "clearance_mm": 300,
-      "tags": ["preview"]
-    },
-    {
-      "block_id": "block-shelf-900",
-      "name": "Shelf 900",
-      "category": "shelf",
-      "domain": "generic",
-      "size": {
-        "width": 900,
-        "depth": 350
-      },
-      "insertion_point": [0, 0, 0],
-      "rotation_allowed": true,
-      "clearance_mm": 150,
-      "tags": ["preview", "storage"]
-    },
-    {
-      "block_id": "block-chair-500",
-      "name": "Chair 500",
-      "category": "chair",
-      "domain": "generic",
-      "size": {
-        "width": 500,
-        "depth": 500
-      },
-      "insertion_point": [0, 0, 0],
-      "rotation_allowed": true,
-      "clearance_mm": 300,
-      "tags": ["preview", "seating"]
-    },
-    {
-      "block_id": "block-counter-1800",
-      "name": "Counter 1800",
-      "category": "counter",
-      "domain": "retail",
-      "size": {
-        "width": 1800,
-        "depth": 700
-      },
+      "tags": ["controlled", "preview"],
+      "size": { "width": 900, "depth": 450, "height": 750 },
       "insertion_point": [0, 0, 0],
       "rotation_allowed": true,
       "clearance_mm": 600,
-      "tags": ["preview", "retail", "service"]
+      "source": {
+        "type": "controlled_test_block",
+        "path": "libraries/blocks/controlled/CODEX_TEST_BLOCK_001.metadata.json",
+        "status": "metadata_only"
+      },
+      "cad_identity": {
+        "block_name": "CODEX_TEST_BLOCK_001",
+        "definition_name": "CODEX_TEST_BLOCK_001",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": {
+        "insert": [0, 0, 0],
+        "center": [450, 225, 0]
+      },
+      "footprint_2d": { "width": 900, "depth": 450 },
+      "clearance_zones": [{ "role": "front_pull", "offset_mm": 600, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 900, "depth": 450 },
+      "layer_bindings": {
+        "insert_layer_role": "preview",
+        "block_internal_layer_role": "furniture"
+      },
+      "validation": {
+        "status": "metadata_only",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
     },
     {
-      "block_id": "block-desk-1400",
-      "name": "Desk 1400",
-      "category": "desk",
+      "block_id": "block-cabinet-1800",
+      "block_version": "1",
+      "name": "Cabinet 1800",
+      "category": "cabinet",
       "domain": "generic",
-      "size": {
-        "width": 1400,
-        "depth": 700
+      "tags": ["preview", "fallback"],
+      "size": { "width": 1800, "depth": 600 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 100,
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_CABINET_1800",
+        "definition_name": "BLOCK_CABINET_1800",
+        "expected_entity_type": "block_reference"
       },
+      "anchor_points": { "insert": [0, 0, 0], "center": [900, 300, 0] },
+      "footprint_2d": { "width": 1800, "depth": 600 },
+      "clearance_zones": [{ "role": "front_pull", "offset_mm": 100, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1800, "depth": 600 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "block-table-1200",
+      "block_version": "1",
+      "name": "Table 1200",
+      "category": "table",
+      "domain": "generic",
+      "tags": ["preview"],
+      "size": { "width": 1200, "depth": 700 },
       "insertion_point": [0, 0, 0],
       "rotation_allowed": true,
       "clearance_mm": 300,
-      "tags": ["preview", "work"]
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_TABLE_1200",
+        "definition_name": "BLOCK_TABLE_1200",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [600, 350, 0] },
+      "footprint_2d": { "width": 1200, "depth": 700 },
+      "clearance_zones": [{ "role": "chair_pullback", "offset_mm": 300, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1200, "depth": 700 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
     },
     {
-      "block_id": "block-sofa-2200",
-      "name": "Sofa 2200",
-      "category": "sofa",
+      "block_id": "block-shelf-900",
+      "block_version": "1",
+      "name": "Shelf 900",
+      "category": "shelf",
       "domain": "generic",
-      "size": {
-        "width": 2200,
-        "depth": 900
-      },
-      "insertion_point": [0, 0, 0],
-      "rotation_allowed": true,
-      "clearance_mm": 300,
-      "tags": ["preview", "seating"]
-    },
-    {
-      "block_id": "block-display-unit-1200",
-      "name": "Display Unit 1200",
-      "category": "display_unit",
-      "domain": "generic",
-      "size": {
-        "width": 1200,
-        "depth": 500
-      },
+      "tags": ["preview", "storage"],
+      "size": { "width": 900, "depth": 350 },
       "insertion_point": [0, 0, 0],
       "rotation_allowed": true,
       "clearance_mm": 150,
-      "tags": ["preview", "display"]
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_SHELF_900",
+        "definition_name": "BLOCK_SHELF_900",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [450, 175, 0] },
+      "footprint_2d": { "width": 900, "depth": 350 },
+      "clearance_zones": [{ "role": "front_access", "offset_mm": 150, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 900, "depth": 350 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "block-chair-500",
+      "block_version": "1",
+      "name": "Chair 500",
+      "category": "chair",
+      "domain": "generic",
+      "tags": ["preview", "seating"],
+      "size": { "width": 500, "depth": 500 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_CHAIR_500",
+        "definition_name": "BLOCK_CHAIR_500",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [250, 250, 0] },
+      "footprint_2d": { "width": 500, "depth": 500 },
+      "clearance_zones": [{ "role": "rear_clearance", "offset_mm": 300, "side": "back" }],
+      "symbol_2d": { "type": "rectangle", "width": 500, "depth": 500 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "block-counter-1800",
+      "block_version": "1",
+      "name": "Counter 1800",
+      "category": "counter",
+      "domain": "retail",
+      "tags": ["preview", "retail", "service"],
+      "size": { "width": 1800, "depth": 700 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 600,
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_COUNTER_1800",
+        "definition_name": "BLOCK_COUNTER_1800",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [900, 350, 0] },
+      "footprint_2d": { "width": 1800, "depth": 700 },
+      "clearance_zones": [{ "role": "service_aisle", "offset_mm": 600, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1800, "depth": 700 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "block-desk-1400",
+      "block_version": "1",
+      "name": "Desk 1400",
+      "category": "desk",
+      "domain": "generic",
+      "tags": ["preview", "work"],
+      "size": { "width": 1400, "depth": 700 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_DESK_1400",
+        "definition_name": "BLOCK_DESK_1400",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [700, 350, 0] },
+      "footprint_2d": { "width": 1400, "depth": 700 },
+      "clearance_zones": [{ "role": "chair_pullback", "offset_mm": 300, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1400, "depth": 700 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "block-sofa-2200",
+      "block_version": "1",
+      "name": "Sofa 2200",
+      "category": "sofa",
+      "domain": "generic",
+      "tags": ["preview", "seating"],
+      "size": { "width": 2200, "depth": 900 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 300,
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_SOFA_2200",
+        "definition_name": "BLOCK_SOFA_2200",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [1100, 450, 0] },
+      "footprint_2d": { "width": 2200, "depth": 900 },
+      "clearance_zones": [{ "role": "circulation_front", "offset_mm": 300, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 2200, "depth": 900 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
+    },
+    {
+      "block_id": "block-display-unit-1200",
+      "block_version": "1",
+      "name": "Display Unit 1200",
+      "category": "display_unit",
+      "domain": "generic",
+      "tags": ["preview", "display"],
+      "size": { "width": 1200, "depth": 500 },
+      "insertion_point": [0, 0, 0],
+      "rotation_allowed": true,
+      "clearance_mm": 150,
+      "source": { "type": "symbol_fallback", "path": "", "status": "symbol_fallback" },
+      "cad_identity": {
+        "block_name": "BLOCK_DISPLAY_UNIT_1200",
+        "definition_name": "BLOCK_DISPLAY_UNIT_1200",
+        "expected_entity_type": "block_reference"
+      },
+      "anchor_points": { "insert": [0, 0, 0], "center": [600, 250, 0] },
+      "footprint_2d": { "width": 1200, "depth": 500 },
+      "clearance_zones": [{ "role": "viewer_clearance", "offset_mm": 150, "side": "front" }],
+      "symbol_2d": { "type": "rectangle", "width": 1200, "depth": 500 },
+      "layer_bindings": { "insert_layer_role": "preview", "block_internal_layer_role": "furniture" },
+      "validation": {
+        "status": "symbol_fallback",
+        "readback_fields": ["handle", "block_name", "insertion_point", "rotation", "scale", "layer", "bbox"],
+        "tolerance_mm": 2.0
+      }
     }
   ]
 }

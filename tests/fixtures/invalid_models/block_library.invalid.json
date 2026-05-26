@@ -1,6 +1,8 @@
 {
   "model_type": "block_library",
   "data": {
-    "version": "0.1"
+    "version": "9.9",
+    "library_id": "invalid-version",
+    "blocks": []
   }
 }

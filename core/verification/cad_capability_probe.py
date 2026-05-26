@@ -8,6 +8,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
+from core.verification.evidence_contract import apply_capability_probe_contract
+
 
 PREVIEW_LAYER = "CODEX_PREVIEW"
 EXPECTED_TYPE_COUNTS = {"arc": 1, "circle": 1, "dimension": 2, "line": 5, "polyline": 1, "text": 1}
@@ -140,6 +142,7 @@ def run_cad_capability_probe(
     if layer != PREVIEW_LAYER:
         report["failure_category"] = "safety_policy_failed"
         report["checks"].append(_check("layer_policy", "fail", f"Only {PREVIEW_LAYER} is allowed."))
+        apply_capability_probe_contract(report)
         _write_report(output_dir, report)
         return report
 
@@ -150,6 +153,7 @@ def run_cad_capability_probe(
         report["failure_category"] = "cad_connection_failed"
         report["error"] = str(exc)
         report["checks"].append(_check("cad_connection", "fail", str(exc)))
+        apply_capability_probe_contract(report)
         _write_report(output_dir, report)
         return report
 
@@ -265,6 +269,7 @@ def run_cad_capability_probe(
         report["failure_category"] = "execution_failed"
         report["error"] = str(exc)
         report["checks"].append(_check("cad_write_operations", "fail", str(exc)))
+        apply_capability_probe_contract(report)
         _write_report(output_dir, report)
         return report
 
@@ -275,6 +280,7 @@ def run_cad_capability_probe(
         report["failure_category"] = "readback_failed"
         report["error"] = str(exc)
         report["checks"].append(_check("handle_readback", "fail", str(exc)))
+        apply_capability_probe_contract(report)
         _write_report(output_dir, report)
         return report
 
@@ -334,6 +340,7 @@ def run_cad_capability_probe(
     else:
         report["status"] = "cad_capability_verified"
         report["failure_category"] = ""
+    apply_capability_probe_contract(report)
     _write_report(output_dir, report)
     return report
 

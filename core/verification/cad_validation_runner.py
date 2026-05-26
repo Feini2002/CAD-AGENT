@@ -11,6 +11,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
+from core.verification.evidence_contract import (
+    validate_capability_probe_evidence,
+    validate_readback_report_evidence,
+)
+
 
 @dataclass(frozen=True)
 class CommandResult:
@@ -175,6 +180,10 @@ def _readback_gate_failure(stdout: str) -> str:
     if readback_status != "geometry_verified" or non_pass_checks:
         details = ", ".join(non_pass_checks) if non_pass_checks else "all checks pass"
         return f"readback_report.status={readback_status!r}; expected 'geometry_verified'; non_pass_checks={details}"
+
+    evidence_failure = validate_readback_report_evidence(report)
+    if evidence_failure:
+        return evidence_failure
     return ""
 
 
@@ -202,6 +211,10 @@ def _cad_capability_gate_failure(stdout: str) -> str:
     if probe_status != "cad_capability_verified" or non_pass_checks:
         details = ", ".join(non_pass_checks) if non_pass_checks else "all checks pass"
         return f"cad_capability_probe.status={probe_status!r}; expected 'cad_capability_verified'; non_pass_checks={details}"
+
+    evidence_failure = validate_capability_probe_evidence(report)
+    if evidence_failure:
+        return evidence_failure
     return ""
 
 
@@ -246,6 +259,15 @@ def _step_record(step: ValidationStep, result: CommandResult, output_dir: Path) 
     if step.id == "capture_screen":
         record["screenshot_role"] = "visual_aid_only"
         record["geometry_accuracy"] = "not_verified_by_screenshot"
+    if step.id in {"inspect_readback", "cad_capability_probe"} and stdout:
+        try:
+            payload = json.loads(stdout)
+            if isinstance(payload, dict):
+                record["evidence_state"] = payload.get("evidence_state", "")
+                record["geometry_accuracy"] = payload.get("geometry_accuracy", "")
+                record["screenshot_role"] = payload.get("screenshot_role", "")
+        except json.JSONDecodeError:
+            pass
     return record
 
 

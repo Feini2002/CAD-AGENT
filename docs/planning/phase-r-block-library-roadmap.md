@@ -1,6 +1,6 @@
 # Phase R Block Library Roadmap
 
-状态：图块库与制图标准路线已细化  
+状态：`R-BLOCK-METADATA` baseline 已落地  
 最后同步：2026-05-26
 
 > 本文是 Phase R 的图块库路线辅助文档，不是独立 PlanMD。它定义从 `symbol_2d fallback` 走向受控 block insertion alpha 的候选路线；是否进入实现、优先级和退出标准以 `CORE_RESTRUCTURE_PLAN.md` 为准。本文不接真实公司块库，不声称当前 schema、CAD_PLAN 或 CAD driver 已支持真实块插入。

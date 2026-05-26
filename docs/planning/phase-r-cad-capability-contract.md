@@ -1,9 +1,9 @@
 # Phase R CAD Capability Contract
 
-状态：能力契约计划已细化  
+状态：`R-CAD-CONTRACT` baseline 已落地  
 最后同步：2026-05-26
 
-> 本文是 Phase R 的能力契约辅助文档，不是独立 PlanMD。它只把已有 Phase W baseline 和 CAD capability probe 转成可执行契约；是否进入实现、优先级和退出标准以 `CORE_RESTRUCTURE_PLAN.md` 为准，且本文不声称新增 CAD 能力已经实现。
+> 本文是 Phase R 的能力契约辅助文档，不是独立 PlanMD。机器可读契约元数据见 `core/verification/evidence_contract.py`；`cad_capability_probe` 与 `readback_report` 现已输出 `evidence_state`、`geometry_accuracy`、`screenshot_role` 等字段，并由 CAD validation runner 硬门禁校验。
 
 ## 总原则
 
@@ -12,6 +12,17 @@
 - `cad_capability_verified` 证明基础图元探针可用，不证明 block insertion 已通过。
 - 新实体类型如果本轮没有真实 CAD readback，必须进入 `deferred_verification`。
 - 所有真实 CAD 写入仍默认只允许 `CODEX_PREVIEW`。
+
+## 机器可读证据字段（`R-CAD-CONTRACT`）
+
+| 报告 | `status` 通过值 | `evidence_state` | `geometry_accuracy` | `screenshot_role` |
+| --- | --- | --- | --- | --- |
+| `cad_capability_probe.json` | `cad_capability_verified` | `cad_capability_verified` | `verified_by_cad_capability_readback` | `not_applicable` |
+| `cad_capability_probe.json`（无 CAD / 失败） | `external_blocker` / `failed` | `deferred_cad_readback_required` | `not_verified_without_cad_readback` | `not_applicable` |
+| `readback_report.json` | `geometry_verified` | `readback_geometry_verified` | `verified_by_cad_readback` | `visual_aid_only`（有截图时） |
+| `readback_report.json`（未几何验证） | 其他 | `deferred_cad_readback_required` | `not_verified_without_cad_readback` | 依是否有截图 |
+
+`cad_capability_verified` 与 `readback_geometry_verified` 必须分离：前者只覆盖 primitive probe，后者只覆盖 baseline / plan 级 created handles 回读。二者不得互相替代。
 
 ## 实体契约矩阵
 

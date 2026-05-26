@@ -75,10 +75,16 @@
 
 **开发步骤**
 
-- [ ] 梳理 `line`、`rectangle`、`circle`、`arc`、`polyline`、`text`、`dimension` 的 expected / actual / checks 字段，补齐契约文档中字段名和容差。
-- [ ] 在测试里断言 capability probe 输出包含 `evidence_state`、`geometry_accuracy`、`screenshot_role` 或等价门禁字段；如果当前实现没有这些字段，先写失败测试。
-- [ ] 只做最小实现：probe 或 runner 的输出字段必须能被机器断言，不依赖 Markdown 解释。
-- [ ] 确认无真实 CAD 时不会误报 `geometry_verified`，而是进入 deferred 或 no-CAD 状态。
+- [x] 梳理 `line`、`rectangle`、`circle`、`arc`、`polyline`、`text`、`dimension` 的 expected / actual / checks 字段，补齐契约文档中字段名和容差。
+- [x] 在测试里断言 capability probe 输出包含 `evidence_state`、`geometry_accuracy`、`screenshot_role` 或等价门禁字段；如果当前实现没有这些字段，先写失败测试。
+- [x] 只做最小实现：probe 或 runner 的输出字段必须能被机器断言，不依赖 Markdown 解释。
+- [x] 确认无真实 CAD 时不会误报 `geometry_verified`，而是进入 deferred 或 no-CAD 状态。
+
+**执行记录（2026-05-26）**
+
+- 新增 `core/verification/evidence_contract.py` 作为机器可读契约与证据词表；`cad_capability_probe`、`build_verification_report` 与 CAD validation runner 硬门禁已接入。
+- `tests.core.test_cad_capability_probe`、`tests.core.test_cad_validation_runner`、`tests.core.test_verification_report` 通过。
+- `scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\r-cad-contract-no-cad`：`status=pass`。
 
 **子校验**
 
@@ -108,11 +114,17 @@
 
 **开发步骤**
 
-- [ ] 为 `BLOCK_LIBRARY v0.2` 增加 `units`、`source`、`cad_identity`、`anchor_points`、`footprint_2d`、`clearance_zones`、`layer_bindings`、`validation` 字段。
-- [ ] 在 `libraries/blocks/block_library.example.json` 中只放受控测试块和 symbol fallback，不引用真实公司块库。
-- [ ] loader 保持兼容：旧 `0.1` 示例若仍存在，要么可读，要么给出结构化 schema error。
-- [ ] selector 能按 `category`、`domain`、`tags`、`validation.status` 过滤。
-- [ ] fallback object spec 仍可用，不能因为 block metadata 缺失而破坏 blank-shell pipeline。
+- [x] 为 `BLOCK_LIBRARY v0.2` 增加 `units`、`source`、`cad_identity`、`anchor_points`、`footprint_2d`、`clearance_zones`、`layer_bindings`、`validation` 字段。
+- [x] 在 `libraries/blocks/block_library.example.json` 中只放受控测试块和 symbol fallback，不引用真实公司块库。
+- [x] loader 保持兼容：旧 `0.1` 示例若仍存在，要么可读，要么给出结构化 schema error。
+- [x] selector 能按 `category`、`domain`、`tags`、`validation.status` 过滤。
+- [x] fallback object spec 仍可用，不能因为 block metadata 缺失而破坏 blank-shell pipeline。
+
+**执行记录（2026-05-26）**
+
+- `libraries/blocks/block_library.example.json` 升级为 `0.2`，新增 `controlled-test-block-001`（`CODEX_TEST_BLOCK_001`）与其余 `symbol_fallback` 元数据块。
+- 新增 `object_spec_to_block_reference()`、`normalize_block()`、`validate_block_library()`；`0.1` 示例 `examples/block_libraries/minimal_builtin_blocks.json` 仍可加载。
+- `234 tests OK`；`run_repo_audit.py --fail-on-findings` 0 findings；`blank_shell_core_benchmark` pass；`run_cad_validation.py --no-cad --output-dir output\validation_runs\r-block-metadata-no-cad` pass。
 
 **子校验**
 
@@ -144,11 +156,16 @@
 
 **开发步骤**
 
-- [ ] 新增最小合法 `insert_block_alpha` 示例，字段只包含 `block_id`、`block_name`、`base_point`、`rotation`、`scale`、`layer` 和可选 `attributes`。
-- [ ] 新增 invalid fixture：缺 `block_name`、越权 layer、非法 scale、非 preview 写入。
-- [ ] validate 阶段拒绝正式图层、空 block identity 和缺 base point。
-- [ ] dry-run 阶段输出 bbox / anchor / rotation / layer role 检查，且写明 `geometry_accuracy=not_verified_without_cad_readback`。
-- [ ] fake execution driver 只记录 block insert call，不触碰真实 CAD。
+- [x] 新增最小合法 `insert_block_alpha` 示例，字段只包含 `block_id`、`block_name`、`base_point`、`rotation`、`scale`、`layer` 和可选 `attributes`。
+- [x] 新增 invalid fixture：缺 `block_name`、越权 layer、非法 scale、非 preview 写入。
+- [x] validate 阶段拒绝正式图层、空 block identity 和缺 base point。
+- [x] dry-run 阶段输出 bbox / anchor / rotation / layer role 检查，且写明 `geometry_accuracy=not_verified_without_cad_readback`。
+- [x] fake execution driver 只记录 block insert call，不触碰真实 CAD。
+
+**执行记录（2026-05-26）**
+
+- 新增 `core/plan_engine/block_alpha_plan.py`、`examples/plans/insert_block_alpha_test.json`；`validate_plan` / `dry_run_report` / `execute_plan` 已支持 `insert_block_alpha`。
+- `scripts\validate_plan.py` 与 `scripts\dry_run_plan.py` 对示例 plan 通过；相关单测 19 项 OK；全量 `unittest discover -s tests` 通过；`run_cad_validation.py --no-cad --output-dir output\validation_runs\r-block-plan-no-cad` pass。
 
 **子校验**
 

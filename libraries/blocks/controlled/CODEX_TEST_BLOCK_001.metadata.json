@@ -1,0 +1,8 @@
+{
+  "block_id": "controlled-test-block-001",
+  "cad_identity": {
+    "block_name": "CODEX_TEST_BLOCK_001",
+    "definition_name": "CODEX_TEST_BLOCK_001"
+  },
+  "note": "Controlled test block metadata only. Real DWG definition is deferred; do not treat as company block library."
+}

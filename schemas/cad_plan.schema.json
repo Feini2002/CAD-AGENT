@@ -24,7 +24,7 @@
     },
     "intent": {
       "type": "string",
-      "enum": ["draw_object", "draw_annotation", "modify_object", "delete_object"]
+      "enum": ["draw_object", "draw_annotation", "modify_object", "delete_object", "insert_block_alpha"]
     },
     "object": {
       "type": "object",
@@ -43,6 +43,15 @@
         "depth": {
           "type": "number",
           "exclusiveMinimum": 0
+        },
+        "block_id": {
+          "type": "string"
+        },
+        "cad_identity": {
+          "type": "object"
+        },
+        "attributes": {
+          "type": "object"
         }
       },
       "additionalProperties": true
@@ -68,6 +77,18 @@
         },
         "reference": {
           "type": "string"
+        },
+        "rotation": {
+          "type": "number"
+        },
+        "scale": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
         }
       },
       "additionalProperties": true

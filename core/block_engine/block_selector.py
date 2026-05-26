@@ -38,7 +38,15 @@ def select_block_candidate(
     min_clearance: float | int | None = None,
 ) -> dict[str, Any]:
     tags = tags or []
-    candidates = select_blocks(library, category=category, domain=domain, max_width=max_width, max_depth=max_depth)
+    candidates = select_blocks(
+        library,
+        category=category,
+        domain=domain,
+        tags=tags,
+        max_width=max_width,
+        max_depth=max_depth,
+        selectable_only=True,
+    )
     if min_clearance is not None:
         candidates = [block for block in candidates if block.get("clearance_mm", 0) >= min_clearance]
     if not candidates:

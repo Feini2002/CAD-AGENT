@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from core.plan_engine.validate_plan import load_json, validate_plan
+from core.verification.evidence_contract import apply_readback_report_contract
 
 
 DEFAULT_TOLERANCE_MM = 1.0
@@ -337,7 +338,7 @@ def build_verification_report(
         actual["bbox"] = bbox
 
     repair_suggestions = repair_suggestions_for_checks(checks)
-    return {
+    report = {
         "version": "0.1",
         "report_id": f"verification-{plan_path.stem}",
         "status": status,
@@ -354,3 +355,7 @@ def build_verification_report(
         "requires_real_cad": [] if entities else ["ModelSpace entity enumeration", "dimension measurement readback"],
         "repair_suggestions": repair_suggestions,
     }
+    return apply_readback_report_contract(
+        report,
+        screenshot_path=str(screenshot) if screenshot_valid else None,
+    )

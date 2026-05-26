@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+from core.plan_engine.dry_run_report import create_dry_run_report
 
 
 def main() -> int:
@@ -16,22 +19,12 @@ def main() -> int:
     with args.plan.open("r", encoding="utf-8") as file:
         plan = json.load(file)
 
-    obj = plan["object"]
-    placement = plan["placement"]
-    drawing = plan["drawing"]
-    base_point = placement.get("base_point", [0, 0, 0])
-    width = obj.get("width", 0)
-    depth = obj.get("depth", 0)
-
-    print("CAD_PLAN DRY RUN")
-    print(f"- intent: {plan['intent']}")
-    print(f"- object: {obj.get('name')} ({obj.get('type')})")
-    print(f"- size: {width} x {depth} mm")
-    print(f"- placement: {placement.get('mode')} at {base_point}")
-    print(f"- layer: {drawing.get('layer')}")
-    print(f"- include_label: {drawing.get('include_label', False)}")
-    print(f"- include_dimensions: {drawing.get('include_dimensions', False)}")
-    print("- entities to create: rectangle, optional text, optional linear dimensions")
+    report = create_dry_run_report(plan)
+    print(report.get("human_summary", ""))
+    if report.get("status") != "valid":
+        for error in report.get("validation_errors", []):
+            print(f"- {error}", file=sys.stderr)
+        return 1
     return 0
 
 

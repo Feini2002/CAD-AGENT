@@ -40,6 +40,9 @@ Phase R 角色驱动组合交付已从 non-CAD benchmark 推进到 3 个组合�
 - Phase R 第二批代码切口已落地：新增 `core/composition_engine/`，支持将卧室床+地毯、餐桌+椅、办公桌+椅+显示器这类角色需求转成组合规格、多 CAD_PLAN、dry-run、unverified verification 和 SVG/PNG 视觉辅助预览；benchmark runner 新增 `composition_spec` pipeline、`contains_object_roles` 断言和 `examples/benchmarks/interior_delivery_benchmark.json`，当前 3 个 persona composition cases 在 non-CAD 下通过。
 - Phase R 第三批真实 CAD 校验已落地：新增 `core/execution/batch_plan_runner.py` 与 `scripts/run_composition_cad_check.py`，可将 benchmark 产出的多 CAD_PLAN 按 case 偏移批量写入 AutoCAD，并对本轮 created handles 做逐 plan `geometry_verified` 回读；脚本支持 `--start-x` / `--start-y` / `--spacing-x`，避免为了取干净截图而删除旧预览实体。
 - `R-CAD-VIEW-CAPTURE` baseline 已落地：`render_preview.py` 支持 AutoCAD 窗口级截图与 created handles bbox 聚焦；`run_cad_validation.py` 已改为输出 `cad-validation-window.png`，截图继续只作为 `visual_aid_only`，几何准确仍由 created handles 回读决定。
+- `R-CAD-CONTRACT` baseline 已落地：新增 `core/verification/evidence_contract.py`，`cad_capability_probe` 与 `readback_report` 现输出 `evidence_state`、`geometry_accuracy`、`screenshot_role`；CAD validation runner 对缺失或错配证据字段做硬门禁。证据：`output\validation_runs\r-cad-contract-no-cad\report.json`、`output\validation_runs\r-cad-contract-cad\report.json`。
+- `R-BLOCK-METADATA` baseline 已落地：`libraries/blocks/block_library.example.json` 升级为 `0.2`，含受控 `controlled-test-block-001`（`CODEX_TEST_BLOCK_001`）与 `symbol_fallback` 元数据；新增 `object_spec_to_block_reference()` 与 `validation.status` 过滤。证据：`234 tests OK`、`output\validation_runs\r-block-metadata-no-cad\report.json`、blank-shell benchmark pass。
+- `R-BLOCK-PLAN` baseline 已落地：`insert_block_alpha` CAD_PLAN intent 已接入 `validate_plan`、`dry_run_report`、`execute_plan`（fake driver 记录 `insert_block_alpha` 调用）；示例 `examples/plans/insert_block_alpha_test.json`。证据：`239 tests OK`、`output\validation_runs\r-block-plan-no-cad\report.json`。
 
 ## 当前可用链路
 
@@ -65,7 +68,7 @@ SHELL_MODEL
 最近复验时间：2026-05-26。
 
 ```text
-unittest discover -s tests: 227 tests OK
+unittest discover -s tests: 239 tests OK
 run_repo_audit.py --max-python-lines 500 --fail-on-findings: 0 findings
 run_benchmark_suite.py examples\benchmarks\interior_delivery_benchmark.json: pass, 3/3 cases
 run_benchmark_suite.py examples\benchmarks\office_alpha_benchmark.json: pass, 4/4 cases
@@ -78,6 +81,8 @@ run_cad_validation.py: output\validation_runs\manual-cad-after-primitive-probe s
 focused R-CAD-VIEW tests: tests.core.test_render_preview + tests.core.test_cad_validation_runner, 11 tests OK
 run_cad_validation.py --no-cad: output\validation_runs\r-cad-view-no-cad status pass
 run_cad_validation.py: output\validation_runs\r-cad-view-cad status pass
+run_cad_validation.py --no-cad: output\validation_runs\r-cad-contract-no-cad status pass
+run_cad_validation.py: output\validation_runs\r-cad-contract-cad status pass
 run_composition_cad_check.py: output\validation_runs\interior-composition-cad-label-clean-y8000 status geometry_verified, 3/3 cases, 55 created handles
 最新真实 CAD 报告: output\validation_runs\manual-cad-after-primitive-probe\report.json
 最新窗口级截图 CAD 报告: output\validation_runs\r-cad-view-cad\report.json
