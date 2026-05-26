@@ -39,6 +39,7 @@ Phase R 角色驱动组合交付已从 non-CAD benchmark 推进到 3 个组合�
 - Phase R 第一批代码切口已落地：benchmark runner 支持 `evidence_state`、`geometry_accuracy`、`screenshot_role`、`minimums`、`contains_object_types`、`contains_component_roles`、suite/case 配置校验和 `object_spec` pipeline；blank-shell pipeline 已输出每个 CAD_PLAN 的 dry-run / verification 汇总证据；新增 `examples/benchmarks/office_alpha_benchmark.json`，用于验证 desk / chair / cabinet 对象规格、office blank-shell 对象类型和 non-CAD 证据状态。
 - Phase R 第二批代码切口已落地：新增 `core/composition_engine/`，支持将卧室床+地毯、餐桌+椅、办公桌+椅+显示器这类角色需求转成组合规格、多 CAD_PLAN、dry-run、unverified verification 和 SVG/PNG 视觉辅助预览；benchmark runner 新增 `composition_spec` pipeline、`contains_object_roles` 断言和 `examples/benchmarks/interior_delivery_benchmark.json`，当前 3 个 persona composition cases 在 non-CAD 下通过。
 - Phase R 第三批真实 CAD 校验已落地：新增 `core/execution/batch_plan_runner.py` 与 `scripts/run_composition_cad_check.py`，可将 benchmark 产出的多 CAD_PLAN 按 case 偏移批量写入 AutoCAD，并对本轮 created handles 做逐 plan `geometry_verified` 回读；脚本支持 `--start-x` / `--start-y` / `--spacing-x`，避免为了取干净截图而删除旧预览实体。
+- `R-CAD-VIEW-CAPTURE` baseline 已落地：`render_preview.py` 支持 AutoCAD 窗口级截图与 created handles bbox 聚焦；`run_cad_validation.py` 已改为输出 `cad-validation-window.png`，截图继续只作为 `visual_aid_only`，几何准确仍由 created handles 回读决定。
 
 ## 当前可用链路
 
@@ -61,10 +62,10 @@ SHELL_MODEL
 
 ## 最近验证记录
 
-最近复验时间：2026-05-25。
+最近复验时间：2026-05-26。
 
 ```text
-unittest discover -s tests: 223 tests OK
+unittest discover -s tests: 227 tests OK
 run_repo_audit.py --max-python-lines 500 --fail-on-findings: 0 findings
 run_benchmark_suite.py examples\benchmarks\interior_delivery_benchmark.json: pass, 3/3 cases
 run_benchmark_suite.py examples\benchmarks\office_alpha_benchmark.json: pass, 4/4 cases
@@ -74,8 +75,12 @@ render_preview.py --check: ready（最近稳定基线）
 run_cad_validation.py --no-cad: output\validation_runs\manual-no-cad-after-composition-cad status pass
 run_cad_capability_probe.py: output\validation_runs\manual-primitive-cad-probe status cad_capability_verified
 run_cad_validation.py: output\validation_runs\manual-cad-after-primitive-probe status pass
+focused R-CAD-VIEW tests: tests.core.test_render_preview + tests.core.test_cad_validation_runner, 11 tests OK
+run_cad_validation.py --no-cad: output\validation_runs\r-cad-view-no-cad status pass
+run_cad_validation.py: output\validation_runs\r-cad-view-cad status pass
 run_composition_cad_check.py: output\validation_runs\interior-composition-cad-label-clean-y8000 status geometry_verified, 3/3 cases, 55 created handles
 最新真实 CAD 报告: output\validation_runs\manual-cad-after-primitive-probe\report.json
+最新窗口级截图 CAD 报告: output\validation_runs\r-cad-view-cad\report.json
 最新角色组合真实 CAD 报告: output\validation_runs\interior-composition-cad-label-clean-y8000\composition_cad_check_report.json
 readback_report.json: status geometry_verified
 cad_capability_probe.json: status cad_capability_verified
@@ -84,6 +89,7 @@ capability probe handles: 3CCD, 3CCE, 3CCF, 3CD0, 3CD1, 3CD2, 3CD3, 3CD4, 3CD5, 
 关键 checks: readback_scope / layer_entities / bbox_size / base_point / label_text / dimension_count / created_handles_scope 全部 pass
 能力探针 checks: active_document_read / layer_policy / layer_ensure / rectangle_handles / line_handle / circle_handle / arc_handle / polyline_handle / text_handle / dimension_handles / handle_readback_count / readback_layer_scope / readback_type_counts / readback_bbox / safety_preview_only 全部 pass
 截图证据: output\validation_runs\manual-primitive-cad-probe\cad-primitive-screen.png, 538584 bytes
+窗口级截图证据: output\validation_runs\r-cad-view-cad\cad-validation-window.png, mode autocad_window, focus zoomed_to_bbox, 7 created handles
 角色组合视觉辅助截图: output\test_artifacts\benchmarks\interior_delivery_manual\interior_designer_bedroom_bed_rug\preview-browser.png; output\test_artifacts\benchmarks\interior_delivery_manual\home_designer_dining_table_set\preview-browser.png; output\test_artifacts\benchmarks\interior_delivery_manual\office_planner_desk_combo\preview-browser.png
 角色组合真实 CAD 截图: output\validation_runs\interior-composition-cad-label-clean-y8000\composition-cad-screen-clean-y8000.png
 ```
@@ -95,9 +101,9 @@ W-07 真实 CAD 总验证入口已经完成 baseline 落图、截图和实体回
 按 `CAD_AGENT_RULES.md` 的粗估口径，当前基准为：
 
 ```text
-通用底座进度：约 70%
-多场景 Agent 进度：约 34%
-总体进度：约 59%（通用底座 70% + 多场景 Agent 30%）
+总进度：约 59%（Core 底座开发 70% + Agent 多场景实现 30%）
+Core 底座开发进度：约 70%
+Agent 多场景实现进度：约 34%
 ```
 
 解释：Core 已经从脚手架推进到可复验 Alpha 底座，本轮又补上 Phase R benchmark 证据状态、对象规格 pipeline、角色驱动组合 pipeline、对象/组件/角色断言、视觉辅助预览，以及 3 个组合案例的真实 AutoCAD 批量落图与 created handles 回读；但复杂几何、真实样本、块库、块插入、自动图纸理解还没闭合。场景 Agent 目前主要是 preferences、manifest、目录、边界测试、office alpha non-CAD object/scene cases、3 个 interior delivery persona composition cases 和对应真实 CAD 组合回读，尚未完成 Phase X 的正式 Alpha 验收。
@@ -113,10 +119,13 @@ W-07 真实 CAD 总验证入口已经完成 baseline 落图、截图和实体回
 | 真实项目样本和失败基准不足 | benchmark 代表性有限 | Phase Y |
 | 文档历史状态曾经分散重复 | 后续 Codex 容易读错阶段 | Phase Z |
 | office alpha benchmark 仍缺 micro-scene / failure 样本 | 已覆盖 desk / chair / cabinet object spec 与第一条 scene case，但还没有覆盖入口、通道、冲突和失败样本 | Phase R / Phase Y |
+| CAD 窗口级截图仍需扩展到更多边界 | baseline 已能截 AutoCAD 客户区并按本轮 created handles 缩放视图；后续仍需覆盖更细绘图区裁剪、多显示器和遮挡边界；几何准确仍以 created handles 回读为准 | Phase W / Phase R |
 
 ## 计划入口
 
 后续优先级、Phase 顺序、待办和退出标准只以唯一 `PlanMD`：`CORE_RESTRUCTURE_PLAN.md` 为准。本文只维护当前进展、最近验证、风险边界和状态快照。
+
+2026-05-26 已把下一轮开发建议拆成九个可执行开发包：`R-CAD-CONTRACT`、`R-BLOCK-METADATA`、`R-BLOCK-PLAN`、`R-BLOCK-CAD-ALPHA`、`R-CAD-VIEW-CAPTURE`、`R-OFFICE-MICRO`、`R4-EVIDENCE-GATES`、`Y-MULTI-CANDIDATE`、`X-SCENE-ALPHA`。其中 `R-CAD-VIEW-CAPTURE` 已完成 baseline 实现与真实 CAD 验证，证据为 `output\validation_runs\r-cad-view-cad\cad-validation-window.png`；截图能力提升不改变几何门槛，真实 CAD 几何仍只看 created handles 回读和 `geometry_verified`。
 
 ## 后续恢复开发时怎么问
 

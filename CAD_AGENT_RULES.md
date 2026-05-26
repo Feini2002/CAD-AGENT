@@ -58,22 +58,22 @@
 
 如果未来判断根目录 Markdown 过多，优先迁移到 `docs/history/`、`docs/architecture/`、`docs/decisions/` 或 `docs/verification/`，不要直接删除仍有历史依据的文档。
 
-## 0.4 开发进度百分比估算口径
+## 0.4 交付进度百分比估算口径
 
 后续每次完成 CAD Agent 相关改动后，Codex 都要顺手模拟估算一次开发进度，并在最终回复中给出大概百分比。该百分比是产品和工程节奏判断工具，不是严格项目管理 KPI，允许有 5-10 个百分点的主观误差。
 
 固定按三项汇报：
 
-- `通用底座进度`：把 Core 通用计划按 100% 估算，包含 schema、workflow、CAD IO、执行、验证、安全、benchmark、真实样本、维护治理和可迁移性。
-- `多场景 Agent 进度`：把场景扩展层按 100% 估算，包含 `agents/<scenario>` manifest、preferences、场景 workflow、场景 benchmark、场景语义、真实样本和不得复制 Core 的边界。
-- `总体进度`：默认按 `通用底座 70% + 多场景 Agent 30%` 加权估算。除非用户另行指定权重，否则使用这个口径。
+- `Core 底座开发进度`：把 Core 通用计划按 100% 估算，包含 schema、workflow、CAD IO、执行、验证、安全、benchmark、真实样本、维护治理和可迁移性。
+- `Agent 多场景实现进度`：把场景扩展层按 100% 估算，包含 `agents/<scenario>` manifest、preferences、场景 workflow、场景 benchmark、场景语义、真实样本和不得复制 Core 的边界。
+- `总进度`：默认按 `Core 底座开发 70% + Agent 多场景实现 30%` 加权估算。除非用户另行指定权重，否则使用这个口径。
 
 当前基准估算见 `CORE_STATUS.md` 与 `CAD_AGENT_STATUS.md`。截至 2026-05-26 的同步口径为：
 
 ```text
-通用底座进度：约 70%
-多场景 Agent 进度：约 34%
-总体进度：约 59% = 70% * 0.70 + 34% * 0.30
+总进度：约 59% = 70% * 0.70 + 34% * 0.30
+Core 底座开发进度：约 70%
+Agent 多场景实现进度：约 34%
 ```
 
 估算规则：

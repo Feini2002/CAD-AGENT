@@ -42,6 +42,18 @@ SHELL_MODEL
 
 仍需注意：这些验证不能扩大解释为真实项目图纸、块库、块插入或任意 `CAD_PLAN` 都已经准确。当前系统是 Core Alpha 原型，不是完整自动设计大脑。
 
+## 交付进度规则
+
+后续每次 CAD Agent 相关交付，最终回复都必须附带一组粗估开发进度，用于判断当前产品和工程节奏。固定三项为：
+
+```text
+总进度：约 xx%
+Core 底座开发进度：约 xx%
+Agent 多场景实现进度：约 xx%
+```
+
+默认权重口径沿用 `CAD_AGENT_RULES.md`：`总进度 = Core 底座开发进度 * 70% + Agent 多场景实现进度 * 30%`。百分比是 5-10 个百分点误差范围内的主观工程估算，不替代真实验证证据；涉及 CAD 几何准确时，仍必须以 created handles 回读、`geometry_verified` 和关键 checks 为准。
+
 ## 下一步计划
 
 近期开发继续围绕 `CORE_RESTRUCTURE_PLAN.md` 推进，重点是：

@@ -263,3 +263,57 @@ class AutoCADComDriver:
                 continue
             entities.append(normalized)
         return entities
+
+    @staticmethod
+    def _bbox_from_entities(entities: list[dict[str, object]]) -> dict[str, list[float]] | None:
+        xs: list[float] = []
+        ys: list[float] = []
+        for entity in entities:
+            bbox = entity.get("bbox")
+            if isinstance(bbox, dict):
+                minimum = bbox.get("min")
+                maximum = bbox.get("max")
+                if isinstance(minimum, list) and isinstance(maximum, list) and len(minimum) >= 2 and len(maximum) >= 2:
+                    xs.extend([float(minimum[0]), float(maximum[0])])
+                    ys.extend([float(minimum[1]), float(maximum[1])])
+                    continue
+            for key in ("start_point", "end_point", "position", "center"):
+                point = entity.get(key)
+                if isinstance(point, list) and len(point) >= 2:
+                    xs.append(float(point[0]))
+                    ys.append(float(point[1]))
+            points = entity.get("points")
+            if isinstance(points, list):
+                for point in points:
+                    if isinstance(point, list) and len(point) >= 2:
+                        xs.append(float(point[0]))
+                        ys.append(float(point[1]))
+        if not xs or not ys:
+            return None
+        return {"min": [min(xs), min(ys)], "max": [max(xs), max(ys)]}
+
+    def zoom_to_bbox(self, bbox: dict[str, list[float]], *, padding_ratio: float = 0.15) -> dict[str, object]:
+        minimum = bbox.get("min", [])
+        maximum = bbox.get("max", [])
+        if len(minimum) < 2 or len(maximum) < 2:
+            raise ValueError("bbox must contain min and max xy coordinates.")
+        min_x, min_y = float(minimum[0]), float(minimum[1])
+        max_x, max_y = float(maximum[0]), float(maximum[1])
+        width = max(max_x - min_x, 1.0)
+        height = max(max_y - min_y, 1.0)
+        pad_x = width * padding_ratio
+        pad_y = height * padding_ratio
+        p1 = [min_x - pad_x, min_y - pad_y, 0]
+        p2 = [max_x + pad_x, max_y + pad_y, 0]
+        self.app.ZoomWindow(self._point(p1), self._point(p2))
+        return {"status": "zoomed_to_bbox", "bbox": {"min": p1[:2], "max": p2[:2]}}
+
+    def zoom_to_handles(self, *, handles: list[str], layer: str | None = None, padding_ratio: float = 0.15) -> dict[str, object]:
+        entities = self.snapshot_handles(handles=handles, layer=layer)
+        bbox = self._bbox_from_entities(entities)
+        if bbox is None:
+            self.app.ZoomExtents()
+            return {"status": "zoom_extents", "reason": "created handle bbox unavailable", "handle_count": len(handles)}
+        result = self.zoom_to_bbox(bbox, padding_ratio=padding_ratio)
+        result["handle_count"] = len(handles)
+        return result

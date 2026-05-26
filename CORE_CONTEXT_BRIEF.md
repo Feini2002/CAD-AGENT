@@ -12,12 +12,13 @@
 
 - Phase O-V 非 CAD 主线已完成，系统层安全补强和自检已完成。
 - `docs/architecture/shell-layout-foundation-design.md` 的核心思路已合并进主计划，并落地到 blank-shell pipeline 的 Phase P-V。
-- 最新基线记录为 223 tests OK，repo audit 0 findings，blank-shell 4 场景 benchmark pass，office alpha benchmark 4 cases pass，interior delivery benchmark 3 persona composition cases pass；此外，interior delivery 的 3 个 persona composition cases 已补跑真实 AutoCAD batch check，结果为 3/3 `geometry_verified`。此前记录中 `self_check.py` pass、`render_preview.py --check` ready、`run_cad_validation.py --no-cad` pass 仍为最近稳定基线。
-- Phase W 已执行到 W-16；W-07 真实 CAD 总验证已在用户会话下通过。最新 CAD 底座加固报告为 `output\validation_runs\manual-cad-after-primitive-probe\report.json`，顶层 `status=pass`；`readback_report.json.status=geometry_verified`，`cad_capability_probe.json.status=cad_capability_verified`，关键 checks 全部通过。能力矩阵已从矩形/文字/标注扩展到独立直线、圆、弧和闭合多段线；缩放后的截图证据为 `output\validation_runs\manual-primitive-cad-probe\cad-primitive-screen.png`。此前无法调用的根因是默认沙箱身份 `desktop-r40v31q\codexsandboxoffline` 看不到用户桌面的 AutoCAD 进程、窗口和 ROT/COM 活动对象；用户会话身份 `desktop-r40v31q\user` 下 COM 可用。本轮额外修复了总控只看顶层 pass 的误判风险，并让真实 CAD 回读优先按本轮 created handles 定向读取，避免在大 DWG 中扫描全 ModelSpace。
+- 最新基线记录为 227 tests OK，repo audit 0 findings，blank-shell 4 场景 benchmark pass，office alpha benchmark 4 cases pass，interior delivery benchmark 3 persona composition cases pass；此外，interior delivery 的 3 个 persona composition cases 已补跑真实 AutoCAD batch check，结果为 3/3 `geometry_verified`。此前记录中 `self_check.py` pass、`render_preview.py --check` ready、`run_cad_validation.py --no-cad` pass 仍为最近稳定基线。
+- Phase W 已执行到 W-16；W-07 真实 CAD 总验证已在用户会话下通过。最新 CAD 底座加固报告为 `output\validation_runs\manual-cad-after-primitive-probe\report.json`，顶层 `status=pass`；`readback_report.json.status=geometry_verified`，`cad_capability_probe.json.status=cad_capability_verified`，关键 checks 全部通过。能力矩阵已从矩形/文字/标注扩展到独立直线、圆、弧和闭合多段线；缩放后的截图证据为 `output\validation_runs\manual-primitive-cad-probe\cad-primitive-screen.png`。此前无法调用的根因是默认沙箱身份 `desktop-r40v31q\codexsandboxoffline` 看不到用户桌面的 AutoCAD 进程、窗口和 ROT/COM 活动对象；用户会话身份 `desktop-r40v31q\user` 下 COM 可用。本轮额外修复了总控只看顶层 pass 的误判风险，并让真实 CAD 回读优先按本轮 created handles 定向读取，避免在大 DWG 中扫描全 ModelSpace。2026-05-26 的 `R-CAD-VIEW-CAPTURE` baseline 已把总控截图升级为 AutoCAD 客户区窗口级截图，并在截图前按本轮 created handles bbox 缩放视图；最新证据为 `output\validation_runs\r-cad-view-cad\report.json` 和 `output\validation_runs\r-cad-view-cad\cad-validation-window.png`。
 - 当前唯一 `PlanMD` / 开发主线是 `CORE_RESTRUCTURE_PLAN.md`；根目录没有独立 `plan.md`。用户提到 `PlanMD`、`plan.md` 或“主 plan”时，默认指这份文件。
 - 主平台 Markdown 精细化拆分已执行：`CORE_RESTRUCTURE_PLAN.md` 已收缩为总控索引，Phase W/X/Y/Z 执行剧本已迁入 `docs/planning/`。
 - 本轮二次收束已新增 `docs/README.md` 作为文档区总地图，并把 `docs/ROADMAP.md` 降级为兼容跳转；后续又补强 PlanMD 主线协议，明确 `docs/planning/phase-*.md` 是辅助执行剧本，避免旧阶段路线或多个带 plan 的文件和当前主线并存造成误读。
 - Phase R 新鲜视角评审已启动并细化：多名只读专家 agent 从 CAD 执行、图块库、办公业务、平台架构和 benchmark 验证角度提出建议；记录在 `docs/reviews/fresh-eyes-review-2026-05-25.md`。执行入口已扩展为 `docs/planning/phase-r-fresh-perspective-rebirth-plan.md`、`phase-r-rebirth-implementation-plan.md`、`phase-r-cad-capability-contract.md`、`phase-r-block-library-roadmap.md`、`phase-r-office-benchmark-cases.md`，并新增 `docs/governance/multi-agent-contribution.md` 与 `docs/onboarding/first-handoff.md`。当前已把 Phase R 代码切口落到 benchmark runner、composition engine 和真实 CAD batch runner：支持 `evidence_state`、`geometry_accuracy`、`screenshot_role`、`minimums`、`contains_object_types`、`contains_component_roles`、`contains_object_roles`、`object_spec` / `composition_spec` benchmark pipeline、suite/case 配置校验，以及 blank-shell / composition 每个 CAD_PLAN 的 dry-run / verification 汇总证据；新增 `examples/benchmarks/office_alpha_benchmark.json` 与 `examples/benchmarks/interior_delivery_benchmark.json`。后者模拟室内设计师 / 家庭设计者 / 办公布局者，覆盖卧室床+地毯、餐桌组合、办公桌组合，并输出 SVG 与浏览器 PNG 视觉辅助证据；最新真实 CAD 组合证据为 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition_cad_check_report.json` 和 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition-cad-screen-clean-y8000.png`。
+- 2026-05-26 已把下一轮开发建议写回主计划：`CORE_RESTRUCTURE_PLAN.md` 新增九个开发包和固定子校验顺序；其中 `R-CAD-VIEW-CAPTURE` baseline 已完成实现与真实 CAD 验证，避免全屏截图被 Codex 窗口遮挡；`docs/planning/phase-r-rebirth-implementation-plan.md` 已记录文件级步骤、子校验命令、通过标准和执行证据。该变更不代表 block insertion、office micro-scene、blank-shell 多候选或 Scene Alpha 已完成；截图仍不能替代 created handles 回读。
 
 当前非 CAD blank-shell 链路：
 
@@ -51,6 +52,18 @@ SHELL_MODEL
 - `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` 只写能力、证据、风险和当前状态，不写独立下一步。
 - `CORE_ROADMAP.md`、`docs/README.md`、架构、治理、交接、验证、历史和 review 文档都服务 PlanMD。
 - 如果辅助 MD 想新增待办或调整优先级，先同步到 `CORE_RESTRUCTURE_PLAN.md`。
+
+## 交付进度格式
+
+每次 CAD Agent 相关交付的最终回复都要附带粗估进度，固定写三项：
+
+```text
+总进度：约 xx%
+Core 底座开发进度：约 xx%
+Agent 多场景实现进度：约 xx%
+```
+
+当前估算口径见 `CAD_AGENT_RULES.md` 与 `CAD_AGENT_STATUS.md`；百分比只表示开发节奏，不替代真实 CAD 验证证据。
 
 ## 目标入口
 

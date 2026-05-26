@@ -77,7 +77,7 @@ def _base_steps(root: Path) -> list[ValidationStep]:
 
 def _cad_steps(root: Path, output_dir: Path) -> list[ValidationStep]:
     plan = str(root / "examples" / "plans" / "draw_test_cabinet.json")
-    screenshot = str(output_dir / "cad-validation-screen.png")
+    screenshot = str(output_dir / "cad-validation-window.png")
     execution_summary = str(output_dir / "execution_summary.json")
     capability_report = str(output_dir / "cad_capability_probe.json")
     return [
@@ -102,8 +102,16 @@ def _cad_steps(root: Path, output_dir: Path) -> list[ValidationStep]:
         ),
         ValidationStep(
             "capture_screen",
-            "Capture CAD visual checkpoint",
-            [_python(), "scripts/render_preview.py", "--capture-screen", "--output", screenshot],
+            "Capture CAD window visual checkpoint",
+            [
+                _python(),
+                "scripts/render_preview.py",
+                "--capture-autocad-window",
+                "--execution-summary",
+                execution_summary,
+                "--output",
+                screenshot,
+            ],
             "screenshot_failed",
             cad_required=True,
         ),
@@ -221,7 +229,7 @@ def _step_record(step: ValidationStep, result: CommandResult, output_dir: Path) 
     if step.stdout_artifact and result.stdout:
         _write_text(Path(step.stdout_artifact), stdout)
 
-    return {
+    record = {
         "id": step.id,
         "title": step.title,
         "status": status,
@@ -235,6 +243,10 @@ def _step_record(step: ValidationStep, result: CommandResult, output_dir: Path) 
         "stdout_excerpt": stdout[-1200:],
         "stderr_excerpt": stderr[-1200:],
     }
+    if step.id == "capture_screen":
+        record["screenshot_role"] = "visual_aid_only"
+        record["geometry_accuracy"] = "not_verified_by_screenshot"
+    return record
 
 
 def _skipped_step_record(step: ValidationStep, output_dir: Path, *, blocked_by: str) -> dict[str, Any]:
@@ -244,7 +256,7 @@ def _skipped_step_record(step: ValidationStep, output_dir: Path, *, blocked_by: 
     message = f"Skipped because prerequisite step `{blocked_by}` did not pass.\n"
     _write_text(stdout_path, message)
     _write_text(stderr_path, "")
-    return {
+    record = {
         "id": step.id,
         "title": step.title,
         "status": "not_run",
@@ -259,6 +271,10 @@ def _skipped_step_record(step: ValidationStep, output_dir: Path, *, blocked_by: 
         "stderr_excerpt": "",
         "blocked_by": blocked_by,
     }
+    if step.id == "capture_screen":
+        record["screenshot_role"] = "visual_aid_only"
+        record["geometry_accuracy"] = "not_verified_by_screenshot"
+    return record
 
 
 def _overall_status(records: list[dict[str, Any]]) -> str:
@@ -300,6 +316,7 @@ def _next_actions(report: dict[str, Any]) -> list[str]:
 def _clear_stale_derived_artifacts(steps: list[ValidationStep], output_dir: Path) -> None:
     paths = [Path(step.stdout_artifact) for step in steps if step.stdout_artifact]
     paths.append(output_dir / "cad-validation-screen.png")
+    paths.append(output_dir / "cad-validation-window.png")
     for path in paths:
         if path.exists():
             path.unlink()

@@ -4,6 +4,39 @@
 
 ## 2026-05-26
 
+### 交付进度估算规则写入主入口
+
+- 按用户要求在 `README.md` 增加“交付进度规则”：后续每次 CAD Agent 相关交付，最终回复必须带 `总进度`、`Core 底座开发进度`、`Agent 多场景实现进度` 三项估算。
+- 同步 `AGENTS.md` 和 `CORE_CONTEXT_BRIEF.md`，让 Codex 恢复上下文和最终交付时都能看到该要求。
+- 将 `CAD_AGENT_RULES.md` 的进度字段名从旧口径统一为 `总进度`、`Core 底座开发进度`、`Agent 多场景实现进度`，默认权重仍为 Core 70%、Agent 30%。
+- 更新 `CAD_AGENT_STATUS.md` 的当前进度估算字段名；本次仅固化交付格式，不提升进度百分比。
+
+### R-CAD-VIEW-CAPTURE 实现与真实 CAD 验证
+
+- 按用户要求优先完成窗口级截图小开发包，避免继续依赖全屏截图导致 Codex 或其他窗口遮挡 AutoCAD 画面。
+- 扩展 `core/verification/render_preview.py`：`--check` 现在输出 `capture_modes`、`autocad_window`、`autocad_viewport_or_client` 等结构化字段；新增 `--capture-autocad-window`、`--execution-summary`、`--layer` 和 `--fallback-screen`，默认尝试恢复并置前 AutoCAD 窗口，再截取客户区。
+- 扩展 `core/cad_io/autocad_com.py`：新增按实体 bbox 计算视图范围、`zoom_to_bbox()` 和 `zoom_to_handles()`，用于在截图前按本轮 created handles 缩放到当前输出范围。
+- 更新 `core/verification/cad_validation_runner.py`：真实 CAD 总控截图步骤改为 `cad-validation-window.png`，命令使用 `scripts/render_preview.py --capture-autocad-window --execution-summary <execution_summary.json>`；旧全屏截图路径只作为 stale artifact 清理项保留。
+- 扩展测试 `tests/core/test_render_preview.py` 与 `tests/core/test_cad_validation_runner.py`，覆盖无 AutoCAD 窗口时不误报 ready、窗口级截图 bbox、缺窗口失败分类，以及总控必须调用 `--capture-autocad-window`。
+- 同步 `CORE_STATUS.md`、`CAD_AGENT_STATUS.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`docs/planning/phase-r-rebirth-implementation-plan.md`、`docs/planning/phase-w-cad-validation-plan.md`、`CAD_AGENT_BLOCKER_PLAYBOOK.md`、`CAD_AGENT_AUTONOMOUS_VALIDATION.md`、`docs/onboarding/migration-checklist.md` 和 `CAD_AGENT_ISSUES.md`，把当前执行口径从全屏截图更新为窗口级视觉辅助截图。
+- 复验通过：focused tests 11 项 OK；`scripts\render_preview.py --check` 在无可用窗口时只报告 `screen`，不误报窗口级 ready；`scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\r-cad-view-no-cad` 顶层 `status=pass`；真实 CAD `scripts\run_cad_validation.py --output-dir output\validation_runs\r-cad-view-cad` 顶层 `status=pass`。
+- 真实 CAD 证据：`output\validation_runs\r-cad-view-cad\cad-validation-window.png` 为 AutoCAD 客户区截图，`capture_screen.stdout.txt` 记录 `mode=autocad_window`、窗口标题 `Autodesk AutoCAD 2026 - [Drawing1.dwg]`、`bbox=[6,0,1914,1028]`、`focus.status=zoomed_to_bbox`、`handle_count=7`；`readback_report.json.status=geometry_verified`，`cad_capability_probe.json.status=cad_capability_verified`。
+- 边界不变：截图只作为视觉辅助；真实 CAD 几何准确仍必须以 validate、dry-run、`CODEX_PREVIEW`、created handles 定向回读和 `geometry_verified` 为准。全程只写入 `CODEX_PREVIEW`，未保存 DWG、未覆盖原图、未删除实体、未修改正式图层。
+
+### CAD 窗口级截图开发包登记
+
+- 按用户指出“直接按当前屏幕截图会被 Codex 窗口遮挡”的问题，将 AutoCAD 窗口级 / 视口级截图能力拆成独立开发包 `R-CAD-VIEW-CAPTURE`。
+- 在 `CORE_RESTRUCTURE_PLAN.md` 的当前活跃队列和开发包表中加入 `R-CAD-VIEW-CAPTURE`，目标是优先截取 AutoCAD 客户区或按本轮 created handles bbox 缩放后的实体范围截图。
+- 在 `docs/planning/phase-r-rebirth-implementation-plan.md` 增加该包的文件范围、开发步骤、子校验命令和通过标准，明确截图仍是 `visual_aid_only`，不能替代 created handles readback。
+- 同步 `CORE_CONTEXT_BRIEF.md` 与 `CAD_AGENT_STATUS.md`，把下一轮开发包数量从八个更新为九个；该条为计划登记时状态，随后同日已完成 `R-CAD-VIEW-CAPTURE` baseline 实现与真实 CAD 验证，见上方记录。
+
+### 下一轮开发拆解与子校验计划
+
+- 按用户要求将“先推进 R-CAD / R-BLOCK、补 office micro-scene 与 failure benchmark、强化 blank-shell 多候选、保持 Core 优先”的开发建议落入 Markdown。
+- 在 `CORE_RESTRUCTURE_PLAN.md` 新增“下一轮开发拆解与子校验”，把后续工作拆成 `R-CAD-CONTRACT`、`R-BLOCK-METADATA`、`R-BLOCK-PLAN`、`R-BLOCK-CAD-ALPHA`、`R-CAD-VIEW-CAPTURE`、`R-OFFICE-MICRO`、`R4-EVIDENCE-GATES`、`Y-MULTI-CANDIDATE`、`X-SCENE-ALPHA` 九个开发包。
+- 在 `docs/planning/phase-r-rebirth-implementation-plan.md` 新增文件级开发拆解，明确每个开发包的目标、文件范围、开发步骤、子校验命令和通过标准。
+- 本轮只细化计划与校验路径，不修改代码、不运行真实 CAD、不提升能力成熟度，也不把 block insertion、office micro-scene 或 blank-shell 多候选写成已完成能力。
+
 ### PlanMD 主线权威收束
 
 - 按用户要求继续雕琢整体文档架构，明确 `CORE_RESTRUCTURE_PLAN.md` 是唯一 `PlanMD` / 开发主线；根目录没有独立 `plan.md`，用户说 `PlanMD`、`plan.md` 或主 plan 时都指向该文件。

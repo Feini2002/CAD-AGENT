@@ -177,7 +177,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 & $py scripts\execute_plan.py examples\plans\draw_test_cabinet.json
 
 # 5) 截图（必须能落盘）
-& $py scripts\render_preview.py --capture-screen --output output\previews\migration-check.png
+& $py scripts\render_preview.py --capture-autocad-window --output output\previews\migration-check.png
 
 # 6) 自主 CAD 验证总控（回家或换机时推荐使用）
 & $py scripts\run_cad_validation.py --output-dir output\validation_runs\migration-check
@@ -192,12 +192,12 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `validate_plan` | 输出 `VALID CAD_PLAN` |
 | `dry_run_plan` | 正常预演输出 |
 | `render_preview --check` | `"status": "ready"`，且 `pillow_imagegrab: true` |
-| `unittest` | `OK`，223 tests |
+| `unittest` | `OK`，227 tests |
 | repo audit | `0 findings` |
 | benchmark suites | `non_cad_core_benchmark`、`blank_shell_core_benchmark`、`office_alpha_benchmark`、`interior_delivery_benchmark` 均 pass；office alpha 为 `4/4 cases`，interior delivery 为 `3/3 cases` |
 | COM 探测 | 打印当前活动 DWG 文件名 |
 | `execute_plan` | 图上出现 `CODEX_PREVIEW` 测试柜 |
-| `--capture-screen` | 生成 `output\previews\migration-check.png` |
+| `--capture-autocad-window` | 生成窗口级视觉辅助截图，优先避免 Codex 或其他窗口遮挡 |
 | `run_cad_validation.py` | 顶层 `status=pass`，且 `readback_report.status=geometry_verified`、`cad_capability_probe.status=cad_capability_verified` |
 | **CAD-MCP 对话画图** | 在 IDE 里手动确认一次成功 |
 

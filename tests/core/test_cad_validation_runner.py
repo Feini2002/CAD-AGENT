@@ -108,9 +108,12 @@ class CadValidationRunnerTests(unittest.TestCase):
         self.assertEqual(report["status"], "pass")
         steps = {step["id"]: step for step in report["steps"]}
         self.assertEqual(steps["cad_capability_probe"]["status"], "pass")
+        self.assertEqual(steps["capture_screen"]["screenshot_role"], "visual_aid_only")
+        self.assertIn("--capture-autocad-window", steps["capture_screen"]["command"])
+        self.assertIn("cad-validation-window.png", " ".join(steps["capture_screen"]["command"]))
         self.assertTrue((output_dir / "cad_capability_probe.json").exists())
         self.assertTrue((output_dir / "execution_summary.json").exists())
-        self.assertTrue((output_dir / "cad-validation-screen.png").as_posix().endswith("cad-validation-screen.png"))
+        self.assertTrue((output_dir / "cad-validation-window.png").as_posix().endswith("cad-validation-window.png"))
 
     def test_readback_report_must_be_geometry_verified_for_cad_pass(self) -> None:
         output_dir = artifact_path("cad_validation", "readback_not_verified")

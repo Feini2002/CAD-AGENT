@@ -18,7 +18,7 @@ Phase W 不是从零开发 CAD 验证工具，而是把已有入口组织成一�
 | `scripts/run_cad_validation.py` | 已有 CAD 验证总控 | `--no-cad` 已通过；会写 `report.json` / `report.md` | 真实 CAD 全链路报告 | 生成并审查 `output\validation_runs\cad-readback-alpha\report.json` |
 | `execute_plan.py` | 可执行 baseline plan 到 `CODEX_PREVIEW` | 单测、dry-run、无 CAD 总控 | 真实 AutoCAD 执行结果 | 审查 `execution_summary.json` 和 `created_handles` |
 | `inspect_dwg.py` | 有 `--connect-cad`、`--execution-summary`、截图路径和 JSON report 入口 | fake readback 与无 CAD 报告壳 | 真实 ModelSpace 实体回读 | 生成并审查 `readback_report.json` |
-| `render_preview.py` | `--check` ready，`--capture-screen` 已存在 | 截图能力检查 | 真实 CAD 窗口截图 | 生成 `cad-validation-screen.png` |
+| `render_preview.py` | `--check` ready，`--capture-autocad-window` 已存在 | 截图能力检查 | 真实 CAD 窗口截图 | 生成 `cad-validation-window.png` |
 | `VERIFICATION_REPORT` | 已有 `unverified` / `executed_only` / `screenshot_captured` / `geometry_verified` 等状态 | 单测和 fake readback | 真实 readback 升级证据 | 只有证据满足门槛时才允许 `status=geometry_verified` |
 | `scripts/run_cad_capability_probe.py` | CAD COM 能力矩阵探针 | 单测和真实 CAD 探针已通过 | 更复杂实体、块和选择集能力 | 验证活动文档、preview 图层、primitive write、handles、readback、bbox 和安全边界 |
 
@@ -56,7 +56,7 @@ Phase W 不是从零开发 CAD 验证工具，而是把已有入口组织成一�
 | 有活动测试 DWG | `AutoCADComDriver(connect_existing_only=True)` 输出文档名 | 无活动文档时停止，请用户打开测试 DWG |
 | 允许写入 `CODEX_PREVIEW` | 执行器安全策略 | 不允许则停止问用户 |
 | 不需要保存、覆盖、删除、正式图层 | 执行请求审查 | 一旦需要突破，必须先问用户 |
-| 当前窗口可截图 | `render_preview.py --check` 和 `capture_screen` | 窗口/权限问题可登记 `external_blocker` |
+| 当前窗口可截图 | `render_preview.py --check` 和 `capture_autocad_window` | 窗口/权限问题可登记 `external_blocker` |
 
 ### W.3 输出目录与证据清单
 
@@ -68,7 +68,7 @@ output/validation_runs/cad-readback-alpha/
   report.md
   execution_summary.json
   readback_report.json
-  cad-validation-screen.png
+  cad-validation-window.png
   *.stdout.txt
   *.stderr.txt
 ```
@@ -79,7 +79,7 @@ output/validation_runs/cad-readback-alpha/
 | `report.md` | 每次总验证后 | 人读摘要 | JSON 存在但 MD 缺失时修报告生成 |
 | `execution_summary.json` | `execute_sample_plan` 有 stdout 时 | created handles、目标图层、对象摘要 | 缺失则查执行阶段 |
 | `readback_report.json` | `inspect_readback` 有 stdout 时 | 几何验证主证据 | 缺失则查回读阶段 |
-| `cad-validation-screen.png` | 截图成功后 | 视觉辅助证据 | 环境权限问题登记外部阻塞 |
+| `cad-validation-window.png` | 截图成功后 | 视觉辅助证据 | 环境权限问题登记外部阻塞 |
 | `*.stdout.txt` / `*.stderr.txt` | 每个 step 都应写入 | 失败复盘和分类 | 缺失则修 runner 证据落盘 |
 
 ### W.4 执行顺序总表
@@ -93,7 +93,7 @@ output/validation_runs/cad-readback-alpha/
 | 5 | validate baseline plan | 总控内置 | `validate_sample_plan` pass | 修 schema / plan |
 | 6 | dry-run baseline plan | 总控内置 | `dry_run_sample_plan` pass | 修 dry-run / plan_engine |
 | 7 | 安全落图 | `execute_sample_plan` | `execution_summary.json`、created handles | 仓库执行问题自动修，COM 权限问题问用户 |
-| 8 | 截图取证 | `capture_screen` | `cad-validation-screen.png` | 脚本问题自动修，窗口/权限问用户 |
+| 8 | 截图取证 | `capture_screen` | `cad-validation-window.png` | 脚本问题自动修，窗口/权限问用户 |
 | 9 | 实体回读 | `inspect_readback` | `readback_report.json` | 仓库 readback 自动修 |
 | 10 | 几何门禁 | 解析 `readback_report.json` | `status=geometry_verified` 且关键 checks 全 pass | 修 verification / readback；不得只看总控 pass |
 | 11 | 归档与同步 | 写 `docs/verification/cad_readback_alpha_check.md`，更新状态文档 | 验证记录和状态同步 | 缺记录不算交接完成 |
@@ -108,7 +108,7 @@ output/validation_runs/cad-readback-alpha/
 | W-CAD-04 | baseline CAD_PLAN 校验 | 任何真实落图前 | `validate_sample_plan` 或 `validate_plan.py <plan_path>` | `VALID CAD_PLAN` | `cad_plan_invalid`：修 schema / 示例 / 生成器 |
 | W-CAD-05 | dry-run 一致性 | 任何真实落图前 | `dry_run_sample_plan` 或 `dry_run_plan.py <plan_path>` | 对象、尺寸、基点、图层、文字、标注符合预期 | `dry_run_failed`：修 plan_engine / CAD_PLAN |
 | W-CAD-06 | 安全落图 | AutoCAD 已打开且预检通过 | `execute_sample_plan`；`execution_summary.json` | 只写 `CODEX_PREVIEW`，created handles 非空，不保存/覆盖/删除 | `execution_failed`：先查执行器、driver、安全策略 |
-| W-CAD-07 | 截图落盘 | 已落图，需要视觉辅助 | `capture_screen`；`cad-validation-screen.png` | PNG 文件存在且可作为视觉辅助 | `screenshot_failed`：路径/脚本自动修，窗口/权限问用户 |
+| W-CAD-07 | 截图落盘 | 已落图，需要视觉辅助 | `capture_screen`；`cad-validation-window.png` | PNG 文件存在且可作为视觉辅助 | `screenshot_failed`：路径/脚本自动修，窗口/权限问用户 |
 | W-CAD-08 | 实体回读 | 已落图，需要证明画准 | `inspect_readback`；`readback_report.json` | 回读到本次实体，字段覆盖 layer / bbox / base point / text / dimension | `readback_failed`：查 handles、scope、snapshot、实体标准化 |
 | W-CAD-09 | `geometry_verified` 升级门 | 生成 verification report 后 | 解析 `readback_report.json.status` 和 `checks` | 只有 readback scope 明确且关键 checks 全 pass，才允许 `geometry_verified` | 误升级/误降级：修 `verification_report.py` 和测试 |
 | W-CAD-10 | 新 CAD_PLAN 延后补验 | pipeline 或新功能生成新 CAD_PLAN，但当轮无 CAD | `docs/verification/cad_deferred_verification_template.md` | 登记 plan_path、expected_layer、expected_objects、tolerance、待补命令 | 不得把 dry-run / no-cad / 截图能力写成几何准确 |
@@ -118,7 +118,7 @@ output/validation_runs/cad-readback-alpha/
 
 ### W.6 分步执行清单
 
-执行记录（2026-05-25 21:42）：W-01 到 W-16 已执行并完成 CAD 底座加固复验。默认沙箱身份无法看到用户桌面的 AutoCAD COM 活动对象，沙箱外用户会话诊断确认 `AutoCAD.Application`、`AutoCAD.Application.25.1`、`AutoCAD.Application.25` 均可 `GetActiveObject`。本轮先在 `output\validation_runs\full-repair-cad-20260525-212001\readback_report.json` 暴露“顶层 pass 但 readback 未 geometry_verified”的仓库门禁问题，随后按 W.10 修复 runner 和 handle 定向回读；又新增 `cad_capability_probe`，验证活动文档、preview 图层、矩形/文字/标注写入、handle 回读、类型统计、bbox 和安全边界。最终 W-07 输出 `output\validation_runs\cad-foundation-full-cad-20260525\report.json`，顶层状态为 `pass`；`execution_summary.json` 记录 7 个 baseline created handles；`cad-validation-screen.png` 已生成；`readback_report.json.status=geometry_verified`，关键 checks 全部 pass；`cad_capability_probe.json.status=cad_capability_verified`，能力矩阵 checks 全部 pass。全程只写入 `CODEX_PREVIEW`，未保存 DWG、未覆盖原图、未删除实体、未修改正式图层。
+执行记录（2026-05-25 21:42）：W-01 到 W-16 已执行并完成 CAD 底座加固复验。默认沙箱身份无法看到用户桌面的 AutoCAD COM 活动对象，沙箱外用户会话诊断确认 `AutoCAD.Application`、`AutoCAD.Application.25.1`、`AutoCAD.Application.25` 均可 `GetActiveObject`。本轮先在 `output\validation_runs\full-repair-cad-20260525-212001\readback_report.json` 暴露“顶层 pass 但 readback 未 geometry_verified”的仓库门禁问题，随后按 W.10 修复 runner 和 handle 定向回读；又新增 `cad_capability_probe`，验证活动文档、preview 图层、矩形/文字/标注写入、handle 回读、类型统计、bbox 和安全边界。最终 W-07 输出 `output\validation_runs\cad-foundation-full-cad-20260525\report.json`，顶层状态为 `pass`；`execution_summary.json` 记录 7 个 baseline created handles；当时的 `cad-validation-screen.png` 已生成；`readback_report.json.status=geometry_verified`，关键 checks 全部 pass；`cad_capability_probe.json.status=cad_capability_verified`，能力矩阵 checks 全部 pass。2026-05-26 的 `R-CAD-VIEW-CAPTURE` 已把后续总控截图产物升级为 `cad-validation-window.png`。全程只写入 `CODEX_PREVIEW`，未保存 DWG、未覆盖原图、未删除实体、未修改正式图层。
 
 - [x] W-01 读取上下文。
   - 动作：读取 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、本文 Phase W、`CAD_AGENT_AUTONOMOUS_VALIDATION.md`、`CAD_AGENT_BLOCKER_PLAYBOOK.md`。
@@ -156,7 +156,7 @@ output/validation_runs/cad-readback-alpha/
   - 证据：`execution_summary.json`。
   - 通过：`layer` 为 `CODEX_PREVIEW`，`created_handles` 非空，未出现保存、覆盖、删除或正式图层操作。
 - [x] W-10 审查截图证据。
-  - 证据：`cad-validation-screen.png`。
+  - 证据：`cad-validation-window.png`。
   - 通过：文件存在；截图只作为视觉辅助，不作为几何准确结论。
 - [x] W-11 审查实体回读报告。
   - 证据：`readback_report.json`。
@@ -205,7 +205,7 @@ output/validation_runs/cad-readback-alpha/
 | 对象数量、类型和图层匹配 | `checks` 与 `actual.layer_counts` |
 | bbox、尺寸和基点在误差内 | `bbox_size`、`base_point` check pass |
 | 文字和标注匹配或明确不适用 | `label_text`、`dimension_count` check pass 或不适用 |
-| 截图文件存在 | `cad-validation-screen.png`，仅作辅助证据 |
+| 截图文件存在 | `cad-validation-window.png`，仅作辅助证据 |
 | 未保存、覆盖、删除、修改正式图层 | 执行摘要和安全策略无违规 |
 
 即使 `run_cad_validation.py` 顶层 `status=pass`，也必须继续审查 `readback_report.json.status`。只有 `readback_report.json.status=geometry_verified` 且关键 checks 全部通过，才允许说 baseline 真实 CAD 几何已通过。
@@ -242,7 +242,7 @@ output/validation_runs/cad-readback-alpha/
 
 - `output\validation_runs\cad-readback-alpha\report.json` 存在。
 - `execution_summary.json` 存在，且 created handles 非空。
-- `cad-validation-screen.png` 存在。
+- `cad-validation-window.png` 存在。
 - `readback_report.json` 存在。
 - `readback_report.json.status=geometry_verified`。
 - `cad_capability_probe.json` 存在，且 `status=cad_capability_verified`。

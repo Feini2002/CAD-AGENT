@@ -53,7 +53,7 @@
    -> python scripts/validate_plan.py <plan>
    -> python scripts/dry_run_plan.py <plan>
    -> python scripts/render_preview.py --check
-   -> 如已绘制，使用 render_preview.py --capture-screen 保存视觉检查点
+   -> 如已绘制，优先使用 render_preview.py --capture-autocad-window 保存 AutoCAD 客户区视觉检查点
 
 5. 定位原因
    -> 对比用户白话和 CAD_PLAN
@@ -100,7 +100,7 @@
 ```powershell
 & 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\self_check.py'
 & 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\render_preview.py' --check
-& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\render_preview.py' --capture-screen --output 'output\previews\manual-check.png'
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\render_preview.py' --capture-autocad-window --output 'output\previews\manual-check.png'
 ```
 
-截图命令只在用户允许或确实需要视觉证据时运行；它会截取当前可见屏幕，保存到 `output/previews/`。
+截图命令只在用户允许或确实需要视觉证据时运行；它会优先截取 AutoCAD 客户区，保存到 `output/previews/`。截图仍只作为视觉辅助，几何准确以 created handles 回读为准。

@@ -21,7 +21,7 @@
 当前 Core 已完成 Phase O-V 的非 CAD 主线和一次系统层安全补强。最新记录为：
 
 ```text
-223 tests OK
+227 tests OK
 self_check.py pass
 render_preview.py --check ready
 repo audit 0 findings
@@ -32,12 +32,13 @@ interior delivery benchmark 3 persona composition cases pass
 interior delivery real CAD composition check 3/3 geometry_verified
 run_cad_validation.py --no-cad pass
 Phase W W-07 CAD foundation run_cad_validation.py pass
+R-CAD-VIEW-CAPTURE run_cad_validation.py pass, cad-validation-window.png captured
 readback_report.json status geometry_verified
 cad_capability_probe.json status cad_capability_verified
 primitive probe covers line/circle/arc/polyline/text/dimensions
 ```
 
-这证明非 CAD 链路、benchmark、验证总控和维护门禁可用；Phase W baseline 真实 CAD 总验证已在用户会话下完成落图、截图、实体回读和 `geometry_verified` 闭环。本轮还加固了 CAD COM 调用底座：即使 `run_cad_validation.py` 顶层为 `pass`，也必须要求 `readback_report.json.status=geometry_verified`、`cad_capability_probe.json.status=cad_capability_verified` 且关键 checks 全部通过。最新能力探针已覆盖独立直线、圆、弧、闭合多段线、文字、标注和矩形边框。用户指出角色组合截图不在 CAD 后，本轮已将 3 个室内组合案例接入真实 AutoCAD 批量落图与 created handles 回读，最新证据为 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition_cad_check_report.json`，3/3 cases `geometry_verified`。该结论仍只覆盖当前简单矩形对象组合、baseline `examples\plans\draw_test_cabinet.json` 与当前能力探针，不扩大为真实项目图纸、块库、块插入或任意 CAD_PLAN 全部准确。
+这证明非 CAD 链路、benchmark、验证总控和维护门禁可用；Phase W baseline 真实 CAD 总验证已在用户会话下完成落图、截图、实体回读和 `geometry_verified` 闭环。本轮还加固了 CAD COM 调用底座：即使 `run_cad_validation.py` 顶层为 `pass`，也必须要求 `readback_report.json.status=geometry_verified`、`cad_capability_probe.json.status=cad_capability_verified` 且关键 checks 全部通过。最新能力探针已覆盖独立直线、圆、弧、闭合多段线、文字、标注和矩形边框。用户指出角色组合截图不在 CAD 后，本轮已将 3 个室内组合案例接入真实 AutoCAD 批量落图与 created handles 回读，最新证据为 `output\validation_runs\interior-composition-cad-label-clean-y8000\composition_cad_check_report.json`，3/3 cases `geometry_verified`。2026-05-26 又完成 `R-CAD-VIEW-CAPTURE` baseline：CAD 总控截图步骤改为 AutoCAD 客户区窗口级截图，并可按本轮 created handles bbox 缩放视图，证据为 `output\validation_runs\r-cad-view-cad\cad-validation-window.png`。该结论仍只覆盖当前简单矩形对象组合、baseline `examples\plans\draw_test_cabinet.json` 与当前能力探针，不扩大为真实项目图纸、块库、块插入或任意 CAD_PLAN 全部准确；截图也仍只是视觉辅助。
 
 ## 当前进度估算
 
@@ -60,7 +61,7 @@ primitive probe covers line/circle/arc/polyline/text/dimensions
 | preview safety | `prototype` | `core/safety/policy.py` 默认只允许 `CODEX_PREVIEW`，正式图层/保存/覆盖/删除需要显式批准 | 补批准证据格式和审计字段 |
 | validate / dry-run | `alpha_ready_non_cad` | `scripts/validate_plan.py`、`scripts/dry_run_plan.py` 和 core 入口稳定；baseline plan 通过 | 扩展批量 CAD_PLAN 和高层模型失败隔离 |
 | self check / repo audit | `alpha_ready_non_cad` | `self_check.py`、`run_repo_audit.py --fail-on-findings` 已进入固定基线 | 继续把新维护风险纳入 audit |
-| render preview | `prototype` | `render_preview.py --check` ready，截图入口存在 | Phase W 验证真实 CAD 截图落盘和报告挂载 |
+| render preview | `alpha_verified_cad` | `render_preview.py --check` 输出结构化截图能力；`render_preview.py --capture-autocad-window --execution-summary ...` 已在真实 CAD 总控中生成 `output\validation_runs\r-cad-view-cad\cad-validation-window.png`，并按 created handles bbox 缩放视图 | 仍需扩展更细绘图区裁剪、多显示器和遮挡边界；截图不参与几何通过判断 |
 | entity readback | `alpha_verified_cad` | `inspect_dwg.py --connect-cad` 已对真实 AutoCAD baseline 输出生成 `readback_report.json`；最新复验使用 created handles 定向回读，`status=geometry_verified` 且 `readback_scope`、`layer_entities`、`bbox_size`、`base_point`、`label_text`、`dimension_count`、`created_handles_scope` 全部 pass | 扩展 before/after snapshot、批量 plan 和真实图纸回读样本 |
 | schemas | `alpha_ready_non_cad` | 高层 schema、examples、invalid fixtures、registry 和 validator 已建立 | 扩展真实项目正反例和跨模型引用边界 |
 | capability runtime | `alpha_ready_non_cad` | `core/capabilities/` 已登记能力、风险、CAD 依赖、验证命令、maturity、known_limits；`workflow.blank_shell_pipeline` 可运行 | 增加审计记录字段和更多 workflow 类型 |

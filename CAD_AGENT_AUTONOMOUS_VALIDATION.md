@@ -49,7 +49,7 @@ output/validation_runs/<timestamp>/
   execution_summary.json
   readback_report.json
   cad_capability_probe.json
-  cad-validation-screen.png
+  cad-validation-window.png
 ```
 
 `report.json.status` 只有三类顶层结论：

@@ -127,6 +127,8 @@ Phase R 初版为了快速验证组合规格和 benchmark 断言，先走了 non
 
 日期：2026-05-25
 
+更新：2026-05-26，`R-CAD-VIEW-CAPTURE` 已完成 baseline 实现与真实 CAD 验证。
+
 现象：
 用户要求实际调用 CAD 画一些内容并截图检查时，现有总验证虽能通过，但底层能力探针主要覆盖矩形 4 线、文字和 2 个标注；全屏截图没有主动缩放到测试实体范围，画面里可见内容偏小，容易让“脚本 pass”和“肉眼看得清楚”脱节。
 
@@ -134,23 +136,31 @@ Phase R 初版为了快速验证组合规格和 benchmark 断言，先走了 non
 如果只保留浅层探针，圆、弧、多段线等基础 CAD 图元的 COM 参数转换和回读标准化问题可能长期漏测；如果截图不先缩放视图，视觉证据虽然存在，但排查“画没画对”时价值有限。
 
 原因：
-早期 Phase W 重点是证明 baseline `CAD_PLAN` 的矩形对象可落图和 handle 回读，能力矩阵尚未覆盖更多基础图元；`render_preview.py` 当前实现的是可见屏幕截图，不负责自动设置 CAD 视图窗口。
+早期 Phase W 重点是证明 baseline `CAD_PLAN` 的矩形对象可落图和 handle 回读，能力矩阵尚未覆盖更多基础图元；`render_preview.py` 当时实现的是可见屏幕截图，不负责自动设置 CAD 视图窗口，也不能避开 Codex 窗口遮挡。
 
 修复：
 `AutoCADComDriver` 已新增 `draw_line`、`draw_circle`、`draw_arc`、`draw_polyline`；`inspect_dwg.py` 已能标准化回读 `circle`、`arc`、`polyline`；`cad_capability_probe` 已扩展为 11 个实体的基础图元探针，并在用户会话下真实运行通过。另手动将 AutoCAD 视图缩放到探针范围后保存截图 `output\validation_runs\manual-primitive-cad-probe\cad-primitive-screen.png`。
 
+`R-CAD-VIEW-CAPTURE` 进一步修复了截图链路：`render_preview.py --check` 不再把最小化或不可用 bbox 的 AutoCAD 窗口误报为窗口级 ready；`render_preview.py --capture-autocad-window --execution-summary ...` 会按本轮 created handles bbox 尝试缩放视图，再截取 AutoCAD 客户区；`run_cad_validation.py` 已改为生成 `cad-validation-window.png`。最新真实 CAD 证据为 `output\validation_runs\r-cad-view-cad\report.json` 和 `output\validation_runs\r-cad-view-cad\cad-validation-window.png`。
+
 以后规则：
-真实 CAD 能力探针不能只验证一个矩形对象；至少要覆盖常见基础图元、created handles、按 handle 回读、类型统计、bbox 和安全边界。需要肉眼判断时，应先把 CAD 视图缩放到测试实体范围再截图；截图只能作为视觉辅助，几何准确仍以实体回读为主。
+真实 CAD 能力探针不能只验证一个矩形对象；至少要覆盖常见基础图元、created handles、按 handle 回读、类型统计、bbox 和安全边界。需要肉眼判断时，应先把 CAD 视图缩放到测试实体范围，再优先做 AutoCAD 客户区或实体范围窗口级截图；截图只能作为视觉辅助，几何准确仍以实体回读为主。
 
 相关文件：
 - `core/cad_io/autocad_com.py`
 - `core/verification/inspect_dwg.py`
 - `core/verification/cad_capability_probe.py`
+- `core/verification/render_preview.py`
+- `core/verification/cad_validation_runner.py`
 - `tests/core/test_autocad_com_driver.py`
 - `tests/core/test_cad_capability_probe.py`
+- `tests/core/test_render_preview.py`
+- `tests/core/test_cad_validation_runner.py`
 - `tests/core/test_verification_report.py`
 - `output/validation_runs/manual-primitive-cad-probe/cad_capability_probe.json`
 - `output/validation_runs/manual-primitive-cad-probe/cad-primitive-screen.png`
+- `output/validation_runs/r-cad-view-cad/report.json`
+- `output/validation_runs/r-cad-view-cad/cad-validation-window.png`
 
 ### 问题：CAD 总验证顶层 pass 不能替代 readback geometry_verified
 
@@ -1097,7 +1107,7 @@ Core 实现中改为 `Path(__file__).resolve().parents[2]`，旧 `scripts/self_c
 
 - 新增 `CAD_AGENT_BLOCKER_PLAYBOOK.md`。
 - 新增 `scripts/self_check.py`。
-- 扩展 `scripts/render_preview.py --check` 和 `--capture-screen`。
+- 扩展 `scripts/render_preview.py --check`、`--capture-screen` 和后续窗口级 `--capture-autocad-window`。
 - 新增相关单测。
 
 以后规则：
@@ -1110,8 +1120,8 @@ Core 实现中改为 `Path(__file__).resolve().parents[2]`，旧 `scripts/self_c
 - `CAD_AGENT_RULES.md`
 - `scripts/self_check.py`
 - `scripts/render_preview.py`
-- `tests/test_render_preview.py`
-- `tests/test_self_check.py`
+- `tests/core/test_render_preview.py`
+- `tests/core/test_self_check.py`
 
 ### 问题：早期测试目录未包化导致模块名运行失败
 

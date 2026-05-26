@@ -7,7 +7,7 @@
 
 本文不是本轮要立即执行代码的指令，而是一次深度复盘后的系统级开发计划：记录当前真实进度、维护方式、已知缺口、下一阶段可继续排查和优化的路线。具体开发仍需按 phase 拆小步、测试先行、留证据、同步状态文档。
 
-本文是唯一主 plan。其他 Markdown 可以记录规则、状态、手册、设计依据、历史和执行剧本，但不得各自承载独立“下一步”。主平台 Markdown 精细化拆分已执行：Phase W/X/Y/Z 的长篇执行剧本已迁入 `docs/planning/phase-*.md`；已完成的拆分记录迁入 `docs/history/core-platform-md-split-plan-2026-05-25.md`。2026-05-26 二次雕琢新增 `docs/README.md` 作为文档区总地图，并把 `docs/ROADMAP.md` 降级为兼容跳转。本轮继续把文档权威关系收束为“单一 PlanMD + 辅助 MD”，只改 Markdown，不改代码或 CAD 图纸。
+本文是唯一主 plan。其他 Markdown 可以记录规则、状态、手册、设计依据、历史和执行剧本，但不得各自承载独立“下一步”。主平台 Markdown 精细化拆分已执行：Phase W/X/Y/Z 的长篇执行剧本已迁入 `docs/planning/phase-*.md`；已完成的拆分记录迁入 `docs/history/core-platform-md-split-plan-2026-05-25.md`。2026-05-26 二次雕琢新增 `docs/README.md` 作为文档区总地图，并把 `docs/ROADMAP.md` 降级为兼容跳转；同日又完成 `R-CAD-VIEW-CAPTURE` baseline 小开发包，把 CAD 总控视觉辅助截图升级为 AutoCAD 窗口级截图。
 
 ## 防偏离边界
 
@@ -42,7 +42,7 @@
 
 - `core/`、`agents/`、`libraries/`、`projects/`、`tests/` 等通用结构已建立。
 - Phase O-V 已把 `docs/architecture/shell-layout-foundation-design.md` 的核心思想合并进主线，并落地为可运行的 blank-shell pipeline。
-- 当前基线记录为：`unittest discover -s tests` 共 223 tests OK，repo audit 0 findings，blank-shell 4 场景 benchmark pass，office alpha benchmark 4 cases pass，interior delivery benchmark 3 persona composition cases pass；interior delivery 的 3 个 persona composition cases 已补跑真实 AutoCAD batch check，结果为 3/3 `geometry_verified`；此前 `self_check.py` pass、`render_preview.py --check` ready、`run_cad_validation.py --no-cad` pass 仍为最近稳定基线。
+- 当前基线记录为：`unittest discover -s tests` 共 227 tests OK，repo audit 0 findings，blank-shell 4 场景 benchmark pass，office alpha benchmark 4 cases pass，interior delivery benchmark 3 persona composition cases pass；interior delivery 的 3 个 persona composition cases 已补跑真实 AutoCAD batch check，结果为 3/3 `geometry_verified`；`R-CAD-VIEW-CAPTURE` 已通过 no-CAD 与真实 CAD 总控，真实 CAD 证据为 `output\validation_runs\r-cad-view-cad\report.json` 和 `output\validation_runs\r-cad-view-cad\cad-validation-window.png`；此前 `self_check.py` pass、`render_preview.py --check` ready、`run_cad_validation.py --no-cad` pass 仍为稳定基线。
 - `scripts/run_cad_validation.py` 已成为 CAD 层面验证总控入口。Phase W 已执行到 W-16；W-07 baseline 真实 CAD 总验证已在用户会话下通过，完成 `CODEX_PREVIEW` 落图、截图、created handles 和实体回读闭环。最新 CAD 底座加固补上了 `readback_report.status` 与 `cad_capability_probe.status` 双硬门禁，并让真实 CAD 回读优先按 created handles 定向读取。
 - 当前可以声明 Phase W baseline `examples\plans\draw_test_cabinet.json` 的真实 CAD 几何已通过；不能扩大为真实项目图纸、块库或任意 CAD_PLAN 全部准确。
 
@@ -137,10 +137,37 @@ Phase R：新鲜视角评审与重生式开发校准
 | 1 | R-CAD | 把基础图元探针沉淀为正式 CAD 能力契约，并推进受控 `insert_block_alpha` | non-CAD tests 先过；真实 CAD 时必须有 created handles readback | 不接真实公司块库，不突破 `CODEX_PREVIEW` |
 | 2 | R-BLOCK | 定义 `BLOCK_LIBRARY v0.2`、OBJECT_SPEC 到 block reference 的接口和受控测试块 metadata | metadata validation、dry-run、后续 block readback 报告字段清楚 | 先受控测试块，真实块库另需用户决策 |
 | 3 | R-OFFICE | 扩展 office object / micro-scene / failure benchmark | office alpha benchmark 覆盖电脑桌、入口、通道、失败样本 | 场景 Agent 只给偏好，不实现 Core 算法 |
-| 4 | R4 | 扩展 runner 证据状态和 blocked / invalid failure 分类 | 不允许顶层 pass 掩盖未验证；`benchmark_pass_non_cad` 与 `geometry_verified` 分离 | 截图只能是视觉辅助 |
-| 5 | X | 做场景 Agent Alpha 验收 | 至少 3 个场景复用同一 Core pipeline，preferences 差异可验证 | 禁止场景层实现 CAD 执行、回读、碰撞和几何算法 |
-| 6 | Y | 硬化 blank-shell 多候选、失败基准和真实/近真实 shell 样本 | 多候选、失败原因分布、unverified verification 状态可复验 | 不把 pipeline 说成完整自动设计大脑 |
+| 4 | R-CAD-VIEW | AutoCAD 窗口级 / 视口级截图 baseline 已完成，后续扩展更细绘图区裁剪、多显示器和遮挡边界 | 当前证据为 `output\validation_runs\r-cad-view-cad\cad-validation-window.png`，已按 AutoCAD 窗口句柄和本轮 created handles bbox 生成干净截图 | 截图仍只作视觉辅助，不替代 created handles readback |
+| 5 | R4 | 扩展 runner 证据状态和 blocked / invalid failure 分类 | 不允许顶层 pass 掩盖未验证；`benchmark_pass_non_cad` 与 `geometry_verified` 分离 | 截图只能是视觉辅助 |
+| 6 | X | 做场景 Agent Alpha 验收 | 至少 3 个场景复用同一 Core pipeline，preferences 差异可验证 | 禁止场景层实现 CAD 执行、回读、碰撞和几何算法 |
+| 7 | Y | 硬化 blank-shell 多候选、失败基准和真实/近真实 shell 样本 | 多候选、失败原因分布、unverified verification 状态可复验 | 不把 pipeline 说成完整自动设计大脑 |
 | 持续 | Z | 维护文档职责、引用和验证基线 | 根目录入口清楚；状态页不承载独立计划；文本自查通过 | 不把历史归档当作能力完成 |
+
+## 下一轮开发拆解与子校验
+
+本节把当前建议拆成可执行开发包。它决定开发顺序和退出门槛；更细的文件级步骤写在 `docs/planning/phase-r-rebirth-implementation-plan.md`。每个开发包都必须先完成本地子校验，再进入下一包；真实 CAD 相关结论必须额外通过 created handles 定向 readback，不得只看截图或 runner 顶层 `pass`。
+
+| 顺序 | 开发包 | 开发目标 | 主要文件边界 | 子校验 | 退出门槛 |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `R-CAD-CONTRACT` | 把现有基础图元探针、readback 字段和证据状态固化为正式 CAD 能力契约 | `docs/planning/phase-r-cad-capability-contract.md`、`core/verification/cad_capability_probe.py`、`core/verification/inspect_dwg.py`、`tests/core/test_cad_capability_probe.py` | `python -m unittest tests.core.test_cad_capability_probe tests.core.test_geometry_checks tests.core.test_cad_validation_runner`；无 CAD 时报告仍必须标记 deferred | 契约字段、failure class、`evidence_state`、`geometry_accuracy` 和不可扩大边界清楚；不新增未验证能力声明 |
+| 2 | `R-BLOCK-METADATA` | 定义 `BLOCK_LIBRARY v0.2`、受控测试块 metadata、OBJECT_SPEC 到 block reference 的接口 | `core/schemas/block_library.schema.json`、`libraries/blocks/block_library.example.json`、`core/block_engine/`、`tests/core/test_block_engine.py`、`tests/core/test_schema_validation.py` | schema 正反例测试；block metadata loader / selector 测试；`run_repo_audit.py --fail-on-findings` | metadata 可验证、可 fallback，不依赖真实公司块库；受控测试块字段能支持后续 dry-run 和 readback expectation |
+| 3 | `R-BLOCK-PLAN` | 增加受控 `insert_block_alpha` CAD_PLAN intent、dry-run 校验和 fake driver 执行路径 | `core/schemas/cad_plan.schema.json`、`core/plan_engine/`、`core/execution/execute_plan.py`、`tests/core/test_plan_engine.py`、`tests/core/test_execute_plan.py` | 先写 invalid / valid plan 测试；`validate_plan.py` 与 `dry_run_plan.py` 必须区分 block alpha 与普通对象；fake driver 记录非空 block intent | no-CAD 链路能证明 plan 合法与执行意图完整，但报告仍写 `geometry_accuracy=not_verified_without_cad_readback` |
+| 4 | `R-BLOCK-CAD-ALPHA` | 在真实 AutoCAD 中只向 `CODEX_PREVIEW` 插入受控测试块，并按 created handles 回读 | `core/cad_io/autocad_com.py`、`core/verification/inspect_dwg.py`、`core/verification/cad_validation_runner.py`、`scripts/run_cad_validation.py`、`docs/verification/` | 非 CAD 单测先过；真实 CAD 时运行 block alpha 专项 step；截图仅作视觉辅助 | 只有 `block_reference` readback checks 全 pass 且报告为 `readback_geometry_verified`，才能声称 block alpha 对受控样本通过 |
+| 5 | `R-CAD-VIEW-CAPTURE` | 已把当前全屏截图升级为 AutoCAD 窗口级 / 视口级视觉辅助证据，优先避开 Codex 窗口遮挡 | `core/verification/render_preview.py`、`scripts/render_preview.py`、`core/cad_io/autocad_com.py`、`core/verification/cad_validation_runner.py`、`tests/core/test_render_preview.py`、`tests/core/test_cad_validation_runner.py` | focused tests 11 项 OK；no-CAD 总控 pass；真实 CAD 总控 pass，`cad-validation-window.png` 已生成；报告必须保留 `screenshot_role=visual_aid_only` | baseline 已完成；后续只扩展绘图区裁剪、多显示器和遮挡边界；几何准确仍只由 readback 决定 |
+| 6 | `R-OFFICE-MICRO` | 扩展 office object / micro-scene / failure benchmark，覆盖电脑桌、入口、通道和冲突样本 | `examples/benchmarks/office_alpha_benchmark.json`、`examples/shell_models/`、`examples/workflows/`、`core/benchmarks/runner.py`、`tests/core/test_benchmarks.py` | `run_benchmark_suite.py examples/benchmarks/office_alpha_benchmark.json`；失败样本必须输出 `blocked_expected_non_cad` 或 `invalid` | office benchmark 覆盖对象、微场景、场景和失败样本；所有无 CAD 结论仍显式标记非几何验证 |
+| 7 | `R4-EVIDENCE-GATES` | 强化 runner 证据状态、blocked / invalid 分类和报告门禁，防止顶层 pass 掩盖未验证 | `core/benchmarks/runner.py`、`core/verification/verification_report.py`、`tests/core/test_benchmarks.py`、`tests/core/test_verification_report.py` | runner 单测 + 三组 benchmark；报告必须区分 `benchmark_pass_non_cad`、`dry_run_valid_plan_only`、`readback_geometry_verified`、`blocked_expected_non_cad` | 任一 case 的状态、几何准确性和截图角色都可被机器断言，不靠人工解释 |
+| 8 | `Y-MULTI-CANDIDATE` | 让 blank-shell pipeline 输出更可解释的多候选和结构化失败原因 | `core/workflows/blank_shell_pipeline.py`、`core/layout_engine/`、`core/proposal_engine/`、`examples/benchmarks/blank_shell_core_benchmark.json` | `run_blank_shell_pipeline.py` 与 blank-shell benchmark；新增失败样本不能静默少放对象 | pipeline 能输出多个候选、比较摘要和失败原因分布；仍不声称完整自动设计大脑 |
+| 9 | `X-SCENE-ALPHA` | 场景 Agent Alpha 验收，验证至少 3 个场景复用同一 Core pipeline | `agents/*/preferences.json`、`agents/*/rules.md`、`tests/agents/`、`examples/benchmarks/` | agent 边界测试；至少 3 个场景 benchmark 跑通；确认场景目录没有 CAD 执行 / 几何算法 | preferences 差异可观察，Core pipeline 复用清楚，场景层保持轻量 |
+
+### 每个开发包的固定子校验顺序
+
+1. 写或更新最小失败测试 / benchmark case。
+2. 运行目标测试，确认失败原因对应本包目标。
+3. 实现最小改动，不跨包做大重构。
+4. 运行本包测试和相关 benchmark。
+5. 若涉及真实 CAD，先跑 no-CAD 校验，再在用户会话下跑真实 CAD，并读取 readback 报告字段。
+6. 更新 `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` 和 `CAD_AGENT_CHANGELOG.md`；若出现失败教训，更新 `CAD_AGENT_ISSUES.md`。
+7. 在最终汇报里明确哪些是 `benchmark_pass_non_cad`，哪些是 `readback_geometry_verified`。
 
 ---
 
@@ -148,9 +175,9 @@ Phase R：新鲜视角评审与重生式开发校准
 
 | 基线 | 最新证据 | 能声称 | 不能声称 |
 | --- | --- | --- | --- |
-| 非 CAD 测试基线 | `223 tests OK`、repo audit 0 findings、office alpha benchmark 4 cases pass、interior delivery benchmark 3 cases pass | 仓库非 CAD 主线、组合交付自检和维护门禁当前可复验 | 不证明真实 CAD 几何准确 |
+| 非 CAD 测试基线 | `227 tests OK`、repo audit 0 findings、office alpha benchmark 4 cases pass、interior delivery benchmark 3 cases pass | 仓库非 CAD 主线、组合交付自检和维护门禁当前可复验 | 不证明真实 CAD 几何准确 |
 | blank-shell benchmark | 4 场景 benchmark pass | `retail / office / residential / restaurant` 样例链路可跑通 | 不等于完整自动设计大脑 |
-| CAD baseline 几何 | `output\validation_runs\manual-cad-after-primitive-probe\report.json` | baseline `draw_test_cabinet.json` 已真实 CAD `geometry_verified` | 不扩大到真实项目图纸、块库、块插入或任意 CAD_PLAN |
+| CAD baseline 几何 | `output\validation_runs\manual-cad-after-primitive-probe\report.json`；窗口级截图验证为 `output\validation_runs\r-cad-view-cad\report.json` 与 `output\validation_runs\r-cad-view-cad\cad-validation-window.png` | baseline `draw_test_cabinet.json` 已真实 CAD `geometry_verified`；视觉辅助截图已能避开 Codex 窗口遮挡 | 不扩大到真实项目图纸、块库、块插入或任意 CAD_PLAN；截图不证明几何准确 |
 | CAD capability probe | `cad_capability_probe.json.status=cad_capability_verified` | 当前用户会话下基础图元、文字、标注、handles 和定向回读底座可用 | 不代表属性块、hatch、选择集、真实块库已通过 |
 | 文档治理基线 | `docs/planning/phase-*.md` 与 `CORE_RESTRUCTURE_PLAN.md` 索引化 | 主计划已从长篇剧本收缩为入口索引 | 不代表 Core Alpha 已完成 |
 

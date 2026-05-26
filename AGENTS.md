@@ -49,6 +49,16 @@
 - 新增待办、调整优先级或改变退出标准时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD。
 - 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
 
+## 交付必须带进度估算
+
+每次 CAD Agent 相关交付的最终回复，都必须附带粗估开发进度，固定包含：
+
+- `总进度`
+- `Core 底座开发进度`
+- `Agent 多场景实现进度`
+
+默认按 `总进度 = Core 底座开发进度 * 70% + Agent 多场景实现进度 * 30%` 估算。百分比只是产品和工程节奏参考，不得替代测试、benchmark、截图、created handles 回读或 `geometry_verified` 证据。
+
 ## Core 优先
 
 本仓库是通用 CAD Agent Core Lab。可复用能力放入 `core/`，共享资源放入 `libraries/`，项目专属资料放入 `projects/`，只有场景差异放入 `agents/<scenario>/`。
