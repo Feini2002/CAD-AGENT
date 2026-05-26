@@ -36,11 +36,13 @@ SHELL_MODEL
 - 当前唯一 `PlanMD` / 开发主线是 `CORE_RESTRUCTURE_PLAN.md`。
 - `CORE_CONTEXT_BRIEF.md` 是日常恢复上下文的短入口。
 - `docs/planning/phase-*.md` 是 Phase 执行剧本，不是第二套主计划；后置 Backlog 和未来小包只看 `CORE_RESTRUCTURE_PLAN.md`。
-- `core.plan_engine`、benchmark runner、composition engine、CAD validation runner 已进入可运行原型状态。
-- blank-shell benchmark、office alpha benchmark、interior delivery benchmark 已有可重复运行的用例。
-- 真实 CAD 验证已覆盖 baseline、基础图元能力探针和 3 个简单 interior composition cases，并取得 `geometry_verified` 证据。
+- 最新全量回归为 `456 tests OK`，repo audit 0 findings；blank-shell、office alpha、interior delivery、project sample、proposal confirmed、CAD beta rollup 和 scene beta benchmark 均已有可重复运行证据。
+- `core.plan_engine`、benchmark runner、composition engine、CAD validation runner、本地 CAD regression runner 已进入可运行原型状态。
+- `scripts/run_local_cad_regression.py --no-cad` 已能汇总 baseline CAD validation、project sample CAD check 和 interior composition CAD check，输出 deferred / strict gate 证据；当前 no-CAD 矩阵不等于真实 CAD 几何通过。
+- 真实 CAD 验证已覆盖 baseline、基础图元能力探针、受控 block alpha 和 3 个简单 interior composition cases，并取得有限 `geometry_verified` 证据。
+- 按用户要求，`CORE_RESTRUCTURE_PLAN.md` 已新增“本地真实 CAD 校验扩样主线”，拆为 `LCAD-01` 到 `LCAD-11` 小任务包。
 
-仍需注意：这些验证不能扩大解释为真实项目图纸、块库、块插入或任意 `CAD_PLAN` 都已经准确。当前系统是 Core Alpha 原型，不是完整自动设计大脑。
+仍需注意：这些验证不能扩大解释为真实项目图纸、公司块库、属性块、hatch 或任意 `CAD_PLAN` 都已经准确。当前系统是 Core Alpha 原型，不是完整自动设计大脑；真实 CAD 几何准确仍只看 created handles 定向回读、`geometry_verified` 和关键 checks。
 
 ## 交付进度规则
 
@@ -56,10 +58,10 @@ Agent 多场景实现进度：约 xx%
 
 ## 下一步计划
 
-近期开发继续围绕 `CORE_RESTRUCTURE_PLAN.md` 推进，重点是：
+近期开发继续围绕 `CORE_RESTRUCTURE_PLAN.md` 推进。当前用户指定的默认优先级是补齐“大量本地真实 CAD 校验层”：
 
-1. 扩展真实 CAD readback 证据链，让“画准了”能被 created handles、几何回读和验证报告证明。
-2. 推进场景 Agent Alpha 验收，确认商业、住宅、办公、餐饮等场景只做轻量差异并复用 Core。
-3. 硬化 blank-shell pipeline，补多候选、失败基准、真实样本和更复杂几何。
-4. 推进 Phase R 的重生式开发校准，落地 CAD 能力契约、block alpha 路线、office benchmark 和多 agent 协作治理。
-5. 继续收束文档治理，保持 README 只做入口说明，详细状态、计划、规则和历史分别进入对应文档。
+1. 先做 `LCAD-01-REGRESSION-MANIFEST`、`LCAD-02-STRICT-MATRIX-RUNNER`、`LCAD-03-ACTIVE-DOCUMENT-GUARD`，把本地真实 CAD regression manifest、strict runner 和 ActiveDocument / `CODEX_PREVIEW` 安全守卫搭稳。
+2. 再做 `LCAD-04` 到 `LCAD-06`，扩大 baseline smoke、基础实体矩阵和 `CAD_PLAN` fixture suite。
+3. 然后做 `LCAD-07` 到 `LCAD-09`，覆盖 block / attribute / hatch、project sample 真实 CAD smoke 和多场景 composition 真实 CAD smoke。
+4. 最后做 `LCAD-10` 和 `LCAD-11`，补负向安全 suite、趋势 rollup 和证据审计。
+5. 继续保持 README 只做入口说明；详细状态、计划、规则、交接和历史分别进入 `CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`CAD_AGENT_RULES.md`、`docs/handoffs/` 和 `CAD_AGENT_CHANGELOG.md`。

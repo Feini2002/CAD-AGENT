@@ -11,6 +11,7 @@
 - 用户明确指出当前缺大量“本地真实 CAD 校验层”的测试；已写入唯一 `PlanMD`，作为下一轮默认优先补强方向。
 - `CORE_RESTRUCTURE_PLAN.md` 新增“本地真实 CAD 校验扩样主线”，先列出 10 类测试方向：环境与安全守卫、baseline 回归、基础实体矩阵、CAD_PLAN fixture suite、block / attribute / hatch、样本项目闭环、多场景组合、负向安全、视觉辅助一致性、趋势和审计。
 - 同步拆出 `LCAD-01` 到 `LCAD-11` 小任务包，从 manifest / strict runner / ActiveDocument guard 开始，再扩 baseline、primitive、CAD_PLAN fixtures、block / attribute / hatch、project sample、scene composition、negative safety 和 evidence trend rollup。
+- `README.md` 已同步为入口级摘要，下一步计划改为优先推进 `LCAD-01` 到 `LCAD-11`，并明确 no-CAD 矩阵、截图和 fake driver 不等于真实 CAD 几何通过。
 - 这只是计划写入，不新增真实 CAD 运行证据；当前真实 CAD 几何结论仍只限既有 baseline、受控 block alpha 和少量 composition 样本。
 
 ### 2026-05-26 Codex 本地 CAD 回归矩阵加固

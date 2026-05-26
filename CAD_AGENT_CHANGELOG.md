@@ -9,6 +9,7 @@
 - 按用户要求，在唯一 `PlanMD`（`CORE_RESTRUCTURE_PLAN.md`）中新增“本地真实 CAD 校验扩样主线”，明确当前缺口是大量用户会话下真实 AutoCAD `geometry_verified` 样本不足。
 - 新增测试方向矩阵：环境与安全守卫、baseline 回归、基础实体矩阵、CAD_PLAN fixture suite、block / attribute / hatch、样本项目闭环、多场景组合、负向安全、视觉辅助一致性、趋势和审计。
 - 拆分 `LCAD-01` 到 `LCAD-11` 小任务包：manifest、strict runner、ActiveDocument guard、baseline smoke、primitive matrix、CAD_PLAN fixtures、block/attribute/hatch、project sample、scene composition、negative safety、evidence trend rollup。
+- `README.md` 同步更新为入口级摘要：开发状况补上 `456 tests OK`、local CAD regression no-CAD 矩阵、受控 block alpha 和 LCAD 扩样主线；下一步计划改为优先推进本地真实 CAD 校验扩样。
 - 本次只更新计划和状态记录，不运行真实 AutoCAD，不新增 `geometry_verified` 结论；下一轮若无更高优先级用户任务，默认从 `LCAD-01` 开始。
 
 ### Codex 本地 CAD 回归矩阵加固
