@@ -14,7 +14,7 @@ from core.symbol_engine.fallback_policy import (
     detect_silent_degradation,
     resolve_symbol_render_resolution,
 )
-from core.verification.capability_registry import index_capability_rows, load_capability_registry
+from core.verification.capability_registry import index_capability_rows, load_capability_registry, validate_capability_registry
 
 SYMBOL_08_PACKAGE_ID = "SYMBOL-08-GLYPH-FALLBACK-BOUNDARY"
 
@@ -30,6 +30,15 @@ SYMBOL_08_REGISTRY_BENCHMARK_IDS = (
     "benchmark.symbol_fallback_policy_01.desk_symbol_glyph",
     "benchmark.symbol_fallback_policy_01.desk_elevation_component_preview",
     "benchmark.symbol_fallback_policy_01.counter_deferred",
+)
+
+VPROOF_35_PACKAGE_ID = "V-PROOF-35-FALLBACK-TIER-ROWS"
+VPROOF_35_REGISTRY_TIER_IDS = (
+    "symbol.fallback_tier.block",
+    "symbol.fallback_tier.symbol_glyph",
+    "symbol.fallback_tier.component_preview",
+    "symbol.fallback_tier.bbox_placeholder",
+    "symbol.fallback_tier.deferred_unsupported_symbol",
 )
 
 
@@ -86,6 +95,16 @@ def assert_symbol_glyph_fallback_boundary_contract(*, project_root: Path) -> Non
     for capability_id in SYMBOL_08_REGISTRY_BENCHMARK_IDS:
         if capability_id not in index:
             raise AssertionError(f"missing registry benchmark row: {capability_id}")
+    for capability_id in VPROOF_35_REGISTRY_TIER_IDS:
+        row = index.get(capability_id)
+        if row is None:
+            raise AssertionError(f"missing V-PROOF-35 fallback tier row: {capability_id}")
+        if row.get("claim_level") in {"verified", "showcase"}:
+            raise AssertionError(f"{capability_id} must not claim geometry proof without CAD readback")
+
+    schema_errors = validate_capability_registry(registry)
+    if schema_errors:
+        raise AssertionError(f"registry validation failed: {schema_errors[:3]}")
 
     suite = json.loads((root / SYMBOL_FALLBACK_BENCHMARK_PATH).read_text(encoding="utf-8"))
     if suite.get("suite_id") != "symbol-fallback-policy-01":
@@ -142,4 +161,6 @@ def symbol_fallback_boundary_status_summary(*, project_root: Path) -> dict[str, 
         "glyph_fallback_tier_count": len(GLYPH_FALLBACK_TIERS),
         "benchmark_case_count": len(suite.get("cases", [])),
         "registry_benchmark_row_count": len(SYMBOL_08_REGISTRY_BENCHMARK_IDS),
+        "vproof_35_package_id": VPROOF_35_PACKAGE_ID,
+        "vproof_35_registry_tier_count": len(VPROOF_35_REGISTRY_TIER_IDS),
     }

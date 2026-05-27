@@ -15,6 +15,7 @@ from core.block_engine.block_matrix_registry import (
     build_block_matrix_suite_registry_row,
     build_matrix_registry_binding_requests,
     capability_id_for_matrix_dimension,
+    run_block_matrix_registry_no_cad_sync,
     sync_block_matrix_registry_from_manifest,
     MatrixRegistryBindingRequest,
 )
@@ -134,6 +135,17 @@ class Rblock07BlockMatrixRegistryRowsTests(unittest.TestCase):
         self.assertTrue(
             (output_root / "block_insert_matrix_summary.json").is_file()
         )
+
+    def test_no_cad_sync_accepts_relative_output_dir(self) -> None:
+        summary = run_block_matrix_registry_no_cad_sync(
+            project_root=PROJECT_ROOT,
+            output_dir=Path("output/test_artifacts/rblock_07/relative_matrix_sync"),
+            dry_run=True,
+        )
+
+        self.assertEqual(summary["matrix_status"], "pass")
+        self.assertEqual(summary["binding_applied_count"], 5)
+        self.assertEqual(summary["output_root"], "output/test_artifacts/rblock_07/relative_matrix_sync")
 
     def test_status_summary(self) -> None:
         summary = block_matrix_registry_status_summary(project_root=PROJECT_ROOT)

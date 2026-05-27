@@ -56,4 +56,4 @@
 
 **禁止**用工程完备度或 RCAD 烟囱 % 代替表 C 声称「系统已能画准施工图」。表 C 机器字段见 `cad_capability_coverage.json` → `cad_strength_*`。
 
-状态页固定表格与禁止声称：[`docs/verification/capability_proof_status_template.md`](../verification/capability_proof_status_template.md)（`CORE_STATUS.md` / `CAD_AGENT_STATUS.md` 同步）。交接扩展：[`docs/verification/capability_proof_handoff_template.md`](../verification/capability_proof_handoff_template.md)。
+状态页固定表格与禁止声称：[`docs/verification/capability_proof_status_template.md`](../verification/capability_proof_status_template.md)（`CORE_STATUS.md` / `docs/status/current.md` 同步）。交接扩展：[`docs/verification/capability_proof_handoff_template.md`](../verification/capability_proof_handoff_template.md)。

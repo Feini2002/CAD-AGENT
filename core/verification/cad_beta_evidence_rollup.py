@@ -24,12 +24,19 @@ from core.verification.evidence_contract import (
     NON_CAD_GEOMETRY_ACCURACY,
     validate_capability_probe_evidence,
 )
+from core.verification.evidence_trend import (
+    build_evidence_trend_report,
+    build_evidence_trend_snapshot,
+    validate_evidence_trend_report,
+)
+from core.verification.evidence_vocabulary import SCREENSHOT_NOT_APPLICABLE
 from core.verification.fake_cad_driver import FakeCadDriver
 from core.verification.geometry_checks import check_block_reference_readback, expected_block_reference_from_plan
 
 
 PARENT_PACKAGE_ID = "BETA-CAD-BLOCK"
 ROLLUP_VERSION = "0.1"
+CAD_BETA_EVIDENCE_TREND_FILENAME = "cad_beta_evidence_rollup_trend.json"
 
 VERIFICATION_DOC_NAMES = (
     "beta_cad_block_01_boundaries.md",
@@ -245,10 +252,11 @@ def run_cad_beta_evidence_rollup(
         "claim_scope": "reference_only_not_part_of_rollup_pass",
     }
 
+    generated_at = datetime.now().isoformat(timespec="seconds")
     report: dict[str, Any] = {
         "version": ROLLUP_VERSION,
         "parent_package_id": PARENT_PACKAGE_ID,
-        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "generated_at": generated_at,
         "status": "pass" if failed == 0 else "fail",
         "summary": {
             "subpackage_total": len(subpackages),
@@ -276,7 +284,45 @@ def run_cad_beta_evidence_rollup(
     if output_root is not None:
         output_root = Path(output_root)
         output_root.mkdir(parents=True, exist_ok=True)
-        (output_root / "cad_beta_evidence_rollup.json").write_text(
+        rollup_path = output_root / "cad_beta_evidence_rollup.json"
+        source_path = str(rollup_path.relative_to(root)).replace("\\", "/")
+        trend = build_evidence_trend_report(
+            report_id="cad-beta-evidence-rollup-trend",
+            generated_at=generated_at,
+            snapshots=[
+                build_evidence_trend_snapshot(
+                    snapshot_id="beta-cad-block-05",
+                    series_id="cad_beta_evidence_rollup",
+                    source_kind="benchmark_suite",
+                    source_path=source_path,
+                    snapshot_at=generated_at,
+                    evidence_state_counts={EVIDENCE_DRY_RUN_VALID_PLAN_ONLY: passed},
+                    geometry_accuracy_counts={NON_CAD_GEOMETRY_ACCURACY: len(subpackages)},
+                    screenshot_role_counts={SCREENSHOT_NOT_APPLICABLE: len(subpackages)},
+                    metrics={
+                        "subpackage_total": len(subpackages),
+                        "subpackage_passed": passed,
+                        "subpackage_failed": failed,
+                        "geometry_verified_count": 0,
+                        "readback_geometry_verified_count": 0,
+                    },
+                )
+            ],
+            status=report["status"],
+            notes=[
+                "BETA-CAD-BLOCK rollup is non-CAD only; it must not be counted as real CAD geometry_verified.",
+                "Real CAD references in the rollup are reference_only_not_part_of_rollup_pass.",
+            ],
+        )
+        trend_errors = validate_evidence_trend_report(trend)
+        if trend_errors:
+            raise ValueError(f"cad beta evidence trend validation failed: {trend_errors}")
+        trend_dir = output_root / "evidence_trend"
+        trend_dir.mkdir(parents=True, exist_ok=True)
+        trend_path = trend_dir / CAD_BETA_EVIDENCE_TREND_FILENAME
+        trend_path.write_text(json.dumps(trend, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        report["trend_output_path"] = str(trend_path.relative_to(root)).replace("\\", "/")
+        rollup_path.write_text(
             json.dumps(report, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )

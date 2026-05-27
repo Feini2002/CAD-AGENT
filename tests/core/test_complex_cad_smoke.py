@@ -9,6 +9,7 @@ from core.verification.complex_cad_smoke import (
     resolve_complex_output_dir,
     run_complex_cad_smoke,
 )
+from core.safety.policy import DIAGNOSTIC_LAYER, PREVIEW_LAYER
 from core.verification.evidence_contract import (
     EVIDENCE_DEFERRED_CAD_READBACK,
     EVIDENCE_READBACK_GEOMETRY_VERIFIED,
@@ -30,9 +31,16 @@ class ComplexCadSmokeTests(unittest.TestCase):
         self.assertTrue(report["geometry_verified"])
         self.assertEqual(report["evidence_state"], EVIDENCE_READBACK_GEOMETRY_VERIFIED)
         self.assertEqual(report["geometry_accuracy"], GEOMETRY_VERIFIED_BY_READBACK)
-        self.assertEqual(report["layer"], "CODEX_PREVIEW")
+        self.assertEqual(report["layer"], PREVIEW_LAYER)
+        self.assertEqual(report["diagnostic_layer"], DIAGNOSTIC_LAYER)
         self.assertEqual(report["expected"]["type_counts"], EXPECTED_TYPE_COUNTS)
         self.assertEqual(report["actual"]["type_counts"], EXPECTED_TYPE_COUNTS)
+        self.assertEqual(
+            report["actual"]["preview_type_counts"],
+            {"arc": 2, "circle": 3, "line": 11, "polyline": 1},
+        )
+        self.assertEqual(report["actual"]["diagnostic_type_counts"], {"dimension": 2, "text": 4})
+        self.assertEqual(report["actual"]["layer_counts"], {DIAGNOSTIC_LAYER: 6, PREVIEW_LAYER: 17})
         self.assertEqual(report["created_handle_count"], sum(EXPECTED_TYPE_COUNTS.values()))
         self.assertEqual(len(report["created_handles"]), report["created_handle_count"])
         self.assertTrue(all(check["status"] == "pass" for check in report["checks"]))

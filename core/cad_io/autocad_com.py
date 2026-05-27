@@ -16,6 +16,7 @@ from core.cad_io.autocad_block_alpha import (
     CONTROLLED_BLOCK_MIN_SIZE,
     CONTROLLED_BLOCK_NAME,
     PREVIEW_LAYER,
+    SECOND_CONTROLLED_BLOCK_NAME,
     AutoCADBlockAlphaMixin,
     BlockAlphaInsertionError,
     _controlled_block_footprint_mm,
@@ -90,17 +91,24 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         self.model_space = self.doc.ModelSpace
         self._init_preview_write_guard(preview_layer=PREVIEW_LAYER)
 
-    def ensure_layer(self, layer: str) -> None:
-        self._guard_preview_layer_write(layer)
+    def ensure_layer(self, layer: str, *, layer_role: str = "preview") -> None:
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         try:
             self.doc.Layers.Item(layer)
         except Exception:
             self.doc.Layers.Add(layer)
 
-    def _apply_common(self, entity: Any, *, layer: str | None = None, color: str | None = None) -> None:
+    def _apply_common(
+        self,
+        entity: Any,
+        *,
+        layer: str | None = None,
+        color: str | None = None,
+        layer_role: str = "preview",
+    ) -> None:
         if layer:
-            self._guard_preview_layer_write(layer)
-            self.ensure_layer(layer)
+            self._guard_preview_layer_write(layer, layer_role=layer_role)
+            self.ensure_layer(layer, layer_role=layer_role)
             entity.Layer = layer
         if color:
             color_value = ACI_COLORS.get(color.lower())
@@ -127,6 +135,12 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
             coordinates.extend([float(point[0]), float(point[1])])
         return self._win32com.VARIANT(self._pythoncom.VT_ARRAY | self._pythoncom.VT_R8, tuple(coordinates))
 
+    def _dispatch_array(self, values: list[Any]) -> Any:
+        return self._win32com.VARIANT(
+            self._pythoncom.VT_ARRAY | self._pythoncom.VT_DISPATCH,
+            tuple(values),
+        )
+
     def draw_line(
         self,
         *,
@@ -134,11 +148,12 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         end_point: list[float | int],
         layer: str | None = None,
         color: str | None = None,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._guard_preview_layer_write(layer)
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         entity = self.model_space.AddLine(self._point(start_point), self._point(end_point))
-        self._apply_common(entity, layer=layer, color=color)
+        self._apply_common(entity, layer=layer, color=color, layer_role=layer_role)
         return {"handle": self._handle(entity)}
 
     def draw_rectangle(
@@ -148,9 +163,10 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         corner2: list[float | int],
         layer: str | None = None,
         color: str | None = None,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, list[str]]:
-        self._guard_preview_layer_write(layer)
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         x1, y1, z1 = corner1
         x2, y2, _z2 = corner2
         points = [
@@ -162,7 +178,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         handles: list[str] = []
         for start, end in points:
             entity = self.model_space.AddLine(self._point(list(start)), self._point(list(end)))
-            self._apply_common(entity, layer=layer, color=color)
+            self._apply_common(entity, layer=layer, color=color, layer_role=layer_role)
             handle = self._handle(entity)
             if handle:
                 handles.append(handle)
@@ -175,11 +191,12 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         radius: float | int,
         layer: str | None = None,
         color: str | None = None,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._guard_preview_layer_write(layer)
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         entity = self.model_space.AddCircle(self._point(center), float(radius))
-        self._apply_common(entity, layer=layer, color=color)
+        self._apply_common(entity, layer=layer, color=color, layer_role=layer_role)
         return {"handle": self._handle(entity)}
 
     def draw_arc(
@@ -191,16 +208,17 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         end_angle: float | int,
         layer: str | None = None,
         color: str | None = None,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._guard_preview_layer_write(layer)
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         entity = self.model_space.AddArc(
             self._point(center),
             float(radius),
             math.radians(float(start_angle)),
             math.radians(float(end_angle)),
         )
-        self._apply_common(entity, layer=layer, color=color)
+        self._apply_common(entity, layer=layer, color=color, layer_role=layer_role)
         return {"handle": self._handle(entity)}
 
     def draw_polyline(
@@ -210,12 +228,13 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         closed: bool = False,
         layer: str | None = None,
         color: str | None = None,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._guard_preview_layer_write(layer)
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         entity = self.model_space.AddLightWeightPolyline(self._point2d_array(points))
         entity.Closed = bool(closed)
-        self._apply_common(entity, layer=layer, color=color)
+        self._apply_common(entity, layer=layer, color=color, layer_role=layer_role)
         return {"handle": self._handle(entity)}
 
     def draw_hatch(
@@ -228,20 +247,28 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         **_: object,
     ) -> dict[str, Any]:
         resolved_layer = layer or PREVIEW_LAYER
-        self._guard_preview_layer_write(resolved_layer)
+        self._guard_preview_layer_write(resolved_layer, layer_role=layer_role)
 
-        from core.verification.entity_level_evidence import build_hatch_deferred_entry
+        if len(boundary_points) < 3:
+            raise ValueError("Hatch boundary requires at least three points.")
 
-        write = {
-            "boundary_points": [[float(point[0]), float(point[1])] for point in boundary_points],
+        boundary = self.model_space.AddLightWeightPolyline(self._point2d_array(boundary_points))
+        boundary.Closed = True
+        self._apply_common(boundary, layer=resolved_layer, layer_role=layer_role)
+        hatch = self.model_space.AddHatch(0, pattern, True)
+        hatch.AppendOuterLoop(self._dispatch_array([boundary]))
+        hatch.Evaluate()
+        self._apply_common(hatch, layer=resolved_layer, layer_role=layer_role)
+        boundary_handle = self._handle(boundary)
+        hatch_handle = self._handle(hatch)
+        return {
+            "handle": hatch_handle,
+            "handles": [hatch_handle],
+            "boundary_handles": [boundary_handle] if boundary_handle else [],
+            "created_handles": [handle for handle in (boundary_handle, hatch_handle) if handle],
             "pattern": pattern,
             "layer": resolved_layer,
-            "layer_role": layer_role,
         }
-        entry = build_hatch_deferred_entry(write)
-        entry["created_handles"] = []
-        entry["geometry_verified"] = False
-        return entry
 
     def draw_text(
         self,
@@ -252,12 +279,13 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         layer: str | None = None,
         color: str | None = None,
         rotation: float | int = 0,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._guard_preview_layer_write(layer)
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         entity = self.model_space.AddText(text, self._point(position), height)
         entity.Rotation = rotation
-        self._apply_common(entity, layer=layer, color=color)
+        self._apply_common(entity, layer=layer, color=color, layer_role=layer_role)
         return {"handle": self._handle(entity)}
 
     def add_dimension(
@@ -269,9 +297,10 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         layer: str | None = None,
         color: str | None = None,
         textheight: float | int | None = None,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._guard_preview_layer_write(layer)
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
         if text_position is None:
             text_position = [
                 (start_point[0] + end_point[0]) / 2,
@@ -285,7 +314,7 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         )
         if textheight is not None:
             entity.TextHeight = textheight
-        self._apply_common(entity, layer=layer, color=color)
+        self._apply_common(entity, layer=layer, color=color, layer_role=layer_role)
         return {"handle": self._handle(entity)}
 
     def snapshot_modelspace(self, *, layer: str | None = None) -> list[dict[str, object]]:

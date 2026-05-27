@@ -102,7 +102,14 @@ class CapabilityRegistryWritebackTests(unittest.TestCase):
     def test_run_registry_writeback_dry_run_then_apply_updates_coverage(self) -> None:
         registry_copy_path = self.artifact_root / "registry_writeback_copy.json"
         source = PROJECT_ROOT / "examples" / "capability_proof" / "cad_capability_registry.json"
-        registry_copy_path.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+        registry_payload = json.loads(source.read_text(encoding="utf-8"))
+        for row in registry_payload["capabilities"]:
+            if row["capability_id"] == "primitive.hatch":
+                row["claim_level"] = "deferred"
+                row["deferred_reason"] = "Test fixture resets hatch to deferred before exercising writeback."
+                row.pop("evidence", None)
+                break
+        registry_copy_path.write_text(json.dumps(registry_payload, ensure_ascii=False, indent=2), encoding="utf-8")
         report_path = self.artifact_root / "hatch_probe_report.json"
         report_path.write_text(
             json.dumps(
@@ -147,7 +154,7 @@ class CapabilityRegistryWritebackTests(unittest.TestCase):
         self.assertEqual(applied.status, "pass")
         saved = load_capability_registry(registry_copy_path, project_root=PROJECT_ROOT)
         before = build_capability_coverage_report(
-            json.loads(source.read_text(encoding="utf-8")),
+            registry_payload,
             registry_path=source,
             project_root=PROJECT_ROOT,
             generated_at="2026-05-27T00:00:00Z",
@@ -197,6 +204,38 @@ class CapabilityRegistryWritebackTests(unittest.TestCase):
         self.assertIsNotNone(triplet)
         assert triplet is not None
         self.assertEqual(triplet["evidence_state"], "readback_geometry_verified")
+
+    def test_extract_geometry_evidence_from_real_cad_suite_summary(self) -> None:
+        triplet, reason = extract_geometry_evidence_from_report(
+            {
+                "status": "pass",
+                "evidence_summary": {
+                    "geometry_verified_count": 8,
+                    "non_cad_only": False,
+                    "evidence_state": "readback_geometry_verified",
+                    "geometry_accuracy": "verified_by_cad_readback",
+                },
+            }
+        )
+        self.assertEqual(reason, "")
+        self.assertIsNotNone(triplet)
+        assert triplet is not None
+        self.assertEqual(triplet["evidence_state"], "readback_geometry_verified")
+
+    def test_rejects_no_cad_suite_summary_for_writeback(self) -> None:
+        triplet, reason = extract_geometry_evidence_from_report(
+            {
+                "status": "pass",
+                "evidence_summary": {
+                    "geometry_verified_count": 0,
+                    "non_cad_only": True,
+                    "evidence_state": "dry_run_valid_plan_only",
+                    "geometry_accuracy": "not_verified_without_cad_readback",
+                },
+            }
+        )
+        self.assertIsNone(triplet)
+        self.assertIn("geometry-verified", reason)
 
 
 if __name__ == "__main__":

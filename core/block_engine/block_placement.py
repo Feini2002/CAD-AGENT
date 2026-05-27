@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 
@@ -24,19 +25,17 @@ def create_block_insertion_intent(
     normalized_rotation = int(rotation) % 360 if float(rotation).is_integer() else rotation
     warnings: list[str] = []
     if normalized_rotation in {90, 270}:
-        bbox_width, bbox_depth = depth, width
-        anchor_x, anchor_y = insertion[1], insertion[0]
         warnings.append("right_angle_rotation_bbox")
-    elif normalized_rotation in {0, 180}:
-        bbox_width, bbox_depth = width, depth
-        anchor_x, anchor_y = insertion[0], insertion[1]
-    else:
-        bbox_width, bbox_depth = width, depth
-        anchor_x, anchor_y = insertion[0], insertion[1]
+    elif normalized_rotation not in {0, 180}:
         warnings.append("non_right_angle_rotation_bbox_is_approximate")
 
-    min_x = base_point[0] - anchor_x
-    min_y = base_point[1] - anchor_y
+    bbox = _rotated_block_bbox(
+        width=float(width),
+        depth=float(depth),
+        insertion=[float(insertion[0]), float(insertion[1])],
+        base_point=[float(base_point[0]), float(base_point[1])],
+        rotation_degrees=float(rotation),
+    )
     cad_identity = block.get("cad_identity", {})
     return {
         "operation": "insert_block_preview_intent",
@@ -48,11 +47,32 @@ def create_block_insertion_intent(
         "rotation": rotation,
         "layer": layer,
         "layer_role": block.get("layer_bindings", {}).get("insert_layer_role", "preview"),
-        "bbox": {
-            "min": [min_x, min_y],
-            "max": [min_x + bbox_width, min_y + bbox_depth],
-        },
+        "bbox": bbox,
         "validation_status": block.get("validation", {}).get("status", "symbol_fallback"),
         "geometry_accuracy": "not_verified_without_cad_readback",
         "warnings": warnings,
+    }
+
+
+def _rotated_block_bbox(
+    *,
+    width: float,
+    depth: float,
+    insertion: list[float],
+    base_point: list[float],
+    rotation_degrees: float,
+) -> dict[str, list[float]]:
+    theta = math.radians(rotation_degrees)
+    cos_t = math.cos(theta)
+    sin_t = math.sin(theta)
+    xs: list[float] = []
+    ys: list[float] = []
+    for x, y in ((0.0, 0.0), (width, 0.0), (width, depth), (0.0, depth)):
+        local_x = x - insertion[0]
+        local_y = y - insertion[1]
+        xs.append(base_point[0] + local_x * cos_t - local_y * sin_t)
+        ys.append(base_point[1] + local_x * sin_t + local_y * cos_t)
+    return {
+        "min": [min(xs), min(ys)],
+        "max": [max(xs), max(ys)],
     }

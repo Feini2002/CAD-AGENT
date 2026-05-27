@@ -7,8 +7,11 @@ from tests.bootstrap import PROJECT_ROOT
 
 from core.composition_engine.catalog_loader import load_composition_template_catalog
 from core.composition_engine.composition_template_catalog import COMPOSITION_TEMPLATES
-from core.composition_engine.drawing_policy import resolve_composition_object_drawing_flags
-from core.composition_engine.templates import composition_to_cad_plans, create_composition_spec
+from core.composition_engine.templates import (
+    composition_to_cad_plans,
+    create_composition_spec,
+    resolve_composition_object_drawing_flags,
+)
 from core.schemas.validator import validate_json
 
 
@@ -55,6 +58,7 @@ class CompositionCatalogTests(unittest.TestCase):
         self.assertIn("office_desk_combo", loaded)
 
     def test_catalog_objects_default_to_no_labels_or_dimensions(self) -> None:
+        self.assertFalse((PROJECT_ROOT / "core" / "composition_engine" / "drawing_policy.py").exists())
         for composition_id, template in COMPOSITION_TEMPLATES.items():
             for item in template["objects"]:
                 with self.subTest(composition_id=composition_id, instance_id=item["instance_id"]):

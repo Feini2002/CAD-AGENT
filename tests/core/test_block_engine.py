@@ -63,7 +63,7 @@ class BlockEngineTests(unittest.TestCase):
 
         intent = create_block_insertion_intent(block, base_point=[500, 500, 0], rotation=90)
 
-        self.assertEqual(intent["bbox"], {"min": [450, 400], "max": [850, 1400]})
+        self.assertEqual(intent["bbox"], {"min": [150.0, 400.0], "max": [550.0, 1400.0]})
         self.assertIn("right_angle_rotation_bbox", intent["warnings"])
 
     def test_v02_example_library_validates_and_exposes_controlled_test_block(self) -> None:

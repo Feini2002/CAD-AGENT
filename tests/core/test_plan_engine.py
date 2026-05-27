@@ -154,6 +154,19 @@ class PlanEngineTests(unittest.TestCase):
         self.assertEqual(report["status"], "valid")
         self.assertEqual(report["bbox"], {"min": [1200, 800], "max": [3000.0, 1700.0]})
 
+    def test_insert_block_alpha_second_controlled_block_validates_and_uses_its_footprint(self) -> None:
+        plan = load_example("examples/plans/insert_block_alpha_test.json")
+        plan["object"]["block_id"] = "controlled-test-block-002"
+        plan["object"]["name"] = "Controlled Test Block 002"
+        plan["object"]["cad_identity"]["block_name"] = "CODEX_TEST_BLOCK_002"
+
+        self.assertEqual(validate_plan(plan), [])
+        report = create_dry_run_report(plan)
+
+        self.assertEqual(report["status"], "valid")
+        self.assertEqual(report["entities"][0]["block_name"], "CODEX_TEST_BLOCK_002")
+        self.assertEqual(report["bbox"], {"min": [1200, 800], "max": [1800.0, 1100.0]})
+
     def test_dry_run_report_is_machine_readable(self) -> None:
         plan = load_example("examples/plans/draw_test_cabinet.json")
 

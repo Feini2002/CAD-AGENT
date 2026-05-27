@@ -42,11 +42,14 @@ class HatchComDeferredBoundaryTests(unittest.TestCase):
 
         required_terms = [
             "LCAD-12-HATCH-COM",
+            "RCAD-06-HATCH",
             "draw_hatch",
             "structured deferred",
             "hatch_unverified",
             "created_handles=[]",
             "geometry_verified=false",
+            "readback_geometry_verified",
+            "ANSI31",
             "V-PROOF-53",
         ]
         for term in required_terms:

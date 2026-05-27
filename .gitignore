@@ -8,6 +8,9 @@ output/*
 output/previews/*
 !output/previews/README.md
 
+# Local CodeGraph index
+.codegraph/
+
 # Local tool logs
 cad_mcp.log
 

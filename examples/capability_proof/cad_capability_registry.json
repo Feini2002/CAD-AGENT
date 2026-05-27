@@ -182,7 +182,7 @@
       "capability_id": "primitive.arc",
       "display_name": "CAD primitive arc",
       "category": "primitive",
-      "claim_level": "verified",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
@@ -217,12 +217,14 @@
         "evidence_state": "cad_capability_verified",
         "geometry_accuracy": "verified_by_cad_capability_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-round2-20260527/primitive_matrix_cad/cad_capability_probe.json",
-        "last_verified_at": "2026-05-27T03:14:28Z"
+        "report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       },
       "notes": [
         "CAD capability probe COM primitive write/readback (sprint 20260527)",
-        "primitive matrix CAD probe (round2)"
+        "primitive matrix CAD probe (round2)",
+        "writeback from output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "V-PROOF-66 showcase promotion from RCAD-22 primitive capability probe."
       ]
     },
     {
@@ -275,7 +277,7 @@
       "capability_id": "primitive.circle",
       "display_name": "CAD primitive circle",
       "category": "primitive",
-      "claim_level": "verified",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
@@ -310,19 +312,21 @@
         "evidence_state": "cad_capability_verified",
         "geometry_accuracy": "verified_by_cad_capability_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-round2-20260527/primitive_matrix_cad/cad_capability_probe.json",
-        "last_verified_at": "2026-05-27T03:14:28Z"
+        "report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       },
       "notes": [
         "CAD capability probe COM primitive write/readback (sprint 20260527)",
-        "primitive matrix CAD probe (round2)"
+        "primitive matrix CAD probe (round2)",
+        "writeback from output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "V-PROOF-66 showcase promotion from RCAD-22 primitive capability probe."
       ]
     },
     {
       "capability_id": "primitive.dimension",
       "display_name": "CAD primitive dimension",
       "category": "primitive",
-      "claim_level": "verified",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
@@ -357,23 +361,24 @@
         "evidence_state": "cad_capability_verified",
         "geometry_accuracy": "verified_by_cad_capability_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-round2-20260527/primitive_matrix_cad/cad_capability_probe.json",
-        "last_verified_at": "2026-05-27T03:14:28Z"
+        "report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       },
       "notes": [
         "CAD capability probe COM primitive write/readback (sprint 20260527)",
-        "primitive matrix CAD probe (round2)"
+        "primitive matrix CAD probe (round2)",
+        "writeback from output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "V-PROOF-66 showcase promotion from RCAD-22 primitive capability probe."
       ]
     },
     {
       "capability_id": "primitive.hatch",
       "display_name": "CAD primitive hatch",
       "category": "primitive",
-      "claim_level": "deferred",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
-      "deferred_reason": "Primitive hatch requires cad_capability_probe or CAD_PLAN readback before claim_level=verified.",
       "cad_case": {
         "case_kind": "script",
         "requires_real_cad": true,
@@ -400,13 +405,24 @@
           "source_path": "core/verification/evidence_vocabulary.py",
           "source_key": "hatch"
         }
+      ],
+      "evidence": {
+        "evidence_state": "readback_geometry_verified",
+        "geometry_accuracy": "verified_by_cad_readback",
+        "screenshot_role": "not_applicable",
+        "report_path": "output/validation_runs/rcad-06-hatch-cad-20260527-escalated/hatch_cad_smoke_report.json",
+        "last_verified_at": "2026-05-27T14:42:32Z"
+      },
+      "notes": [
+        "writeback from output/validation_runs/rcad-06-hatch-cad-20260527-escalated/hatch_cad_smoke_report.json",
+        "V-PROOF-65 showcase promotion from RCAD-06 controlled ANSI31 hatch readback."
       ]
     },
     {
       "capability_id": "primitive.line",
       "display_name": "CAD primitive line",
       "category": "primitive",
-      "claim_level": "verified",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
@@ -441,19 +457,21 @@
         "evidence_state": "cad_capability_verified",
         "geometry_accuracy": "verified_by_cad_capability_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-round2-20260527/primitive_matrix_cad/cad_capability_probe.json",
-        "last_verified_at": "2026-05-27T03:14:28Z"
+        "report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       },
       "notes": [
         "CAD capability probe COM primitive write/readback (sprint 20260527)",
-        "primitive matrix CAD probe (round2)"
+        "primitive matrix CAD probe (round2)",
+        "writeback from output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "V-PROOF-66 showcase promotion from RCAD-22 primitive capability probe."
       ]
     },
     {
       "capability_id": "primitive.polyline",
       "display_name": "CAD primitive polyline",
       "category": "primitive",
-      "claim_level": "verified",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
@@ -488,19 +506,21 @@
         "evidence_state": "cad_capability_verified",
         "geometry_accuracy": "verified_by_cad_capability_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-round2-20260527/primitive_matrix_cad/cad_capability_probe.json",
-        "last_verified_at": "2026-05-27T03:14:28Z"
+        "report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       },
       "notes": [
         "CAD capability probe COM primitive write/readback (sprint 20260527)",
-        "primitive matrix CAD probe (round2)"
+        "primitive matrix CAD probe (round2)",
+        "writeback from output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "V-PROOF-66 showcase promotion from RCAD-22 primitive capability probe."
       ]
     },
     {
       "capability_id": "primitive.rectangle",
       "display_name": "CAD primitive rectangle",
       "category": "primitive",
-      "claim_level": "verified",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
@@ -535,18 +555,20 @@
         "evidence_state": "cad_capability_verified",
         "geometry_accuracy": "verified_by_cad_capability_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-sprint-20260527/baseline_cad_validation/cad_capability_probe.json",
-        "last_verified_at": "2026-05-27T03:04:52Z"
+        "report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       },
       "notes": [
-        "CAD capability probe COM primitive write/readback (sprint 20260527)"
+        "CAD capability probe COM primitive write/readback (sprint 20260527)",
+        "writeback from output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "V-PROOF-66 showcase promotion from RCAD-22 primitive capability probe rectangle linework."
       ]
     },
     {
       "capability_id": "primitive.text",
       "display_name": "CAD primitive text",
       "category": "primitive",
-      "claim_level": "verified",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "intent": "draw_object",
@@ -581,12 +603,14 @@
         "evidence_state": "cad_capability_verified",
         "geometry_accuracy": "verified_by_cad_capability_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-round2-20260527/primitive_matrix_cad/cad_capability_probe.json",
-        "last_verified_at": "2026-05-27T03:14:28Z"
+        "report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       },
       "notes": [
         "CAD capability probe COM primitive write/readback (sprint 20260527)",
-        "primitive matrix CAD probe (round2)"
+        "primitive matrix CAD probe (round2)",
+        "writeback from output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+        "V-PROOF-66 showcase promotion from RCAD-22 primitive capability probe."
       ]
     },
     {
@@ -2803,8 +2827,8 @@
         "evidence_state": "readback_geometry_verified",
         "geometry_accuracy": "verified_by_cad_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-cad-validation-20260527/office_composition_cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
-        "last_verified_at": "2026-05-27T04:01:42Z"
+        "report_path": "output/validation_runs/vproof-42-office-composition-expand-20260527-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+        "last_verified_at": "2026-05-27T15:21:46Z"
       }
     },
     {
@@ -2909,8 +2933,8 @@
         "evidence_state": "readback_geometry_verified",
         "geometry_accuracy": "verified_by_cad_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-cad-validation-20260527/office_composition_cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
-        "last_verified_at": "2026-05-27T04:01:42Z"
+        "report_path": "output/validation_runs/vproof-42-office-composition-expand-20260527-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+        "last_verified_at": "2026-05-27T15:21:46Z"
       }
     },
     {
@@ -3218,8 +3242,8 @@
         "evidence_state": "readback_geometry_verified",
         "geometry_accuracy": "verified_by_cad_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-cad-validation-20260527/office_composition_cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
-        "last_verified_at": "2026-05-27T04:01:42Z"
+        "report_path": "output/validation_runs/vproof-42-office-composition-expand-20260527-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+        "last_verified_at": "2026-05-27T15:21:46Z"
       }
     },
     {
@@ -3257,8 +3281,8 @@
         "evidence_state": "readback_geometry_verified",
         "geometry_accuracy": "verified_by_cad_readback",
         "screenshot_role": "not_applicable",
-        "report_path": "output/validation_runs/capability-lab-cad-validation-20260527/office_composition_cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
-        "last_verified_at": "2026-05-27T04:01:42Z"
+        "report_path": "output/validation_runs/vproof-42-office-composition-expand-20260527-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+        "last_verified_at": "2026-05-27T15:21:46Z"
       }
     },
     {
@@ -7016,6 +7040,214 @@
       ]
     },
     {
+      "capability_id": "symbol.fallback_tier.block",
+      "display_name": "Symbol fallback tier / block",
+      "category": "symbol",
+      "claim_level": "smoke",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "intent": "insert_block_alpha",
+      "tags": [
+        "fallback_tier",
+        "V-PROOF-35",
+        "SYMBOL-08"
+      ],
+      "source_refs": [
+        {
+          "source_kind": "documentation",
+          "source_path": "docs/verification/symbol_08_glyph_fallback_boundary.md",
+          "source_key": "block"
+        }
+      ],
+      "cad_case": {
+        "case_kind": "script",
+        "requires_real_cad": false,
+        "entrypoint": "python -m unittest tests.core.test_symbol_08_glyph_fallback_boundary tests.core.test_symbol_fallback_policy",
+        "safety": {
+          "layer": "CODEX_PREVIEW",
+          "saved_dwg": false,
+          "deleted_entities": false,
+          "modified_formal_layers": false
+        }
+      },
+      "evidence": {
+        "evidence_state": "dry_run_valid_plan_only",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "not_applicable"
+      },
+      "notes": [
+        "V-PROOF-35 fallback tier row.",
+        "Controlled block selection still requires RCAD readback before geometry_verified."
+      ]
+    },
+    {
+      "capability_id": "symbol.fallback_tier.symbol_glyph",
+      "display_name": "Symbol fallback tier / symbol_glyph",
+      "category": "symbol",
+      "claim_level": "smoke",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "intent": "draw_symbol_glyph",
+      "readability_status": "symbol_readable",
+      "tags": [
+        "fallback_tier",
+        "V-PROOF-35",
+        "SYMBOL-08"
+      ],
+      "source_refs": [
+        {
+          "source_kind": "documentation",
+          "source_path": "docs/verification/symbol_08_glyph_fallback_boundary.md",
+          "source_key": "symbol_glyph"
+        }
+      ],
+      "cad_case": {
+        "case_kind": "script",
+        "requires_real_cad": false,
+        "entrypoint": "python -m unittest tests.core.test_symbol_08_glyph_fallback_boundary tests.core.test_symbol_fallback_policy",
+        "safety": {
+          "layer": "CODEX_PREVIEW",
+          "saved_dwg": false,
+          "deleted_entities": false,
+          "modified_formal_layers": false
+        }
+      },
+      "evidence": {
+        "evidence_state": "dry_run_valid_plan_only",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "not_applicable"
+      },
+      "notes": [
+        "V-PROOF-35 fallback tier row.",
+        "Glyph dry-run evidence does not imply real CAD geometry_verified."
+      ]
+    },
+    {
+      "capability_id": "symbol.fallback_tier.component_preview",
+      "display_name": "Symbol fallback tier / component_preview",
+      "category": "symbol",
+      "claim_level": "smoke",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "intent": "draw_object",
+      "readability_status": "fallback_component_preview",
+      "tags": [
+        "fallback_tier",
+        "V-PROOF-35",
+        "SYMBOL-08"
+      ],
+      "source_refs": [
+        {
+          "source_kind": "documentation",
+          "source_path": "docs/verification/symbol_08_glyph_fallback_boundary.md",
+          "source_key": "component_preview"
+        }
+      ],
+      "cad_case": {
+        "case_kind": "script",
+        "requires_real_cad": false,
+        "entrypoint": "python -m unittest tests.core.test_symbol_08_glyph_fallback_boundary tests.core.test_symbol_fallback_policy",
+        "safety": {
+          "layer": "CODEX_PREVIEW",
+          "saved_dwg": false,
+          "deleted_entities": false,
+          "modified_formal_layers": false
+        }
+      },
+      "evidence": {
+        "evidence_state": "dry_run_valid_plan_only",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "not_applicable"
+      },
+      "notes": [
+        "V-PROOF-35 fallback tier row.",
+        "Component preview is a declared fallback boundary, not CAD readback proof."
+      ]
+    },
+    {
+      "capability_id": "symbol.fallback_tier.bbox_placeholder",
+      "display_name": "Symbol fallback tier / bbox_placeholder",
+      "category": "symbol",
+      "claim_level": "smoke",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "intent": "draw_object",
+      "readability_status": "fallback_bbox_placeholder",
+      "tags": [
+        "fallback_tier",
+        "V-PROOF-35",
+        "SYMBOL-08"
+      ],
+      "source_refs": [
+        {
+          "source_kind": "documentation",
+          "source_path": "docs/verification/symbol_08_glyph_fallback_boundary.md",
+          "source_key": "bbox_placeholder"
+        }
+      ],
+      "cad_case": {
+        "case_kind": "script",
+        "requires_real_cad": false,
+        "entrypoint": "python -m unittest tests.core.test_symbol_08_glyph_fallback_boundary tests.core.test_symbol_fallback_policy",
+        "safety": {
+          "layer": "CODEX_PREVIEW",
+          "saved_dwg": false,
+          "deleted_entities": false,
+          "modified_formal_layers": false
+        }
+      },
+      "evidence": {
+        "evidence_state": "dry_run_valid_plan_only",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "not_applicable"
+      },
+      "notes": [
+        "V-PROOF-35 fallback tier row.",
+        "BBox placeholder must be explicitly declared and remains non-geometry proof."
+      ]
+    },
+    {
+      "capability_id": "symbol.fallback_tier.deferred_unsupported_symbol",
+      "display_name": "Symbol fallback tier / deferred_unsupported_symbol",
+      "category": "symbol",
+      "claim_level": "deferred",
+      "ladder_level": "L0",
+      "domain": "generic",
+      "readability_status": "deferred_unsupported_symbol",
+      "deferred_reason": "No block, readable glyph, component preview, or declared bbox fallback is available.",
+      "tags": [
+        "fallback_tier",
+        "V-PROOF-35",
+        "SYMBOL-08"
+      ],
+      "source_refs": [
+        {
+          "source_kind": "documentation",
+          "source_path": "docs/verification/symbol_08_glyph_fallback_boundary.md",
+          "source_key": "deferred"
+        }
+      ],
+      "cad_case": {
+        "case_kind": "none",
+        "requires_real_cad": false,
+        "safety": {
+          "layer": "CODEX_PREVIEW",
+          "saved_dwg": false,
+          "deleted_entities": false,
+          "modified_formal_layers": false
+        }
+      },
+      "evidence": {
+        "evidence_state": "deferred_cad_readback_required",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "not_applicable"
+      },
+      "notes": [
+        "V-PROOF-35 fallback tier row.",
+        "Structured deferred output is a boundary, not a successful CAD proof."
+      ]
+    },
+    {
       "capability_id": "regression.baseline_cad_validation",
       "display_name": "Baseline CAD validation runner",
       "category": "other",
@@ -7420,6 +7652,44 @@
         "screenshot_role": "visual_aid_only",
         "report_path": "output/validation_runs/capability-lab-sprint-20260527/baseline_cad_validation/block_alpha_report.json",
         "last_verified_at": "2026-05-27T04:04:07Z"
+      }
+    },
+    {
+      "capability_id": "block.library.controlled_test_block_002",
+      "display_name": "Block Controlled Test Block 002",
+      "category": "block",
+      "claim_level": "verified",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "intent": "insert_block_alpha",
+      "cad_case": {
+        "case_kind": "cad_plan",
+        "requires_real_cad": true,
+        "safety": {
+          "layer": "CODEX_PREVIEW",
+          "saved_dwg": false,
+          "deleted_entities": false,
+          "modified_formal_layers": false
+        },
+        "plan_path": "examples/plans/insert_block_alpha_test.json"
+      },
+      "source_refs": [
+        {
+          "source_kind": "block_library",
+          "source_path": "libraries/blocks/block_library.example.json",
+          "source_key": "controlled-test-block-002"
+        }
+      ],
+      "notes": [
+        "Controlled block alpha has RCAD evidence; claim_level remains smoke until V-PROOF-03 backfill.",
+        "writeback from output/validation_runs/vproof-41-block-cad-matrix-20260527-cad/vproof_41_block_002_offset/block_alpha_report.json"
+      ],
+      "evidence": {
+        "evidence_state": "readback_geometry_verified",
+        "geometry_accuracy": "verified_by_cad_readback",
+        "screenshot_role": "not_applicable",
+        "report_path": "output/validation_runs/vproof-41-block-cad-matrix-20260527-cad/vproof_41_block_002_offset/block_alpha_report.json",
+        "last_verified_at": "2026-05-27T15:08:10Z"
       }
     },
     {
@@ -8092,7 +8362,7 @@
       "capability_id": "block.insert_block_alpha.matrix",
       "display_name": "Block insert matrix suite (no-CAD)",
       "category": "block",
-      "claim_level": "smoke",
+      "claim_level": "showcase",
       "ladder_level": "L0",
       "domain": "generic",
       "intent": "insert_block_alpha",
@@ -8103,7 +8373,10 @@
       ],
       "notes": [
         "RBLOCK-07 parent smoke row for block-insert-matrix-01.",
-        "dry_run_valid_plan_only does not imply geometry_verified."
+        "dry_run_valid_plan_only does not imply geometry_verified.",
+        "DRAW-02 smoke writeback from output/validation_runs/vproof-40-block-matrix-plan-no-cad/block_insert_matrix_summary.json",
+        "V-PROOF-45 writeback from RCAD-24 block alpha beta suite: 8/8 real CAD block_reference readback",
+        "V-PROOF-64 showcase promotion from RCAD-24 block alpha beta suite: controlled block matrix gallery"
       ],
       "source_refs": [
         {
@@ -8123,6 +8396,13 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         }
+      },
+      "evidence": {
+        "evidence_state": "readback_geometry_verified",
+        "geometry_accuracy": "verified_by_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "report_path": "output/validation_runs/rcad-24-block-beta-cad-after-rotfix-20260527/block_alpha_beta_summary.json",
+        "last_verified_at": "2026-05-27T14:33:00Z"
       }
     },
     {
@@ -8142,7 +8422,8 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         },
-        "plan_path": "examples/plans/insert_block_alpha_test.json"
+        "plan_path": "examples/plans/insert_block_alpha_test.json",
+        "output_path": "output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_anchor.json"
       },
       "source_refs": [
         {
@@ -8164,7 +8445,8 @@
         "last_verified_at": "2026-05-27T03:44:30Z"
       },
       "notes": [
-        "baseline block_alpha readback"
+        "baseline block_alpha readback",
+        "RBLOCK-07 matrix smoke binding (anchor): output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_anchor.json"
       ]
     },
     {
@@ -8184,7 +8466,8 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         },
-        "plan_path": "examples/plans/insert_block_alpha_test.json"
+        "plan_path": "examples/plans/insert_block_alpha_test.json",
+        "output_path": "output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_rotation.json"
       },
       "source_refs": [
         {
@@ -8206,7 +8489,8 @@
         "last_verified_at": "2026-05-27T03:44:30Z"
       },
       "notes": [
-        "baseline block_alpha readback"
+        "baseline block_alpha readback",
+        "RBLOCK-07 matrix smoke binding (rotation): output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_rotation.json"
       ]
     },
     {
@@ -8226,7 +8510,8 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         },
-        "plan_path": "examples/plans/insert_block_alpha_test.json"
+        "plan_path": "examples/plans/insert_block_alpha_test.json",
+        "output_path": "output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_scale.json"
       },
       "source_refs": [
         {
@@ -8248,7 +8533,8 @@
         "last_verified_at": "2026-05-27T03:44:30Z"
       },
       "notes": [
-        "baseline block_alpha readback"
+        "baseline block_alpha readback",
+        "RBLOCK-07 matrix smoke binding (scale): output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_scale.json"
       ]
     },
     {
@@ -8268,7 +8554,8 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         },
-        "plan_path": "examples/plans/insert_block_alpha_test.json"
+        "plan_path": "examples/plans/insert_block_alpha_test.json",
+        "output_path": "output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_attribute.json"
       },
       "source_refs": [
         {
@@ -8290,7 +8577,8 @@
         "last_verified_at": "2026-05-27T03:44:30Z"
       },
       "notes": [
-        "baseline block_alpha readback"
+        "baseline block_alpha readback",
+        "RBLOCK-07 matrix smoke binding (attribute): output/validation_runs/vproof-40-block-matrix-plan-no-cad/dimension_attribute.json"
       ]
     },
     {
@@ -8697,7 +8985,7 @@
       "capability_id": "drawing_standard.beta.drawing_standard_beta_04",
       "display_name": "Drawing standard beta suite (codex_preview_beta)",
       "category": "other",
-      "claim_level": "smoke",
+      "claim_level": "showcase",
       "ladder_level": "L0",
       "domain": "generic",
       "tags": [
@@ -8707,7 +8995,9 @@
       ],
       "notes": [
         "DRAW-02 registry row bound to drawing_standard_beta_suite case.",
-        "dry_run_valid_plan_only does not imply geometry_verified; RCAD-23 for real CAD."
+        "dry_run_valid_plan_only does not imply geometry_verified; RCAD-23 for real CAD.",
+        "writeback from output/validation_runs/rcad-23-drawing-standard-beta-20260527-escalated/drawing_standard_cad_smoke_report.json",
+        "V-PROOF-66 showcase promotion from RCAD-23 drawing-standard beta suite evidence."
       ],
       "source_refs": [
         {
@@ -8727,6 +9017,13 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         }
+      },
+      "evidence": {
+        "evidence_state": "readback_geometry_verified",
+        "geometry_accuracy": "verified_by_cad_readback",
+        "screenshot_role": "not_applicable",
+        "report_path": "output/validation_runs/rcad-23-drawing-standard-beta-20260527-escalated/drawing_standard_cad_smoke_report.json",
+        "last_verified_at": "2026-05-27T14:48:36Z"
       }
     },
     {
@@ -8841,7 +9138,7 @@
       "capability_id": "drawing_standard.beta.block_insert_plan_resolution",
       "display_name": "Drawing standard beta / block_insert_plan_resolution",
       "category": "other",
-      "claim_level": "smoke",
+      "claim_level": "showcase",
       "ladder_level": "L0",
       "domain": "generic",
       "tags": [
@@ -8851,7 +9148,9 @@
       ],
       "notes": [
         "DRAW-02 registry row bound to drawing_standard_beta_suite case.",
-        "dry_run_valid_plan_only does not imply geometry_verified; RCAD-23 for real CAD."
+        "dry_run_valid_plan_only does not imply geometry_verified; RCAD-23 for real CAD.",
+        "writeback from output/validation_runs/rcad-23-drawing-standard-beta-20260527-escalated/drawing_standard_cad_smoke_report.json",
+        "V-PROOF-65 showcase promotion from RCAD-23 drawing-standard block insert readback."
       ],
       "source_refs": [
         {
@@ -8871,6 +9170,13 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         }
+      },
+      "evidence": {
+        "evidence_state": "readback_geometry_verified",
+        "geometry_accuracy": "verified_by_cad_readback",
+        "screenshot_role": "not_applicable",
+        "report_path": "output/validation_runs/rcad-23-drawing-standard-beta-20260527-escalated/drawing_standard_cad_smoke_report.json",
+        "last_verified_at": "2026-05-27T14:42:32Z"
       }
     },
     {
@@ -8949,7 +9255,7 @@
       "capability_id": "symbol.block_first.symbol_block_first_tier_01",
       "display_name": "Symbol block-first tier smoke suite",
       "category": "symbol",
-      "claim_level": "smoke",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "tags": [
@@ -8959,7 +9265,9 @@
       ],
       "notes": [
         "SYMBOL-09 block-first tier smoke row; block tier requires cad_insertion_verified controlled block.",
-        "Does not imply real CAD geometry_verified until RCAD-25."
+        "Does not imply real CAD geometry_verified until RCAD-25.",
+        "writeback from output/validation_runs/rcad-25-symbol-block-first-20260527-escalated/symbol_block_first_cad_smoke_report.json",
+        "V-PROOF-65 showcase promotion from RCAD-25 controlled block-first suite readback."
       ],
       "source_refs": [
         {
@@ -8979,13 +9287,20 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         }
+      },
+      "evidence": {
+        "evidence_state": "readback_geometry_verified",
+        "geometry_accuracy": "verified_by_cad_readback",
+        "screenshot_role": "not_applicable",
+        "report_path": "output/validation_runs/rcad-25-symbol-block-first-20260527-escalated/symbol_block_first_cad_smoke_report.json",
+        "last_verified_at": "2026-05-27T14:42:32Z"
       }
     },
     {
       "capability_id": "symbol.block_first.controlled_block_wins",
       "display_name": "Symbol block-first / controlled-block-wins",
       "category": "symbol",
-      "claim_level": "smoke",
+      "claim_level": "showcase",
       "ladder_level": "L1",
       "domain": "generic",
       "tags": [
@@ -8995,7 +9310,9 @@
       ],
       "notes": [
         "SYMBOL-09 block-first tier smoke row; block tier requires cad_insertion_verified controlled block.",
-        "Does not imply real CAD geometry_verified until RCAD-25."
+        "Does not imply real CAD geometry_verified until RCAD-25.",
+        "writeback from output/validation_runs/rcad-25-symbol-block-first-20260527-escalated/symbol_block_first_cad_smoke_report.json",
+        "V-PROOF-65 showcase promotion from RCAD-25 controlled-block-wins readback."
       ],
       "source_refs": [
         {
@@ -9015,6 +9332,13 @@
           "deleted_entities": false,
           "modified_formal_layers": false
         }
+      },
+      "evidence": {
+        "evidence_state": "readback_geometry_verified",
+        "geometry_accuracy": "verified_by_cad_readback",
+        "screenshot_role": "not_applicable",
+        "report_path": "output/validation_runs/rcad-25-symbol-block-first-20260527-escalated/symbol_block_first_cad_smoke_report.json",
+        "last_verified_at": "2026-05-27T14:42:32Z"
       }
     },
     {

@@ -46,7 +46,7 @@ class CapabilityCoverageTests(unittest.TestCase):
             row for row in registry["capabilities"] if row["capability_id"] == "regression.baseline_cad_validation"
         )
         self.assertEqual(baseline["claim_level"], "verified")
-        self.assertGreaterEqual(report["category_cad_proof"]["primitive"]["verified_count"], 6)
+        self.assertGreaterEqual(report["category_cad_proof"]["primitive"]["cad_proof_count"], 6)
         self.assertGreaterEqual(report["category_cad_proof"]["other"]["verified_count"], 3)
         self.assertGreaterEqual(report["category_cad_proof"]["object"]["verified_count"], 8)
         self.assertGreaterEqual(report["category_cad_proof"]["intent"]["verified_count"], 3)

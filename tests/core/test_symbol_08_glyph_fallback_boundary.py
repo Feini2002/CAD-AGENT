@@ -7,9 +7,12 @@ from core.symbol_engine.symbol_fallback_boundary import (
     GLYPH_FALLBACK_TIERS,
     SYMBOL_08_BOUNDARY_DOC,
     SYMBOL_08_PACKAGE_ID,
+    VPROOF_35_PACKAGE_ID,
+    VPROOF_35_REGISTRY_TIER_IDS,
     assert_symbol_glyph_fallback_boundary_contract,
     symbol_fallback_boundary_status_summary,
 )
+from core.verification.capability_registry import index_capability_rows, load_capability_registry
 from tests.bootstrap import PROJECT_ROOT
 
 
@@ -26,6 +29,22 @@ class Symbol08GlyphFallbackBoundaryTests(unittest.TestCase):
         self.assertEqual(summary["package_id"], SYMBOL_08_PACKAGE_ID)
         self.assertEqual(summary["benchmark_case_count"], 3)
         self.assertEqual(summary["registry_benchmark_row_count"], 3)
+        self.assertEqual(summary["vproof_35_package_id"], VPROOF_35_PACKAGE_ID)
+        self.assertEqual(summary["vproof_35_registry_tier_count"], 5)
+
+    def test_vproof_35_fallback_tier_rows_are_registered_without_geometry_claims(self) -> None:
+        registry = load_capability_registry(
+            PROJECT_ROOT / "examples/capability_proof/cad_capability_registry.json",
+            project_root=PROJECT_ROOT,
+        )
+        index = index_capability_rows(registry)
+        self.assertEqual(len(VPROOF_35_REGISTRY_TIER_IDS), 5)
+        for capability_id in VPROOF_35_REGISTRY_TIER_IDS:
+            with self.subTest(capability_id=capability_id):
+                row = index[capability_id]
+                self.assertIn("V-PROOF-35", row.get("tags", []))
+                self.assertNotIn(row["claim_level"], {"verified", "showcase"})
+                self.assertEqual(row["evidence"]["geometry_accuracy"], "not_verified_without_cad_readback")
 
     def test_boundary_doc_states_claim_limits(self) -> None:
         text = (PROJECT_ROOT / SYMBOL_08_BOUNDARY_DOC).read_text(encoding="utf-8")

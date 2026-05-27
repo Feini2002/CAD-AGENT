@@ -7,13 +7,21 @@ from pathlib import Path
 from typing import Any
 
 from core.path_safety import resolve_under_project_output, validate_safe_path_segment
-from core.plan_engine.block_alpha_plan import CONTROLLED_BLOCK_ID, CONTROLLED_BLOCK_NAME, PREVIEW_LAYER
+from core.plan_engine.block_alpha_plan import CONTROLLED_BLOCK_ALLOWLIST, CONTROLLED_BLOCK_ID, CONTROLLED_BLOCK_NAME, PREVIEW_LAYER
 from core.plan_engine.dry_run_report import create_dry_run_report
 from core.plan_engine.validate_plan import validate_plan
+from core.execution.execute_plan import execute_plan_file
+from core.verification.block_alpha_validation import (
+    build_block_alpha_readback_report,
+    validate_block_alpha_report_evidence,
+)
 from core.verification.evidence_contract import (
     EVIDENCE_DRY_RUN_VALID_PLAN_ONLY,
+    EVIDENCE_READBACK_GEOMETRY_VERIFIED,
+    GEOMETRY_VERIFIED_BY_READBACK,
     NON_CAD_GEOMETRY_ACCURACY,
 )
+from core.verification.inspect_dwg import snapshot_entities_by_handles
 
 
 DEFAULT_SUITE_REL = "examples/plans/block_alpha_beta_suite.json"
@@ -42,15 +50,19 @@ def materialize_block_alpha_plan(case: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"case {case.get('case_id')}: placement.base_point is required")
     rotation = placement.get("rotation", 0)
     scale = placement.get("scale", [1, 1, 1])
+    block_id = str(case.get("block_id") or CONTROLLED_BLOCK_ID)
+    block_name = CONTROLLED_BLOCK_ALLOWLIST.get(block_id)
+    if block_name is None:
+        raise ValueError(f"case {case.get('case_id')}: unsupported controlled block_id {block_id!r}")
     return {
         "version": "0.1",
         "domain": "generic",
         "intent": "insert_block_alpha",
         "object": {
             "type": "block_reference",
-            "name": "Controlled Test Block",
-            "block_id": CONTROLLED_BLOCK_ID,
-            "cad_identity": {"block_name": CONTROLLED_BLOCK_NAME},
+            "name": str(case.get("block_name") or "Controlled Test Block"),
+            "block_id": block_id,
+            "cad_identity": {"block_name": block_name},
         },
         "placement": {
             "mode": "absolute",
@@ -129,14 +141,35 @@ def run_block_alpha_beta_suite(
     suite_path: Path,
     *,
     output_root: Path | None = None,
+    driver_factory: Any | None = None,
 ) -> dict[str, Any]:
     project_root = _project_root_from_suite(suite_path)
     if output_root is not None:
         output_root = resolve_under_project_output(project_root, output_root, label="output_root")
     suite = load_block_alpha_beta_suite(suite_path)
-    case_results = [run_block_alpha_beta_case(case=case) for case in suite["cases"]]
+    use_cad = driver_factory is not None
+    if use_cad and output_root is None:
+        raise ValueError("output_root is required for CAD block alpha beta evidence.")
+
+    driver = driver_factory() if driver_factory is not None else None
+    case_results = []
+    for case in suite["cases"]:
+        case_result = run_block_alpha_beta_case(case=case)
+        if use_cad:
+            assert output_root is not None
+            case_result = _attach_cad_readback_to_case(
+                case_result=case_result,
+                case_dir=output_root / str(case_result["case_id"]),
+                driver=driver,
+            )
+        case_results.append(case_result)
     passed = sum(1 for case in case_results if case["status"] == "pass")
     failed = len(case_results) - passed
+    geometry_verified = sum(
+        1
+        for case in case_results
+        if case.get("block_alpha_report", {}).get("status") == "geometry_verified"
+    )
 
     summary = {
         "version": "0.1",
@@ -145,11 +178,16 @@ def run_block_alpha_beta_suite(
         "summary": {"total": len(case_results), "passed": passed, "failed": failed},
         "evidence_summary": {
             "case_count": len(case_results),
-            "dry_run_valid_count": passed,
-            "geometry_verified_count": 0,
-            "non_cad_only": True,
-            "geometry_accuracy": NON_CAD_GEOMETRY_ACCURACY,
-            "evidence_state": EVIDENCE_DRY_RUN_VALID_PLAN_ONLY,
+            "dry_run_valid_count": sum(1 for case in case_results if case.get("dry_run", {}).get("status") == "valid"),
+            "geometry_verified_count": geometry_verified,
+            "readback_geometry_verified_count": geometry_verified,
+            "non_cad_only": not use_cad,
+            "geometry_accuracy": GEOMETRY_VERIFIED_BY_READBACK if use_cad and failed == 0 else NON_CAD_GEOMETRY_ACCURACY,
+            "evidence_state": (
+                EVIDENCE_READBACK_GEOMETRY_VERIFIED
+                if use_cad and failed == 0
+                else EVIDENCE_DRY_RUN_VALID_PLAN_ONLY
+            ),
         },
         "cases": case_results,
     }
@@ -173,3 +211,50 @@ def run_block_alpha_beta_suite(
                 )
 
     return summary
+
+
+def _attach_cad_readback_to_case(
+    *,
+    case_result: dict[str, Any],
+    case_dir: Path,
+    driver: Any,
+) -> dict[str, Any]:
+    case_dir.mkdir(parents=True, exist_ok=True)
+    plan_path = case_dir / "cad_plan.json"
+    plan_path.write_text(json.dumps(case_result["plan"], indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    if case_result["status"] != "pass":
+        return case_result
+
+    execution_summary = execute_plan_file(plan_path, driver=driver, preview_only=True)
+    created_handles = [str(handle) for handle in execution_summary.get("created_handles", [])]
+    entities = snapshot_entities_by_handles(driver, created_handles, layer=PREVIEW_LAYER)
+    block_report = build_block_alpha_readback_report(
+        plan_path=plan_path,
+        entities=entities,
+        created_handles=created_handles,
+    )
+    evidence_failure = validate_block_alpha_report_evidence(block_report, no_cad=False)
+
+    (case_dir / "block_alpha_execution_summary.json").write_text(
+        json.dumps(execution_summary, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    (case_dir / "block_alpha_report.json").write_text(
+        json.dumps(block_report, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+    case_result["execution_summary"] = execution_summary
+    case_result["block_alpha_report"] = block_report
+    case_result["actual"]["created_handles"] = created_handles
+    case_result["actual"]["readback_entity_count"] = len(entities)
+    case_result["actual"]["cad_status"] = block_report.get("status")
+    if evidence_failure:
+        case_result["errors"].append(evidence_failure)
+    if block_report.get("status") != "geometry_verified":
+        case_result["errors"].append(
+            f"block_alpha_report.status expected geometry_verified, got {block_report.get('status')!r}"
+        )
+    case_result["status"] = "pass" if not case_result["errors"] else "fail"
+    return case_result

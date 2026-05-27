@@ -11,6 +11,7 @@ from core.cad_io.autocad_com import (
     CONTROLLED_BLOCK_MIN_SIZE,
     CONTROLLED_BLOCK_NAME,
     PREVIEW_LAYER,
+    SECOND_CONTROLLED_BLOCK_NAME,
     AutoCADComDriver,
     BlockAlphaInsertionError,
     block_definition_failure,
@@ -382,6 +383,20 @@ class ControlledBlockDefinitionTests(unittest.TestCase):
         self.assertEqual(result["block_definition_source"], "created")
         self.assertEqual(driver.doc.Blocks.created[0][1], CONTROLLED_BLOCK_NAME)
         self.assertEqual(len(driver.model_space.insert_calls), 1)
+
+    def test_insert_block_alpha_allows_second_controlled_block(self) -> None:
+        driver = self._driver_with_insert_block()
+        result = driver.insert_block_alpha(
+            block_id="controlled-test-block-002",
+            block_name=SECOND_CONTROLLED_BLOCK_NAME,
+            base_point=[0, 0, 0],
+            rotation=0,
+            scale=[1, 1, 1],
+            layer=PREVIEW_LAYER,
+        )
+        self.assertEqual(result["block_name"], SECOND_CONTROLLED_BLOCK_NAME)
+        self.assertEqual(driver.doc.Blocks.created[0][1], SECOND_CONTROLLED_BLOCK_NAME)
+        self.assertEqual(driver.model_space.insert_calls[0]["name"], SECOND_CONTROLLED_BLOCK_NAME)
 
     def test_insert_block_alpha_rejects_non_preview_layer(self) -> None:
         driver = self._driver_with_insert_block(existing={CONTROLLED_BLOCK_NAME})

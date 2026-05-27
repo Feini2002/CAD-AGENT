@@ -943,10 +943,10 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 只要开发了这部分能力，应同步更新：
 
 - `CORE_STATUS.md`
-- `CORE_ROADMAP.md`
-- `CAD_AGENT_STATUS.md`
-- `CAD_AGENT_CHANGELOG.md`
-- `CAD_AGENT_ISSUES.md`，如果涉及失败、风险或调试教训
+- `docs/roadmap/current.md`
+- `docs/status/current.md`
+- `docs/status/changelog.md`
+- `docs/status/issues.md`，如果涉及失败、风险或调试教训
 
 ## 13. 风险与反跑偏规则
 
@@ -1049,7 +1049,7 @@ projects/
 后续新对话可以这样启动：
 
 ```text
-读取 `docs/architecture/shell-layout-foundation-design.md`，以及根目录 `README.md`、`CORE_STATUS.md`、`CORE_ROADMAP.md`。
+读取 `docs/architecture/shell-layout-foundation-design.md`，以及根目录 `README.md`、`CORE_STATUS.md`、`docs/roadmap/current.md`。
 不要直接开发公司专用方案 Agent。
 请围绕“空壳布局底座”制定 Core 实施计划：
 第一版允许人工标注空壳输入，输出 SHELL_MODEL、PROJECT_MODEL、CIRCULATION_MODEL、FUNCTION_ZONE、LAYOUT_PROPOSAL，并能转 CAD_PLAN。

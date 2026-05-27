@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
+from core.safety.policy import DIAGNOSTIC_LAYER
 from core.verification.cad_session_guard import (
     build_capability_probe_session_guard,
     capture_active_document_snapshot,
@@ -69,6 +70,10 @@ def _layer_counts(entities: list[dict[str, Any]]) -> dict[str, int]:
         layer = str(entity.get("layer", ""))
         counts[layer] = counts.get(layer, 0) + 1
     return dict(sorted(counts.items()))
+
+
+def _type_counts_for_layer(entities: list[dict[str, Any]], layer: str) -> dict[str, int]:
+    return _type_counts([entity for entity in entities if entity.get("layer") == layer])
 
 
 def _bbox_from_entities(entities: list[dict[str, Any]]) -> dict[str, Any] | None:
@@ -138,6 +143,7 @@ def _empty_report(*, layer: str, output_dir: Path | None) -> dict[str, Any]:
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "active_document": "",
         "layer": layer,
+        "diagnostic_layer": DIAGNOSTIC_LAYER,
         "output_dir": str(output_dir) if output_dir else "",
         "expected": {
             "type_counts": EXPECTED_TYPE_COUNTS,
@@ -149,12 +155,16 @@ def _empty_report(*, layer: str, output_dir: Path | None) -> dict[str, Any]:
             "entity_count": 0,
             "type_counts": {},
             "layer_counts": {},
+            "preview_type_counts": {},
+            "diagnostic_type_counts": {},
             "bbox": None,
         },
         "checks": [],
         "entity_evidence": [],
         "safety": {
             "writes_only_preview_layer": layer == PREVIEW_LAYER,
+            "writes_only_allowed_layers": layer == PREVIEW_LAYER,
+            "allowed_layers": sorted({PREVIEW_LAYER, DIAGNOSTIC_LAYER}),
             "saves_dwg": False,
             "deletes_entities": False,
             "modifies_formal_layers": False,
@@ -206,6 +216,7 @@ def run_cad_capability_probe(
     try:
         if hasattr(driver, "ensure_layer"):
             driver.ensure_layer(layer)
+            driver.ensure_layer(DIAGNOSTIC_LAYER, layer_role="diagnostic")
         report["checks"].append(_check("layer_ensure", "pass", f"Layer {layer} is available."))
         after_connect_snapshot = capture_active_document_snapshot(driver, phase="after_connect")
 
@@ -301,7 +312,8 @@ def run_cad_capability_probe(
             text="CAD_CAPABILITY_PROBE",
             position=[x0 + width / 2, y0 + depth / 2, z0],
             height=90,
-            layer=layer,
+            layer=DIAGNOSTIC_LAYER,
+            layer_role="diagnostic",
             color="cyan",
         )
         text_handles = _collect_handles(text)
@@ -314,7 +326,8 @@ def run_cad_capability_probe(
                     start_point=[x0, y0, z0],
                     end_point=[x0 + width, y0, z0],
                     text_position=[x0 + width / 2, y0 - 160, z0],
-                    layer=layer,
+                    layer=DIAGNOSTIC_LAYER,
+                    layer_role="diagnostic",
                     color="cyan",
                 )
             )
@@ -325,7 +338,8 @@ def run_cad_capability_probe(
                     start_point=[x0, y0, z0],
                     end_point=[x0, y0 + depth, z0],
                     text_position=[x0 - 160, y0 + depth / 2, z0],
-                    layer=layer,
+                    layer=DIAGNOSTIC_LAYER,
+                    layer_role="diagnostic",
                     color="cyan",
                 )
             )
@@ -349,7 +363,7 @@ def run_cad_capability_probe(
         return report
 
     try:
-        entities = driver.snapshot_handles(handles=report["created_handles"], layer=layer)
+        entities = driver.snapshot_handles(handles=report["created_handles"], layer=None)
         entities = [entity for entity in entities if isinstance(entity, dict)]
     except Exception as exc:
         report["failure_category"] = "readback_failed"
@@ -365,6 +379,8 @@ def run_cad_capability_probe(
         "entity_count": len(entities),
         "type_counts": _type_counts(entities),
         "layer_counts": _layer_counts(entities),
+        "preview_type_counts": _type_counts_for_layer(entities, layer),
+        "diagnostic_type_counts": _type_counts_for_layer(entities, DIAGNOSTIC_LAYER),
         "bbox": _bbox_from_entities(entities),
     }
     report["checks"].append(
@@ -377,7 +393,13 @@ def run_cad_capability_probe(
     report["checks"].append(
         _check(
             "readback_layer_scope",
-            "pass" if report["actual"]["layer_counts"] == {layer: len(entities)} else "fail",
+            "pass"
+            if report["actual"]["layer_counts"]
+            == {
+                DIAGNOSTIC_LAYER: len(text_handles) + len(dimensions),
+                layer: len(rectangle_handles) + len(line_handles) + len(circle_handles) + len(arc_handles) + len(polyline_handles),
+            }
+            else "fail",
             f"Layer counts: {report['actual']['layer_counts']}",
         )
     )

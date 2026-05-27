@@ -1,0 +1,31 @@
+{
+  "version": "0.1",
+  "gallery_id": "showcase-l1-symbol-block-first",
+  "package_id": "V-PROOF-65-SHOWCASE-SECOND-WAVE",
+  "capability_ids": [
+    "symbol.block_first.symbol_block_first_tier_01",
+    "symbol.block_first.controlled_block_wins"
+  ],
+  "ladder_level": "L1",
+  "title": "Controlled block-first symbol path",
+  "verification_report_path": "output/validation_runs/rcad-25-symbol-block-first-20260527-escalated/symbol_block_first_cad_smoke_report.json",
+  "evidence_state": "readback_geometry_verified",
+  "geometry_accuracy": "verified_by_cad_readback",
+  "summary": {
+    "block_first_case_id": "controlled-block-wins",
+    "selected_render_path": "block",
+    "selected_cad_intent": "insert_block_alpha",
+    "created_handle_count": 1,
+    "block_name": "CODEX_TEST_BLOCK_001",
+    "layer": "CODEX_PREVIEW"
+  },
+  "claims": [
+    "The controlled block-first path chooses insert_block_alpha and verifies the created block reference by readback.",
+    "The suite and controlled-block-wins row share the same real CAD evidence."
+  ],
+  "cannot_claim": [
+    "This does not upgrade glyph fallback cases.",
+    "This does not prove arbitrary external block libraries.",
+    "This does not replace V-PROOF-41 second controlled block readback."
+  ]
+}

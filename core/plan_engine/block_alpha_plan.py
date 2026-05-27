@@ -17,6 +17,12 @@ PREVIEW_LAYER = "CODEX_PREVIEW"
 BLOCK_REFERENCE_TYPE = "block_reference"
 CONTROLLED_BLOCK_ID = "controlled-test-block-001"
 CONTROLLED_BLOCK_NAME = "CODEX_TEST_BLOCK_001"
+SECOND_CONTROLLED_BLOCK_ID = "controlled-test-block-002"
+SECOND_CONTROLLED_BLOCK_NAME = "CODEX_TEST_BLOCK_002"
+CONTROLLED_BLOCK_ALLOWLIST = {
+    CONTROLLED_BLOCK_ID: CONTROLLED_BLOCK_NAME,
+    SECOND_CONTROLLED_BLOCK_ID: SECOND_CONTROLLED_BLOCK_NAME,
+}
 
 
 def _require(condition: bool, message: str, errors: list[str]) -> None:
@@ -51,8 +57,9 @@ def validate_insert_block_alpha(plan: dict[str, Any]) -> list[str]:
     _require(bool(block_id), "object.block_id is required.", errors)
     if block_id:
         _require(
-            block_id == CONTROLLED_BLOCK_ID,
-            f"insert_block_alpha only allows object.block_id={CONTROLLED_BLOCK_ID}.",
+            block_id in CONTROLLED_BLOCK_ALLOWLIST,
+            "insert_block_alpha only allows controlled test block ids: "
+            + ", ".join(sorted(CONTROLLED_BLOCK_ALLOWLIST)),
             errors,
         )
     _require(bool(str(obj.get("name", "")).strip()), "object.name is required.", errors)
@@ -62,10 +69,11 @@ def validate_insert_block_alpha(plan: dict[str, Any]) -> list[str]:
     if isinstance(cad_identity, dict):
         block_name = str(cad_identity.get("block_name", "")).strip()
         _require(bool(block_name), "object.cad_identity.block_name is required.", errors)
-        if block_name:
+        if block_name and block_id in CONTROLLED_BLOCK_ALLOWLIST:
+            expected_name = CONTROLLED_BLOCK_ALLOWLIST[block_id]
             _require(
-                block_name == CONTROLLED_BLOCK_NAME,
-                f"insert_block_alpha only allows object.cad_identity.block_name={CONTROLLED_BLOCK_NAME}.",
+                block_name == expected_name,
+                f"insert_block_alpha block_id={block_id} requires object.cad_identity.block_name={expected_name}.",
                 errors,
             )
 

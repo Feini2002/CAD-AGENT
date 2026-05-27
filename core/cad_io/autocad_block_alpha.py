@@ -8,18 +8,24 @@ from typing import Any
 
 CONTROLLED_BLOCK_NAME = "CODEX_TEST_BLOCK_001"
 CONTROLLED_BLOCK_ID = "controlled-test-block-001"
+SECOND_CONTROLLED_BLOCK_NAME = "CODEX_TEST_BLOCK_002"
+SECOND_CONTROLLED_BLOCK_ID = "controlled-test-block-002"
+CONTROLLED_BLOCK_ALLOWLIST = {
+    CONTROLLED_BLOCK_ID: CONTROLLED_BLOCK_NAME,
+    SECOND_CONTROLLED_BLOCK_ID: SECOND_CONTROLLED_BLOCK_NAME,
+}
 CONTROLLED_BLOCK_DEFINITION_LAYER = "0"
 CONTROLLED_BLOCK_FOOTPRINT_MM = (900.0, 450.0)
 CONTROLLED_BLOCK_MIN_SIZE = CONTROLLED_BLOCK_FOOTPRINT_MM
 PREVIEW_LAYER = "CODEX_PREVIEW"
 
 
-def _controlled_block_footprint_mm() -> tuple[float, float]:
+def _controlled_block_footprint_mm(block_id: str = CONTROLLED_BLOCK_ID) -> tuple[float, float]:
     try:
         from core.block_engine.block_library import load_block_library, normalize_block
 
         for block in load_block_library().get("blocks", []):
-            if isinstance(block, dict) and block.get("block_id") == CONTROLLED_BLOCK_ID:
+            if isinstance(block, dict) and block.get("block_id") == block_id:
                 normalized = normalize_block(block)
                 footprint = normalized.get("footprint_2d", normalized.get("size", {}))
                 if isinstance(footprint, dict):
@@ -119,14 +125,14 @@ class AutoCADBlockAlphaMixin:
             except Exception:
                 return None
 
-    def _controlled_block_definition_failure(self, block_record: object) -> str:
+    def _controlled_block_definition_failure(self, block_record: object, *, block_id: str) -> str:
         entities = self._block_record_entities(block_record)
         if entities is None:
             return "unable to inspect existing controlled block definition"
         if len(entities) != 4:
             return f"expected 4 line entities, got {len(entities)}"
 
-        width, depth = _controlled_block_footprint_mm()
+        width, depth = _controlled_block_footprint_mm(block_id)
         expected_edges = {
             ((0.0, 0.0, 0.0), (round(width, 3), 0.0, 0.0)),
             ((round(width, 3), 0.0, 0.0), (round(width, 3), round(depth, 3), 0.0)),
@@ -146,7 +152,7 @@ class AutoCADBlockAlphaMixin:
                 return "controlled block definition line endpoints are unreadable"
             actual_edges.add((start, end))
         if actual_edges != expected_edges:
-            return "controlled block definition footprint does not match 900x450 origin rectangle"
+            return f"controlled block definition footprint does not match {width:g}x{depth:g} origin rectangle"
         return ""
 
     def block_definition_exists(self, block_name: str) -> bool:
@@ -156,10 +162,10 @@ class AutoCADBlockAlphaMixin:
         except Exception:
             return False
 
-    def _create_minimal_controlled_block_definition(self, block_name: str) -> dict[str, Any]:
+    def _create_minimal_controlled_block_definition(self, block_name: str, *, block_id: str) -> dict[str, Any]:
         """Create a tiny rectangle inside a new block table record (layer 0 only, no DWG save)."""
 
-        width, depth = _controlled_block_footprint_mm()
+        width, depth = _controlled_block_footprint_mm(block_id)
         origin = self._point([0.0, 0.0, 0.0])
         try:
             block_record = self.doc.Blocks.Add(origin, block_name)
@@ -216,7 +222,7 @@ class AutoCADBlockAlphaMixin:
         *,
         allow_create: bool = True,
     ) -> dict[str, Any]:
-        """Resolve CODEX_TEST_BLOCK_001: reuse existing definition or create minimal geometry."""
+        """Resolve a controlled test block: reuse existing definition or create minimal geometry."""
 
         resolved_name = str(block_name or CONTROLLED_BLOCK_NAME).strip()
         if not resolved_name:
@@ -224,10 +230,13 @@ class AutoCADBlockAlphaMixin:
                 block_name=CONTROLLED_BLOCK_NAME,
                 message="block_name is required",
             )
-        if resolved_name != CONTROLLED_BLOCK_NAME:
+        allowed_name_to_id = {name: block_id for block_id, name in CONTROLLED_BLOCK_ALLOWLIST.items()}
+        block_id = allowed_name_to_id.get(resolved_name)
+        if block_id is None:
             return block_definition_failure(
                 block_name=resolved_name,
-                message=f"block alpha only allows controlled block definition {CONTROLLED_BLOCK_NAME}",
+                message="block alpha only allows controlled block definitions: "
+                + ", ".join(sorted(CONTROLLED_BLOCK_ALLOWLIST.values())),
                 failure_category="controlled_block_mismatch",
             )
 
@@ -237,7 +246,7 @@ class AutoCADBlockAlphaMixin:
             existing_record = None
 
         if existing_record is not None:
-            definition_failure = self._controlled_block_definition_failure(existing_record)
+            definition_failure = self._controlled_block_definition_failure(existing_record, block_id=block_id)
             if definition_failure:
                 return block_definition_failure(
                     block_name=resolved_name,
@@ -252,7 +261,7 @@ class AutoCADBlockAlphaMixin:
                 message=f"block definition '{resolved_name}' is not present in the active DWG",
             )
 
-        return self._create_minimal_controlled_block_definition(resolved_name)
+        return self._create_minimal_controlled_block_definition(resolved_name, block_id=block_id)
 
     def insert_block_alpha(
         self,
@@ -271,14 +280,20 @@ class AutoCADBlockAlphaMixin:
 
         resolved_block_id = str(block_id or "").strip()
         resolved_name = str(block_name or "").strip()
-        if resolved_block_id != CONTROLLED_BLOCK_ID:
-            raise ValueError(f"insert_block_alpha only allows block_id={CONTROLLED_BLOCK_ID}.")
+        if resolved_block_id not in CONTROLLED_BLOCK_ALLOWLIST:
+            raise ValueError(
+                "insert_block_alpha only allows controlled test block ids: "
+                + ", ".join(sorted(CONTROLLED_BLOCK_ALLOWLIST))
+            )
         if not resolved_name:
             raise BlockAlphaInsertionError(
                 block_insert_failure(block_name=CONTROLLED_BLOCK_NAME, message="block_name is required"),
             )
-        if resolved_name != CONTROLLED_BLOCK_NAME:
-            raise ValueError(f"insert_block_alpha only allows block_name={CONTROLLED_BLOCK_NAME}.")
+        expected_block_name = CONTROLLED_BLOCK_ALLOWLIST[resolved_block_id]
+        if resolved_name != expected_block_name:
+            raise ValueError(
+                f"insert_block_alpha block_id={resolved_block_id} requires block_name={expected_block_name}."
+            )
 
         if layer != PREVIEW_LAYER:
             raise ValueError(f"insert_block_alpha only allows layer={PREVIEW_LAYER}.")
@@ -304,7 +319,7 @@ class AutoCADBlockAlphaMixin:
                 ),
             )
 
-        definition_result = self.ensure_controlled_block_definition(CONTROLLED_BLOCK_NAME)
+        definition_result = self.ensure_controlled_block_definition(expected_block_name)
         if definition_result.get("status") != "ready":
             raise BlockAlphaInsertionError(
                 block_insert_failure(

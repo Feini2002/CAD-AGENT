@@ -9,12 +9,12 @@
 
 | 角色 | 可写边界 | 交付物 |
 | --- | --- | --- |
-| Phase 负责人 | 当前目标 `docs/planning/phase-*.md`、状态文档同步；调整优先级时必须同步 `CORE_RESTRUCTURE_PLAN.md` | Phase 总表、任务状态、同步清单 |
+| Phase 负责人 | 当前目标 `docs/planning/phases/*.md`、状态文档同步；调整优先级时必须同步 `CORE_RESTRUCTURE_PLAN.md` | Phase 总表、任务状态、同步清单 |
 | CAD 能力契约 agent | Phase W / Phase R 相关计划、验证文档；代码实现需另开任务 | 实体契约、证据门禁、deferred verification |
 | 图块 / 制图标准 agent | `libraries/` 与 block/style 设计文档；代码实现需 disjoint write set | BLOCK_LIBRARY 字段、受控测试块、drawing standard profile |
 | 办公场景 agent | `agents/office` 偏好、examples / benchmark 计划 | 办公对象集、微场景、失败样本 |
 | Benchmark agent | `examples/benchmarks`、verification 计划、runner 断言设计 | 三层 benchmark、证据状态命名、报告字段 |
-| 文档同步 agent | `CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`CAD_AGENT_STATUS.md`、`CAD_AGENT_CHANGELOG.md` | 短结论、能力状态、历史流水 |
+| 文档同步 agent | `CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`docs/status/current.md`、`docs/status/changelog.md` | 短结论、能力状态、历史流水 |
 | Reviewer agent | 只读，除非明确分配修复任务 | 发现列表、边界风险、测试缺口 |
 
 ## 不可越界
@@ -37,8 +37,8 @@
 | 可提交样例和 benchmark | `examples/` |
 | 真实或样例项目资料 | `projects/` |
 | 计划、架构、治理、review | `docs/` |
-| 历史流水 | `CAD_AGENT_CHANGELOG.md` |
-| 失败、风险、教训 | `CAD_AGENT_ISSUES.md` |
+| 历史流水 | `docs/status/changelog.md` |
+| 失败、风险、教训 | `docs/status/issues.md` |
 
 几何准确声明必须满足：
 
@@ -82,6 +82,6 @@
 ## 每轮收尾
 
 - 运行适合本轮的验证；文档轮至少跑引用、占位词和边界扫描。
-- 同步 `CORE_CONTEXT_BRIEF.md`、唯一 PlanMD `CORE_RESTRUCTURE_PLAN.md`、`CORE_STATUS.md`、`CAD_AGENT_STATUS.md`、`CAD_AGENT_CHANGELOG.md`。
-- 若出现失败、回归或环境教训，更新 `CAD_AGENT_ISSUES.md`。
+- 同步 `CORE_CONTEXT_BRIEF.md`、唯一 PlanMD `CORE_RESTRUCTURE_PLAN.md`、`CORE_STATUS.md`、`docs/status/current.md`、`docs/status/changelog.md`。
+- 若出现失败、回归或环境教训，更新 `docs/status/issues.md`。
 - 最终回复说明改了什么、验证了什么、没有验证什么。

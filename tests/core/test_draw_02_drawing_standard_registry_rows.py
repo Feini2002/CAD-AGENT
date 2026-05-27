@@ -100,7 +100,7 @@ class Draw02DrawingStandardRegistryRowsTests(unittest.TestCase):
         )
         self.assertEqual(result.status, "rejected")
 
-    def test_sync_from_suite_output_writes_seven_smoke_paths(self) -> None:
+    def test_sync_from_suite_output_writes_smoke_paths_without_downgrading_verified_rows(self) -> None:
         output_root = artifact_path("draw_02", "suite_sync")
         suite_result = run_drawing_standard_beta_suite(
             default_suite_path(PROJECT_ROOT),
@@ -121,7 +121,11 @@ class Draw02DrawingStandardRegistryRowsTests(unittest.TestCase):
             dry_run=True,
         )
         self.assertEqual(len(results), 7)
-        self.assertTrue(all(item.status == "applied" for item in results))
+        applied = [item for item in results if item.status == "applied"]
+        rejected = [item for item in results if item.status == "rejected"]
+        self.assertEqual(len(applied), 5)
+        self.assertEqual(len(rejected), 2)
+        self.assertTrue(all("claim_level=smoke" in item.message for item in rejected))
 
         requests = build_smoke_writeback_requests_from_suite_output(
             suite_result,
@@ -143,7 +147,8 @@ class Draw02DrawingStandardRegistryRowsTests(unittest.TestCase):
         )
         self.assertEqual(summary["package_id"], DRAW_02_PACKAGE_ID)
         self.assertEqual(summary["suite_status"], "pass")
-        self.assertEqual(summary["writeback_applied_count"], 7)
+        self.assertEqual(summary["writeback_applied_count"], 5)
+        self.assertEqual(summary["writeback_rejected_count"], 2)
 
     def test_handoff_indexes_draw_02(self) -> None:
         handoff = (PROJECT_ROOT / "docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md").read_text(encoding="utf-8")

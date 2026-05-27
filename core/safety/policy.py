@@ -6,6 +6,8 @@ from typing import Any
 
 
 PREVIEW_LAYER = "CODEX_PREVIEW"
+DIAGNOSTIC_LAYER = "CODEX_DIAGNOSTIC"
+PREVIEW_ALLOWED_LAYERS = frozenset({PREVIEW_LAYER, DIAGNOSTIC_LAYER})
 DESTRUCTIVE_INTENTS = {"delete_object"}
 WRITE_OPERATIONS = {"save", "overwrite", "delete"}
 

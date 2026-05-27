@@ -115,6 +115,123 @@
       "sample_id": "commercial_fitout_reception_sample",
       "claim_level": "showcase",
       "package_id": "V-PROOF-63-L4-PROJECT-SLICE"
+    },
+    {
+      "capability_id": "block.insert_block_alpha.matrix",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "showcase_path": "showcase/L2/block_insert_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-24-block-beta-cad-after-rotfix-20260527/block_alpha_beta_summary.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-64-LADDER-BOUNDARY-DOC"
+    },
+    {
+      "capability_id": "primitive.hatch",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_hatch_smoke/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-06-hatch-cad-20260527-escalated/hatch_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-65-SHOWCASE-SECOND-WAVE"
+    },
+    {
+      "capability_id": "symbol.block_first.symbol_block_first_tier_01",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/symbol_block_first/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-25-symbol-block-first-20260527-escalated/symbol_block_first_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-65-SHOWCASE-SECOND-WAVE"
+    },
+    {
+      "capability_id": "symbol.block_first.controlled_block_wins",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/symbol_block_first/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-25-symbol-block-first-20260527-escalated/symbol_block_first_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-65-SHOWCASE-SECOND-WAVE"
+    },
+    {
+      "capability_id": "drawing_standard.beta.block_insert_plan_resolution",
+      "ladder_level": "L0",
+      "domain": "generic",
+      "showcase_path": "showcase/L0/drawing_standard_block_insert/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-23-drawing-standard-beta-20260527-escalated/drawing_standard_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-65-SHOWCASE-SECOND-WAVE"
+    },
+    {
+      "capability_id": "primitive.arc",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_probe_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
+    },
+    {
+      "capability_id": "primitive.circle",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_probe_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
+    },
+    {
+      "capability_id": "primitive.dimension",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_probe_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
+    },
+    {
+      "capability_id": "primitive.line",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_probe_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
+    },
+    {
+      "capability_id": "primitive.polyline",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_probe_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
+    },
+    {
+      "capability_id": "primitive.rectangle",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_probe_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
+    },
+    {
+      "capability_id": "primitive.text",
+      "ladder_level": "L1",
+      "domain": "generic",
+      "showcase_path": "showcase/L1/primitive_probe_matrix/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
+    },
+    {
+      "capability_id": "drawing_standard.beta.drawing_standard_beta_04",
+      "ladder_level": "L0",
+      "domain": "generic",
+      "showcase_path": "showcase/L0/drawing_standard_block_insert/gallery_index.json",
+      "verification_report_path": "output/validation_runs/rcad-23-drawing-standard-beta-20260527-escalated/drawing_standard_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE"
     }
   ]
 }

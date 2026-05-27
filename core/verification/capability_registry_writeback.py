@@ -213,6 +213,17 @@ def extract_geometry_evidence_from_report(
     if direct:
         return direct, ""
 
+    evidence_summary = report.get("evidence_summary")
+    if (
+        isinstance(evidence_summary, dict)
+        and report.get("status") == "pass"
+        and not evidence_summary.get("non_cad_only", True)
+        and int(evidence_summary.get("geometry_verified_count") or 0) > 0
+    ):
+        triplet = _triplet_from_payload(evidence_summary)
+        if triplet:
+            return triplet, ""
+
     steps = report.get("steps")
     if isinstance(steps, list):
         for step in steps:

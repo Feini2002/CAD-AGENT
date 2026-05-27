@@ -30,7 +30,7 @@
 出现画不准、画不出来、截图或回读缺失时，进入：
 
 ```text
-CAD_AGENT_BLOCKER_PLAYBOOK.md
+docs/runbooks/blocker-playbook.md
 -> scripts/self_check.py
 -> scripts/render_preview.py --check
 -> scripts/inspect_dwg.py --plan <plan> --format json

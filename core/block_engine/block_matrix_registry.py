@@ -158,7 +158,7 @@ def apply_block_matrix_registry_binding(
             report_path=smoke_result.report_path,
         )
 
-    if claim_level not in {"verified", "deferred"}:
+    if claim_level not in {"verified", "showcase", "deferred"}:
         return MatrixRegistryBindingResult(
             capability_id=request.capability_id,
             status="rejected",
@@ -296,15 +296,18 @@ def run_block_matrix_registry_no_cad_sync(
     output_dir: Path,
     dry_run: bool = False,
 ) -> dict[str, Any]:
+    root = project_root.resolve()
+    output = output_dir if output_dir.is_absolute() else root / output_dir
+    output = output.resolve()
     manifest_path = default_manifest_path(project_root)
-    matrix_result = run_block_insert_matrix_manifest(manifest_path, output_root=output_dir)
-    registry_path = project_root / "examples/capability_proof/cad_capability_registry.json"
+    matrix_result = run_block_insert_matrix_manifest(manifest_path, output_root=output)
+    registry_path = root / "examples/capability_proof/cad_capability_registry.json"
     registry = json.loads(registry_path.read_text(encoding="utf-8"))
     writeback_results = sync_block_matrix_registry_from_manifest(
         registry,
         matrix_result,
-        output_root=output_dir,
-        project_root=project_root,
+        output_root=output,
+        project_root=root,
         dry_run=dry_run,
     )
     if not dry_run:
@@ -318,7 +321,7 @@ def run_block_matrix_registry_no_cad_sync(
         "binding_applied_count": applied,
         "binding_rejected_count": rejected,
         "binding_results": [item.__dict__ for item in writeback_results],
-        "output_root": str(output_dir).replace("\\", "/"),
+        "output_root": str(output.relative_to(root)).replace("\\", "/"),
     }
 
 

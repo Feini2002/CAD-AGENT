@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from core.safety.policy import PREVIEW_LAYER
+from core.safety.policy import DIAGNOSTIC_LAYER, PREVIEW_ALLOWED_LAYERS, PREVIEW_LAYER
 
 
 class CadWriteGuardViolation(RuntimeError):
@@ -17,6 +17,7 @@ class CadWriteGuard:
         *,
         enabled: bool = True,
         preview_layer: str = PREVIEW_LAYER,
+        allowed_layers: set[str] | frozenset[str] | None = None,
         allow_formal_layer: bool = False,
         allow_save: bool = False,
         allow_delete: bool = False,
@@ -24,6 +25,7 @@ class CadWriteGuard:
     ) -> None:
         self.enabled = enabled
         self.preview_layer = preview_layer
+        self.allowed_layers = frozenset(allowed_layers or PREVIEW_ALLOWED_LAYERS)
         self.allow_formal_layer = allow_formal_layer
         self.allow_save = allow_save
         self.allow_delete = allow_delete
@@ -33,14 +35,24 @@ class CadWriteGuard:
     def _record_block(self, operation: str, message: str) -> None:
         self.blocked_attempts.append({"operation": operation, "message": message})
 
-    def assert_preview_layer_write(self, layer: str | None) -> None:
+    def assert_preview_layer_write(self, layer: str | None, *, layer_role: str = "preview") -> None:
         if not self.enabled or layer is None:
             return
         if layer == self.preview_layer:
             return
+        if layer == DIAGNOSTIC_LAYER and layer in self.allowed_layers:
+            if layer_role == "diagnostic":
+                return
+            message = (
+                f"Diagnostic layer write blocked: {layer!r} requires layer_role='diagnostic', "
+                f"got {layer_role!r}"
+            )
+            self._record_block("write_diagnostic_layer_without_role", message)
+            raise CadWriteGuardViolation(message)
         if self.allow_formal_layer:
             return
-        message = f"Formal layer write blocked: {layer!r} (preview-only session allows {self.preview_layer!r})"
+        allowed = ", ".join(sorted(self.allowed_layers))
+        message = f"Formal layer write blocked: {layer!r} (preview-only session allows {allowed})"
         self._record_block("write_formal_layer", message)
         raise CadWriteGuardViolation(message)
 

@@ -2,7 +2,7 @@
   "version": "0.1",
   "report_id": "route-audit-req-audit-schema",
   "context_id": "req-audit-schema",
-  "generated_at": "2026-05-27T14:27:07",
+  "generated_at": "2026-05-28T01:32:13",
   "routing_summary": {
     "request_kind": "proposal",
     "activated_scene_id": "no_scene",

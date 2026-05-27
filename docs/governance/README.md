@@ -8,4 +8,4 @@
 | --- | --- |
 | `multi-agent-contribution.md` | 多 agent 协作协议、可写边界、审查门禁和冲突处理 |
 
-治理文档只写稳定规则和工作流，不写长历史。长历史进入 `CAD_AGENT_CHANGELOG.md`，失败教训进入 `CAD_AGENT_ISSUES.md`。
+治理文档只写稳定规则和工作流，不写长历史。长历史进入 `docs/status/changelog.md`，失败教训进入 `docs/status/issues.md`。

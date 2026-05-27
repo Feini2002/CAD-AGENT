@@ -7,8 +7,8 @@
   "primary_controlled_block_id": "controlled-test-block-001",
   "second_controlled_block_id": "controlled-test-block-002",
   "second_controlled_block_name": "CODEX_TEST_BLOCK_002",
-  "insert_block_alpha_allowlist_block_ids": ["controlled-test-block-001"],
-  "insert_block_alpha_allowlist_block_names": ["CODEX_TEST_BLOCK_001"],
+  "insert_block_alpha_allowlist_block_ids": ["controlled-test-block-001", "controlled-test-block-002"],
+  "insert_block_alpha_allowlist_block_names": ["CODEX_TEST_BLOCK_001", "CODEX_TEST_BLOCK_002"],
   "validation_status": "metadata_only",
   "boundary_doc": "docs/verification/rblock_05_second_controlled_block.md",
   "proof_package": "V-PROOF-41"

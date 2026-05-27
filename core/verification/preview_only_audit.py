@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from core.safety.policy import PREVIEW_LAYER
+from core.safety.policy import PREVIEW_ALLOWED_LAYERS, PREVIEW_LAYER
 
 
 PREVIEW_ONLY_AUDIT_KEYS = (
@@ -27,6 +27,7 @@ PREVIEW_ONLY_AUDIT_EXPECTED: dict[str, Any] = {
 def build_preview_only_audit(*, layer: str = PREVIEW_LAYER) -> dict[str, Any]:
     return {
         "layer": layer,
+        "allowed_layers": sorted(PREVIEW_ALLOWED_LAYERS),
         "saved_dwg": False,
         "deleted_entities": False,
         "modified_formal_layers": False,
@@ -39,6 +40,7 @@ def with_legacy_safety_aliases(audit: dict[str, Any]) -> dict[str, Any]:
     merged = dict(audit)
     layer = str(merged.get("layer", ""))
     merged.setdefault("writes_only_preview_layer", layer == PREVIEW_LAYER)
+    merged.setdefault("writes_only_allowed_layers", layer in PREVIEW_ALLOWED_LAYERS)
     merged.setdefault("saves_dwg", bool(merged.get("saved_dwg", False)))
     merged.setdefault("deletes_entities", bool(merged.get("deleted_entities", False)))
     merged.setdefault("modifies_formal_layers", bool(merged.get("modified_formal_layers", False)))

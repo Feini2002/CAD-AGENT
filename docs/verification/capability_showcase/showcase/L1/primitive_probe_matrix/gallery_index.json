@@ -1,0 +1,42 @@
+{
+  "version": "0.1",
+  "gallery_id": "showcase-l1-primitive-probe-matrix",
+  "package_id": "V-PROOF-66-PRIMITIVE-PROBE-SHOWCASE",
+  "capability_ids": [
+    "primitive.arc",
+    "primitive.circle",
+    "primitive.dimension",
+    "primitive.line",
+    "primitive.polyline",
+    "primitive.rectangle",
+    "primitive.text"
+  ],
+  "ladder_level": "L1",
+  "title": "Primitive capability probe matrix",
+  "verification_report_path": "output/validation_runs/rcad-22-capability-probe-beta-20260527-escalated/cad_capability_probe.json",
+  "evidence_state": "cad_capability_verified",
+  "geometry_accuracy": "verified_by_capability_probe",
+  "summary": {
+    "entity_count": 11,
+    "created_handle_count": 11,
+    "type_counts": {
+      "arc": 1,
+      "circle": 1,
+      "dimension": 2,
+      "line": 5,
+      "polyline": 1,
+      "text": 1
+    },
+    "bbox": "900 x 450",
+    "layer": "CODEX_PREVIEW"
+  },
+  "claims": [
+    "The controlled primitive probe writes and reads back arc, circle, dimension, line, polyline, rectangle-linework, and text entities.",
+    "The report verifies created handle coverage, layer scope, type counts, and bounding box."
+  ],
+  "cannot_claim": [
+    "This does not prove arbitrary annotation styles, formal-layer drafting standards, or project DWG delivery.",
+    "The rectangle row is represented by controlled linework in the probe, not a separate AutoCAD rectangle entity.",
+    "Hatch is intentionally excluded here and remains covered by the separate RCAD-06 showcase."
+  ]
+}

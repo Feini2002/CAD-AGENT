@@ -8,6 +8,7 @@
 | --- | --- |
 | 入口 | `scripts/run_cad_beta_evidence_rollup.py` |
 | 默认输出 | `output/test_artifacts/cad_beta_evidence/beta_cad_block_05/cad_beta_evidence_rollup.json` |
+| Trend 输出 | `<output-root>/evidence_trend/cad_beta_evidence_rollup_trend.json` |
 | 顶层 `status` | 全部 5 个子包 `pass` 时为 `pass` |
 | `evidence_summary.geometry_verified_count` | **固定为 0**（rollup 不声称几何已验证） |
 

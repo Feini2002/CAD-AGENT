@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from core.path_safety import find_project_root, resolve_under_project_output
+from core.safety.policy import DIAGNOSTIC_LAYER
 from core.verification.evidence_contract import (
     EVIDENCE_DEFERRED_CAD_READBACK,
     EVIDENCE_READBACK_GEOMETRY_VERIFIED,
@@ -88,6 +89,10 @@ def _layer_counts(entities: list[dict[str, Any]]) -> dict[str, int]:
     return dict(sorted(counts.items()))
 
 
+def _type_counts_for_layer(entities: list[dict[str, Any]], layer: str) -> dict[str, int]:
+    return _type_counts([entity for entity in entities if entity.get("layer") == layer])
+
+
 def _bbox_from_entities(entities: list[dict[str, Any]]) -> dict[str, Any] | None:
     points: list[list[float]] = []
     for entity in entities:
@@ -125,6 +130,7 @@ def _empty_report(*, layer: str, output_dir: Path | None) -> dict[str, Any]:
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "active_document": "",
         "layer": layer,
+        "diagnostic_layer": DIAGNOSTIC_LAYER,
         "output_dir": str(output_dir) if output_dir else "",
         "expected": {
             "base_point": BASE_POINT,
@@ -138,6 +144,8 @@ def _empty_report(*, layer: str, output_dir: Path | None) -> dict[str, Any]:
             "entity_count": 0,
             "type_counts": {},
             "layer_counts": {},
+            "preview_type_counts": {},
+            "diagnostic_type_counts": {},
             "bbox": None,
         },
         "checks": [],
@@ -258,7 +266,14 @@ def _draw_complex_geometry(driver: Any, *, layer: str) -> tuple[list[str], list[
     for index, (text, position, text_height) in enumerate(text_specs, start=1):
         add_group(
             f"text_{index}",
-            driver.draw_text(text=text, position=position, height=text_height, layer=layer, color="white"),
+            driver.draw_text(
+                text=text,
+                position=position,
+                height=text_height,
+                layer=DIAGNOSTIC_LAYER,
+                layer_role="diagnostic",
+                color="white",
+            ),
         )
     add_group(
         "dimension_width",
@@ -266,7 +281,8 @@ def _draw_complex_geometry(driver: Any, *, layer: str) -> tuple[list[str], list[
             start_point=[x0, y0, z0],
             end_point=[x0 + width, y0, z0],
             text_position=[x0 + width / 2, y0 - 260, z0],
-            layer=layer,
+            layer=DIAGNOSTIC_LAYER,
+            layer_role="diagnostic",
             color="cyan",
         ),
     )
@@ -276,7 +292,8 @@ def _draw_complex_geometry(driver: Any, *, layer: str) -> tuple[list[str], list[
             start_point=[x0, y0, z0],
             end_point=[x0, y0 + height, z0],
             text_position=[x0 - 260, y0 + height / 2, z0],
-            layer=layer,
+            layer=DIAGNOSTIC_LAYER,
+            layer_role="diagnostic",
             color="cyan",
         ),
     )
@@ -341,6 +358,7 @@ def run_complex_cad_smoke(
     try:
         if hasattr(driver, "ensure_layer"):
             driver.ensure_layer(layer)
+            driver.ensure_layer(DIAGNOSTIC_LAYER, layer_role="diagnostic")
         report["checks"].append(_check("layer_ensure", "pass", f"Layer {layer} is available."))
         created_handles, draw_log = _draw_complex_geometry(driver, layer=layer)
         report["created_handles"] = created_handles
@@ -382,7 +400,7 @@ def run_complex_cad_smoke(
         )
 
     try:
-        entities = snapshot_entities_by_handles(driver, report["created_handles"], layer=layer)
+        entities = snapshot_entities_by_handles(driver, report["created_handles"], layer=None)
         entities = [entity for entity in entities if isinstance(entity, dict)]
     except Exception as exc:
         report["failure_category"] = "readback_failed"
@@ -400,6 +418,8 @@ def run_complex_cad_smoke(
         "entity_count": len(entities),
         "type_counts": _type_counts(entities),
         "layer_counts": _layer_counts(entities),
+        "preview_type_counts": _type_counts_for_layer(entities, layer),
+        "diagnostic_type_counts": _type_counts_for_layer(entities, DIAGNOSTIC_LAYER),
         "bbox": _bbox_from_entities(entities),
         "created_handles": [str(entity.get("handle")) for entity in entities],
         "created_handle_scope": created_handle_scope,
@@ -415,7 +435,9 @@ def run_complex_cad_smoke(
     report["checks"].append(
         _check(
             "readback_layer_scope",
-            "pass" if report["actual"]["layer_counts"] == {layer: len(entities)} else "fail",
+            "pass"
+            if report["actual"]["layer_counts"] == {DIAGNOSTIC_LAYER: 6, layer: len(entities) - 6}
+            else "fail",
             f"Layer counts: {report['actual']['layer_counts']}",
         )
     )

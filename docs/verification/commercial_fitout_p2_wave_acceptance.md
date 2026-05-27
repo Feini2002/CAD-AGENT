@@ -46,7 +46,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `V-PROOF-25` | CFIT-12 已提供 manifest；registry 回写见能力证明轨 |
 | `V-PROOF-62` | 工装微场景 composition showcase（表 C 轨，非本父包） |
 | `RCAD-10` / `18` / `19` | 项目 rollup / subscene 对象真实 CAD 烟囱包 |
-| §4.2 P4 | `DRAW-01` 已进波；next=`DRAW-02`（P3 `OFFICE-PROD` 仍 user_gate） |
+| §4.2 P4 | `DRAW-01` 已进波；后续 P4/P5/Office P3 已收口，当前代码轨 next=`REST-PROD-01` |
 
 ## Acceptance 判定
 

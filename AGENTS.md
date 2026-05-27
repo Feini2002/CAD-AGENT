@@ -30,13 +30,13 @@
 
 1. `README.md`
 2. `CORE_STATUS.md`
-3. `CORE_ROADMAP.md`
+3. `docs/roadmap/current.md`
 4. `CORE_RESTRUCTURE_PLAN.md`
-5. `CAD_AGENT_STATUS.md`
-6. `CAD_AGENT_RULES.md`
-7. `CAD_AGENT_BLOCKER_PLAYBOOK.md`
-8. `CAD_AGENT_CHANGELOG.md`
-9. `CAD_AGENT_ISSUES.md`
+5. `docs/status/current.md`
+6. `docs/governance/cad-agent-rules.md`
+7. `docs/runbooks/blocker-playbook.md`
+8. `docs/status/changelog.md`
+9. `docs/status/issues.md`
 
 ## 单一 PlanMD 开发主线
 
@@ -44,14 +44,14 @@
 
 - `PlanMD` 只做文档治理和开发排序，不改变本仓库“通用 CAD Agent Core Lab”的方向。
 - `CORE_RESTRUCTURE_PLAN.md` 决定当前活跃工作队列、Phase 顺序、优先级、Decision Gate 和退出标准。
-- `docs/planning/phase-*.md` 只是辅助执行剧本，可以写命令和检查表，但不能成为第二套主计划，也不能保留后置 Backlog 副本。
-- `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` 只写能力、证据、风险和当前状态，不承载独立下一步。
+- `docs/planning/phases/*.md` 只是辅助执行剧本，可以写命令和检查表，但不能成为第二套主计划，也不能保留后置 Backlog 副本。
+- `CORE_STATUS.md`、`docs/status/current.md` 只写能力、证据、风险和当前状态，不承载独立下一步。
 - 新增待办、调整优先级、改变退出标准或拆分未来小包时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD 的引用或状态说明。
 - 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
 
 ## 交付默认精简进度
 
-每次 CAD Agent 相关交付的**最终回复**，默认使用 **1 张精简进度表**，先报 **表 C 真实 CAD 实力主指标**，再说明本轮完成内容、验证证据和风险边界。详细口径见 `CAD_AGENT_RULES.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
+每次 CAD Agent 相关交付的**最终回复**，默认使用 **1 张精简进度表**，先报 **表 C 真实 CAD 实力主指标**，再说明本轮完成内容、验证证据和风险边界。详细口径见 `docs/governance/cad-agent-rules.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
 
 **默认精简模板：**
 
@@ -120,19 +120,21 @@
 
 ## 卡壳或绘图不准流程
 
-当用户说“画不准”“画不出来”“不对”“继续修”，或 Codex 无法证明图纸准确时，按 `CAD_AGENT_BLOCKER_PLAYBOOK.md` 执行。
+当用户说“画不准”“画不出来”“不对”“继续修”，或 Codex 无法证明图纸准确时，按 `docs/runbooks/blocker-playbook.md` 执行。
 
 最低必跑探针：
 
 ```powershell
-& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\self_check.py'
-& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\render_preview.py' --check
+$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
+& $py 'scripts\self_check.py'
+& $py 'scripts\render_preview.py' --check
 ```
 
 如果需要视觉证据且用户没有禁止截图，保存一个检查点：
 
 ```powershell
-& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\render_preview.py' --capture-screen --output 'output\previews\manual-check.png'
+$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
+& $py 'scripts\render_preview.py' --capture-screen --output 'output\previews\manual-check.png'
 ```
 
 如果截图或回读不可用，应说明暂时无法证明准确性，并优先补齐缺失的验证机制，再声称完成。
@@ -148,11 +150,12 @@
 
 当 CAD Agent 规则、脚本、测试、工作流文档或状态发生变化时，更新：
 
-- `CAD_AGENT_STATUS.md`
-- `CAD_AGENT_CHANGELOG.md`
-- 如果变更源自失败、风险或调试教训，更新 `CAD_AGENT_ISSUES.md`
+- `docs/status/current.md`
+- `docs/status/changelog.md`
+- 如果变更源自失败、风险或调试教训，更新 `docs/status/issues.md`
 
 每完成一个 PlanMD 开发包，还必须更新 Cursor 交接包汇总：
 
-- `docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md`（按固定 9 项模板追加该包章节，供 Codex 校验）
+- `docs/handoffs/current.md`（按固定 9 项模板追加该包章节，供 Codex 校验）
+- `docs/handoffs/package-index.md`（同步全量包索引）
 - 索引说明见 `docs/handoffs/README.md`

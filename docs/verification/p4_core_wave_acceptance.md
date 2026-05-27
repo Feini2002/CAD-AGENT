@@ -45,7 +45,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `V-PROOF-34` | block-first tier verified |
 | `V-PROOF-35` | fallback tier 登记 |
 | §4.2 P5 | `RBLOCK-03`~`08`（**done**） |
-| §4.2 P3 | `OFFICE-PROD` 等仍为 **user_gate** |
+| §4.2 P3 | `OFFICE-PROD-03` 已收口；next=`REST-PROD-01` |
 
 ## Acceptance 判定
 

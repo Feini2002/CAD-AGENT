@@ -43,13 +43,13 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 - 不得因 fallback 解析或 benchmark pass 就声称 symbol/block 已在真实 AutoCAD `geometry_verified`。
 - 不得跳过可用 `symbol_glyph` 而静默落到 `bbox_placeholder`（`detect_silent_degradation` 必须可审计）。
-- 不得把本包计入表 C 主指标；`V-PROOF-35` 各 tier 的 registry 行仍待后续包登记。
+- 不得把本包计入表 C 主指标；`V-PROOF-35` 各 tier 的 registry 行已登记为 `smoke` / `deferred`，仍不等于真实 CAD 几何证明。
 
 ## 后续映射
 
 | 后续项 | 说明 |
 | --- | --- |
-| `V-PROOF-35` | 四级 fallback 各 tier 登记 `cad_capability_registry` |
+| `V-PROOF-35` | **done** — 四级 fallback 各 tier 已登记 `cad_capability_registry`；4 smoke + 1 deferred |
 | `SYMBOL-09` | **done** — block-first 入口（见 `symbol_09_block_first_tier_boundary.md`） |
 | `D-SYMBOL-07` | 无静默退化门禁（本包提供 detect API 边界） |
 

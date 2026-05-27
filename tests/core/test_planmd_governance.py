@@ -22,10 +22,10 @@ class PlanMdGovernanceTests(unittest.TestCase):
                 self.assertNotIn(phrase, handoff)
 
     def test_status_page_does_not_present_historical_split_as_active_queue(self) -> None:
-        status = (PROJECT_ROOT / "CAD_AGENT_STATUS.md").read_text(encoding="utf-8")
+        status = (PROJECT_ROOT / "docs" / "status" / "current.md").read_text(encoding="utf-8")
 
         self.assertNotIn("这些是后续 Cursor / Codex 按包执行的开发清单", status)
-        self.assertIn("后续优先级、Phase 顺序、待办和退出标准只以唯一 `PlanMD`", status)
+        self.assertIn("后续任务和优先级只写入 PlanMD", status)
 
     def test_planmd_phase_status_matches_completed_scene_alpha_queue(self) -> None:
         plan = (PROJECT_ROOT / "CORE_RESTRUCTURE_PLAN.md").read_text(encoding="utf-8")
@@ -41,7 +41,7 @@ class PlanMdGovernanceTests(unittest.TestCase):
         self.assertIn("cad_strength_headline_percent", core_status)
         self.assertIn("cad_proof_coverage", core_status)
         self.assertIn("禁止", core_status)
-        self.assertIn("94%", core_status)
+        self.assertIn("95%", core_status)
         self.assertIn("≠", core_status)
 
     def test_handoff_has_capability_proof_extension_template(self) -> None:

@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Any
 
 from core.composition_engine.composition_template_catalog import COMPOSITION_TEMPLATES
-from core.composition_engine.drawing_policy import resolve_composition_object_drawing_flags
 from core.composition_engine.preview import write_composition_preview_svg
 from core.object_engine.parametric_objects import create_object_spec, object_spec_to_cad_plan
 from core.verification.evidence_contract import NON_CAD_GEOMETRY_ACCURACY, SCREENSHOT_VISUAL_AID_ONLY
@@ -15,14 +14,26 @@ __all__ = [
     "composition_micro_scene_metrics",
     "composition_to_cad_plans",
     "create_composition_spec",
+    "resolve_composition_object_drawing_flags",
     "write_composition_preview_svg",
 ]
+
+DEFAULT_COMPOSITION_INCLUDE_LABEL = False
+DEFAULT_COMPOSITION_INCLUDE_DIMENSIONS = False
 
 
 def _point3(point: list[Any]) -> list[float | int]:
     if len(point) == 2:
         return [point[0], point[1], 0]
     return [point[0], point[1], point[2]]
+
+
+def resolve_composition_object_drawing_flags(item: dict[str, Any]) -> tuple[bool, bool]:
+    """Return label and dimension flags for composition object previews."""
+    return (
+        DEFAULT_COMPOSITION_INCLUDE_LABEL,
+        DEFAULT_COMPOSITION_INCLUDE_DIMENSIONS,
+    )
 
 
 def _bbox_from_objects(objects: list[dict[str, Any]]) -> dict[str, list[float | int]]:

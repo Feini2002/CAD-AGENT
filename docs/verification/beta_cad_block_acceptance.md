@@ -14,7 +14,9 @@
 | `BETA-CAD-BLOCK-04` | `drawing_standard_profile`（role→预览层 / 语义层 / 样式） | `codex_preview_beta.json` |
 | `BETA-CAD-BLOCK-05` | 本 rollup + 总验收测试 | `cad_beta_evidence_rollup.json` |
 
-**最新 rollup 证据**：`output/test_artifacts/cad_beta_evidence/beta_cad_block_05/cad_beta_evidence_rollup.json`（non-CAD，5/5 subpackages pass）。
+**最新 rollup 证据**：`output/validation_runs/rcad-28-beta-evidence-rollup-20260527-final/cad_beta_evidence_rollup.json`（non-CAD，5/5 subpackages pass）。
+
+**最新 trend 证据**：`output/validation_runs/rcad-28-beta-evidence-rollup-20260527-final/evidence_trend/cad_beta_evidence_rollup_trend.json`（`non_cad_only=true`，`geometry_verified_count=0`）。
 
 ## 现在可以声称什么
 

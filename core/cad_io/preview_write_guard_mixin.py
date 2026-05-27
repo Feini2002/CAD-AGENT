@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from core.safety.policy import PREVIEW_LAYER
+from core.safety.policy import PREVIEW_ALLOWED_LAYERS, PREVIEW_LAYER
 from core.safety.write_guard import CadWriteGuard, CadWriteGuardViolation
 
 
@@ -14,11 +14,13 @@ class PreviewWriteGuardMixin:
     write_guard: CadWriteGuard
 
     def _init_preview_write_guard(self, *, preview_layer: str = PREVIEW_LAYER) -> None:
-        self.write_guard = CadWriteGuard(enabled=True, preview_layer=preview_layer)
+        allowed_layers = set(PREVIEW_ALLOWED_LAYERS)
+        allowed_layers.add(preview_layer)
+        self.write_guard = CadWriteGuard(enabled=True, preview_layer=preview_layer, allowed_layers=allowed_layers)
 
-    def _guard_preview_layer_write(self, layer: str | None) -> None:
+    def _guard_preview_layer_write(self, layer: str | None, *, layer_role: str = "preview") -> None:
         if layer is not None:
-            self.write_guard.assert_preview_layer_write(layer)
+            self.write_guard.assert_preview_layer_write(layer, layer_role=layer_role)
 
     def save_document(self) -> None:
         self.write_guard.assert_save_allowed()

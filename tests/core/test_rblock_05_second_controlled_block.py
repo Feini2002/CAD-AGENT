@@ -7,7 +7,7 @@ from core.block_engine.second_controlled_block_boundary import (
     RBLOCK_05_PACKAGE_ID,
     SECOND_CONTROLLED_BLOCK_ID,
     SECOND_CONTROLLED_BLOCK_NAME,
-    assert_insert_block_alpha_rejects_second_controlled_block,
+    assert_insert_block_alpha_accepts_second_controlled_block,
     assert_second_controlled_block_contract,
     default_manifest_path,
     load_second_controlled_block_manifest,
@@ -55,8 +55,8 @@ class Rblock05SecondControlledBlockTests(unittest.TestCase):
         self.assertEqual(result["status"], "selected")
         self.assertEqual(result["block_reference"]["cad_identity"]["block_name"], SECOND_CONTROLLED_BLOCK_NAME)
 
-    def test_insert_block_alpha_rejects_second_block(self) -> None:
-        assert_insert_block_alpha_rejects_second_controlled_block()
+    def test_insert_block_alpha_accepts_second_block_after_vproof_41(self) -> None:
+        assert_insert_block_alpha_accepts_second_controlled_block()
 
     def test_boundary_doc_states_claim_limits(self) -> None:
         text = (PROJECT_ROOT / RBLOCK_05_BOUNDARY_DOC).read_text(encoding="utf-8")

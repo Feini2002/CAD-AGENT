@@ -31,13 +31,13 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 - `BLOCK_LIBRARY v0.2` 现含 **两块** 受控测试块 metadata，schema 校验通过。
 - `object_spec_to_block_reference` 可按 `preferred_block_refs` 选中 `controlled-test-block-002`（metadata 层）。
-- `insert_block_alpha` **仍仅**允许 `controlled-test-block-001` / `CODEX_TEST_BLOCK_001`（002 探针 plan 被拒绝）。
-- `V-PROOF-41` 代码轨前置完成；真实 CAD 多块矩阵仍待用户会话。
+- `insert_block_alpha` V-PROOF-41 后仅放行两个受控测试块：`controlled-test-block-001` / `CODEX_TEST_BLOCK_001` 与 `controlled-test-block-002` / `CODEX_TEST_BLOCK_002`。
+- `V-PROOF-41` 代码轨可生成双受控块 CAD matrix；真实 CAD `geometry_verified` 仍必须来自 created handles 回读。
 
 ## 不得声称
 
 - 不得因 library 登记 002 就声称第二块已真实 CAD `geometry_verified`。
-- 不得把 metadata 可选中误解为 `insert_block_alpha` COM 已支持 002。
+- 不得把 metadata 可选中误解为任意项目块可写；`insert_block_alpha` 只允许 001/002 两个受控测试块。
 - 不得扩大到公司块库或第三块以上未登记 fixture。
 
 ## 后续

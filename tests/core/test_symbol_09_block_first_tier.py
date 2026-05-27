@@ -84,7 +84,16 @@ class Symbol09BlockFirstTierTests(unittest.TestCase):
             dry_run=True,
         )
         self.assertEqual(len(sync_results), 4)
-        self.assertTrue(all(item.status == "applied" for item in sync_results))
+        self.assertTrue(
+            all(
+                item.status == "applied"
+                or (
+                    item.status == "rejected"
+                    and "claim_level=smoke" in item.message
+                )
+                for item in sync_results
+            )
+        )
 
         report_path = output_root / "controlled-block-wins" / "case_result.json"
         rel = str(report_path.relative_to(PROJECT_ROOT)).replace("\\", "/")

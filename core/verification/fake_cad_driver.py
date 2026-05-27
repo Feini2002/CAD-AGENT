@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from core.cad_io.autocad_block_alpha import CONTROLLED_BLOCK_ID, CONTROLLED_BLOCK_NAME, PREVIEW_LAYER
+from core.cad_io.autocad_block_alpha import (
+    CONTROLLED_BLOCK_ALLOWLIST,
+    CONTROLLED_BLOCK_ID,
+    CONTROLLED_BLOCK_NAME,
+    PREVIEW_LAYER,
+)
 from core.cad_io.preview_write_guard_mixin import PreviewWriteGuardMixin
 from core.safety.write_guard import CadWriteGuardViolation
 
@@ -44,15 +49,15 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         self._init_preview_write_guard(preview_layer=PREVIEW_LAYER)
         self._block_definitions: set[str] = set()
 
-    def _assert_layer(self, layer: str) -> None:
-        self._guard_preview_layer_write(layer)
+    def _assert_layer(self, layer: str, *, layer_role: str = "preview") -> None:
+        self._guard_preview_layer_write(layer, layer_role=layer_role)
 
     def _handle(self) -> str:
         self.next_handle += 1
         return f"H{self.next_handle}"
 
-    def ensure_layer(self, layer: str) -> None:
-        self._assert_layer(layer)
+    def ensure_layer(self, layer: str, *, layer_role: str = "preview") -> None:
+        self._assert_layer(layer, layer_role=layer_role)
         self.layers.append(layer)
 
     def ensure_controlled_block_definition(
@@ -62,11 +67,11 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         allow_create: bool = True,
     ) -> dict[str, Any]:
         resolved_name = str(block_name or CONTROLLED_BLOCK_NAME).strip()
-        if resolved_name != CONTROLLED_BLOCK_NAME:
+        if resolved_name not in CONTROLLED_BLOCK_ALLOWLIST.values():
             return {
                 "status": "failed",
                 "block_name": resolved_name,
-                "message": f"block alpha only allows controlled block definition {CONTROLLED_BLOCK_NAME}",
+                "message": "block alpha only allows controlled block definitions",
                 "failure_category": "controlled_block_mismatch",
             }
         if resolved_name in self._block_definitions:
@@ -96,14 +101,21 @@ class FakeCadDriver(PreviewWriteGuardMixin):
     ) -> dict[str, Any]:
         resolved_layer = str(layer or PREVIEW_LAYER)
         self._assert_layer(resolved_layer)
-        if str(block_id).strip() != CONTROLLED_BLOCK_ID:
-            raise ValueError(f"insert_block_alpha only allows block_id={CONTROLLED_BLOCK_ID}.")
-        if str(block_name).strip() != CONTROLLED_BLOCK_NAME:
-            raise ValueError(f"insert_block_alpha only allows block_name={CONTROLLED_BLOCK_NAME}.")
+        resolved_block_id = str(block_id).strip()
+        if resolved_block_id not in CONTROLLED_BLOCK_ALLOWLIST:
+            raise ValueError(
+                "insert_block_alpha only allows controlled test block ids: "
+                + ", ".join(sorted(CONTROLLED_BLOCK_ALLOWLIST))
+            )
+        expected_block_name = CONTROLLED_BLOCK_ALLOWLIST[resolved_block_id]
+        if str(block_name).strip() != expected_block_name:
+            raise ValueError(
+                f"insert_block_alpha block_id={resolved_block_id} requires block_name={expected_block_name}."
+            )
         if attributes:
             raise ValueError("block attributes are deferred in block alpha")
 
-        definition_result = self.ensure_controlled_block_definition(CONTROLLED_BLOCK_NAME)
+        definition_result = self.ensure_controlled_block_definition(expected_block_name)
         if definition_result.get("status") != "ready":
             return definition_result
 
@@ -113,12 +125,25 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         z0 = float(base_point[2]) if len(base_point) > 2 else 0.0
         width = 900.0 * uniform
         depth = 450.0 * uniform
+        if resolved_block_id != CONTROLLED_BLOCK_ID:
+            try:
+                from core.block_engine.block_library import load_block_library, normalize_block
+
+                for block in load_block_library().get("blocks", []):
+                    if isinstance(block, dict) and block.get("block_id") == resolved_block_id:
+                        normalized = normalize_block(block)
+                        footprint = normalized.get("footprint_2d", {})
+                        width = float(footprint["width"]) * uniform
+                        depth = float(footprint["depth"]) * uniform
+                        break
+            except (OSError, ValueError, KeyError, TypeError):
+                pass
         handle = self._handle()
         self.entities[handle] = FakeCadEntity(
             handle=handle,
             object_name="AcDbBlockReference",
             layer=resolved_layer,
-            block_name=CONTROLLED_BLOCK_NAME,
+            block_name=expected_block_name,
             InsertionPoint=[x0, y0, z0],
             Rotation=float(rotation),
             Scale=[uniform, uniform, uniform],
@@ -132,9 +157,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         corner1: list[float | int],
         corner2: list[float | int],
         layer: str,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, list[str]]:
-        self._assert_layer(layer)
+        self._assert_layer(layer, layer_role=layer_role)
         x1, y1, z1 = corner1
         x2, y2, _z2 = corner2
         segments = [
@@ -162,9 +188,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         start_point: list[float | int],
         end_point: list[float | int],
         layer: str,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._assert_layer(layer)
+        self._assert_layer(layer, layer_role=layer_role)
         handle = self._handle()
         self.entities[handle] = FakeCadEntity(
             handle=handle,
@@ -181,9 +208,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         center: list[float | int],
         radius: float | int,
         layer: str,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._assert_layer(layer)
+        self._assert_layer(layer, layer_role=layer_role)
         handle = self._handle()
         self.entities[handle] = FakeCadEntity(
             handle=handle,
@@ -202,9 +230,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         start_angle: float | int,
         end_angle: float | int,
         layer: str,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._assert_layer(layer)
+        self._assert_layer(layer, layer_role=layer_role)
         handle = self._handle()
         self.entities[handle] = FakeCadEntity(
             handle=handle,
@@ -223,9 +252,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         points: list[list[float | int]],
         closed: bool,
         layer: str,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._assert_layer(layer)
+        self._assert_layer(layer, layer_role=layer_role)
         handle = self._handle()
         coordinates = [coordinate for point in points for coordinate in point[:2]]
         self.entities[handle] = FakeCadEntity(
@@ -247,7 +277,7 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         **_: object,
     ) -> dict[str, Any]:
         resolved_layer = layer or PREVIEW_LAYER
-        self._assert_layer(resolved_layer)
+        self._assert_layer(resolved_layer, layer_role=layer_role)
 
         from core.verification.entity_level_evidence import build_hatch_deferred_entry
 
@@ -268,9 +298,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         text: str,
         position: list[float | int],
         layer: str,
+        layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
-        self._assert_layer(layer)
+        self._assert_layer(layer, layer_role=layer_role)
         handle = self._handle()
         self.entities[handle] = FakeCadEntity(
             handle=handle,
@@ -281,8 +312,8 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         )
         return {"handle": handle}
 
-    def add_dimension(self, *, layer: str, **_: object) -> dict[str, str]:
-        self._assert_layer(layer)
+    def add_dimension(self, *, layer: str, layer_role: str = "preview", **_: object) -> dict[str, str]:
+        self._assert_layer(layer, layer_role=layer_role)
         handle = self._handle()
         self.entities[handle] = FakeCadEntity(
             handle=handle,

@@ -8,6 +8,7 @@ from typing import Any
 
 from core.block_engine.block_library import load_block_library, object_spec_to_block_reference, validate_block_library
 from core.plan_engine.block_alpha_plan import (
+    CONTROLLED_BLOCK_ALLOWLIST,
     CONTROLLED_BLOCK_ID,
     CONTROLLED_BLOCK_NAME,
     validate_insert_block_alpha,
@@ -43,8 +44,8 @@ def _library_block(library: dict[str, Any], block_id: str) -> dict[str, Any] | N
     return None
 
 
-def assert_insert_block_alpha_rejects_second_controlled_block() -> None:
-    """insert_block_alpha allowlist must remain block-001 only (RBLOCK-05 does not widen COM)."""
+def assert_insert_block_alpha_accepts_second_controlled_block() -> None:
+    """V-PROOF-41 widens insert_block_alpha to the second controlled test block only."""
 
     probe_plan = {
         "intent": "insert_block_alpha",
@@ -58,11 +59,10 @@ def assert_insert_block_alpha_rejects_second_controlled_block() -> None:
         "drawing": {"layer": "CODEX_PREVIEW"},
     }
     errors = validate_insert_block_alpha(probe_plan)
-    if not errors:
-        raise AssertionError("insert_block_alpha must reject controlled-test-block-002 until V-PROOF-41 widens allowlist")
-    joined = " ".join(errors)
-    if CONTROLLED_BLOCK_ID not in joined and SECOND_CONTROLLED_BLOCK_ID not in joined:
-        raise AssertionError(f"expected allowlist rejection message, got: {errors}")
+    if errors:
+        raise AssertionError(f"insert_block_alpha must accept controlled-test-block-002 after V-PROOF-41: {errors}")
+    if CONTROLLED_BLOCK_ALLOWLIST.get(SECOND_CONTROLLED_BLOCK_ID) != SECOND_CONTROLLED_BLOCK_NAME:
+        raise AssertionError("insert_block_alpha allowlist must bind block-002 to CODEX_TEST_BLOCK_002")
 
 
 def assert_second_controlled_block_contract(*, project_root: Path) -> None:
@@ -141,7 +141,7 @@ def assert_second_controlled_block_contract(*, project_root: Path) -> None:
     if selection["block_reference"]["block_id"] != SECOND_CONTROLLED_BLOCK_ID:
         raise AssertionError("block_reference must point to controlled-test-block-002")
 
-    assert_insert_block_alpha_rejects_second_controlled_block()
+    assert_insert_block_alpha_accepts_second_controlled_block()
 
 
 def second_controlled_block_status_summary(*, project_root: Path) -> dict[str, Any]:

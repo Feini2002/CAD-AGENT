@@ -5,11 +5,13 @@ import shutil
 import unittest
 
 from core.verification.cad_beta_evidence_rollup import (
+    CAD_BETA_EVIDENCE_TREND_FILENAME,
     PARENT_PACKAGE_ID,
     VERIFICATION_DOC_NAMES,
     run_cad_beta_evidence_rollup,
 )
 from core.verification.evidence_contract import NON_CAD_GEOMETRY_ACCURACY
+from core.verification.evidence_trend import validate_evidence_trend_report
 from tests.bootstrap import PROJECT_ROOT
 from tests.helpers import artifact_path
 
@@ -63,6 +65,14 @@ class CadBetaBlockAcceptanceTests(unittest.TestCase):
         saved = json.loads(rollup_path.read_text(encoding="utf-8"))
         self.assertEqual(saved["status"], "pass")
         self.assertGreater(len(saved["claims"]["forbidden"]), 0)
+
+        trend_path = output_root / "evidence_trend" / CAD_BETA_EVIDENCE_TREND_FILENAME
+        self.assertTrue(trend_path.is_file())
+        trend = json.loads(trend_path.read_text(encoding="utf-8"))
+        self.assertEqual(validate_evidence_trend_report(trend), [])
+        self.assertTrue(trend["summary"]["non_cad_only"])
+        self.assertEqual(trend["summary"]["geometry_verified_count"], 0)
+        self.assertEqual(trend["summary"]["dry_run_valid_plan_only_count"], 5)
 
     def test_beta_cad_block_05_rejects_output_root_outside_project_output(self) -> None:
         output_root = PROJECT_ROOT / "tests" / "outside_cad_beta_rollup"

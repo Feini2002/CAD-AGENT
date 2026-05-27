@@ -1,13 +1,13 @@
 # CAD Agent Core PlanMD（唯一开发主线）
 
 状态：Phase O-V 非 CAD 主线与系统层安全补强已完成；当前主线收束为 Phase R / W / X / Y / Z；三指令执行台账与即时 `next` 见 `docs/planning/任务清单.md` §0
-最后更新：2026-05-27
+最后更新：2026-05-28
 
 > 面向后续 Codex / agentic worker：本文是当前仓库唯一 `PlanMD`，也就是开发主线文件。根目录没有独立 `plan.md`；用户提到 `plan.md`、`PlanMD` 或“主 plan”时，默认指本文。执行开发前必须先读取 `AGENTS.md` 与 `CORE_CONTEXT_BRIEF.md`，再按本文目标 phase 展开。
 
 本文不是本轮要立即执行代码的指令，而是一次深度复盘后的系统级开发计划：记录当前真实进度、维护方式、已知缺口、下一阶段可继续排查和优化的路线。具体开发仍需按 phase 拆小步、测试先行、留证据、同步状态文档。
 
-本文是唯一主 plan。其他 Markdown 可以记录规则、状态、手册、设计依据、历史和执行剧本，但不得各自承载独立“下一步”。本文决定方向、优先级、Decision Gate、退出标准和后置 Backlog；`docs/planning/任务清单.md` 负责把本文已登记的 §3/§4/§5 包维护成执行台账、计数和即时 `next` 镜像。若两者冲突，先按本文修正决策边界，再同步任务清单；不要在 README、状态页、handoff 或 phase 剧本里写第三套待办。主平台 Markdown 精细化拆分已执行：Phase W/X/Y/Z 的长篇执行剧本已迁入 `docs/planning/phase-*.md`；已完成的拆分记录迁入 `docs/history/core-platform-md-split-plan-2026-05-25.md`。2026-05-26 二次雕琢新增 `docs/README.md` 作为文档区总地图，并把 `docs/ROADMAP.md` 降级为兼容跳转；同日又完成 `R-CAD-VIEW-CAPTURE` baseline 小开发包，把 CAD 总控视觉辅助截图升级为 AutoCAD 窗口级截图。
+本文是唯一主 plan。其他 Markdown 可以记录规则、状态、手册、设计依据、历史和执行剧本，但不得各自承载独立“下一步”。本文决定方向、优先级、Decision Gate、退出标准和后置 Backlog；`docs/planning/任务清单.md` 负责把本文已登记的 §3/§4/§5 包维护成执行台账、计数和即时 `next` 镜像。若两者冲突，先按本文修正决策边界，再同步任务清单；不要在 README、状态页、handoff 或 phase 剧本里写第三套待办。主平台 Markdown 精细化拆分已执行：Phase W/X/Y/Z 的长篇执行剧本已迁入 `docs/planning/phases/`；已完成的拆分记录迁入 `docs/history/completed-plans/core-platform-md-split-plan-2026-05-25.md`。2026-05-26 二次雕琢新增 `docs/README.md` 作为文档区总地图，并把 `docs/ROADMAP.md` 降级为兼容跳转；同日又完成 `R-CAD-VIEW-CAPTURE` baseline 小开发包，把 CAD 总控视觉辅助截图升级为 AutoCAD 窗口级截图。
 
 ## 防偏离边界
 
@@ -28,10 +28,10 @@
 | --- | --- | --- | --- |
 | 1 | `CORE_RESTRUCTURE_PLAN.md` | 当前活跃工作队列、Phase 顺序、优先级、Decision Gate、退出标准、后置 Backlog 拆分 | 真实 CAD 几何准确结论，除非有对应验证证据 |
 | 2 | `docs/planning/任务清单.md` | §3/§4/§5 执行台账、包计数、即时 `next` 镜像、四口令说明 | 独立改变主线方向、绕过本文新增优先级或退出标准 |
-| 3 | `docs/planning/phase-*.md` | 展开本文已登记开发包的执行步骤、命令、检查表、失败处理 | 独立改变优先级、新增主线待办或保留后置计划副本 |
-| 4 | `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` | 能力成熟度、当前证据、风险边界、最近验证 | 充当第二份计划 |
-| 5 | `CORE_ROADMAP.md`、`docs/README.md`、`docs/architecture/`、`docs/governance/`、`docs/onboarding/`、`docs/verification/`、`docs/history/` | 路线说明、导航、架构依据、治理、交接、证据、历史 | 覆盖 PlanMD 的当前队列 |
-| 6 | `CAD_AGENT_CHANGELOG.md`、`CAD_AGENT_ISSUES.md` | 历史流水和失败教训 | 推导新的开发优先级 |
+| 3 | `docs/planning/phases/*.md` | 展开本文已登记开发包的执行步骤、命令、检查表、失败处理 | 独立改变优先级、新增主线待办或保留后置计划副本 |
+| 4 | `CORE_STATUS.md`、`docs/status/current.md` | 能力成熟度、当前证据、风险边界、最近验证 | 充当第二份计划 |
+| 5 | `docs/roadmap/current.md`、`docs/README.md`、`docs/architecture/`、`docs/governance/`、`docs/onboarding/`、`docs/verification/`、`docs/history/` | 路线说明、导航、架构依据、治理、交接、证据、历史 | 覆盖 PlanMD 的当前队列 |
+| 6 | `docs/status/changelog.md`、`docs/status/issues.md` | 历史流水和失败教训 | 推导新的开发优先级 |
 
 如果辅助 MD 中出现新的“下一步、待办、优先级、退出标准”，必须回到本文登记或引用本文已有条目；否则只能写成背景、证据、执行步骤或历史记录。后置 Backlog 的小包编号、目标和校验出口不得复制到其它 MD 作为备用计划；其它文件只可写“详见本文”。若两个 Markdown 口径冲突，在用户最新指令、`AGENTS.md` 和安全规则之后，以本文为准。
 
@@ -95,14 +95,14 @@
 | `CORE_CONTEXT_BRIEF.md` | 日常短上下文入口 | 保持短、稳定、可扫读 |
 | `CORE_RESTRUCTURE_PLAN.md` | 唯一 PlanMD 和下一阶段执行路线 | 每次阶段计划变化时更新 |
 | `CORE_STATUS.md` | Core 能力矩阵和成熟度 | 更新能力状态、证据、主要缺口 |
-| `CORE_ROADMAP.md` | 高层路线图 | 不写具体执行细节 |
-| `CAD_AGENT_STATUS.md` | 当前进展页 | 只保留当前阶段、验证、风险边界和阻塞 |
-| `CAD_AGENT_CHANGELOG.md` | 历史变更流水 | 每次结构、规则、脚本、状态变更追加记录 |
-| `CAD_AGENT_ISSUES.md` | 问题与教训库 | 只有失败、回归、风险或排障教训时更新 |
+| `docs/roadmap/current.md` | 高层路线图 | 不写具体执行细节 |
+| `docs/status/current.md` | 当前进展页 | 只保留当前阶段、验证、风险边界和阻塞 |
+| `docs/status/changelog.md` | 历史变更流水 | 每次结构、规则、脚本、状态变更追加记录 |
+| `docs/status/issues.md` | 问题与教训库 | 只有失败、回归、风险或排障教训时更新 |
 | `docs/decisions/cad-agent-decisions.md` | 架构与方向决策 | 只记录“为什么这样做” |
-| `CAD_AGENT_RULES.md` | 长期开发和 CAD 行为准则 | 写规则，不写阶段流水 |
-| `CAD_AGENT_AUTONOMOUS_VALIDATION.md` | 真实 CAD / 换机验证手册 | Phase W 或 CAD 验证时读取 |
-| `CAD_AGENT_BLOCKER_PLAYBOOK.md` | 卡壳、画不准、环境不通时的排障流程 | 遇到失败时读取 |
+| `docs/governance/cad-agent-rules.md` | 长期开发和 CAD 行为准则 | 写规则，不写阶段流水 |
+| `docs/runbooks/cad-validation.md` | 真实 CAD / 换机验证手册 | Phase W 或 CAD 验证时读取 |
+| `docs/runbooks/blocker-playbook.md` | 卡壳、画不准、环境不通时的排障流程 | 遇到失败时读取 |
 | `docs/architecture/shell-layout-foundation-design.md` | 空壳布局架构设计与边界 | 记录设计背景、已落地映射和剩余差距 |
 | `docs/history/shell-layout-time-estimate.md` | 历史时间估算 | 仅作预期管理，不作为当前开发计划 |
 
@@ -148,7 +148,7 @@ Phase R：新鲜视角评审与重生式开发校准
 
 ## 下一轮开发拆解与子校验
 
-本节把当前建议拆成可执行开发包。它决定开发顺序和退出门槛；`docs/planning/phase-r-rebirth-implementation-plan.md` 只展开当前 Phase R 包的执行步骤，不承载独立优先级或后置 Backlog。每个开发包都必须先完成本地子校验，再进入下一包；真实 CAD 相关结论必须额外通过 created handles 定向 readback，不得只看截图或 runner 顶层 `pass`。
+本节把当前建议拆成可执行开发包。它决定开发顺序和退出门槛；Phase R 历史执行剧本已归档到 `docs/history/completed-plans/phase-r/`，不承载独立优先级或后置 Backlog。每个开发包都必须先完成本地子校验，再进入下一包；真实 CAD 相关结论必须额外通过 created handles 定向 readback，不得只看截图或 runner 顶层 `pass`。
 
 | 顺序 | 开发包 | 开发目标 | 主要文件边界 | 子校验 | 退出门槛 |
 | --- | --- | --- | --- | --- | --- |
@@ -169,7 +169,7 @@ Phase R：新鲜视角评审与重生式开发校准
 3. 实现最小改动，不跨包做大重构。
 4. 运行本包测试和相关 benchmark。
 5. 若涉及真实 CAD，先跑 no-CAD 校验，再在用户会话下跑真实 CAD，并读取 readback 报告字段。
-6. 更新 `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` 和 `CAD_AGENT_CHANGELOG.md`；若出现失败教训，更新 `CAD_AGENT_ISSUES.md`。
+6. 更新 `CORE_STATUS.md`、`docs/status/current.md` 和 `docs/status/changelog.md`；若出现失败教训，更新 `docs/status/issues.md`。
 7. 在最终汇报里明确哪些是 `benchmark_pass_non_cad`，哪些是 `readback_geometry_verified`。
 
 ### 2026-05-26 追加已完成加固包
@@ -180,7 +180,7 @@ Phase R：新鲜视角评审与重生式开发校准
 
 ### 剩余开发包二级拆分索引
 
-下表把当前未开始的大包继续拆成更小的可执行包。每个小包都应能独立提交、独立复验、独立写交接记录；当前小包的执行步骤可在 `docs/planning/phase-r-rebirth-implementation-plan.md` 展开，但计划顺序、退出标准和后置路线以本文为准。
+下表把当前未开始的大包继续拆成更小的可执行包。每个小包都应能独立提交、独立复验、独立写交接记录；历史执行剧本归档在 `docs/history/completed-plans/phase-r/`，但计划顺序、退出标准和后置路线以本文为准。
 
 | 父包 | 二级小包 | 目标 | 最小校验出口 |
 | --- | --- | --- | --- |
@@ -270,7 +270,7 @@ Phase R：新鲜视角评审与重生式开发校准
 | CAD baseline 几何 | `output\validation_runs\manual-cad-after-primitive-probe\report.json`；窗口级截图验证为 `output\validation_runs\r-cad-view-cad\report.json` 与 `output\validation_runs\r-cad-view-cad\cad-validation-window.png` | baseline `draw_test_cabinet.json` 已真实 CAD `geometry_verified`；视觉辅助截图已能避开 Codex 窗口遮挡 | 不扩大到真实项目图纸、块库、块插入或任意 CAD_PLAN；截图不证明几何准确 |
 | CAD capability probe | `cad_capability_probe.json.status=cad_capability_verified` | 当前用户会话下基础图元、文字、标注、handles 和定向回读底座可用 | 不代表属性块、hatch、选择集、真实块库已通过 |
 | 本地 CAD 回归矩阵 | `output\validation_runs\local-cad-regression-no-cad\local_cad_regression_report.json` | baseline 总控、project sample CAD check、composition CAD check 已有统一 no-CAD/deferred 汇总入口；严格模式可要求子项 `geometry_verified` | 当前 no-CAD 矩阵不证明真实 CAD 几何准确；需用户 AutoCAD 会话另跑真实 CAD |
-| 文档治理基线 | `docs/planning/phase-*.md` 与 `CORE_RESTRUCTURE_PLAN.md` 索引化 | 主计划已从长篇剧本收缩为入口索引 | 不代表 Core Alpha 已完成 |
+| 文档治理基线 | `docs/planning/phases/*.md` 与 `CORE_RESTRUCTURE_PLAN.md` 索引化 | 主计划已从长篇剧本收缩为入口索引 | 不代表 Core Alpha 已完成 |
 
 ## Phase 状态语义
 
@@ -336,11 +336,11 @@ Phase W/X/Y/Z 的长篇执行剧本已拆入 `docs/planning/`，本文只保留�
 
 | Phase | 当前状态 | 执行文档 | 说明 |
 | --- | --- | --- | --- |
-| Phase R | 新鲜视角已消化为执行包，且角色组合交付自检已有 non-CAD 证据 | `docs/planning/phase-r-fresh-perspective-rebirth-plan.md`、`docs/planning/phase-r-rebirth-implementation-plan.md`、`docs/planning/phase-r-cad-capability-contract.md`、`docs/planning/phase-r-block-library-roadmap.md`、`docs/planning/phase-r-office-benchmark-cases.md`、`examples/benchmarks/interior_delivery_benchmark.json` | 多 agent 外部视角、CAD 能力契约、办公基础闭环、图块库、composition 自检和 benchmark 门禁 |
-| Phase W | baseline 已完成，后续扩展真实 CAD 补验 | `docs/planning/phase-w-cad-validation-plan.md` | 真实 CAD 回读、截图、created handles 和 `geometry_verified` 门禁 |
-| Phase X | Alpha 基线已完成 | `docs/planning/phase-x-scene-agent-alpha-plan.md` | 场景 Agent Alpha 历史验收和边界参考 |
-| Phase Y | 多候选基线已完成，复杂样本后置 | `docs/planning/phase-y-blank-shell-hardening-plan.md` | blank-shell 多候选、失败基准和真实样本边界参考 |
-| Phase Z | 每轮都要同步 | `docs/planning/phase-z-doc-governance-plan.md` | 文档治理、回归基线和状态同步 |
+| Phase R | 新鲜视角已消化为执行包，且角色组合交付自检已有 non-CAD 证据 | `docs/history/completed-plans/phase-r/`、`examples/benchmarks/interior_delivery_benchmark.json` | 多 agent 外部视角、CAD 能力契约、办公基础闭环、图块库、composition 自检和 benchmark 门禁 |
+| Phase W | baseline 已完成，后续扩展真实 CAD 补验 | `docs/planning/phases/phase-w-cad-validation.md` | 真实 CAD 回读、截图、created handles 和 `geometry_verified` 门禁 |
+| Phase X | Alpha 基线已完成 | `docs/planning/phases/phase-x-scene-agent-alpha.md` | 场景 Agent Alpha 历史验收和边界参考 |
+| Phase Y | 多候选基线已完成，复杂样本后置 | `docs/planning/phases/phase-y-blank-shell-hardening.md` | blank-shell 多候选、失败基准和真实样本边界参考 |
+| Phase Z | 每轮都要同步 | `docs/planning/phases/phase-z-doc-governance.md` | 文档治理、回归基线和状态同步 |
 
 文档拆分完成不等于 Core Alpha 完成；它只让后续 Phase X/Y/W 执行更稳定。
 
@@ -367,7 +367,7 @@ Phase W/X/Y/Z 的长篇执行剧本已拆入 `docs/planning/`，本文只保留�
 - Phase Y 让 blank-shell pipeline 输出多个可解释候选或结构化失败原因，并扩展真实/近真实样本。
 - Phase R 的 Fresh Eyes Review 已转化为后续执行计划，且没有把新鲜视角变成偏离 Core 的魔改路线。
 - 固定非 CAD 回归命令通过。
-- `CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`CAD_AGENT_STATUS.md`、`CAD_AGENT_CHANGELOG.md` 已同步。
-- 若过程出现失败或教训，`CAD_AGENT_ISSUES.md` 已记录。
+- `CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`docs/status/current.md`、`docs/status/changelog.md` 已同步。
+- 若过程出现失败或教训，`docs/status/issues.md` 已记录。
 
 如果用户明确说“只讨论计划，不执行开发”，则不得改代码；但计划、状态和文档治理本身发生变化时，仍要同步相关 Markdown。

@@ -5,6 +5,7 @@ import unittest
 
 from tests.helpers import artifact_path
 
+from core.safety.policy import DIAGNOSTIC_LAYER, PREVIEW_LAYER
 from core.verification.cad_capability_probe import run_cad_capability_probe
 from core.verification.entity_level_evidence import entity_level_evidence_allows_probe_pass
 from core.verification.evidence_contract import (
@@ -32,12 +33,24 @@ class CadCapabilityProbeTests(unittest.TestCase):
         self.assertIn("block_reference", report["contract"]["entities"])
         self.assertIn("insert_block_alpha", report["contract"]["entities"]["block_reference"]["intents"])
         self.assertEqual(report["active_document"], "sample-active.dwg")
-        self.assertEqual(report["layer"], "CODEX_PREVIEW")
+        self.assertEqual(report["layer"], PREVIEW_LAYER)
+        self.assertEqual(report["diagnostic_layer"], DIAGNOSTIC_LAYER)
         self.assertEqual(len(report["created_handles"]), 11)
         self.assertEqual(
             report["actual"]["type_counts"],
             {"arc": 1, "circle": 1, "dimension": 2, "line": 5, "polyline": 1, "text": 1},
         )
+        self.assertEqual(
+            report["actual"]["layer_counts"],
+            {DIAGNOSTIC_LAYER: 3, PREVIEW_LAYER: 8},
+        )
+        self.assertEqual(
+            report["actual"]["preview_type_counts"],
+            {"arc": 1, "circle": 1, "line": 5, "polyline": 1},
+        )
+        self.assertEqual(report["actual"]["diagnostic_type_counts"], {"dimension": 2, "text": 1})
+        self.assertEqual(report["safety"]["allowed_layers"], sorted({PREVIEW_LAYER, DIAGNOSTIC_LAYER}))
+        self.assertTrue(report["safety"]["writes_only_allowed_layers"])
         self.assertTrue(all(check["status"] == "pass" for check in report["checks"]))
         self.assertIn("session_guard", report)
         self.assertEqual(report["session_guard"]["status"], "consistent")

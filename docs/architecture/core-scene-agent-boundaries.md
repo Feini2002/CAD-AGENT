@@ -123,6 +123,6 @@ agents/<scenario>/capabilities/
 ## 文档口径
 
 - `CORE_RESTRUCTURE_PLAN.md` 维护开发顺序和未来小包。
-- `CORE_STATUS.md` / `CAD_AGENT_STATUS.md` 维护成熟度和证据。
+- `CORE_STATUS.md` / `docs/status/current.md` 维护成熟度和证据。
 - `agents/SCENE_AGENT_RULES.md` 维护 `agents/` 目录可写边界。
 - `docs/verification/scene_alpha_acceptance.md` 只证明 Scene Alpha，不证明场景产品完成。

@@ -31,7 +31,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 - P5 六子包 boundary MD、三份 manifest、registry 矩阵 5 行绑定均可 `assert_block_p5_wave_contract()` 审计。
 - no-CAD：block-alpha-beta **8/8**、insert-matrix **8/8**、attribute deferred smoke、registry binding API 齐备；证据态为 `dry_run_valid_plan_only`（非 geometry_verified）。
-- `V-PROOF-40` / `V-PROOF-41` 代码轨前置（边界 + manifest + registry）已完成；真实 CAD 仍走 RCAD / 能力证明轨。
+- `V-PROOF-40` / `V-PROOF-41` 代码轨前置（边界 + manifest + registry）已完成；`V-PROOF-41` 的双受控块真实 CAD closeout 已在能力证明轨补齐。
 
 ## 不得声称
 
@@ -47,7 +47,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `V-PROOF-40` | 块矩阵 plan 能力证明（registry 行已绑定） |
 | `V-PROOF-41` | 第二/第三受控块真实 CAD |
 | `RCAD-04`~`05` | block alpha / attribute 烟囱包 |
-| §4.2 P3 | `OFFICE-PROD` 等仍为 **user_gate** |
+| §4.2 P3 | `OFFICE-PROD-03` 已收口；next=`REST-PROD-01` |
 
 ## Acceptance 判定
 
@@ -56,4 +56,4 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 1. `RBLOCK-03` … `RBLOCK-07` 均为 done。
 2. 本文与五份子包 boundary MD 均存在并通过文档/契约测试。
 3. `assert_block_p5_wave_contract()` 通过。
-4. 任务清单 §4.2 P5 波次收口；代码轨 next 转入 PlanMD 下一波次或 P3 user_gate。
+4. 任务清单 §4.2 P5 波次收口；代码轨 next 已转入后续 P3 场景包。

@@ -201,7 +201,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `run_cad_validation.py` | 顶层 `status=pass`，且 `readback_report.status=geometry_verified`、`cad_capability_probe.status=cad_capability_verified` |
 | **CAD-MCP 对话画图** | 在 IDE 里手动确认一次成功 |
 
-任一步失败：**先读 `CAD_AGENT_BLOCKER_PLAYBOOK.md`**，修到与本机同级再开发；不要用「先写代码以后再配环境」的方式凑合。
+任一步失败：**先读 `docs/runbooks/blocker-playbook.md`**，修到与本机同级再开发；不要用「先写代码以后再配环境」的方式凑合。
 
 ### 换机时建议随身带的记录
 
