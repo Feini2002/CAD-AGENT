@@ -200,6 +200,21 @@ def compare_active_document_snapshots(before: dict[str, Any], after: dict[str, A
     return {"status": status, "checks": checks, "preview_layer_entity_delta": preview_delta}
 
 
+def build_capability_probe_session_guard(
+    driver: Any,
+    after_connect: dict[str, Any],
+    *,
+    after_write_phase: str = "after_write",
+) -> dict[str, Any]:
+    """Build connect/write phase snapshots for preview-only capability probe runs."""
+
+    return build_session_guard_report(
+        before_connect=blocked_snapshot(phase="before_connect", reason="cad_not_connected"),
+        after_connect=after_connect,
+        after_write=capture_active_document_snapshot(driver, phase=after_write_phase),
+    )
+
+
 def build_session_guard_report(
     *,
     before_connect: dict[str, Any],

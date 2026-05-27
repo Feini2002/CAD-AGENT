@@ -31,6 +31,8 @@
         "counter",
         "display_unit",
         "workstation",
+        "monitor",
+        "rug",
         "block_reference"
       ]
     },

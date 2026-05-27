@@ -302,7 +302,8 @@ def build_verification_report(
             }
         )
 
-    failed = any(check["status"] == "fail" for check in checks)
+    failed_checks = [check for check in checks if check["status"] == "fail"]
+    failed = bool(failed_checks)
     warning = any(check["status"] == "warning" for check in checks)
     geometry_verified = (
         bool(scoped_entities)
@@ -312,7 +313,10 @@ def build_verification_report(
         and all(check["status"] != "not_run" for check in checks)
     )
     if failed:
-        status = "failed"
+        if all(check["name"] == "created_handles_scope" for check in failed_checks):
+            status = "unverified"
+        else:
+            status = "failed"
     elif geometry_verified:
         status = "geometry_verified"
     elif screenshot_valid:

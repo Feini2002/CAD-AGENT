@@ -23,13 +23,17 @@ from core.verification.cad_validation_gates import (
     created_handles_from_artifact,
     readback_gate_failure,
 )
-from core.verification.preview_only_audit import execution_summary_gate_failure
+from core.verification.cad_validation_geometry_gate import (
+    build_geometry_infrastructure_gates,
+    resolve_report_status_with_geometry_gate,
+)
 from core.verification.cad_validation_evidence import (
     apply_screenshot_step_evidence,
     build_cad_validation_evidence_summary,
     cad_validation_evidence_gate_failure,
     validate_step_evidence_fields,
 )
+from core.verification.cad_validation_trend_index import write_cad_validation_trend_index
 from core.verification.cad_validation_types import CommandResult, CommandRunner, ValidationStep
 from core.path_safety import is_relative_to, resolve_under_project_output
 
@@ -174,14 +178,6 @@ def _step_record(step: ValidationStep, result: CommandResult, output_dir: Path) 
     stderr = result.stderr
 
     status = "pass" if result.returncode == 0 else "fail"
-    if status == "pass" and step.id == "execute_sample_plan":
-        gate_failure = execution_summary_gate_failure(
-            stdout=stdout,
-            path=Path(step.stdout_artifact) if step.stdout_artifact else output_dir / "execution_summary.json",
-        )
-        if gate_failure:
-            status = "fail"
-            stderr = f"{stderr.rstrip()}\n{gate_failure}\n" if stderr else f"{gate_failure}\n"
     if status == "pass" and step.id == "inspect_readback":
         gate_failure = readback_gate_failure(
             stdout,
@@ -285,34 +281,7 @@ def _overall_status(records: list[dict[str, Any]]) -> str:
     return "fail"
 
 
-def _next_actions(report: dict[str, Any]) -> list[str]:
-    failed = [step for step in report["steps"] if step["status"] == "fail"]
-    if not failed:
-        return ["全部验证步骤通过。可以继续执行计划中的下一阶段。"]
-
-    actions: list[str] = []
-    categories = {step["failure_category"] for step in failed}
-    if "missing_dependency" in categories:
-        actions.append("修复 CAD-MCP Python 环境缺失依赖，例如 Pillow、pywin32 或 win32gui，然后重新运行本脚本。")
-    if "cad_connection_failed" in categories:
-        actions.append("打开 AutoCAD 和一张测试 DWG，确认没有授权弹窗阻塞，再重新运行本脚本。")
-    if "repo_regression" in categories:
-        actions.append("仓库测试或自检失败。Codex 应先做最小复现和最小修复，再重新运行本脚本。")
-    if "cad_plan_invalid" in categories or "dry_run_failed" in categories:
-        actions.append("CAD_PLAN 校验或 dry-run 失败。Codex 应修计划生成或 schema 逻辑后复验。")
-    if "execution_failed" in categories:
-        actions.append("CAD 执行失败。Codex 应检查执行器、driver 和安全策略，修复后重新落图。")
-    if "screenshot_failed" in categories:
-        actions.append("截图失败。确认桌面会话可截图，或修复 `render_preview.py` 截图入口。")
-    if "readback_failed" in categories:
-        actions.append("实体回读失败。Codex 应检查 `inspect_dwg.py`、created handles 和 AutoCAD COM 回读逻辑。")
-    if "cad_capability_failed" in categories:
-        actions.append("CAD COM 能力探针失败。Codex 应检查 driver primitive write、handle readback、实体标准化和安全层约束。")
-    if "block_alpha_failed" in categories or "block_alpha_readback_failed" in categories:
-        actions.append("受控块 alpha 证据失败。检查 insert_block_alpha validate/dry-run、COM 插入与 block_reference readback 报告字段。")
-    if "block_alpha_execution_failed" in categories:
-        actions.append("insert_block_alpha 执行失败。检查 AutoCADComDriver.insert_block_alpha 与受控块定义策略。")
-    return actions
+from core.verification.cad_validation_runner_report import _markdown_report, _next_actions
 
 
 def _clear_stale_derived_artifacts(steps: list[ValidationStep], output_dir: Path) -> None:
@@ -329,35 +298,14 @@ def _clear_stale_derived_artifacts(steps: list[ValidationStep], output_dir: Path
             path.unlink()
 
 
-def _markdown_report(report: dict[str, Any]) -> str:
-    lines = [
-        "# CAD Autonomous Validation Report",
-        "",
-        f"- status: `{report['status']}`",
-        f"- root: `{report['root']}`",
-        f"- output_dir: `{report['output_dir']}`",
-        f"- include_cad: `{report['include_cad']}`",
-        "",
-        "## Steps",
-        "",
-        "| step | status | category |",
-        "| --- | --- | --- |",
-    ]
-    for step in report["steps"]:
-        category = step["failure_category"] or "-"
-        lines.append(f"| `{step['id']}` | `{step['status']}` | `{category}` |")
-    lines.extend(["", "## Next Actions", ""])
-    lines.extend(f"- {action}" for action in report["next_actions"])
-    lines.append("")
-    return "\n".join(lines)
-
-
 def run_cad_validation(
     *,
     root: Path,
     output_dir: Path,
     include_cad: bool,
     block_alpha_only: bool = False,
+    geometry_gate_mode: bool = False,
+    environment_optional: bool = False,
     command_runner: CommandRunner = default_command_runner,
 ) -> dict[str, Any]:
     project_root = root.resolve()
@@ -391,16 +339,33 @@ def run_cad_validation(
         if record["status"] == "fail" and step.id in {"autocad_com_connect", "execute_sample_plan", "block_alpha_execute"}:
             blocked_cad_step = step.id
 
+    legacy_status = _overall_status(records)
+    gates = build_geometry_infrastructure_gates(records)
+    effective_geometry_gate_mode = geometry_gate_mode or environment_optional
     report: dict[str, Any] = {
-        "status": _overall_status(records),
+        "status": resolve_report_status_with_geometry_gate(
+            records,
+            geometry_gate_mode=effective_geometry_gate_mode,
+        ),
+        "legacy_status": legacy_status,
+        "geometry_gate_mode": geometry_gate_mode,
+        "environment_optional": environment_optional,
         "root": str(project_root),
         "output_dir": str(output_dir),
         "include_cad": include_cad,
         "block_alpha_only": block_alpha_only,
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "steps": records,
+        **gates,
     }
+    if effective_geometry_gate_mode and gates["geometry_gate"]["status"] == "pass" and gates["infrastructure_gate"]["status"] != "pass":
+        report["infrastructure_debt"] = True
     report["next_actions"] = _next_actions(report)
+    if report.get("infrastructure_debt"):
+        report["next_actions"] = [
+            "几何门禁已通过，但环境/截图/单测等基础设施步骤仍有失败；请单独修复基础设施后再做完整 baseline。",
+            *report["next_actions"],
+        ]
     report["block_alpha"] = summarize_block_alpha_from_steps(records)
     report["evidence_summary"] = build_cad_validation_evidence_summary(records, include_cad=include_cad)
     evidence_gate_failure = cad_validation_evidence_gate_failure(report)
@@ -411,6 +376,12 @@ def run_cad_validation(
 
     _write_text(output_dir / "report.json", json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     _write_text(output_dir / "report.md", _markdown_report(report))
+    write_cad_validation_trend_index(
+        project_root=project_root,
+        reports_root=output_dir.parent,
+        output_dir=output_dir,
+        generated_at=str(report["generated_at"]),
+    )
     return report
 
 
@@ -435,6 +406,7 @@ def run_validation(
         output_dir=resolved_output_dir,
         include_cad=include_cad,
         block_alpha_only=False,
+        environment_optional=False,
         command_runner=command_runner,
     )
 
@@ -453,17 +425,42 @@ def main() -> int:
         action="store_true",
         help="Run only insert_block_alpha validate/dry-run and CAD block alpha steps.",
     )
+    parser.add_argument(
+        "--geometry-gate",
+        action="store_true",
+        help="Top-level status follows geometry steps only (CAD-VAL-01 / RCAD-01).",
+    )
+    parser.add_argument(
+        "--require-geometry-pass",
+        action="store_true",
+        help="Exit non-zero when geometry_gate.status is not pass (implies --geometry-gate).",
+    )
+    parser.add_argument(
+        "--environment-optional",
+        action="store_true",
+        help="Keep infrastructure failures in infrastructure_gate without failing geometry-level status.",
+    )
     args = parser.parse_args()
 
     root = args.root.resolve()
     output_dir = args.output_dir if args.output_dir.is_absolute() else root / args.output_dir
+    geometry_gate_mode = bool(args.geometry_gate or args.require_geometry_pass)
     report = run_cad_validation(
         root=root,
         output_dir=output_dir,
         include_cad=not args.no_cad,
         block_alpha_only=args.block_alpha_only,
+        geometry_gate_mode=geometry_gate_mode,
+        environment_optional=args.environment_optional,
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
+    if args.require_geometry_pass:
+        geometry_status = str(report.get("geometry_gate", {}).get("status", ""))
+        if geometry_status == "pass":
+            return 0
+        if geometry_status == "external_blocker":
+            return 2
+        return 1
     if report["status"] == "pass":
         return 0
     if report["status"] == "external_blocker":

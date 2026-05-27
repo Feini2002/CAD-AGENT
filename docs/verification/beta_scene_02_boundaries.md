@@ -17,8 +17,6 @@
 | `blank_shell` | 客厅 blank-shell + `along_wall` 动线 |
 | `failure` | 净空冲突 blocked 样本 |
 
-Scene Beta 仍是 **能力包**，不是住宅 Scene Product。它证明住宅对象与组合语义可跑通 non-CAD benchmark，但还没有真实住宅项目样本、真实 CAD smoke 和用户确认流。
-
 ## 已交付
 
 | 项 | 说明 |
@@ -32,7 +30,6 @@ Scene Beta 仍是 **能力包**，不是住宅 Scene Product。它证明住宅�
 
 - benchmark pass **≠** `geometry_verified`。
 - Scene Beta **不** 实现 Core 算法或 CAD 执行。
-- Scene Beta **不等于** 住宅场景产品完成。
 - 失败样本为合成 composition，**不** 代表真实户型图纸。
 
 ## 子校验

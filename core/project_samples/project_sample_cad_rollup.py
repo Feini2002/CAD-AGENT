@@ -24,7 +24,14 @@ DEFAULT_MANIFEST_REL = Path("examples/cad_regression/project_sample_cad_rollup.j
 SCHEMA_PATH_REL = Path("core/schemas/project_sample_cad_rollup.schema.json")
 SAFETY_CLAIMS = build_preview_only_audit(layer="CODEX_PREVIEW")
 
-REQUIRED_SAMPLE_IDS = frozenset({"sample_blank_shell", "commercial_fitout_sample"})
+REQUIRED_SAMPLE_IDS = frozenset(
+    {
+        "sample_blank_shell",
+        "commercial_fitout_sample",
+        "commercial_fitout_meeting_sample",
+        "commercial_fitout_reception_sample",
+    }
+)
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -68,10 +75,12 @@ def _run_sample_entry(
             offset=offset,
         )
     elif runner == "fitout_confirmation_workflow":
+        workflow_path = project_root / str(entry["workflow_path"])
         report = run_commercial_fitout_cad_smoke_with_workflow(
             project_root=project_root,
             workflow_output_dir=workflow_output_dir,
             cad_output_dir=cad_output_dir,
+            workflow_path=workflow_path,
             driver=driver,
             no_cad=no_cad,
             offset=offset,

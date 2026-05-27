@@ -55,6 +55,21 @@ def execution_summary_payload(*, handles: list[str], layer: str = "CODEX_PREVIEW
     )
 
 
+def _consistent_capability_probe_session_guard() -> dict[str, object]:
+    return {
+        "version": "cad_session_guard_v1",
+        "status": "consistent",
+        "comparison": {
+            "status": "consistent",
+            "preview_layer_entity_delta": 11,
+            "checks": [
+                {"name": "active_document_identity_stable", "status": "pass", "message": "stable"},
+                {"name": "preview_layer_entity_delta", "status": "pass", "message": "delta=11"},
+            ],
+        },
+    }
+
+
 def cad_capability_verified_probe_payload(**extra: object) -> dict[str, object]:
     payload: dict[str, object] = {
         "status": "cad_capability_verified",
@@ -66,10 +81,12 @@ def cad_capability_verified_probe_payload(**extra: object) -> dict[str, object]:
         "deferred_verification": [],
         "limitations": [],
         "entity_evidence": minimal_verified_entity_evidence(),
+        "session_guard": _consistent_capability_probe_session_guard(),
         "checks": [
             {"name": "handle_readback_count", "status": "pass"},
             {"name": "readback_type_counts", "status": "pass"},
             {"name": "preview_only_audit", "status": "pass"},
+            {"name": "session_guard_consistent", "status": "pass"},
         ],
         "safety": with_legacy_safety_aliases(build_preview_only_audit()),
     }

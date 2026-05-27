@@ -327,12 +327,23 @@ def main() -> int:
         default=Path("output") / "validation_runs" / f"symbol-glyph-cad-smoke-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
     )
     parser.add_argument("--symbol-spec", type=Path, default=None, help="Path to SYMBOL_SPEC JSON (default desk plan).")
+    parser.add_argument("--base-x", type=float, default=None, help="Override glyph base_point X (mm).")
+    parser.add_argument("--base-y", type=float, default=None, help="Override glyph base_point Y (mm).")
     parser.add_argument("--no-cad", action="store_true", help="Emit a deferred report without connecting to AutoCAD.")
     args = parser.parse_args()
+
+    base_point = None
+    if args.base_x is not None or args.base_y is not None:
+        base_point = [
+            float(args.base_x if args.base_x is not None else BASE_POINT[0]),
+            float(args.base_y if args.base_y is not None else BASE_POINT[1]),
+            0.0,
+        ]
 
     output_dir = resolve_symbol_glyph_output_dir(args.output_dir)
     report = run_symbol_glyph_cad_smoke(
         symbol_spec_path=args.symbol_spec,
+        base_point=base_point,
         output_dir=output_dir,
         include_cad=not args.no_cad,
     )

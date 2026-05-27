@@ -27,6 +27,7 @@ ALLOWED_DOMAINS = {
     "retail",
     "office",
     "restaurant",
+    "commercial_fitout",
     "exhibition",
     "hotel",
     "education",

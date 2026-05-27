@@ -20,6 +20,7 @@ from core.verification.block_alpha_validation import (
     default_block_alpha_plan_path,
     write_block_alpha_report,
 )
+from core.path_safety import resolve_under_project_output, resolve_under_project_root
 from core.verification.inspect_dwg import load_execution_summary, snapshot_entities_by_handles
 
 
@@ -35,8 +36,8 @@ def main() -> int:
     args = parser.parse_args()
 
     root = args.root.resolve()
-    output_dir = args.output_dir if args.output_dir.is_absolute() else root / args.output_dir
-    plan_path = (args.plan or default_block_alpha_plan_path(root)).resolve()
+    output_dir = resolve_under_project_output(root, args.output_dir, label="output_dir")
+    plan_path = resolve_under_project_root(root, args.plan or default_block_alpha_plan_path(root), label="plan")
     report_path = output_dir / "block_alpha_report.json"
 
     if args.no_cad:

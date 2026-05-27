@@ -18,8 +18,9 @@ from core.benchmarks.expectations import (
     _validate_expected_evidence_fields,
     summarize_benchmark_evidence,
 )
-from core.object_engine.parametric_objects import create_object_spec, object_spec_to_cad_plan
+from core.demand_agents.loaders import demand_agent_by_id, load_demand_agent_registry, load_demand_cases
 from core.object_engine.detail_plan import object_spec_to_detail_cad_plans
+from core.object_engine.parametric_objects import create_object_spec, object_spec_to_cad_plan
 from core.plan_engine.dry_run_report import create_dry_run_report
 from core.schemas.validator import load_json
 from core.verification.evidence_contract import classify_benchmark_pipeline_evidence, validate_failure_expected_contract
@@ -28,7 +29,6 @@ from core.layout_engine.commercial_fitout_layout_failure import evaluate_fitout_
 from core.path_safety import resolve_under_project_output, validate_safe_path_segment
 from core.workflows.non_cad_pipeline import run_non_cad_pipeline
 from core.workflows.blank_shell_pipeline import run_blank_shell_pipeline
-from core.demand_agents.loaders import demand_agent_by_id, load_demand_agent_registry
 
 
 def _find_project_root(path: Path) -> Path:
@@ -102,7 +102,6 @@ def _actual_from_pipeline(result: dict[str, Any]) -> dict[str, Any]:
         "depth": metrics.get("depth"),
         "height": metrics.get("height"),
         "component_roles": metrics.get("component_roles", []),
-        "detail_plan_count": metrics.get("detail_plan_count"),
         "clearance_refs": metrics.get("clearance_refs", []),
         "clearance_ref_roles": metrics.get("clearance_ref_roles", []),
         "placement_role": metrics.get("placement_role"),
@@ -114,12 +113,6 @@ def _actual_from_pipeline(result: dict[str, Any]) -> dict[str, Any]:
         "failed_check_count": metrics.get("failed_checks", metrics.get("failed_check_count", 0)),
         "failure_category": metrics.get("failure_category", ""),
         "blocked_reasons": metrics.get("blocked_reasons", errors),
-        "demand_agent_id": metrics.get("demand_agent_id", ""),
-        "demand_agent_role_name": metrics.get("demand_agent_role_name", ""),
-        "scene_id": metrics.get("scene_id", ""),
-        "target_pipeline": metrics.get("target_pipeline", ""),
-        "request_text": metrics.get("request_text", ""),
-        "core_capability_targets": metrics.get("core_capability_targets", []),
     }
 
 
@@ -147,20 +140,11 @@ def _validate_benchmark_case(case: Any, *, label: str = "case") -> None:
     pipeline = case.get("pipeline", "non_cad")
     if pipeline not in {"non_cad", "blank_shell", "object_spec", "object_detail_spec", "composition_spec", "demand_case"}:
         raise ValueError(f"{label}.pipeline is not supported: {pipeline}")
-    if pipeline == "demand_case":
-        if not isinstance(case.get("demand_agent_id"), str) or not case.get("demand_agent_id"):
-            raise ValueError(f"{label}.demand_agent_id must be a non-empty string for demand_case pipeline.")
-        if not isinstance(case.get("target_pipeline"), str) or not case.get("target_pipeline"):
-            raise ValueError(f"{label}.target_pipeline must be a non-empty string for demand_case pipeline.")
-        if not isinstance(case.get("request_text"), str) or not case.get("request_text"):
-            raise ValueError(f"{label}.request_text must be a non-empty string for demand_case pipeline.")
-        targets = case.get("core_capability_targets")
-        if not isinstance(targets, list) or not targets:
-            raise ValueError(f"{label}.core_capability_targets must be a non-empty list for demand_case pipeline.")
+    if pipeline in {"demand_case", "object_detail_spec"}:
         return
-    if pipeline in {"object_spec", "object_detail_spec"}:
+    if pipeline == "object_spec":
         if not isinstance(case.get("object_type"), str) or not case.get("object_type"):
-            raise ValueError(f"{label}.object_type must be a non-empty string for {pipeline} pipeline.")
+            raise ValueError(f"{label}.object_type must be a non-empty string for object_spec pipeline.")
         return
     if pipeline == "composition_spec":
         if not isinstance(case.get("composition_id"), str) or not case.get("composition_id"):
@@ -168,6 +152,104 @@ def _validate_benchmark_case(case: Any, *, label: str = "case") -> None:
         return
     if not isinstance(case.get("workflow"), str) or not case.get("workflow"):
         raise ValueError(f"{label}.workflow must be a non-empty string.")
+
+
+def _run_object_detail_spec_case(case: dict[str, Any], *, case_output: Path) -> dict[str, Any]:
+    object_type = str(case["object_type"])
+    spec = create_object_spec(
+        object_type,
+        name=case.get("name") if isinstance(case.get("name"), str) else None,
+        width=case.get("width") if isinstance(case.get("width"), (int, float)) else None,
+        depth=case.get("depth") if isinstance(case.get("depth"), (int, float)) else None,
+        height=case.get("height") if isinstance(case.get("height"), (int, float)) else None,
+    )
+    cad_plans = object_spec_to_detail_cad_plans(spec)
+    dry_run_reports = [create_dry_run_report(cad_plan) for cad_plan in cad_plans]
+    paths = {
+        "object_spec": case_output / "object_spec.json",
+        "cad_plans": case_output / "cad_plans.json",
+        "dry_run_reports": case_output / "dry_run_reports.json",
+        "verification_reports": case_output / "verification_reports.json",
+    }
+    cad_plan_paths = [case_output / "cad_plan_items" / f"cad_plan_{index + 1:03d}.json" for index in range(len(cad_plans))]
+    _write_json(paths["object_spec"], spec)
+    _write_json(paths["cad_plans"], cad_plans)
+    for plan_path, cad_plan in zip(cad_plan_paths, cad_plans):
+        _write_json(plan_path, cad_plan)
+    _write_json(paths["dry_run_reports"], dry_run_reports)
+    verification_reports = [build_verification_report(plan_path=plan_path) for plan_path in cad_plan_paths]
+    _write_json(paths["verification_reports"], verification_reports)
+    component_roles = sorted(
+        {
+            str(component.get("role"))
+            for component in spec.get("components", [])
+            if isinstance(component, dict) and component.get("role")
+        }
+    )
+    return {
+        "status": "ok",
+        "artifacts": {key: str(path) for key, path in paths.items()},
+        "dry_run_report": dry_run_reports[0] if dry_run_reports else {},
+        "dry_run_reports": dry_run_reports,
+        "dry_run_summary": _summarize_dry_run_reports(dry_run_reports),
+        "verification_report": verification_reports[0] if verification_reports else {},
+        "verification_reports": verification_reports,
+        "verification_summary": _summarize_plan_verification_reports(verification_reports),
+        "metrics": {
+            "object_types": [object_type],
+            "object_type": object_type,
+            "width": spec["size"]["width"],
+            "depth": spec["size"]["depth"],
+            "height": spec["size"]["height"],
+            "cad_plans": len(cad_plans),
+            "detail_plan_count": len(cad_plans),
+            "component_roles": component_roles,
+        },
+    }
+
+
+def _merge_demand_metrics(result: dict[str, Any], case: dict[str, Any], *, registry: dict[str, Any]) -> dict[str, Any]:
+    agents = demand_agent_by_id(registry)
+    demand_agent_id = str(case.get("demand_agent_id", ""))
+    agent = agents.get(demand_agent_id, {})
+    metrics = dict(result.get("metrics", {}))
+    metrics.update(
+        {
+            "demand_agent_id": demand_agent_id,
+            "scene_id": str(agent.get("scene_id", case.get("scene_id", ""))),
+            "target_pipeline": str(case.get("target_pipeline", "")),
+            "request_text": str(case.get("request_text", "")),
+            "core_capability_targets": list(case.get("core_capability_targets", [])),
+        }
+    )
+    if metrics.get("detail_plan_count") is not None:
+        metrics["cad_plan_count"] = metrics.get("detail_plan_count", metrics.get("cad_plans", 0))
+    result["metrics"] = metrics
+    return result
+
+
+def _run_demand_case(
+    case: dict[str, Any],
+    *,
+    case_output: Path,
+    root: Path,
+    suite: dict[str, Any],
+) -> dict[str, Any]:
+    registry_path = root / str(suite["demand_agent_registry"])
+    registry = load_demand_agent_registry(registry_path)
+    target_pipeline = str(case["target_pipeline"])
+    if target_pipeline == "object_spec":
+        result = _run_object_spec_case(case, case_output=case_output)
+    elif target_pipeline == "object_detail_spec":
+        result = _run_object_detail_spec_case(case, case_output=case_output)
+    elif target_pipeline == "composition_spec":
+        result = _run_composition_spec_case(case, case_output=case_output)
+    elif target_pipeline == "blank_shell":
+        workflow_path = root / str(case["workflow"])
+        result = run_blank_shell_pipeline(workflow_path, output_dir=case_output)
+    else:
+        raise ValueError(f"unsupported demand target_pipeline: {target_pipeline}")
+    return _merge_demand_metrics(result, case, registry=registry)
 
 
 def _run_object_spec_case(case: dict[str, Any], *, case_output: Path) -> dict[str, Any]:
@@ -198,12 +280,12 @@ def _run_object_spec_case(case: dict[str, Any], *, case_output: Path) -> dict[st
         "dry_run_report": dry_run_report,
         "verification_report": verification_report,
         "metrics": {
-            "cad_plans": 1,
             "object_types": [object_type],
             "object_type": object_type,
             "width": spec["size"]["width"],
             "depth": spec["size"]["depth"],
             "height": spec["size"]["height"],
+            "cad_plans": 1,
             "component_roles": sorted({str(component.get("role")) for component in spec.get("components", [])}),
             "clearance_refs": spec.get("clearance_refs", []),
             "clearance_ref_roles": sorted(
@@ -318,112 +400,27 @@ def _run_composition_spec_case(case: dict[str, Any], *, case_output: Path) -> di
     }
 
 
-def _run_object_detail_spec_case(case: dict[str, Any], *, case_output: Path) -> dict[str, Any]:
-    object_type = str(case["object_type"])
-    spec = create_object_spec(
-        object_type,
-        name=case.get("name") if isinstance(case.get("name"), str) else None,
-        width=case.get("width") if isinstance(case.get("width"), (int, float)) else None,
-        depth=case.get("depth") if isinstance(case.get("depth"), (int, float)) else None,
-        height=case.get("height") if isinstance(case.get("height"), (int, float)) else None,
-    )
-    cad_plans = object_spec_to_detail_cad_plans(spec)
-    dry_run_reports = [create_dry_run_report(cad_plan) for cad_plan in cad_plans]
-    paths = {
-        "object_spec": case_output / "object_spec.json",
-        "detail_cad_plans": case_output / "detail_cad_plans.json",
-        "dry_run_reports": case_output / "dry_run_reports.json",
-        "verification_reports": case_output / "verification_reports.json",
-        "cad_plan_items": case_output / "cad_plan_items",
-    }
-    cad_plan_paths = [paths["cad_plan_items"] / f"cad_plan_{index + 1:03d}.json" for index in range(len(cad_plans))]
-    _write_json(paths["object_spec"], spec)
-    _write_json(paths["detail_cad_plans"], cad_plans)
-    for plan_path, cad_plan in zip(cad_plan_paths, cad_plans):
-        _write_json(plan_path, cad_plan)
-    _write_json(paths["dry_run_reports"], dry_run_reports)
-    verification_reports = [build_verification_report(plan_path=plan_path) for plan_path in cad_plan_paths]
-    _write_json(paths["verification_reports"], verification_reports)
-    component_roles = sorted({str(plan["object"].get("component_role")) for plan in cad_plans})
-    return {
-        "status": "ok",
-        "artifacts": {key: str(path) for key, path in paths.items()},
-        "dry_run_report": dry_run_reports[0],
-        "dry_run_reports": dry_run_reports,
-        "dry_run_summary": _summarize_dry_run_reports(dry_run_reports),
-        "verification_report": verification_reports[0],
-        "verification_reports": verification_reports,
-        "verification_summary": _summarize_plan_verification_reports(verification_reports),
-        "metrics": {
-            "object_types": [object_type],
-            "object_type": object_type,
-            "width": spec["size"]["width"],
-            "depth": spec["size"]["depth"],
-            "height": spec["size"]["height"],
-            "component_roles": component_roles,
-            "cad_plans": len(cad_plans),
-            "detail_plan_count": len(cad_plans),
-        },
-    }
-
-
-def _run_demand_case(case: dict[str, Any], *, root: Path, case_output: Path) -> dict[str, Any]:
-    registry = load_demand_agent_registry(root / "agents" / "demand_side" / "role_agents.json")
-    agents = demand_agent_by_id(registry)
-    demand_agent_id = str(case["demand_agent_id"])
-    if demand_agent_id not in agents:
-        raise ValueError(f"unknown demand_agent_id: {demand_agent_id}")
-    agent = agents[demand_agent_id]
-    target_pipeline = str(case["target_pipeline"])
-    delegate_case = {**case, "pipeline": target_pipeline}
-    if target_pipeline == "object_spec":
-        result = _run_object_spec_case(delegate_case, case_output=case_output)
-    elif target_pipeline == "object_detail_spec":
-        result = _run_object_detail_spec_case(delegate_case, case_output=case_output)
-    elif target_pipeline == "composition_spec":
-        result = _run_composition_spec_case(delegate_case, case_output=case_output)
-    elif target_pipeline == "blank_shell":
-        workflow_path = root / str(case["workflow"])
-        result = run_blank_shell_pipeline(workflow_path, output_dir=case_output)
-    else:
-        raise ValueError(f"demand_case target_pipeline is not supported: {target_pipeline}")
-
-    metrics = result.get("metrics", {}) if isinstance(result.get("metrics"), dict) else {}
-    result["metrics"] = {
-        **metrics,
-        "demand_agent_id": demand_agent_id,
-        "demand_agent_role_name": agent["role_name"],
-        "scene_id": agent["scene_id"],
-        "target_pipeline": target_pipeline,
-        "request_text": str(case["request_text"]),
-        "core_capability_targets": list(case["core_capability_targets"]),
-    }
-    artifacts = result.get("artifacts", {}) if isinstance(result.get("artifacts"), dict) else {}
-    result["artifacts"] = {
-        **artifacts,
-        "demand_agent_registry": str(root / "agents" / "demand_side" / "role_agents.json"),
-    }
-    return result
-
-
 def run_benchmark_case(
     case: dict[str, Any],
     *,
     root: Path,
     output_root: Path,
+    suite: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     output_root = _resolve_output_root(root, output_root)
     _validate_benchmark_case(case)
     case_id = str(case["case_id"])
     case_output = output_root / case_id
-    if case.get("pipeline") == "object_spec":
+    if case.get("pipeline") == "demand_case":
+        if suite is None:
+            raise ValueError("demand_case requires benchmark suite context.")
+        result = _run_demand_case(case, case_output=case_output, root=root, suite=suite)
+    elif case.get("pipeline") == "object_spec":
         result = _run_object_spec_case(case, case_output=case_output)
     elif case.get("pipeline") == "object_detail_spec":
         result = _run_object_detail_spec_case(case, case_output=case_output)
     elif case.get("pipeline") == "composition_spec":
         result = _run_composition_spec_case(case, case_output=case_output)
-    elif case.get("pipeline") == "demand_case":
-        result = _run_demand_case(case, root=root, case_output=case_output)
     elif case.get("pipeline") == "blank_shell":
         workflow_path = root / str(case["workflow"])
         result = run_blank_shell_pipeline(workflow_path, output_dir=case_output)
@@ -431,6 +428,17 @@ def run_benchmark_case(
         workflow_path = root / str(case["workflow"])
         result = run_non_cad_pipeline(workflow_path, output_dir=case_output)
     actual = _actual_from_pipeline(result)
+    metrics = result.get("metrics", {}) if isinstance(result.get("metrics"), dict) else {}
+    for key in (
+        "demand_agent_id",
+        "scene_id",
+        "target_pipeline",
+        "request_text",
+        "core_capability_targets",
+        "detail_plan_count",
+    ):
+        if key in metrics:
+            actual[key] = metrics[key]
     expected = case["expected"]
     errors = _compare_expected(actual, expected)
     status = "pass" if not errors else "fail"
@@ -458,9 +466,17 @@ def run_benchmark_suite(suite_path: Path, *, output_root: Path) -> dict[str, Any
         raise ValueError("Benchmark suite cases must not be empty.")
 
     output_root.mkdir(parents=True, exist_ok=True)
+    if any(isinstance(case, dict) and case.get("pipeline") == "demand_case" for case in cases):
+        registry_rel = suite.get("demand_agent_registry")
+        if not isinstance(registry_rel, str) or not registry_rel:
+            raise ValueError("demand_case benchmark suite requires demand_agent_registry.")
+        registry = load_demand_agent_registry(root / registry_rel)
+        load_demand_cases(suite_path, registry=registry)
     for index, case in enumerate(cases):
         _validate_benchmark_case(case, label=f"cases[{index}]")
-    case_results = [run_benchmark_case(case, root=root, output_root=output_root) for case in cases]
+    case_results = [
+        run_benchmark_case(case, root=root, output_root=output_root, suite=suite) for case in cases
+    ]
     passed = sum(1 for case in case_results if case["status"] == "pass")
     failed = len(case_results) - passed
     evidence_summary = summarize_benchmark_evidence(case_results)

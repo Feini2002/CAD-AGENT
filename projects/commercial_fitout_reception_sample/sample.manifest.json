@@ -1,0 +1,40 @@
+{
+  "version": "0.1",
+  "sample_id": "commercial_fitout_reception_sample",
+  "display_name": "Commercial Fitout Reception Sample (De-identified)",
+  "domain": "office",
+  "deidentified": true,
+  "description": "Manual SHELL_MODEL and DESIGN_BRIEF for reception commercial fitout confirmation loop; no committed DWG.",
+  "cad_policy": {
+    "preview_layer_only": true,
+    "allow_formal_layers": false,
+    "allow_save_dwg": false
+  },
+  "input_files": [
+    {
+      "role": "shell_model",
+      "path": "input/shell.manual.json",
+      "schema": "shell_model"
+    },
+    {
+      "role": "design_brief",
+      "path": "fixtures/design_brief.json",
+      "schema": "design_brief"
+    },
+    {
+      "role": "drawing_model",
+      "path": "fixtures/drawing_model.json",
+      "schema": "drawing_model"
+    }
+  ],
+  "expected_artifacts": [
+    "shell_model",
+    "project_model",
+    "layout_proposal",
+    "design_proposal",
+    "cad_plan",
+    "dry_run_report",
+    "verification_report"
+  ],
+  "evidence_claim": "non_cad_pipeline_only"
+}

@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "gallery_id": "symbol_sofa",
+  "display_name": "沙发 L2 符号（plan glyph）",
+  "ladder_level": "L2",
+  "capability_id": "symbol.spec.symbol_sofa_plan",
+  "symbol_spec_path": "examples/symbol_specs/seating_sofa_plan.json",
+  "cad_evidence": {
+    "validation_run": "output/validation_runs/rcad-15-symbol-glyph-sofa-20260527",
+    "report_path": "output/validation_runs/rcad-15-symbol-glyph-sofa-20260527/symbol_glyph_cad_smoke_report.json",
+    "created_handle_count": 6,
+    "evidence_state": "readback_geometry_verified"
+  },
+  "package_id": "V-PROOF-61-L2-SYMBOL-GALLERY"
+}

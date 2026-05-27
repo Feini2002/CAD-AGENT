@@ -31,7 +31,7 @@ def main() -> int:
         driver_factory=None if args.no_cad else _default_driver_factory,
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    return 0 if report["status"] == "pass" else 1
+    return 0 if report["status"] in {"pass", "geometry_verified"} else 1
 
 
 def _default_driver_factory() -> object:

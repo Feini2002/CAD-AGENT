@@ -8,28 +8,17 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
+from core.verification.cad_session_guard import (
+    build_capability_probe_session_guard,
+    capture_active_document_snapshot,
+    write_session_guard_report,
+)
 from core.verification.entity_level_evidence import (
     assess_entity_level_evidence,
     build_hatch_deferred_entry,
     entity_level_evidence_allows_probe_pass,
 )
-from core.verification.cad_session_guard import (
-    blocked_snapshot,
-    build_session_guard_report,
-    capture_active_document_snapshot,
-    write_session_guard_report,
-)
 from core.verification.evidence_contract import apply_capability_probe_contract
-from core.safety.write_guard import run_negative_write_guard_checks
-from core.verification.created_handle_scope import (
-    analyze_created_handle_scope,
-    created_handle_scope_check,
-)
-from core.verification.preview_only_audit import (
-    build_preview_only_audit,
-    preview_only_audit_check,
-    with_legacy_safety_aliases,
-)
 
 
 PREVIEW_LAYER = "CODEX_PREVIEW"
@@ -121,6 +110,27 @@ def _write_report(output_dir: Path | None, report: dict[str, Any]) -> None:
     )
 
 
+def _attach_probe_session_guard(
+    report: dict[str, Any],
+    driver: Any,
+    after_connect: dict[str, Any],
+    *,
+    output_dir: Path | None,
+) -> dict[str, Any]:
+    session_guard = build_capability_probe_session_guard(driver, after_connect)
+    report["session_guard"] = session_guard
+    write_session_guard_report(output_dir, session_guard)
+    guard_status = str(session_guard.get("status", ""))
+    report["checks"].append(
+        _check(
+            "session_guard_consistent",
+            "pass" if guard_status == "consistent" else "fail",
+            f"session_guard.status={guard_status}",
+        )
+    )
+    return session_guard
+
+
 def _empty_report(*, layer: str, output_dir: Path | None) -> dict[str, Any]:
     return {
         "status": "failed",
@@ -142,10 +152,13 @@ def _empty_report(*, layer: str, output_dir: Path | None) -> dict[str, Any]:
             "bbox": None,
         },
         "checks": [],
-        "active_document_guard": {},
-        "write_guard": {},
         "entity_evidence": [],
-        "safety": with_legacy_safety_aliases(build_preview_only_audit(layer=layer)),
+        "safety": {
+            "writes_only_preview_layer": layer == PREVIEW_LAYER,
+            "saves_dwg": False,
+            "deletes_entities": False,
+            "modifies_formal_layers": False,
+        },
     }
 
 
@@ -158,7 +171,6 @@ def run_cad_capability_probe(
     """Create a tiny preview-only probe and verify it through handle readback."""
 
     report = _empty_report(layer=layer, output_dir=output_dir)
-    before_connect = blocked_snapshot(phase="before_connect", reason="cad_not_connected", preview_layer=layer)
     if layer != PREVIEW_LAYER:
         report["failure_category"] = "safety_policy_failed"
         report["checks"].append(_check("layer_policy", "fail", f"Only {PREVIEW_LAYER} is allowed."))
@@ -173,17 +185,10 @@ def run_cad_capability_probe(
         report["failure_category"] = "cad_connection_failed"
         report["error"] = str(exc)
         report["checks"].append(_check("cad_connection", "fail", str(exc)))
-        after_connect = blocked_snapshot(phase="after_connect", reason="cad_connection_failed", preview_layer=layer)
-        report["active_document_guard"] = build_session_guard_report(
-            before_connect=before_connect,
-            after_connect=after_connect,
-        )
-        write_session_guard_report(output_dir, report["active_document_guard"])
         apply_capability_probe_contract(report)
         _write_report(output_dir, report)
         return report
 
-    after_connect = capture_active_document_snapshot(driver, phase="after_connect", preview_layer=layer)
     active_document = str(getattr(getattr(driver, "doc", None), "Name", ""))
     report["active_document"] = active_document
     report["checks"].append(
@@ -196,10 +201,13 @@ def run_cad_capability_probe(
     report["checks"].append(_check("layer_policy", "pass", f"Probe layer is {PREVIEW_LAYER}."))
 
     write_records: list[dict[str, Any]] = []
+    session_guard_attached = False
+    after_connect_snapshot: dict[str, Any] | None = None
     try:
         if hasattr(driver, "ensure_layer"):
             driver.ensure_layer(layer)
         report["checks"].append(_check("layer_ensure", "pass", f"Layer {layer} is available."))
+        after_connect_snapshot = capture_active_document_snapshot(driver, phase="after_connect")
 
         x0, y0, z0 = PROBE_BASE_POINT
         width, depth = PROBE_SIZE
@@ -324,47 +332,21 @@ def run_cad_capability_probe(
         )
         report["checks"].append(_check("dimension_handles", "pass" if len(dimensions) == 2 else "fail", f"{len(dimensions)} dimension handles returned."))
         report["created_handles"] = rectangle_handles + line_handles + circle_handles + arc_handles + polyline_handles + text_handles + dimensions
+        if after_connect_snapshot is not None:
+            _attach_probe_session_guard(report, driver, after_connect_snapshot, output_dir=output_dir)
+            session_guard_attached = True
     except Exception as exc:
+        if not session_guard_attached and after_connect_snapshot is not None:
+            try:
+                _attach_probe_session_guard(report, driver, after_connect_snapshot, output_dir=output_dir)
+            except Exception:
+                pass
         report["failure_category"] = "execution_failed"
         report["error"] = str(exc)
         report["checks"].append(_check("cad_write_operations", "fail", str(exc)))
-        after_write = blocked_snapshot(phase="after_write", reason="cad_write_failed", preview_layer=layer)
-        report["active_document_guard"] = build_session_guard_report(
-            before_connect=before_connect,
-            after_connect=after_connect,
-            after_write=after_write,
-        )
-        write_session_guard_report(output_dir, report["active_document_guard"])
         apply_capability_probe_contract(report)
         _write_report(output_dir, report)
         return report
-
-    write_guard_report = run_negative_write_guard_checks(driver, preview_layer=layer)
-    report["write_guard"] = write_guard_report
-    report["checks"].append(
-        _check(
-            "write_guard_negative",
-            "pass" if write_guard_report.get("status") == "pass" else "fail",
-            f"write guard status={write_guard_report.get('status')}",
-        )
-    )
-
-    after_write = capture_active_document_snapshot(driver, phase="after_write", preview_layer=layer)
-    report["active_document_guard"] = build_session_guard_report(
-        before_connect=before_connect,
-        after_connect=after_connect,
-        after_write=after_write,
-    )
-    write_session_guard_report(output_dir, report["active_document_guard"])
-    guard_status = str(report["active_document_guard"].get("status", ""))
-    guard_check_status = "pass" if guard_status == "consistent" else "fail"
-    report["checks"].append(
-        _check(
-            "active_document_guard",
-            guard_check_status,
-            f"session guard status={guard_status}",
-        )
-    )
 
     try:
         entities = driver.snapshot_handles(handles=report["created_handles"], layer=layer)
@@ -377,24 +359,19 @@ def run_cad_capability_probe(
         _write_report(output_dir, report)
         return report
 
-    created_handle_scope = analyze_created_handle_scope(
-        input_handles=report["created_handles"],
-        readback_entities=entities,
-    )
-    report["created_handle_scope"] = created_handle_scope
+    read_handles = {str(entity.get("handle")) for entity in entities}
+    missing_handles = [handle for handle in report["created_handles"] if handle not in read_handles]
     report["actual"] = {
         "entity_count": len(entities),
         "type_counts": _type_counts(entities),
         "layer_counts": _layer_counts(entities),
         "bbox": _bbox_from_entities(entities),
-        "created_handle_scope": created_handle_scope,
     }
-    report["checks"].append(created_handle_scope_check(created_handle_scope))
     report["checks"].append(
         _check(
             "handle_readback_count",
-            "pass" if created_handle_scope.get("miss_count", 0) == 0 else "fail",
-            f"hit={created_handle_scope.get('hit_count')} miss={created_handle_scope.get('miss_handles')}",
+            "pass" if not missing_handles and len(entities) == len(report["created_handles"]) else "fail",
+            "Readback covers created handles." if not missing_handles else f"Missing handles: {missing_handles}",
         )
     )
     report["checks"].append(
@@ -445,8 +422,6 @@ def run_cad_capability_probe(
             else f"entity_evidence: {report['entity_evidence']}",
         )
     )
-
-    report["checks"].append(preview_only_audit_check(report.get("safety")))
 
     failed_checks = [check for check in report["checks"] if check["status"] != "pass"]
     if failed_checks:

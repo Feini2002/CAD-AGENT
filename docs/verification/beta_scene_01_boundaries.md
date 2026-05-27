@@ -14,8 +14,6 @@
 | 统一 benchmark | 对象 / 微场景 / blank-shell / 失败样本 9 cases 同一 suite |
 | 断言 | `preferences_scenario=office`、`straight_spine`、evidence 计数 |
 
-Scene Beta 仍是 **能力包**，不是 Scene Product。它证明 office 场景对象和组合语义可在 non-CAD benchmark 中稳定复验，但还没有真实办公项目样本、正式图块库策略、真实 CAD smoke 和用户确认流。
-
 ## 已交付
 
 | 项 | 说明 |
@@ -30,7 +28,6 @@ Scene Beta 仍是 **能力包**，不是 Scene Product。它证明 office 场景
 
 - office beta benchmark pass **≠** `geometry_verified` 或办公真实 CAD 准确。
 - Scene Beta **不** 在 `agents/` 实现 Core 算法或 CAD 执行。
-- Scene Beta **不等于** 办公 / 工装 Scene Product 完成。
 - 本包 **仅** 覆盖 office；residential / restaurant 为后续 `BETA-SCENE-02/03`。
 
 ## 子校验

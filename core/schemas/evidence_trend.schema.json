@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evidence_trend.schema.json",
+  "title": "EVIDENCE_TREND",
+  "type": "object",
+  "required": ["version", "report_id", "status", "generated_at", "vocabulary", "snapshots", "summary", "notes"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "report_id": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["pass", "invalid"] },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "vocabulary": {
+      "type": "object",
+      "required": [
+        "evidence_states",
+        "geometry_accuracy_values",
+        "screenshot_role_values",
+        "geometry_verified_evidence_states",
+        "guard_only_evidence_states"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_states": {
+          "type": "array",
+          "minItems": 8,
+          "items": {
+            "type": "string",
+            "enum": [
+              "cad_capability_verified",
+              "readback_geometry_verified",
+              "deferred_cad_readback_required",
+              "benchmark_pass_non_cad",
+              "blocked_expected_non_cad",
+              "dry_run_valid_plan_only",
+              "invalid_configuration",
+              "negative_guard_verified"
+            ]
+          }
+        },
+        "geometry_accuracy_values": {
+          "type": "array",
+          "minItems": 4,
+          "items": {
+            "type": "string",
+            "enum": [
+              "verified_by_cad_readback",
+              "verified_by_cad_capability_readback",
+              "not_verified_without_cad_readback",
+              "not_verified_by_screenshot"
+            ]
+          }
+        },
+        "screenshot_role_values": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "enum": ["visual_aid_only", "not_applicable"] }
+        },
+        "geometry_verified_evidence_states": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "enum": ["cad_capability_verified", "readback_geometry_verified"]
+          }
+        },
+        "guard_only_evidence_states": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "enum": ["negative_guard_verified"] }
+        }
+      }
+    },
+    "snapshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "snapshot_id",
+          "series_id",
+          "source_kind",
+          "source_path",
+          "snapshot_at",
+          "evidence_state_counts",
+          "geometry_accuracy_counts",
+          "screenshot_role_counts",
+          "summary",
+          "metrics"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "snapshot_id": { "type": "string", "minLength": 1 },
+          "series_id": { "type": "string", "minLength": 1 },
+          "source_kind": {
+            "type": "string",
+            "enum": [
+              "local_cad_regression",
+              "cad_validation",
+              "capability_coverage",
+              "negative_cad_runner",
+              "benchmark_suite",
+              "manual"
+            ]
+          },
+          "source_path": { "type": "string", "minLength": 1 },
+          "snapshot_at": { "type": "string", "minLength": 1 },
+          "evidence_state_counts": {
+            "type": "object",
+            "required": [
+              "cad_capability_verified",
+              "readback_geometry_verified",
+              "deferred_cad_readback_required",
+              "benchmark_pass_non_cad",
+              "blocked_expected_non_cad",
+              "dry_run_valid_plan_only",
+              "invalid_configuration",
+              "negative_guard_verified"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "cad_capability_verified": { "type": "integer", "minimum": 0 },
+              "readback_geometry_verified": { "type": "integer", "minimum": 0 },
+              "deferred_cad_readback_required": { "type": "integer", "minimum": 0 },
+              "benchmark_pass_non_cad": { "type": "integer", "minimum": 0 },
+              "blocked_expected_non_cad": { "type": "integer", "minimum": 0 },
+              "dry_run_valid_plan_only": { "type": "integer", "minimum": 0 },
+              "invalid_configuration": { "type": "integer", "minimum": 0 },
+              "negative_guard_verified": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "geometry_accuracy_counts": {
+            "type": "object",
+            "required": [
+              "not_verified_by_screenshot",
+              "not_verified_without_cad_readback",
+              "verified_by_cad_capability_readback",
+              "verified_by_cad_readback"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "not_verified_by_screenshot": { "type": "integer", "minimum": 0 },
+              "not_verified_without_cad_readback": { "type": "integer", "minimum": 0 },
+              "verified_by_cad_capability_readback": { "type": "integer", "minimum": 0 },
+              "verified_by_cad_readback": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "screenshot_role_counts": {
+            "type": "object",
+            "required": ["not_applicable", "visual_aid_only"],
+            "additionalProperties": false,
+            "properties": {
+              "not_applicable": { "type": "integer", "minimum": 0 },
+              "visual_aid_only": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "required": [
+              "total_count",
+              "geometry_verified_count",
+              "cad_proof_state_count",
+              "guard_only_count",
+              "blocked_or_invalid_count",
+              "deferred_count",
+              "non_cad_only"
+            ],
+            "properties": {
+              "total_count": { "type": "integer", "minimum": 0 },
+              "geometry_verified_count": { "type": "integer", "minimum": 0 },
+              "cad_proof_state_count": { "type": "integer", "minimum": 0 },
+              "guard_only_count": { "type": "integer", "minimum": 0 },
+              "blocked_or_invalid_count": { "type": "integer", "minimum": 0 },
+              "deferred_count": { "type": "integer", "minimum": 0 },
+              "non_cad_only": { "type": "boolean" },
+              "benchmark_pass_non_cad_count": { "type": "integer", "minimum": 0 },
+              "blocked_expected_non_cad_count": { "type": "integer", "minimum": 0 },
+              "invalid_configuration_count": { "type": "integer", "minimum": 0 },
+              "readback_geometry_verified_count": { "type": "integer", "minimum": 0 },
+              "cad_capability_verified_count": { "type": "integer", "minimum": 0 },
+              "deferred_cad_readback_count": { "type": "integer", "minimum": 0 },
+              "dry_run_valid_plan_only_count": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "metrics": { "type": "object" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "total_count",
+        "geometry_verified_count",
+        "cad_proof_state_count",
+        "guard_only_count",
+        "blocked_or_invalid_count",
+        "deferred_count",
+        "non_cad_only",
+        "snapshot_count",
+        "series_count"
+      ],
+      "properties": {
+        "total_count": { "type": "integer", "minimum": 0 },
+        "geometry_verified_count": { "type": "integer", "minimum": 0 },
+        "cad_proof_state_count": { "type": "integer", "minimum": 0 },
+        "guard_only_count": { "type": "integer", "minimum": 0 },
+        "blocked_or_invalid_count": { "type": "integer", "minimum": 0 },
+        "deferred_count": { "type": "integer", "minimum": 0 },
+        "non_cad_only": { "type": "boolean" },
+        "snapshot_count": { "type": "integer", "minimum": 0 },
+        "series_count": { "type": "integer", "minimum": 0 },
+        "benchmark_pass_non_cad_count": { "type": "integer", "minimum": 0 },
+        "blocked_expected_non_cad_count": { "type": "integer", "minimum": 0 },
+        "invalid_configuration_count": { "type": "integer", "minimum": 0 },
+        "readback_geometry_verified_count": { "type": "integer", "minimum": 0 },
+        "cad_capability_verified_count": { "type": "integer", "minimum": 0 },
+        "deferred_cad_readback_count": { "type": "integer", "minimum": 0 },
+        "dry_run_valid_plan_only_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

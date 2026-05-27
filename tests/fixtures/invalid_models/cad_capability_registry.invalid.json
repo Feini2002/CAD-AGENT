@@ -1,0 +1,21 @@
+{
+  "model_type": "cad_capability_registry",
+  "data": {
+    "version": "0.1",
+    "registry_id": "invalid-registry",
+    "capabilities": [
+      {
+        "capability_id": "intent.draw_object.invalid_claim",
+        "display_name": "Invalid claim_level",
+        "category": "intent",
+        "claim_level": "geometry_verified",
+        "ladder_level": "L1",
+        "evidence": {
+          "evidence_state": "readback_geometry_verified",
+          "geometry_accuracy": "verified_by_cad_readback",
+          "screenshot_role": "visual_aid_only"
+        }
+      }
+    ]
+  }
+}

@@ -45,8 +45,6 @@ pass 样本证据为非 CAD：`benchmark_pass_non_cad`、`geometry_accuracy=not_
 
 这些字段是业务语义和验证提示，不在场景 Agent 内实现碰撞、通道、净空或 CAD 执行。
 
-本文的 office benchmark 是 Core 底座验证和办公语义样本，不等于办公 / 工装 Scene Product 已完成。真正的工装或办公产品化还需要对象体系固化、图块 metadata、脱敏项目样本、真实 CAD smoke 和用户确认流；边界见 `../architecture/core-scene-agent-boundaries.md`。
-
 ## 最小对象集合
 
 | 对象 | 默认尺寸 / 字段 | 角色 | 验收重点 |
@@ -143,4 +141,4 @@ office agent 不得写：
 
 ## 本文不能声称
 
-本文不能声称办公布局几何已经真实准确，不能声称已经通过 AutoCAD readback，不能声称已有完整碰撞 / 通道 / 净空算法，不能把截图当几何证据，也不能把 `benchmark_pass_non_cad` 等同于 `readback_geometry_verified`。本文也不能声称办公或工装 Scene Product 已完成。
+本文不能声称办公布局几何已经真实准确，不能声称已经通过 AutoCAD readback，不能声称已有完整碰撞 / 通道 / 净空算法，不能把截图当几何证据，也不能把 `benchmark_pass_non_cad` 等同于 `readback_geometry_verified`。

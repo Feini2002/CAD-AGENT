@@ -1,0 +1,30 @@
+{
+  "version": "0.1",
+  "manifest_id": "composition_cad_registry",
+  "description": "Commercial fitout micro-scene composition CAD → registry composition + benchmark rows.",
+  "benchmark_suite_path": "examples/benchmarks/commercial_fitout_micro_scene_benchmark.json",
+  "benchmark_output_subdir": "commercial_fitout_micro_scene_benchmark",
+  "cases": [
+    {
+      "benchmark_case_id": "fitout_open_office_desk_chair_micro_scene",
+      "registry_capability_id": "composition.fitout_open_office_desk_chair",
+      "mirror_capability_ids": [
+        "benchmark.commercial_fitout_micro_scene_benchmark.fitout_open_office_desk_chair_micro_scene"
+      ]
+    },
+    {
+      "benchmark_case_id": "fitout_reception_counter_micro_scene",
+      "registry_capability_id": "composition.fitout_reception_counter_waiting",
+      "mirror_capability_ids": [
+        "benchmark.commercial_fitout_micro_scene_benchmark.fitout_reception_counter_micro_scene"
+      ]
+    },
+    {
+      "benchmark_case_id": "fitout_meeting_table_micro_scene",
+      "registry_capability_id": "composition.fitout_meeting_table_chairs",
+      "mirror_capability_ids": [
+        "benchmark.commercial_fitout_micro_scene_benchmark.fitout_meeting_table_micro_scene"
+      ]
+    }
+  ]
+}

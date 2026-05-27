@@ -4,6 +4,7 @@ import json
 import unittest
 from pathlib import Path
 
+from core.agents.fitout_sample_specs import resolve_fitout_sample_spec
 from core.agents.commercial_fitout_sample_confirmation import (
     assert_pre_confirmation_gate,
     build_assumptions_risks,
@@ -68,7 +69,10 @@ class CommercialFitoutSampleConfirmationTests(unittest.TestCase):
         pre = run_fitout_sample_pre_confirmation(output_dir=output_dir, project_root=PROJECT_ROOT)
         self.assertEqual(pre["status"], "confirmation_pending")
         proposal = json.loads((output_dir / "design_proposal.json").read_text(encoding="utf-8"))
-        confirmation = build_confirmation_for_sample_proposal(proposal)
+        confirmation = build_confirmation_for_sample_proposal(
+            proposal,
+            spec=resolve_fitout_sample_spec(),
+        )
         self.assertEqual(confirmation["proposal_id"], proposal["proposal_id"])
         self.assertTrue(confirmation["selected_candidate_id"])
 

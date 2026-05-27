@@ -72,3 +72,6 @@ projects/<sample_id>/
 
 - `sample_blank_shell/` — 手工 `SHELL_MODEL`，blank-shell 非 CAD 回归（`BETA-PROJECT-SAMPLE-01` 基线）。
 - `sample_blank_shell_too_small/` — 过小 shell，用于 `project_sample_benchmark` 的 `blocked_expected_non_cad` 失败断言（`BETA-PROJECT-SAMPLE-04`）。
+- `commercial_fitout_sample/` — 工装开放办公脱敏样本（C-CFIT-05）。
+- `commercial_fitout_meeting_sample/` — 工装会议室脱敏样本（CFIT-09；`RCAD-10` 路径）。
+- `commercial_fitout_reception_sample/` — 工装前台接待脱敏样本（CFIT-10；`RCAD-19` 路径）。

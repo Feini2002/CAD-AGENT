@@ -84,6 +84,25 @@
       }
     },
     {
+      "id": "primitive_matrix_cad",
+      "title": "Primitive capability matrix (real CAD)",
+      "entrypoint": "scripts/run_primitive_matrix.py",
+      "requires_real_cad": true,
+      "expected_evidence_state": "geometry_verified",
+      "output_path": "primitive_matrix_cad/primitive_matrix_report.json",
+      "command": [
+        "scripts/run_primitive_matrix.py",
+        "--output-dir",
+        "{output_dir}/primitive_matrix_cad"
+      ],
+      "safety": {
+        "layer": "CODEX_PREVIEW",
+        "saved_dwg": false,
+        "deleted_entities": false,
+        "modified_formal_layers": false
+      }
+    },
+    {
       "id": "primitive_matrix_no_cad",
       "title": "Primitive capability matrix (no-CAD)",
       "entrypoint": "scripts/run_primitive_matrix.py",

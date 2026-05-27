@@ -1,0 +1,7 @@
+{
+  "model_type": "cad_block_attribute_hatch_boundary",
+  "data": {
+    "version": "0.1",
+    "boundary_id": "block-attribute-hatch-boundary"
+  }
+}

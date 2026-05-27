@@ -1,0 +1,37 @@
+{
+  "version": "0.1",
+  "manifest_id": "symbol_glyph_cad_matrix",
+  "description": "Six symbol archetypes with representative glyph specs (V-PROOF-32).",
+  "cases": [
+    {
+      "case_id": "archetype_surface",
+      "registry_capability_id": "symbol.archetype.surface",
+      "symbol_spec_path": "examples/symbol_specs/surface_desk_plan.json"
+    },
+    {
+      "case_id": "archetype_seating",
+      "registry_capability_id": "symbol.archetype.seating",
+      "symbol_spec_path": "examples/symbol_specs/seating_chair_plan.json"
+    },
+    {
+      "case_id": "archetype_sleeping",
+      "registry_capability_id": "symbol.archetype.sleeping",
+      "symbol_spec_path": "examples/symbol_specs/sleeping_bed_plan.json"
+    },
+    {
+      "case_id": "archetype_storage",
+      "registry_capability_id": "symbol.archetype.storage",
+      "symbol_spec_path": "examples/symbol_specs/storage_cabinet_plan.json"
+    },
+    {
+      "case_id": "archetype_display",
+      "registry_capability_id": "symbol.archetype.display",
+      "symbol_spec_path": "examples/symbol_specs/display_shelf_plan.json"
+    },
+    {
+      "case_id": "archetype_workstation",
+      "registry_capability_id": "symbol.archetype.workstation",
+      "symbol_spec_path": "examples/symbol_specs/workstation_plan.json"
+    }
+  ]
+}

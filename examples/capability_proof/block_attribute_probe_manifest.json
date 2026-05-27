@@ -1,0 +1,12 @@
+{
+  "manifest_id": "block-attribute-probe-01",
+  "package_id": "RBLOCK-06-BLOCK-ATTRIBUTE-BOUNDARY",
+  "legacy_boundary_doc": "docs/verification/beta_cad_block_02_boundaries.md",
+  "boundary_doc": "docs/verification/rblock_06_block_attribute_boundary.md",
+  "probe_plan_path": "examples/plans/insert_block_alpha_attribute_probe.json",
+  "baseline_plan_path": "examples/plans/insert_block_alpha_test.json",
+  "matrix_manifest_path": "examples/capability_proof/block_insert_matrix_manifest.json",
+  "registry_capability_id": "block.insert_block_alpha.attributes",
+  "expected_probe_tags": ["ROOM", "DESK_ID"],
+  "proof_package": "BETA-CAD-BLOCK-02"
+}

@@ -1,0 +1,65 @@
+{
+  "manifest_id": "symbol-block-first-tier-01",
+  "description": "P4 SYMBOL-09: block-first tier resolution smoke (non-CAD).",
+  "library_path": "libraries/blocks/block_library.example.json",
+  "cases": [
+    {
+      "case_id": "controlled-block-wins",
+      "object_spec_path": "examples/object_specs/desk_1400x700.json",
+      "object_spec_overrides": {
+        "preferred_block_refs": ["controlled-test-block-001"],
+        "fallback_policy": { "mode": "block_preferred" }
+      },
+      "block_library_overrides": {
+        "blocks": [
+          {
+            "block_id": "controlled-test-block-001",
+            "name": "Controlled Test Block",
+            "category": "test_fixture",
+            "domain": "generic",
+            "tags": ["controlled"],
+            "size": { "width": 900, "depth": 450, "height": 750 },
+            "insertion_point": [0, 0, 0],
+            "rotation_allowed": true,
+            "cad_identity": {
+              "block_name": "CODEX_TEST_BLOCK_001",
+              "definition_name": "CODEX_TEST_BLOCK_001",
+              "expected_entity_type": "block_reference"
+            },
+            "validation": { "status": "cad_insertion_verified", "tolerance_mm": 2.0 }
+          }
+        ]
+      },
+      "expected": {
+        "selected_render_path": "block",
+        "selected_cad_intent": "insert_block_alpha",
+        "silent_degradation": false
+      }
+    },
+    {
+      "case_id": "metadata-only-block-falls-to-glyph",
+      "object_spec_path": "examples/object_specs/desk_1400x700.json",
+      "object_spec_overrides": {
+        "preferred_block_refs": ["controlled-test-block-001"]
+      },
+      "expected": {
+        "selected_render_path": "symbol_glyph",
+        "selected_cad_intent": "draw_symbol_glyph",
+        "silent_degradation": false,
+        "block_tier_available": false
+      }
+    },
+    {
+      "case_id": "block-preferred-without-library-glyph",
+      "object_spec_path": "examples/object_specs/desk_1400x700.json",
+      "object_spec_overrides": {
+        "fallback_policy": { "mode": "block_preferred" }
+      },
+      "use_library": false,
+      "expected": {
+        "selected_render_path": "symbol_glyph",
+        "silent_degradation": false
+      }
+    }
+  ]
+}

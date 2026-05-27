@@ -1,0 +1,13 @@
+{
+  "version": "0.1",
+  "workflow_id": "commercial-fitout-meeting-sample-confirmation-loop",
+  "description": "CFIT-09: de-identified meeting-room commercial fitout sample -> DESIGN_PROPOSAL gate -> user confirmation -> confirmed CAD_PLAN bundle.",
+  "inputs": {
+    "design_brief": "projects/commercial_fitout_meeting_sample/fixtures/design_brief.json",
+    "drawing_model": "projects/commercial_fitout_meeting_sample/fixtures/drawing_model.json",
+    "shell_model": "projects/commercial_fitout_meeting_sample/input/shell.manual.json",
+    "preferences": "agents/commercial_fitout/preferences.json",
+    "block_library": "libraries/blocks/commercial_fitout_block_library.json"
+  },
+  "object_types": ["table", "chair", "cabinet"]
+}

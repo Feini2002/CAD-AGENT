@@ -1,7 +1,15 @@
 {
   "version": "0.1",
+  "suite_id": "symbol-fallback-policy-01",
   "benchmark_id": "symbol-fallback-policy-01",
   "description": "Non-CAD resolution cases for block / symbol / component / bbox fallback evidence.",
+  "expected_evidence_summary": {
+    "case_count": 3,
+    "dry_run_valid_plan_only_count": 1,
+    "deferred_cad_readback_count": 1,
+    "benchmark_pass_non_cad_count": 1,
+    "non_cad_only": true
+  },
   "cases": [
     {
       "case_id": "desk-symbol-glyph",
@@ -9,7 +17,10 @@
       "expected": {
         "selected_render_path": "symbol_glyph",
         "selected_evidence_state": "dry_run_valid_plan_only",
-        "silent_degradation": false
+        "silent_degradation": false,
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only"
       }
     },
     {
@@ -19,7 +30,10 @@
       "expected": {
         "selected_render_path": "component_preview",
         "declared_fallback_mode": "fallback_component_preview",
-        "silent_degradation": false
+        "silent_degradation": false,
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only"
       }
     },
     {
@@ -35,7 +49,10 @@
       "expected": {
         "selected_render_path": "deferred",
         "selected_evidence_state": "deferred_cad_readback",
-        "silent_degradation": false
+        "silent_degradation": false,
+        "evidence_state": "deferred_cad_readback_required",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "not_applicable"
       }
     }
   ]

@@ -1,0 +1,120 @@
+{
+  "version": "0.1",
+  "index_id": "capability_showcase_index",
+  "updated_at": "2026-05-27",
+  "entries": [
+    {
+      "capability_id": "symbol.spec.symbol_desk_1400_plan",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "showcase_path": "showcase/L2/symbol_desk_1400/gallery_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof61-20260527/desk/symbol_glyph_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-61-L2-SYMBOL-GALLERY"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_chair_plan",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "showcase_path": "showcase/L2/symbol_chair/gallery_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof61-20260527/chair/symbol_glyph_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-61-L2-SYMBOL-GALLERY"
+    },
+    {
+      "capability_id": "symbol.spec.surface_table_plan",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "showcase_path": "showcase/L2/symbol_table/gallery_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof61-20260527/table/symbol_glyph_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-61-L2-SYMBOL-GALLERY"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_sofa_plan",
+      "ladder_level": "L2",
+      "domain": "generic",
+      "showcase_path": "showcase/L2/symbol_sofa/gallery_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof61-20260527/sofa/symbol_glyph_cad_smoke_report.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-61-L2-SYMBOL-GALLERY"
+    },
+    {
+      "capability_id": "composition.fitout_open_office_desk_chair",
+      "ladder_level": "L3",
+      "domain": "commercial_fitout",
+      "showcase_path": "showcase/L3/fitout_open_office_desk_chair/snippet_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof62-20260527/composition_cad/fitout_open_office_desk_chair_micro_scene/verification_reports/verification_report_001.json",
+      "benchmark_case_id": "fitout_open_office_desk_chair_micro_scene",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-62-L3-FITOUT-SNIPPET"
+    },
+    {
+      "capability_id": "composition.fitout_reception_counter_waiting",
+      "ladder_level": "L3",
+      "domain": "commercial_fitout",
+      "showcase_path": "showcase/L3/fitout_reception_counter/snippet_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof62-20260527/composition_cad/fitout_reception_counter_micro_scene/verification_reports/verification_report_001.json",
+      "benchmark_case_id": "fitout_reception_counter_micro_scene",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-62-L3-FITOUT-SNIPPET"
+    },
+    {
+      "capability_id": "composition.fitout_meeting_table_chairs",
+      "ladder_level": "L3",
+      "domain": "commercial_fitout",
+      "showcase_path": "showcase/L3/fitout_meeting_table/snippet_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof62-20260527/composition_cad/fitout_meeting_table_micro_scene/verification_reports/verification_report_001.json",
+      "benchmark_case_id": "fitout_meeting_table_micro_scene",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-62-L3-FITOUT-SNIPPET"
+    },
+    {
+      "capability_id": "composition.bedroom_bed_rug",
+      "ladder_level": "L3",
+      "domain": "residential",
+      "showcase_path": "showcase/L3/interior_bedroom_bed_rug/snippet_index.json",
+      "verification_report_path": "output/validation_runs/capability-lab-vproof-20260527/composition_cad_registry/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-63-L4-PROJECT-SLICE"
+    },
+    {
+      "capability_id": "composition.dining_table_set",
+      "ladder_level": "L3",
+      "domain": "residential",
+      "showcase_path": "showcase/L3/interior_dining_table_set/snippet_index.json",
+      "verification_report_path": "output/validation_runs/capability-lab-vproof-20260527/composition_cad_registry/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-63-L4-PROJECT-SLICE"
+    },
+    {
+      "capability_id": "composition.office_desk_combo",
+      "ladder_level": "L3",
+      "domain": "office",
+      "showcase_path": "showcase/L3/interior_office_desk_combo/snippet_index.json",
+      "verification_report_path": "output/validation_runs/capability-lab-vproof-20260527/composition_cad_registry/composition_cad/office_planner_desk_combo/verification_reports/verification_report_001.json",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-63-L4-PROJECT-SLICE"
+    },
+    {
+      "capability_id": "project.sample.commercial_fitout_meeting_room",
+      "ladder_level": "L4",
+      "domain": "commercial_fitout",
+      "showcase_path": "showcase/L4/commercial_fitout_meeting_sample/slice_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof63-20260527/cad/commercial_fitout_meeting_sample/commercial_fitout_cad_smoke_report.json",
+      "sample_id": "commercial_fitout_meeting_sample",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-63-L4-PROJECT-SLICE"
+    },
+    {
+      "capability_id": "project.sample.commercial_fitout_reception",
+      "ladder_level": "L4",
+      "domain": "commercial_fitout",
+      "showcase_path": "showcase/L4/commercial_fitout_reception_sample/slice_index.json",
+      "verification_report_path": "output/validation_runs/capability-proof-vproof63-20260527/cad/commercial_fitout_reception_sample/commercial_fitout_cad_smoke_report.json",
+      "sample_id": "commercial_fitout_reception_sample",
+      "claim_level": "showcase",
+      "package_id": "V-PROOF-63-L4-PROJECT-SLICE"
+    }
+  ]
+}

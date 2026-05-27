@@ -1,0 +1,10 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": { "type": "rug", "name": "Smoke Rug", "width": 2400, "depth": 1900 },
+  "placement": { "mode": "absolute", "base_point": [0, 0, 0] },
+  "drawing": { "layer": "CODEX_PREVIEW", "include_label": false, "include_dimensions": false },
+  "confidence": 1.0,
+  "needs_confirmation": false
+}

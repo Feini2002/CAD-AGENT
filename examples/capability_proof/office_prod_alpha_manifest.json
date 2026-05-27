@@ -1,0 +1,15 @@
+{
+  "manifest_id": "office-prod-alpha-01",
+  "package_id": "OFFICE-PROD-01-OFFICE-ALPHA-BOUNDARY",
+  "scenario": "office",
+  "benchmark_suite_path": "examples/benchmarks/office_alpha_benchmark.json",
+  "benchmark_suite_id": "office-alpha-benchmark",
+  "legacy_evidence_doc": "docs/verification/office_alpha_benchmark_evidence.md",
+  "boundary_doc": "docs/verification/office_prod_01_office_alpha_boundary.md",
+  "agent_paths": {
+    "agent_json": "agents/office/agent.json",
+    "preferences_json": "agents/office/preferences.json",
+    "rules_md": "agents/office/rules.md"
+  },
+  "proof_packages": ["V-PROOF-24", "R-OFFICE-MICRO"]
+}

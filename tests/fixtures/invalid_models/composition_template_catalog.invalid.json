@@ -1,0 +1,23 @@
+{
+  "model_type": "composition_template_catalog",
+  "data": {
+    "version": "9.9",
+    "catalog_id": "composition_templates",
+    "templates": {
+      "bedroom_bed_rug": {
+        "name": "Bedroom Bed + Rug Set",
+        "domain": "residential",
+        "objects": [
+          {
+            "instance_id": "bed-01",
+            "type": "bed",
+            "name": "Bed",
+            "role": "primary_bed",
+            "base_point": [0, 0, 0],
+            "size": { "width": 2000, "depth": 1500, "height": 600 }
+          }
+        ]
+      }
+    }
+  }
+}

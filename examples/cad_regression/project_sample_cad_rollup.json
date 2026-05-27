@@ -17,6 +17,20 @@
       "workflow_path": "examples/workflows/commercial_fitout_sample_confirmation_loop.json",
       "cad_offset": [64000, 36000, 0],
       "report_filename": "commercial_fitout_cad_smoke_report.json"
+    },
+    {
+      "sample_id": "commercial_fitout_meeting_sample",
+      "runner": "fitout_confirmation_workflow",
+      "workflow_path": "examples/workflows/commercial_fitout_meeting_sample_confirmation_loop.json",
+      "cad_offset": [76000, 36000, 0],
+      "report_filename": "commercial_fitout_cad_smoke_report.json"
+    },
+    {
+      "sample_id": "commercial_fitout_reception_sample",
+      "runner": "fitout_confirmation_workflow",
+      "workflow_path": "examples/workflows/commercial_fitout_reception_sample_confirmation_loop.json",
+      "cad_offset": [88000, 36000, 0],
+      "report_filename": "commercial_fitout_cad_smoke_report.json"
     }
   ]
 }

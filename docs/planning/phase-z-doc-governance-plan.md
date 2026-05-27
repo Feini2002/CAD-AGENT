@@ -1,7 +1,7 @@
 ﻿# Phase Z Documentation Governance Plan
 
 状态：由 `CORE_RESTRUCTURE_PLAN.md` 拆分而来
-最后同步：2026-05-26
+最后同步：2026-05-27
 
 > 本文是 Phase Z 辅助执行剧本，不是独立 PlanMD。执行顺序、优先级和退出标准以根目录 `CORE_RESTRUCTURE_PLAN.md` 为准；执行前仍需先读 `AGENTS.md` 与 `CORE_CONTEXT_BRIEF.md`，并遵守 `CODEX_PREVIEW`、不保存、不覆盖、不删除、不改正式图层的 CAD 安全边界。
 
@@ -19,7 +19,7 @@
 - Z-04b `docs/planning/phase-*.md` 只保留辅助执行剧本身份；新增待办、优先级或退出标准时先回写 PlanMD。
 - 已完成：Z-05 `docs/history/shell-layout-time-estimate.md` 只作为历史估算，不作为执行计划。
 - Z-06 如果未来要迁移根目录文档，优先迁移到 `docs/history/`、`docs/architecture/`、`docs/decisions/` 或 `docs/verification/`，并更新所有引用。
-- Z-07 文档改动后至少跑文本自查，防止过期 phase、占位词和不存在命令继续扩散。
+- Z-07 文档改动后至少跑文本自查，防止过期 phase、占位词、不存在命令、重复 `next`、表 A/B/C 旧数值或“默认完整三表”旧规则继续扩散。
 
 ### 文档自查命令
 
@@ -27,6 +27,8 @@
 rg -n "TB[D]|TO[D]O|以后再[说]|补一[下]|随[便]|先占[位]" README.md CORE_CONTEXT_BRIEF.md CORE_STATUS.md CORE_ROADMAP.md CORE_RESTRUCTURE_PLAN.md CAD_AGENT_STATUS.md
 rg -n "Phase A[-][N]|A[-][M]|阶段 5：图库块底[座]|阶段 6：布局底[座]|阶段 7：图纸理解底[座]" CORE_ROADMAP.md CORE_RESTRUCTURE_PLAN.md CAD_AGENT_STATUS.md README.md
 rg -n "run_cad_validation|run_blank_shell_pipeline|CORE_CONTEXT_BRIEF" README.md CORE_CONTEXT_BRIEF.md CORE_RESTRUCTURE_PLAN.md CAD_AGENT_RULES.md CAD_AGENT_STATUS.md
+rg -n "21/29|72%|48\\.85%|50\\.52%|39\\.53%|展示就绪度.*0%|最高已证 \\*\\*L3|下一步计划" README.md CORE_CONTEXT_BRIEF.md CORE_STATUS.md CAD_AGENT_STATUS.md docs/planning/任务清单.md
+rg -n "next=.*或|或 `REST-PROD|唯一.*next|第二套.*计划" CORE_CONTEXT_BRIEF.md CORE_RESTRUCTURE_PLAN.md docs/planning/任务清单.md docs/README.md docs/handoffs/README.md
 ```
 
 ### 固定非 CAD 回归命令

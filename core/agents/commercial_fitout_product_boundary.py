@@ -11,6 +11,8 @@ from core.agents.commercial_fitout_scope import (
     load_commercial_fitout_scope,
     validate_commercial_fitout_scope,
 )
+from core.agents.fitout_sample_specs import FITOUT_SAMPLE_SPECS, fitout_subscene_to_sample_id
+from core.project_samples.project_sample_cad_rollup import load_project_sample_cad_manifest
 from core.schemas.validator import validate_value
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -20,6 +22,8 @@ DEFAULT_BOUNDARY_PATH = (
 BOUNDARY_SCHEMA_PATH = (
     PROJECT_ROOT / "core" / "schemas" / "commercial_fitout_product_alpha_boundary.schema.json"
 )
+
+FITOUT_DEIDENTIFIED_SAMPLE_IDS = frozenset(FITOUT_SAMPLE_SPECS)
 
 REQUIRED_PACKAGES = frozenset(
     {
@@ -85,6 +89,67 @@ def assert_product_boundary_contract(boundary: dict[str, Any] | None = None) -> 
             raise AssertionError(
                 f"declarable_capabilities[{item.get('id')}] requires geometry_verified_note when geometry_verified=true"
             )
+
+    assert_fitout_three_sample_rollup_sync(boundary=data, project_root=PROJECT_ROOT)
+
+
+def assert_fitout_three_sample_rollup_sync(
+    *,
+    boundary: dict[str, Any] | None = None,
+    project_root: Path | None = None,
+) -> None:
+    """Raise when product boundary, fitout specs, and LCAD-08 rollup manifest disagree."""
+
+    data = boundary or load_product_alpha_boundary()
+    root = project_root or PROJECT_ROOT
+
+    entries = data.get("deidentified_project_samples")
+    if not isinstance(entries, list) or len(entries) != len(PRIMARY_SUBSCENE_IDS):
+        raise AssertionError("deidentified_project_samples must list three primary subscene samples")
+
+    subscene_ids = {str(item.get("subscene_id")) for item in entries if isinstance(item, dict)}
+    if subscene_ids != PRIMARY_SUBSCENE_IDS:
+        raise AssertionError(
+            f"deidentified_project_samples subscene_id set must be {sorted(PRIMARY_SUBSCENE_IDS)!r}, got {sorted(subscene_ids)!r}"
+        )
+
+    spec_by_subscene = {spec.subscene_id: spec for spec in FITOUT_SAMPLE_SPECS.values()}
+    if set(spec_by_subscene) != PRIMARY_SUBSCENE_IDS:
+        raise AssertionError("fitout_sample_specs must cover all primary subscenes")
+
+    if fitout_subscene_to_sample_id() != {spec.subscene_id: spec.sample_id for spec in FITOUT_SAMPLE_SPECS.values()}:
+        raise AssertionError("fitout_subscene_to_sample_id out of sync with FITOUT_SAMPLE_SPECS")
+
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise AssertionError("deidentified_project_samples entries must be objects")
+        subscene_id = str(entry.get("subscene_id", ""))
+        sample_id = str(entry.get("sample_id", ""))
+        spec = spec_by_subscene.get(subscene_id)
+        if spec is None:
+            raise AssertionError(f"unknown subscene in boundary fixture: {subscene_id!r}")
+        if sample_id != spec.sample_id:
+            raise AssertionError(
+                f"boundary sample_id {sample_id!r} != fitout_sample_specs {spec.sample_id!r} for {subscene_id!r}"
+            )
+        if Path(str(entry.get("project_rel", ""))) != spec.project_rel:
+            raise AssertionError(f"boundary project_rel mismatch for {subscene_id!r}")
+        if Path(str(entry.get("workflow_rel", ""))) != spec.workflow_rel:
+            raise AssertionError(f"boundary workflow_rel mismatch for {subscene_id!r}")
+        project_dir = root / spec.project_rel
+        if not project_dir.is_dir():
+            raise AssertionError(f"missing de-identified project directory: {project_dir}")
+
+    manifest = load_project_sample_cad_manifest(project_root=root)
+    manifest_ids = {str(item.get("sample_id")) for item in manifest.get("samples", []) if isinstance(item, dict)}
+    missing_manifest = FITOUT_DEIDENTIFIED_SAMPLE_IDS - manifest_ids
+    if missing_manifest:
+        raise AssertionError(f"project_sample_cad_rollup manifest missing fitout samples: {sorted(missing_manifest)!r}")
+
+    for entry in entries:
+        sample_id = str(entry.get("sample_id", ""))
+        if not entry.get("rollup_manifest_registered"):
+            raise AssertionError(f"rollup_manifest_registered must be true for {sample_id!r}")
 
 
 def summarize_for_status_pages(boundary: dict[str, Any] | None = None) -> dict[str, str]:

@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_symbol_glyph",
+  "object": {
+    "type": "symbol_glyph",
+    "symbol_id": "intent-lab-door-hint",
+    "archetype": "door_opening_hint",
+    "glyph_primitives": [
+      {
+        "part_id": "frame",
+        "kind": "frame",
+        "primitive": "rectangle",
+        "corner1": [0, 0, 0],
+        "corner2": [900, 50, 0]
+      }
+    ]
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [2000, 1000, 0]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW"
+  },
+  "confidence": 1.0,
+  "needs_confirmation": false
+}

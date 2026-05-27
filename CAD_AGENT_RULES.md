@@ -62,25 +62,50 @@
 
 后续每次完成 CAD Agent 相关改动后，Codex 都要顺手模拟估算一次开发进度，并在最终回复中给出大概百分比。该百分比是产品和工程节奏判断工具，不是严格项目管理 KPI，允许有 5-10 个百分点的主观误差。
 
-固定按 **表 A + 表 B** 汇报（格式见 `AGENTS.md`）：
+聊天最终回复默认按 `AGENTS.md`「交付默认精简进度」使用 **1 张轻量表**，结构是：**表 C 主指标** → 本轮进展 / 验证 → 表 A 折叠工程节奏 → 表 B 本轮相关中文轨道。这样减少低价值重复表格，但保留「真实 CAD 实力」的安全阀。
 
-**表 A — 工程节奏**
+**默认必须保留：**
 
-- `Core 底座开发进度`、`Agent 多场景实现进度`、`总进度`（默认 Core 70% + Agent 30%）。
+- **表 C 主指标**：`cad_strength_headline_percent`，必须先报；机器值以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准。
+- **本轮证据**：说明跑了哪些测试、benchmark、coverage、CAD readback；百分比不得替代证据。
+- **表 A 折叠值**：`总进度`，可括号附 `Core` / `Agent`。
+- **表 B 相关轨道**：只报本轮触达的中文轨道名（能力证明 / 代码轨 / CAD 补验）；未触达时写“本轮未改变任务台账”即可。
 
-**表 B — 任务清单三指令执行进度**（`docs/planning/任务清单.md` §0）
+**完整展开条件：**
 
-- `能力证明`（§3）、`一键推进`（§4 代码轨）、`CAD 补验`（§5）。
+- 用户要求完整状态汇报、交接、审计、进度盘点或对比。
+- 用户说「真实 CAD 实力」「推进表 C」「表 C」「刷新表 C」：先展开完整表 C，A/B 可摘要。
+- 完成或更新能力证明 / 代码轨 / CAD 补验包，并改变任务清单计数或 next。
+- 修改 registry、showcase、coverage JSON，或需要解释 CAD 能力瓶颈。
+- 出现回归、绘图不准、口径争议或 Markdown 进度漂移。
+
+**完整表 A — 工程节奏**
+
+- `总进度`、`Core 底座开发进度`、`Agent 多场景实现进度`（默认 `总进度 = Core × 70% + Agent × 30%`）。
+
+**完整表 B — 任务清单三指令执行进度**（`docs/planning/任务清单.md` §0）
+
+- `能力证明`（§3）、`一键推进`（§4 代码轨）、`RCAD 烟囱包`（§5）；展开时须带 `done/总量` 或 §5 的 `verified` 包数/总量。
 - 口径：`done 包数 ÷ 该板块任务包总量`；新增需求入表时分母变大，百分比可能下降。
+- 表 B ≠ 表 A；亦 ≠ 表 C（真实 CAD 实力）。
 
-当前基准估算见 `CORE_STATUS.md` 与 `CAD_AGENT_STATUS.md`。截至 2026-05-26 的同步口径为：
+**完整表 C — 真实 CAD 实力**（`scripts/run_capability_coverage.py`）
+
+- `cad_proof_coverage_percent`、`cad_strength_index_percent`、`scene_fragment_strength_percent`、`showcase_readiness_percent`、**`cad_strength_headline_percent`（主指标）**。
+- 主指标 = `min(实力指数, L3+片段, showcase)`；`showcase_count=0` 时主指标为 0%，须同时报加权指数与 L3+ 子指标。
+- 表 C ≠ RCAD 烟囱完成度；primitive 矩形 smoke verified 不计为「施工图能力」。
+
+**用户口令「真实 CAD 实力」/「推进表 C」**（`docs/planning/任务清单.md` §0.1）：编排 §3 `V-PROOF` + 链式 RCAD + registry 回写 + 复跑 coverage；**不是** §4 一键推进。「刷新表 C」只复跑 coverage、不新开包。
+
+当前基准估算见 `CORE_STATUS.md` 与 `CAD_AGENT_STATUS.md`。截至 2026-05-27 文档治理收尾的同步口径为：
 
 ```text
-总进度：约 86% = 96% * 0.70 + 52% * 0.30（工程节奏）
+总进度：约 94% = 96% * 0.70 + 88% * 0.30（工程节奏）
 Core 底座开发进度：约 96%（工程完备度）
-Agent 多场景实现进度：约 52%
-CAD 证明覆盖率：待 V-PROOF-02（定性 <10%）
-展示等级 Ladder：约 L3~L4 边缘
+Agent 多场景实现进度：约 88%
+CAD 证明覆盖率：约 47.10%（130/276；118 verified + 12 showcase）
+真实 CAD 实力主指标：约 4.35%
+展示等级 Ladder：最高已证 L4
 ```
 
 ## 0.5 能力证明体系（路线 F）

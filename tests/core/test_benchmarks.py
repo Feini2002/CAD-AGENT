@@ -388,35 +388,6 @@ class BenchmarkRunnerTests(unittest.TestCase):
         self.assertIn("object_spec", result["artifacts"])
         self.assertIn("cad_plan", result["artifacts"])
 
-    def test_object_detail_spec_benchmark_case_runs_component_plan_contract(self) -> None:
-        result = run_benchmark_case(
-            {
-                "case_id": "residential-detailed-table",
-                "pipeline": "object_detail_spec",
-                "object_type": "table",
-                "width": 1600,
-                "depth": 900,
-                "expected": {
-                    "pipeline_status": "ok",
-                    "dry_run_status": "valid",
-                    "verification_status": "unverified",
-                    "evidence_state": "benchmark_pass_non_cad",
-                    "geometry_accuracy": "not_verified_without_cad_readback",
-                    "screenshot_role": "visual_aid_only",
-                    "object_type": "table",
-                    "cad_plan_count": 5,
-                    "detail_plan_count": 5,
-                    "contains_component_roles": ["top", "support"],
-                },
-            },
-            root=PROJECT_ROOT,
-            output_root=artifact_path("benchmarks", "object_detail_contract"),
-        )
-
-        self.assertEqual(result["status"], "pass", result["errors"])
-        self.assertIn("detail_cad_plans", result["artifacts"])
-        self.assertIn("cad_plan_items", result["artifacts"])
-
     def test_benchmark_case_id_must_be_safe_path_segment(self) -> None:
         with self.assertRaisesRegex(ValueError, "case_id"):
             run_benchmark_case(

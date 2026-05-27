@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "brief_id": "brief-commercial-fitout-reception-sample",
+  "domain": "office",
+  "user_request": "Preview a reception commercial fitout layout on CODEX_PREVIEW and wait for user confirmation before any CAD_PLAN execution.",
+  "intent": "commercial_fitout_reception_sample_confirmation",
+  "source_language": "zh-CN",
+  "constraints": ["preview_only", "use_CODEX_PREVIEW", "manual_shell_input", "no_save_dwg"],
+  "assumptions": [
+    "Shell geometry is de-identified and hand-authored from projects/commercial_fitout_reception_sample/input/shell.manual.json.",
+    "Object placement uses commercial_fitout preferences and FITOUT_* block placeholders until a company library is bound.",
+    "No client identifiers, addresses, or project names are stored in this sample."
+  ],
+  "needs_confirmation": true
+}

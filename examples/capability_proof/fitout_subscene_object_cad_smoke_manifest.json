@@ -1,0 +1,43 @@
+{
+  "version": "0.1",
+  "manifest_id": "fitout_subscene_object_cad_smoke",
+  "description": "Representative catalog draw_object CAD smoke per meeting_room / reception subscene (CFIT-12, V-PROOF-25).",
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "saved_dwg": false
+  },
+  "catalog_manifest_path": "examples/capability_proof/commercial_fitout_catalog_manifest.json",
+  "catalog_path": "agents/commercial_fitout/capabilities/object_catalog.json",
+  "subscenes": [
+    {
+      "subscene_id": "meeting_room",
+      "sample_id": "commercial_fitout_meeting_sample",
+      "rcad_followup": "RCAD-18-FITOUT-MEETING",
+      "representative_objects": [
+        {
+          "catalog_object_id": "meeting_table",
+          "registry_capability_id": "catalog.commercial_fitout.meeting_table"
+        },
+        {
+          "catalog_object_id": "meeting_chair",
+          "registry_capability_id": "catalog.commercial_fitout.meeting_chair"
+        }
+      ]
+    },
+    {
+      "subscene_id": "reception",
+      "sample_id": "commercial_fitout_reception_sample",
+      "rcad_followup": "RCAD-19-FITOUT-RECEPTION",
+      "representative_objects": [
+        {
+          "catalog_object_id": "reception_desk",
+          "registry_capability_id": "catalog.commercial_fitout.reception_desk"
+        },
+        {
+          "catalog_object_id": "waiting_sofa",
+          "registry_capability_id": "catalog.commercial_fitout.waiting_sofa"
+        }
+      ]
+    }
+  ]
+}

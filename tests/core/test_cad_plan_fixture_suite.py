@@ -16,8 +16,8 @@ class CadPlanFixtureSuiteTests(unittest.TestCase):
         report = run_cad_plan_fixture_suite(root=PROJECT_ROOT, output_dir=output_dir, no_cad=True)
 
         self.assertEqual(report["status"], "pass")
-        self.assertEqual(report["fixture_count"], 3)
-        self.assertEqual(report["passed_fixture_count"], 3)
+        self.assertEqual(report["fixture_count"], 6)
+        self.assertEqual(report["passed_fixture_count"], 6)
         self.assertTrue(all(item["validate_status"] == "pass" for item in report["fixtures"]))
         self.assertTrue(all(item["dry_run_status"] == "valid" for item in report["fixtures"]))
         self.assertTrue(all(item["cad_execution_status"] == "deferred" for item in report["fixtures"]))
@@ -32,9 +32,11 @@ class CadPlanFixtureSuiteTests(unittest.TestCase):
             driver_factory=FakeCadDriver,
         )
 
-        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["status"], "geometry_verified")
         for item in report["fixtures"]:
             with self.subTest(fixture=item["id"]):
                 self.assertEqual(item["cad_execution_status"], "executed")
                 self.assertGreater(item["created_handle_count"], 0)
                 self.assertIn("safety", item["execution_summary"])
+        self.assertEqual(report["status"], "geometry_verified")
+        self.assertTrue(report["geometry_verified"])

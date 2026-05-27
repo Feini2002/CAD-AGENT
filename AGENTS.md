@@ -49,56 +49,56 @@
 - 新增待办、调整优先级、改变退出标准或拆分未来小包时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD 的引用或状态说明。
 - 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
 
-## 交付必须带进度估算
+## 交付默认精简进度
 
-每次 CAD Agent 相关交付的最终回复，都必须附带粗估进度，**固定两张表**（数值以 `docs/planning/任务清单.md` §0 为准，完成包后同步更新）：
+每次 CAD Agent 相关交付的**最终回复**，默认使用 **1 张精简进度表**，先报 **表 C 真实 CAD 实力主指标**，再说明本轮完成内容、验证证据和风险边界。详细口径见 `CAD_AGENT_RULES.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
 
-### 表 A — 工程节奏（产品与底座）
+**默认精简模板：**
 
-| 指标 | 当前粗估 |
-| --- | --- |
-| 总进度 | 约 86% |
-| Core 底座开发进度 | 约 96% |
-| Agent 多场景实现进度 | 约 52% |
-
-默认 `总进度 = Core * 70% + Agent * 30%`。该表只表示**工程完备度**，不得替代 CAD 几何证明。
-
-### 表 B — 任务清单三指令执行进度（台账完成度）
-
-| 指令 | 对应 `任务清单.md` | 当前执行进度 |
+| 口径 | 当前值 | 说明 |
 | --- | --- | --- |
-| 能力证明 | §3 | 约 5%（0/43） |
-| 一键推进（代码轨） | §4 | 约 18%（9/49；§4.1 活跃 0/15） |
-| CAD 补验 | §5 | 约 48%（14/29） |
+| 真实 CAD 实力 | 约 xx%，最高 Lx | 表 C 主指标，必须先报；机器值以 coverage JSON 为准 |
+| 本轮进展 | 完成了什么 / 没改什么 | 不用百分比代替成果与证据 |
+| 工程节奏 | 总约 xx%（Core xx%，Agent xx%） | 表 A 折叠口径 |
+| 任务台账 | 本轮相关中文轨道约 xx%（done/总量） | 轨道名用“能力证明 / 代码轨 / CAD 补验”；CAD 补验 **≠ 画图实力** |
 
-估算口径：`done 包数 ÷ 该板块任务包总量`；新增需求入表时分母变大，百分比可能下降。
+**完整展开条件：** 遇到下列情况，才展开完整 **表 A / 表 B / 表 C**；其中用户问「真实 CAD 实力 / 推进表 C / 表 C / 刷新表 C」时，必须先展开完整表 C。
 
-### 表 C — 能力证明三口径（可选一行摘要）
+- 用户要求完整状态汇报、交接、审计、进度盘点或对比。
+- 完成或更新能力证明、代码轨、CAD 补验包，并改变 `docs/planning/任务清单.md` §0 的计数或 next。
+- 修改 `cad_capability_registry`、showcase、coverage JSON，或需要解释真实 CAD 能力瓶颈。
+- 出现回归、绘图不准、口径漂移，或用户质疑“能不能画准”。
 
-| 指标 | 当前粗估 |
+**完整口径定义：**
+
+- **表 A — 工程节奏**：总进度、Core 底座开发进度、Agent 多场景实现进度；默认 `总进度 = Core × 70% + Agent × 30%`，允许约 5–10 个百分点主观误差。
+- **表 B — 任务清单三指令执行进度**：§3 能力证明、§4 一键推进 / 代码轨、§5 RCAD 烟囱包；`执行进度 ≈ status=done 包数 ÷ 本板块任务包总量`，§5 使用 `cad_status=verified` 包数。
+- **表 C — 真实 CAD 实力**：`scripts/run_capability_coverage.py` 的机器值，包括 `cad_proof_coverage_percent`、`cad_strength_index_percent`、`scene_fragment_strength_percent`、`showcase_readiness_percent`、`cad_strength_headline_percent` 和最高已证 Ladder。
+
+**禁止混用：**
+
+- 表 A 的「工程完备度 / 工程节奏」≠ 表 B 的「台账包完成度」≠ 表 C 的「真实 CAD 实力」。
+- 表 B 的 RCAD 烟囱通过 ≠ `cad_capability_registry` 已满 `verified`，也不等于“已经能画准施工图”。
+- 无论精简或展开，都不得省略表 C 主指标；不得用 Core 进度、RCAD 高完成度、截图、dry-run 或 no-CAD benchmark 暗示真实 CAD 几何已证明。
+- 各表百分比均不替代测试、benchmark、截图、created handles 回读或 `geometry_verified` 证据。
+
+完成能力证明 / 代码轨 / CAD 补验相关包后，应同步更新 `docs/planning/任务清单.md` §0 的计数与 next；改登记表或 showcase 后须复跑 `run_capability_coverage.py` 并更新表 C。
+
+**用户口令（§0 四指令，详见 `docs/planning/任务清单.md`）**
+
+| 用户说 | Agent 默认动作 |
 | --- | --- |
-| CAD 证明覆盖率 | 待 `V-PROOF-02`（定性 <10%） |
-| 展示等级 Ladder | 最高约 L3~L4 边缘 |
-
-**禁止**用 Core 约 96% 或表 B 某一项偏高，声称「CAD 已全面验证」。
-
-执行台账：`docs/planning/任务清单.md`。触发词：「能力证明」→ §3；「一键推进」→ §4；「CAD 补验」→ §5。
+| **一键推进** | §4 代码轨 1 包 |
+| **能力证明** / **覆盖率** | §3 `V-PROOF` 1 包 |
+| **CAD 补验** / **开 CAD 了** | §5 `RCAD` 1 包（真实 CAD） |
+| **真实 CAD 实力** / **推进表 C** / **表 C** | §0.1：优先抬高表 C 的 1 个 `V-PROOF` + 链式 RCAD + registry 回写 + 复跑 coverage；**先报表 C** |
+| **刷新表 C** | 仅 `run_capability_coverage.py` + 汇报表 C，不新开包 |
 
 ## Core 优先
 
 本仓库是通用 CAD Agent Core Lab。可复用能力放入 `core/`，共享资源放入 `libraries/`，项目专属资料放入 `projects/`，只有场景差异放入 `agents/<scenario>/`。
 
 不要把仓库改成工装专用、家装专用或 CAD-MCP 专用项目。场景 Agent 必须保持轻量，并复用 Core。
-
-## Core / 场景 Agent 边界
-
-场景成熟度必须分级表达：
-
-- `Scene Alpha 壳层`：preferences、词汇、默认参数、排序权重、解释模板和边界扫描。
-- `Scene Beta 能力包`：对象体系、微场景、failure benchmark 和 non-CAD 证据。
-- `Scene Product 场景产品`：真实项目样本、图块策略、真实 CAD smoke、用户确认流和交付边界。
-
-当前已有的 office / residential / restaurant 场景材料主要是 Alpha / Beta 验证层，不等于具体工装、办公、住宅或餐饮 Agent 已产品化。真正开发工装等场景时，要先明确对象体系、图块 metadata、业务规则、项目样本、真实 CAD smoke 和用户确认流。详细边界见 `docs/architecture/core-scene-agent-boundaries.md`。
 
 ## 不从白话直接跳到 CAD
 
@@ -118,10 +118,6 @@
 
 如果实际输出和预期不一致，Codex 不得把错误结果当成完成品交给用户。必须诊断差异，做最小安全修复，重新绘制或运行，并再次验证。
 
-## 默认不加文字和尺寸标注
-
-后续面向用户生产的 CAD 输出默认不加中文文字标注、不加英文文字标注，也默认不加尺寸标注。文字和尺寸能力必须保留，只有用户明确要求名称、编号、说明、文字、尺寸、尺寸线或标注时，才显式启用；能力探针、回归测试和 benchmark 可作为例外，但必须标记为测试证据。
-
 ## 卡壳或绘图不准流程
 
 当用户说“画不准”“画不出来”“不对”“继续修”，或 Codex 无法证明图纸准确时，按 `CAD_AGENT_BLOCKER_PLAYBOOK.md` 执行。
@@ -129,16 +125,14 @@
 最低必跑探针：
 
 ```powershell
-$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
-& $py 'scripts\self_check.py'
-& $py 'scripts\render_preview.py' --check
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\self_check.py'
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\render_preview.py' --check
 ```
 
 如果需要视觉证据且用户没有禁止截图，保存一个检查点：
 
 ```powershell
-$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
-& $py 'scripts\render_preview.py' --capture-screen --output 'output\previews\manual-check.png'
+& 'C:\Users\User\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe' 'scripts\render_preview.py' --capture-screen --output 'output\previews\manual-check.png'
 ```
 
 如果截图或回读不可用，应说明暂时无法证明准确性，并优先补齐缺失的验证机制，再声称完成。

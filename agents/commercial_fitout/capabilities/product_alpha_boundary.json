@@ -1,14 +1,43 @@
 {
   "version": "0.1",
   "scene_id": "commercial_fitout",
-  "rollup_id": "commercial-fitout-product-alpha-boundary-2026-05-26",
+  "rollup_id": "commercial-fitout-product-alpha-boundary-2026-05-27-cfit-11",
   "maturity": {
     "level": "scene_product_alpha",
     "declares_scene_product_complete": false,
     "product_alpha_status": "product_boundary",
-    "status_page_wording": "Scene Product Alpha（C-CFIT-01..06 已收口；不等于 Scene Product 产品化完成）"
+    "status_page_wording": "Scene Product Alpha（三子场景脱敏样本路径已对齐；不等于 Scene Product 产品化完成）"
   },
   "primary_subscenes": ["open_office", "meeting_room", "reception"],
+  "deidentified_project_samples": [
+    {
+      "subscene_id": "open_office",
+      "sample_id": "commercial_fitout_sample",
+      "project_rel": "projects/commercial_fitout_sample",
+      "workflow_rel": "examples/workflows/commercial_fitout_sample_confirmation_loop.json",
+      "rollup_manifest_registered": true,
+      "geometry_verified_scope": "open_office_sample_only",
+      "rcad_followup": "RCAD-09-PROJECT-ROLLUP"
+    },
+    {
+      "subscene_id": "meeting_room",
+      "sample_id": "commercial_fitout_meeting_sample",
+      "project_rel": "projects/commercial_fitout_meeting_sample",
+      "workflow_rel": "examples/workflows/commercial_fitout_meeting_sample_confirmation_loop.json",
+      "rollup_manifest_registered": true,
+      "geometry_verified_scope": "none_until_real_cad_readback",
+      "rcad_followup": "RCAD-10-PROJECT-SECOND-SAMPLE"
+    },
+    {
+      "subscene_id": "reception",
+      "sample_id": "commercial_fitout_reception_sample",
+      "project_rel": "projects/commercial_fitout_reception_sample",
+      "workflow_rel": "examples/workflows/commercial_fitout_reception_sample_confirmation_loop.json",
+      "rollup_manifest_registered": true,
+      "geometry_verified_scope": "none_until_real_cad_readback",
+      "rcad_followup": "RCAD-19-FITOUT-RECEPTION"
+    }
+  ],
   "completed_packages": [
     {
       "package_id": "C-CFIT-01-SCOPE-AND-SUBSCENES",
@@ -37,6 +66,9 @@
       "package_id": "C-CFIT-05-SAMPLE-PROJECT-CONFIRMATION",
       "evidence": [
         "projects/commercial_fitout_sample",
+        "projects/commercial_fitout_meeting_sample",
+        "projects/commercial_fitout_reception_sample",
+        "core/agents/fitout_sample_specs.py",
         "core/agents/commercial_fitout_sample_confirmation.py"
       ],
       "tests": "tests.agents.test_commercial_fitout_sample_confirmation"
@@ -45,10 +77,11 @@
       "package_id": "C-CFIT-06-REAL-CAD-SMOKE",
       "evidence": [
         "core/agents/commercial_fitout_cad_smoke.py",
-        "scripts/run_commercial_fitout_cad_smoke.py"
+        "scripts/run_commercial_fitout_cad_smoke.py",
+        "examples/cad_regression/project_sample_cad_rollup.json"
       ],
       "tests": "tests.agents.test_commercial_fitout_cad_smoke",
-      "geometry_verified_scope": "commercial_fitout_sample_confirmed_plans_only",
+      "geometry_verified_scope": "per_sample_via_project_sample_cad_rollup",
       "real_autocad_deferred": true
     }
   ],
@@ -78,23 +111,29 @@
       "geometry_verified": false
     },
     {
+      "id": "three_deidentified_sample_paths",
+      "summary": "三子场景各一组脱敏样本；fitout_sample_specs 与 LCAD-08 rollup manifest 口径一致",
+      "evidence_type": "non_cad_fixture",
+      "geometry_verified": false
+    },
+    {
       "id": "sample_confirmation_loop",
-      "summary": "脱敏样本确认前无 CAD_PLAN；确认后 confirmed bundle 含 assumptions/risks",
+      "summary": "各脱敏样本确认前无 CAD_PLAN；确认后 confirmed bundle 含 assumptions/risks",
       "evidence_type": "non_cad_pipeline",
       "geometry_verified": false
     },
     {
       "id": "sample_cad_smoke_readback",
-      "summary": "确认后 3 个 draw_object 在 CODEX_PREVIEW 执行并通过 created handles readback（单测 FakeCadDriver）",
+      "summary": "确认后 draw_object 在 CODEX_PREVIEW 可通过 created handles readback（FakeCadDriver 单测；rollup 4/4）",
       "evidence_type": "unit_test_readback",
       "geometry_verified": true,
-      "geometry_verified_note": "仅 commercial_fitout_sample；真实 AutoCAD 会话待补跑"
+      "geometry_verified_note": "fake/no-CAD rollup 覆盖四注册样本；开放办公真实 AutoCAD 会话曾 verified，meeting/reception 仍待 RCAD-10/19"
     }
   ],
   "non_declarable": [
     {
       "id": "scene_product_complete",
-      "reason": "缺少多组真实项目样本、公司块库、全子场景真实 CAD verified、交付 SLA"
+      "reason": "缺少全子场景真实 CAD verified、公司块库、交付 SLA"
     },
     {
       "id": "full_construction_documents",
@@ -102,7 +141,11 @@
     },
     {
       "id": "arbitrary_project_geometry_verified",
-      "reason": "仅有单一样本 readback；不得扩大为任意工装项目几何准确"
+      "reason": "三样本路径已定稿；不得将 fake rollup 4/4 扩大为任意工装项目几何准确"
+    },
+    {
+      "id": "all_subscenes_real_cad_verified",
+      "reason": "meeting_room / reception 真实 CAD 仍待 RCAD-10 / RCAD-19；不得因 CFIT-11 口径同步声称三子场景均已真实几何证明"
     },
     {
       "id": "company_block_library",
@@ -114,15 +157,14 @@
     }
   ],
   "next_gaps_to_scene_product": [
-    "commercial_fitout_sample 专用 smoke 已在本机 verified（见 output/validation_runs/rcad补验-20260526-cfit-smoke）；仍需多样本与子场景",
-    "第二组脱敏项目样本与块库策略",
-    "会议室 / 前台子场景的独立真实 CAD 代表 case",
+    "RCAD-10 / RCAD-19：会议室与前台样本真实 AutoCAD created-handle readback",
+    "V-PROOF-62：工装微场景平面片段 showcase（非三矩形）",
     "用户确认流与 partial replan 在真实项目上的复验",
     "解释模板与业务规则的产品化验收"
   ],
   "status_page_sync": {
-    "core_status_scene_line": "commercial_fitout：Scene Product Alpha（非 Scene Product）",
-    "cad_agent_status_scene_line": "C 路线 C-CFIT-01..07 已收口；工装仍为 Alpha 能力包 + 单样本 readback",
+    "core_status_scene_line": "commercial_fitout：Scene Product Alpha；三子场景脱敏样本 + rollup 口径已同步（CFIT-11）",
+    "cad_agent_status_scene_line": "C-CFIT + CFIT-09/10/11；工装三样本路径对齐；真实 CAD 按样本逐项补验",
     "agent_multi_scene_progress_note": "commercial_fitout 计入 Scene Product Alpha，不计入 Scene Product 完成"
   }
 }

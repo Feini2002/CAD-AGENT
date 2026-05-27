@@ -26,7 +26,6 @@ MODEL_SCHEMAS = {
     "proposal_comparison_summary": "proposal_comparison_summary.schema.json",
     "proposal_user_confirmation": "proposal_user_confirmation.schema.json",
     "confirmed_cad_plan_bundle": "confirmed_cad_plan_bundle.schema.json",
-    "cad_regression_manifest": "cad_regression_manifest.schema.json",
     "cad_plan": "cad_plan.schema.json",
     "verification_report": "verification_report.schema.json",
     "shell_model": "shell_model.schema.json",
@@ -37,20 +36,24 @@ MODEL_SCHEMAS = {
     "dwg_geometry_candidates": "dwg_geometry_candidates.schema.json",
     "shell_candidate_confidence_report": "shell_candidate_confidence_report.schema.json",
     "shell_drawing_read_confirmation": "shell_drawing_read_confirmation.schema.json",
-    "symbol_spec": "symbol_spec.schema.json",
-    "symbol_graph": "symbol_graph.schema.json",
-    "request_context": "request_context.schema.json",
-    "scene_registry": "scene_registry.schema.json",
-    "route_audit_report": "route_audit_report.schema.json",
-    "commercial_fitout_scope": "commercial_fitout_scope.schema.json",
-    "commercial_fitout_object_catalog": "commercial_fitout_object_catalog.schema.json",
-    "commercial_fitout_block_mapping": "commercial_fitout_block_mapping.schema.json",
-    "commercial_fitout_sample_confirmation_bundle": "commercial_fitout_sample_confirmation_bundle.schema.json",
-    "commercial_fitout_cad_smoke_report": "commercial_fitout_cad_smoke_report.schema.json",
-    "commercial_fitout_product_alpha_boundary": "commercial_fitout_product_alpha_boundary.schema.json",
+    "cad_regression_manifest": "cad_regression_manifest.schema.json",
     "cad_block_attribute_hatch_boundary": "cad_block_attribute_hatch_boundary.schema.json",
+    "commercial_fitout_block_mapping": "commercial_fitout_block_mapping.schema.json",
+    "commercial_fitout_cad_smoke_report": "commercial_fitout_cad_smoke_report.schema.json",
+    "commercial_fitout_object_catalog": "commercial_fitout_object_catalog.schema.json",
+    "commercial_fitout_product_alpha_boundary": "commercial_fitout_product_alpha_boundary.schema.json",
+    "commercial_fitout_sample_confirmation_bundle": "commercial_fitout_sample_confirmation_bundle.schema.json",
+    "commercial_fitout_scope": "commercial_fitout_scope.schema.json",
     "project_sample_cad_rollup": "project_sample_cad_rollup.schema.json",
     "project_sample_cad_rollup_report": "project_sample_cad_rollup_report.schema.json",
+    "request_context": "request_context.schema.json",
+    "route_audit_report": "route_audit_report.schema.json",
+    "scene_registry": "scene_registry.schema.json",
+    "symbol_graph": "symbol_graph.schema.json",
+    "symbol_spec": "symbol_spec.schema.json",
+    "cad_capability_registry": "cad_capability_registry.schema.json",
+    "composition_template_catalog": "composition_template_catalog.schema.json",
+    "evidence_trend": "evidence_trend.schema.json",
 }
 
 
@@ -92,8 +95,6 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "proposal_user_confirmation"
     if "confirmed_cad_plans" in data and "unselected_candidate_evidence" in data:
         return "confirmed_cad_plan_bundle"
-    if "suite_id" in data and "cases" in data and "safety" in data:
-        return "cad_regression_manifest"
     if "proposal_id" in data:
         return "design_proposal"
     if "intent" in data and "placement" in data and "drawing" in data:
@@ -116,14 +117,40 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "shell_candidate_confidence_report"
     if "confirmation_id" in data and "report_ref" in data and "confirmed_items" in data:
         return "shell_drawing_read_confirmation"
-    if "graph_id" in data and "nodes" in data and "view" in data:
-        return "symbol_graph"
-    if "symbol_id" in data and "archetype" in data and "parts" in data and "fallback_policy" in data:
-        return "symbol_spec"
+    if "suite_id" in data and "cases" in data and "safety" in data and "description" in data:
+        return "cad_regression_manifest"
+    if "package_id" in data and "rollup_id" in data and "samples" in data:
+        return "project_sample_cad_rollup"
+    if "rollup_id" in data and "sample_results" in data:
+        return "project_sample_cad_rollup_report"
     if "context_id" in data and "request_kind" in data and "cad_policy" in data:
         return "request_context"
-    if "registry_id" in data and "default_scene_id" in data and "scenes" in data:
-        return "scene_registry"
     if "routing_summary" in data and "deferred_items" in data and "human_summary" in data:
         return "route_audit_report"
+    if "registry_id" in data and "default_scene_id" in data and "scenes" in data:
+        return "scene_registry"
+    if "graph_id" in data and "nodes" in data:
+        return "symbol_graph"
+    if "symbol_id" in data and "archetype" in data and "readability_constraints" in data:
+        return "symbol_spec"
+    if "scene_id" in data and "subscenes" in data and "delivery_commitments" in data:
+        return "commercial_fitout_scope"
+    if "mapping_id" in data and "entries" in data and "block_library_path" in data:
+        return "commercial_fitout_block_mapping"
+    if "catalog_id" in data and "objects" in data and data.get("scene_id") == "commercial_fitout":
+        return "commercial_fitout_object_catalog"
+    if "rollup_id" in data and "declarable_capabilities" in data and "non_declarable" in data:
+        return "commercial_fitout_product_alpha_boundary"
+    if "assumptions_risks" in data and "confirmation_gate" in data and "finalize_report" in data:
+        return "commercial_fitout_sample_confirmation_bundle"
+    if "product_claim_boundary" in data and "plan_count" in data and "workflow_output_dir" in data:
+        return "commercial_fitout_cad_smoke_report"
+    if "boundary_id" in data and "capabilities" in data and data.get("package_id") == "LCAD-07-BLOCK-ATTRIBUTE-HATCH":
+        return "cad_block_attribute_hatch_boundary"
+    if "registry_id" in data and "capabilities" in data and data.get("version") == "0.1":
+        first = data["capabilities"][0] if data.get("capabilities") else {}
+        if isinstance(first, dict) and "claim_level" in first and "ladder_level" in first:
+            return "cad_capability_registry"
+    if "report_id" in data and "snapshots" in data and "vocabulary" in data:
+        return "evidence_trend"
     raise ValueError("Cannot infer model type.")

@@ -10,6 +10,7 @@
     "rollup_id",
     "maturity",
     "primary_subscenes",
+    "deidentified_project_samples",
     "completed_packages",
     "declarable_capabilities",
     "non_declarable",
@@ -43,6 +44,36 @@
       "items": {
         "type": "string",
         "enum": ["open_office", "meeting_room", "reception"]
+      }
+    },
+    "deidentified_project_samples": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subscene_id",
+          "sample_id",
+          "project_rel",
+          "workflow_rel",
+          "rollup_manifest_registered",
+          "geometry_verified_scope",
+          "rcad_followup"
+        ],
+        "properties": {
+          "subscene_id": {
+            "type": "string",
+            "enum": ["open_office", "meeting_room", "reception"]
+          },
+          "sample_id": { "type": "string", "minLength": 1 },
+          "project_rel": { "type": "string", "minLength": 1 },
+          "workflow_rel": { "type": "string", "minLength": 1 },
+          "rollup_manifest_registered": { "type": "boolean", "const": true },
+          "geometry_verified_scope": { "type": "string", "minLength": 1 },
+          "rcad_followup": { "type": "string", "minLength": 1 }
+        }
       }
     },
     "completed_packages": {

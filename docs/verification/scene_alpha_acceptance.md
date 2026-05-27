@@ -4,8 +4,6 @@
 
 > 机器入口：`examples/benchmarks/scene_alpha_benchmark.json`、`agents/scene_alpha_manifest.json`、`tests/agents/test_scene_alpha_acceptance.py`。证据词表见 [`evidence_gate_handoff_rules.md`](evidence_gate_handoff_rules.md)。
 
-本文只证明 **Scene Alpha 壳层**：场景 preferences 可以驱动同一 Core pipeline，并且 `agents/` 没有复制 Core 算法。它不证明 **Scene Product**：没有真实项目样本闭环、没有场景专属图块策略、没有多场景真实 CAD smoke，也没有用户确认流。
-
 ## 父包 `X-SCENE-ALPHA` 已交付（01–05）
 
 | 小包 | 能力 | 主要 artifact / 入口 |
@@ -28,7 +26,6 @@
 ## 不能声称什么（必须继续遵守）
 
 - **不能说** Scene Agent 产品已完整完成（无真实项目闭环、无 Beta 全场景、无用户确认流）。
-- **不能说** office / residential / restaurant 的 Alpha 或 Beta benchmark 等于工装、办公、住宅、餐饮任一具体场景产品完成。
 - **不能说** `scene_alpha_benchmark` 或 blank-shell non-CAD pass 等于 **`geometry_verified`**。
 - **不能说** 任意 DWG、块库、真实项目图纸已由场景 Agent 自动画准。
 - **不能说** 静态边界扫描替代 runtime CAD 审计或 created-handle 回读。
@@ -58,4 +55,4 @@
 
 ## 下一主线（PlanMD）
 
-`X-SCENE-ALPHA` 父包已收口。后续按 `CORE_RESTRUCTURE_PLAN.md` 后置 Backlog 或用户指定主线推进（真实 CAD 扩展、项目样本、多方案确认、自动读图、Scene Agent Beta、工装 Scene Product Alpha 等）；不得跳过证据门槛声称几何已验证。Core / 场景边界详见 `../architecture/core-scene-agent-boundaries.md`。
+`X-SCENE-ALPHA` 父包已收口。后续按 `CORE_RESTRUCTURE_PLAN.md` 后置 Backlog 或用户指定主线推进（真实 CAD 扩展、项目样本、多方案确认、自动读图、Scene Agent Beta 等）；不得跳过证据门槛声称几何已验证。

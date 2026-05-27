@@ -20,18 +20,11 @@
     },
     "domain": {
       "type": "string",
-      "enum": ["generic", "residential", "retail", "office", "restaurant", "exhibition", "hotel", "education", "healthcare", "industrial", "custom"]
+      "enum": ["generic", "residential", "retail", "office", "restaurant", "commercial_fitout", "exhibition", "hotel", "education", "healthcare", "industrial", "custom"]
     },
     "intent": {
       "type": "string",
-      "enum": [
-        "draw_object",
-        "draw_symbol_glyph",
-        "draw_annotation",
-        "modify_object",
-        "delete_object",
-        "insert_block_alpha"
-      ]
+      "enum": ["draw_object", "draw_symbol_glyph", "draw_annotation", "modify_object", "delete_object", "insert_block_alpha"]
     },
     "object": {
       "type": "object",
@@ -140,5 +133,29 @@
       "type": "object"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": ["placement"],
+        "properties": {
+          "placement": {
+            "required": ["mode"],
+            "properties": {
+              "mode": {
+                "const": "absolute"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "placement": {
+            "required": ["base_point"]
+          }
+        }
+      }
+    }
+  ]
 }

@@ -44,12 +44,16 @@
 | `verified` | registry 行 + 可复跑 cad_case + `geometry_verified` |
 | `showcase` | verified + 纳入 Ladder 展示册 |
 
-## 三进度口径（与 AGENTS.md 对齐）
+## 四进度口径（与 AGENTS.md 对齐）
 
 | 指标 | 回答的问题 |
 | --- | --- |
-| **工程完备度** | 模块有没有、non-CAD 能不能跑 |
+| **工程完备度（表 A）** | 模块有没有、non-CAD 能不能跑 |
+| **任务清单 / RCAD 烟囱（表 B）** | 任务包有没有跑完 |
 | **CAD 证明覆盖率** | 登记能力中有多少 `verified` / `showcase` |
-| **展示等级** | 当前最高 Ladder 到 L几 |
+| **真实 CAD 实力（表 C）** | Ladder 加权 + L3+ 片段 + showcase 门的诚实上限 |
+| **展示等级** | 当前最高已证 Ladder 到 L几 |
 
-**禁止**用工程完备度代替 CAD 证明覆盖率声称「系统已能画准」。
+**禁止**用工程完备度或 RCAD 烟囱 % 代替表 C 声称「系统已能画准施工图」。表 C 机器字段见 `cad_capability_coverage.json` → `cad_strength_*`。
+
+状态页固定表格与禁止声称：[`docs/verification/capability_proof_status_template.md`](../verification/capability_proof_status_template.md)（`CORE_STATUS.md` / `CAD_AGENT_STATUS.md` 同步）。交接扩展：[`docs/verification/capability_proof_handoff_template.md`](../verification/capability_proof_handoff_template.md)。

@@ -33,7 +33,7 @@ class ProjectSampleCadRollupTests(unittest.TestCase):
         )
         self.assertEqual(rollup["status"], "geometry_verified", rollup)
         self.assertTrue(rollup["geometry_verified"])
-        self.assertEqual(rollup["geometry_verified_count"], 2)
+        self.assertEqual(rollup["geometry_verified_count"], 4)
         assert_project_sample_cad_rollup_contract(rollup)
 
         schema = json.loads(
@@ -53,7 +53,7 @@ class ProjectSampleCadRollupTests(unittest.TestCase):
         )
         self.assertEqual(rollup["status"], "deferred")
         self.assertFalse(rollup["geometry_verified"])
-        self.assertEqual(rollup["deferred_count"], 2)
+        self.assertEqual(rollup["deferred_count"], 4)
 
 
 if __name__ == "__main__":

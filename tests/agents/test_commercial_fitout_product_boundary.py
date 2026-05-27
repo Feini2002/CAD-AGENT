@@ -41,7 +41,18 @@ class CommercialFitoutProductBoundaryTests(unittest.TestCase):
         boundary = load_product_alpha_boundary()
         verified = [item for item in boundary["declarable_capabilities"] if item.get("geometry_verified")]
         self.assertEqual(len(verified), 1)
-        self.assertIn("commercial_fitout_sample", verified[0].get("geometry_verified_note", ""))
+        note = verified[0].get("geometry_verified_note", "")
+        self.assertIn("fake", note.lower())
+        self.assertIn("RCAD-10", note)
+
+    def test_deidentified_samples_cover_three_subscenes(self) -> None:
+        boundary = load_product_alpha_boundary()
+        entries = boundary["deidentified_project_samples"]
+        self.assertEqual(len(entries), 3)
+        self.assertEqual(
+            {item["subscene_id"] for item in entries},
+            {"open_office", "meeting_room", "reception"},
+        )
 
     def test_status_page_summary_non_empty(self) -> None:
         summary = summarize_for_status_pages()

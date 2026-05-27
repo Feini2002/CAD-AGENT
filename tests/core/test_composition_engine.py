@@ -38,15 +38,15 @@ class CompositionEngineTests(unittest.TestCase):
                 self.assertEqual(validate_plan(plan), [])
                 self.assertEqual(create_dry_run_report(plan)["status"], "valid")
 
-    def test_composition_keeps_explicit_label_and_dimension_capability(self) -> None:
+    def test_composition_ignores_explicit_label_and_dimension_overrides(self) -> None:
         composition = create_composition_spec("bedroom_bed_rug", persona_role="interior_designer")
         composition["objects"][0]["include_label"] = True
         composition["objects"][0]["include_dimensions"] = True
 
         plans = composition_to_cad_plans(composition)
 
-        self.assertTrue(plans[0]["drawing"]["include_label"])
-        self.assertTrue(plans[0]["drawing"]["include_dimensions"])
+        self.assertFalse(plans[0]["drawing"]["include_label"])
+        self.assertFalse(plans[0]["drawing"]["include_dimensions"])
         self.assertEqual(validate_plan(plans[0]), [])
 
     def test_dining_and_office_compositions_cover_expected_roles(self) -> None:

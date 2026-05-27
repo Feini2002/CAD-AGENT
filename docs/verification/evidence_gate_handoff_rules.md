@@ -1,6 +1,6 @@
 # Evidence Gate 与交接包填写规则（R4-05）
 
-最后更新：2026-05-26
+最后更新：2026-05-27
 
 > 词表与机器门禁见 [`evidence_state_vocabulary.md`](evidence_state_vocabulary.md) 与 `core/verification/evidence_contract.py`。本文规定 **Cursor 每包交接** 与 **Codex 审计** 时必须写清的证据边界。
 
@@ -64,3 +64,15 @@
 
 - R4-01～R4-04 已在代码与 `evidence_state_vocabulary.md` 落地词表、benchmark 汇总、CAD runner 顶层 gate。
 - R4-05 将上述规则固化为交接必读；后续小包（`Y-MULTI-CANDIDATE`、`X-SCENE-ALPHA` 等）默认遵守本文。
+
+## 7. 能力证明包交接（V-PROOF-05）
+
+§3 `V-PROOF` 或 RCAD 回写包在标准 9 项后 **必须** 填写 `CURSOR_PACKAGE_HANDOFFS.md`「能力证明包附加项」：
+
+| 附加项 | Codex 校验 |
+| --- | --- |
+| 10. registry 行表 | `capability_id` 存在；`claim_level` 变更须有 `run_capability_registry_writeback` 或等价证据 |
+| 11. 覆盖率 | 若改 registry，须引用 `cad_capability_coverage.json`；`verified+showcase` / `total_count` 与文件一致 |
+| 12. Ladder | 不得因 non-CAD pass 单独抬高 Ladder |
+
+状态页三口径与禁止混用：[`capability_proof_status_template.md`](capability_proof_status_template.md)、`CORE_STATUS.md`「三进度口径」。

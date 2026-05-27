@@ -6,9 +6,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from core.agents.commercial_fitout_sample_confirmation import (
+from core.agents.commercial_fitout_sample_confirmation import run_fitout_sample_confirmation_loop
+from core.agents.fitout_sample_specs import (
+    DEFAULT_FITOUT_SAMPLE_ID,
     FITOUT_SAMPLE_ID,
-    run_fitout_sample_confirmation_loop,
+    resolve_fitout_sample_spec,
+    resolve_fitout_sample_spec_for_workflow,
 )
 from core.execution.batch_plan_runner import execute_plan_batch
 from core.path_safety import find_project_root, resolve_under_project_output
@@ -27,12 +30,16 @@ PREVIEW_LAYER = "CODEX_PREVIEW"
 REPORT_VERSION = "0.1"
 SAFETY_CLAIMS = build_preview_only_audit(layer=PREVIEW_LAYER)
 
-PRODUCT_CLAIM_BOUNDARY = {
-    "declares_scene_product": False,
-    "declares_full_fitout_delivery": False,
-    "geometry_verified_scope": "commercial_fitout_sample_confirmed_plans_only",
-    "sample_id": FITOUT_SAMPLE_ID,
-}
+def build_product_claim_boundary(sample_id: str) -> dict[str, str | bool]:
+    return {
+        "declares_scene_product": False,
+        "declares_full_fitout_delivery": False,
+        "geometry_verified_scope": f"{sample_id}_confirmed_plans_only",
+        "sample_id": sample_id,
+    }
+
+
+PRODUCT_CLAIM_BOUNDARY = build_product_claim_boundary(FITOUT_SAMPLE_ID)
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -44,6 +51,8 @@ def ensure_fitout_sample_confirmed_plans(
     workflow_output_dir: Path,
     *,
     project_root: Path,
+    workflow_path: Path | None = None,
+    sample_id: str | None = None,
 ) -> dict[str, Any]:
     """Run C-CFIT-05 confirmation loop when cad_plan_items are missing."""
 
@@ -53,6 +62,8 @@ def ensure_fitout_sample_confirmed_plans(
     return run_fitout_sample_confirmation_loop(
         workflow_output_dir,
         project_root=project_root,
+        workflow_path=workflow_path,
+        sample_id=sample_id,
     )
 
 
@@ -60,6 +71,7 @@ def build_deferred_commercial_fitout_cad_smoke_report(
     *,
     workflow_output_dir: Path,
     output_dir: Path,
+    sample_id: str = DEFAULT_FITOUT_SAMPLE_ID,
     reason: str = "no_cad",
 ) -> dict[str, Any]:
     plan_count = 0
@@ -70,7 +82,7 @@ def build_deferred_commercial_fitout_cad_smoke_report(
 
     return {
         "version": REPORT_VERSION,
-        "sample_id": FITOUT_SAMPLE_ID,
+        "sample_id": sample_id,
         "status": "deferred",
         "evidence_state": EVIDENCE_DEFERRED_CAD_READBACK,
         "geometry_accuracy": NON_CAD_GEOMETRY_ACCURACY,
@@ -82,7 +94,7 @@ def build_deferred_commercial_fitout_cad_smoke_report(
         "created_handle_count": 0,
         "deferred_reason": reason,
         "safety": dict(SAFETY_CLAIMS),
-        "product_claim_boundary": dict(PRODUCT_CLAIM_BOUNDARY),
+        "product_claim_boundary": build_product_claim_boundary(sample_id),
     }
 
 
@@ -94,11 +106,13 @@ def run_commercial_fitout_cad_smoke(
     driver: Any | None = None,
     no_cad: bool = False,
     offset: list[float | int] | None = None,
+    sample_id: str | None = None,
 ) -> dict[str, Any]:
     """Execute confirmed fitout sample CAD_PLAN items on CODEX_PREVIEW and read back handles."""
 
     root_hint = workflow_output_dir if workflow_output_dir.is_absolute() else Path.cwd()
     root = project_root or find_project_root(root_hint)
+    resolved_sample_id = sample_id or DEFAULT_FITOUT_SAMPLE_ID
     workflow_output_dir = resolve_under_project_output(
         root,
         workflow_output_dir,
@@ -111,6 +125,7 @@ def run_commercial_fitout_cad_smoke(
         report = build_deferred_commercial_fitout_cad_smoke_report(
             workflow_output_dir=workflow_output_dir,
             output_dir=output_dir,
+            sample_id=resolved_sample_id,
             reason="no_cad" if no_cad else "driver_not_provided",
         )
         _write_json(output_dir / "commercial_fitout_cad_smoke_report.json", report)
@@ -127,7 +142,7 @@ def run_commercial_fitout_cad_smoke(
     geometry_verified = batch_result.get("status") == "geometry_verified"
     report = {
         "version": REPORT_VERSION,
-        "sample_id": FITOUT_SAMPLE_ID,
+        "sample_id": resolved_sample_id,
         "status": batch_result.get("status", "failed"),
         "evidence_state": EVIDENCE_READBACK_GEOMETRY_VERIFIED
         if geometry_verified
@@ -142,7 +157,7 @@ def run_commercial_fitout_cad_smoke(
         "created_handles": batch_result.get("created_handles", []),
         "batch_execution": batch_result,
         "safety": dict(SAFETY_CLAIMS),
-        "product_claim_boundary": dict(PRODUCT_CLAIM_BOUNDARY),
+        "product_claim_boundary": build_product_claim_boundary(resolved_sample_id),
     }
     _write_json(output_dir / "commercial_fitout_cad_smoke_report.json", report)
     return report
@@ -153,6 +168,7 @@ def run_commercial_fitout_cad_smoke_with_workflow(
     project_root: Path,
     workflow_output_dir: Path,
     cad_output_dir: Path,
+    workflow_path: Path | None = None,
     driver: Any | None = None,
     no_cad: bool = False,
     offset: list[float | int] | None = None,
@@ -160,6 +176,13 @@ def run_commercial_fitout_cad_smoke_with_workflow(
     """Ensure confirmed plans exist, then run CODEX_PREVIEW CAD smoke."""
 
     project_root = project_root.resolve()
+    workflow = workflow_path
+    if workflow is None:
+        spec = resolve_fitout_sample_spec()
+        workflow = project_root / spec.workflow_rel
+    else:
+        workflow = (project_root / workflow_path).resolve() if not workflow_path.is_absolute() else workflow_path.resolve()
+    spec = resolve_fitout_sample_spec_for_workflow(workflow, project_root=project_root)
     workflow_output_dir = resolve_under_project_output(
         project_root,
         workflow_output_dir,
@@ -167,7 +190,12 @@ def run_commercial_fitout_cad_smoke_with_workflow(
     )
     cad_output_dir = resolve_under_project_output(project_root, cad_output_dir, label="output_dir")
 
-    prep = ensure_fitout_sample_confirmed_plans(workflow_output_dir, project_root=project_root)
+    prep = ensure_fitout_sample_confirmed_plans(
+        workflow_output_dir,
+        project_root=project_root,
+        workflow_path=workflow,
+        sample_id=spec.sample_id,
+    )
     if prep.get("skipped_confirmation_loop") is not True and prep.get("status") != "ok":
         raise ValueError(f"fitout confirmation loop failed: {prep}")
 
@@ -178,6 +206,7 @@ def run_commercial_fitout_cad_smoke_with_workflow(
         driver=driver,
         no_cad=no_cad,
         offset=offset,
+        sample_id=spec.sample_id,
     )
 
 

@@ -17,8 +17,6 @@
 | `blank_shell` | 前厅 shell + `l_spine` 动线 + service 禁放区 |
 | `failure` | 入口净空冲突 blocked |
 
-Scene Beta 仍是 **能力包**，不是餐饮或完整商业工装 Scene Product。它可为后续 `commercial_fitout` / 工装专项提供入口、接待、桌椅和后场样本，但还没有真实商业项目样本、专属图块策略、真实 CAD smoke 和用户确认流。
-
 ## 已交付
 
 | 项 | 说明 |
@@ -33,7 +31,6 @@ Scene Beta 仍是 **能力包**，不是餐饮或完整商业工装 Scene Produc
 - benchmark pass **≠** `geometry_verified` 或真实餐饮平面准确。
 - 入口组合复用 office 模板 **≠** 餐饮专用语义已完备。
 - Scene Beta **不** 实现 Core 算法或 CAD 执行。
-- Scene Beta **不等于** 餐饮或商业工装场景产品完成。
 
 ## 子校验
 

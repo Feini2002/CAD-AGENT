@@ -225,7 +225,10 @@ def apply_shell_drawing_read_confirmation(
     except ShellLoadError as exc:
         raise ShellConfirmationError(str(exc)) from exc
     finally:
-        temp_path.unlink(missing_ok=True)
+        try:
+            temp_path.unlink(missing_ok=True)
+        except PermissionError:
+            pass
 
 
 def load_shell_drawing_read_confirmation(path: str | Path) -> dict[str, Any]:

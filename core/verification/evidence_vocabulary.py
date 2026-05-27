@@ -18,6 +18,7 @@ EVIDENCE_BENCHMARK_PASS_NON_CAD = "benchmark_pass_non_cad"
 EVIDENCE_BLOCKED_EXPECTED_NON_CAD = "blocked_expected_non_cad"
 EVIDENCE_DRY_RUN_VALID_PLAN_ONLY = "dry_run_valid_plan_only"
 EVIDENCE_INVALID_CONFIGURATION = "invalid_configuration"
+EVIDENCE_NEGATIVE_GUARD_VERIFIED = "negative_guard_verified"
 
 GEOMETRY_VERIFIED_BY_READBACK = "verified_by_cad_readback"
 GEOMETRY_VERIFIED_BY_CAPABILITY_PROBE = "verified_by_cad_capability_readback"
@@ -32,6 +33,7 @@ EVIDENCE_STATE_VALUES: frozenset[str] = frozenset(
         EVIDENCE_BLOCKED_EXPECTED_NON_CAD,
         EVIDENCE_DRY_RUN_VALID_PLAN_ONLY,
         EVIDENCE_INVALID_CONFIGURATION,
+        EVIDENCE_NEGATIVE_GUARD_VERIFIED,
     }
 )
 

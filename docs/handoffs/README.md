@@ -25,6 +25,7 @@
 
 每完成一个开发包，Cursor 必须：
 
-1. 在 `CURSOR_PACKAGE_HANDOFFS.md` 追加或更新对应章节（固定 9 项模板；第 8 项按 `evidence_gate_handoff_rules.md` 填表）。
+1. 在 `CURSOR_PACKAGE_HANDOFFS.md` 追加或更新对应章节（固定 9 项模板；第 8 项按 `evidence_gate_handoff_rules.md` 填表）。§3 能力证明 / RCAD 回写包另填 **能力证明包附加项（10~12）**，见 [`capability_proof_handoff_template.md`](../verification/capability_proof_handoff_template.md)。
 2. 同步 `CAD_AGENT_CHANGELOG.md`、`CAD_AGENT_STATUS.md`（有功能证据时还有 `CORE_STATUS.md`）。
 3. 若包涉及真实 CAD，在 `output/validation_runs/<包名>-no-cad` 与（如适用）`<包名>-cad` 留下证据；第 8 项须区分 non-CAD 与 `geometry_verified`。
+4. 允许对旧包做压缩交接，但不得省略 1~9 项标题；§3 `V-PROOF`、RCAD 回写包或任何修改 `cad_capability_registry.json` 的包必须补 10~12 项，哪怕写「无行变更 / 不适用」。压缩只能压叙述，不能压掉真实 CAD 证据路径、created handles、`external_blocker` 或 `geometry_verified` 边界。

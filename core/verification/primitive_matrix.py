@@ -7,6 +7,13 @@ from pathlib import Path
 from typing import Any, Callable
 
 from core.verification.cad_capability_probe import EXPECTED_TYPE_COUNTS, run_cad_capability_probe
+from core.verification.evidence_contract import (
+    EVIDENCE_CAD_CAPABILITY_VERIFIED,
+    EVIDENCE_DEFERRED_CAD_READBACK,
+    GEOMETRY_VERIFIED_BY_CAPABILITY_PROBE,
+    NON_CAD_GEOMETRY_ACCURACY,
+    SCREENSHOT_NOT_APPLICABLE,
+)
 from core.verification.preview_only_audit import build_preview_only_audit
 
 
@@ -47,8 +54,19 @@ def run_primitive_matrix(
     }
     if no_cad:
         report["status"] = "pass" if type_ok and probe.get("status") != "failed" else "fail"
+        report["evidence_state"] = EVIDENCE_DEFERRED_CAD_READBACK
+        report["geometry_accuracy"] = NON_CAD_GEOMETRY_ACCURACY
+        report["screenshot_role"] = SCREENSHOT_NOT_APPLICABLE
     else:
-        report["status"] = "pass" if geometry_verified and type_ok else "fail"
+        report["status"] = "geometry_verified" if geometry_verified and type_ok else "fail"
+        if geometry_verified and type_ok:
+            report["evidence_state"] = EVIDENCE_CAD_CAPABILITY_VERIFIED
+            report["geometry_accuracy"] = GEOMETRY_VERIFIED_BY_CAPABILITY_PROBE
+            report["screenshot_role"] = SCREENSHOT_NOT_APPLICABLE
+        else:
+            report["evidence_state"] = EVIDENCE_DEFERRED_CAD_READBACK
+            report["geometry_accuracy"] = NON_CAD_GEOMETRY_ACCURACY
+            report["screenshot_role"] = SCREENSHOT_NOT_APPLICABLE
 
     if output_dir is not None:
         output_dir.mkdir(parents=True, exist_ok=True)

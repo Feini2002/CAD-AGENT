@@ -1,0 +1,10 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": { "type": "file_cabinet", "name": "Smoke File Cabinet", "width": 900, "depth": 450 },
+  "placement": { "mode": "absolute", "base_point": [0, 0, 0] },
+  "drawing": { "layer": "CODEX_PREVIEW", "include_label": false, "include_dimensions": false },
+  "confidence": 1.0,
+  "needs_confirmation": false
+}

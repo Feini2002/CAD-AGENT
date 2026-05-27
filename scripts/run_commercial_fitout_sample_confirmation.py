@@ -5,14 +5,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+from _bootstrap import PROJECT_ROOT, ensure_project_root_on_path
 
-from core.agents.commercial_fitout_sample_confirmation import (  # noqa: E402
+ensure_project_root_on_path()
+
+from core.agents.commercial_fitout_sample_confirmation import (
     run_fitout_sample_confirmation_loop,
 )
 
@@ -22,7 +21,7 @@ def main() -> int:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=ROOT / "output" / "validation_runs" / "commercial-fitout-sample-confirmation",
+        default=PROJECT_ROOT / "output" / "validation_runs" / "commercial-fitout-sample-confirmation",
     )
     parser.add_argument(
         "--confirmation",
@@ -34,7 +33,7 @@ def main() -> int:
     result = run_fitout_sample_confirmation_loop(
         args.output_dir,
         args.confirmation,
-        project_root=ROOT,
+        project_root=PROJECT_ROOT,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result.get("status") == "ok" else 1

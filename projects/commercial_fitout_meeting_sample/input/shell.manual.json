@@ -1,0 +1,53 @@
+{
+  "version": "0.1",
+  "shell_id": "shell-commercial-fitout-meeting-sample",
+  "units": "mm",
+  "boundary": {
+    "type": "bbox",
+    "min": [0, 0],
+    "max": [7200, 5400]
+  },
+  "openings": [
+    {
+      "opening_id": "entry-meeting",
+      "type": "entry",
+      "center": [3600, 0],
+      "width": 1200
+    }
+  ],
+  "fixed_obstacles": [
+    {
+      "obstacle_id": "column-meeting-01",
+      "bbox": {
+        "min": [1200, 2200],
+        "max": [1500, 2500]
+      }
+    }
+  ],
+  "no_place_zones": [
+    {
+      "zone_id": "column-meeting-clearance",
+      "bbox": {
+        "min": [1000, 2000],
+        "max": [1700, 2700]
+      }
+    }
+  ],
+  "required_connections": [
+    {
+      "connection_id": "entry-to-meeting-zone",
+      "target": "meeting-zone",
+      "point": [3600, 4800]
+    }
+  ],
+  "building_elements": [
+    {
+      "element_id": "south-glazing-band",
+      "type": "window_wall"
+    }
+  ],
+  "uncertainties": [
+    "Meeting-room shell is hand-authored and not verified from CAD readback.",
+    "Column position is indicative for layout preview only."
+  ]
+}

@@ -4,8 +4,6 @@
 
 确保 `agents/` 保持轻量：只存场景偏好、词汇、workflow 说明与 manifest，不复制 Core 的 CAD 执行、回读、碰撞、几何库或 blank-shell pipeline 实现。
 
-边界扫描只能证明 Scene Alpha 壳层没有越界实现 Core；它不能证明具体场景产品已完成。
-
 ## 扫描入口
 
 - 实现：`core/agents/scene_boundary_scan.py`
@@ -29,7 +27,6 @@
 ## 不可声称
 
 - 边界扫描通过 **不等于** Scene Agent 已具备真实 CAD 几何能力。
-- 边界扫描通过 **不等于** 工装、办公、住宅或餐饮 Scene Product 已完成。
 - 扫描是静态子串/导入前缀检查，不能替代 runtime 审计或 `geometry_verified` 证据。
 
 ## 相关

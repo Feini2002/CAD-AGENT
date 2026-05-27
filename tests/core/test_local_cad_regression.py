@@ -33,6 +33,7 @@ class LocalCadRegressionTests(unittest.TestCase):
                 "baseline_cad_validation",
                 "project_sample_cad_check",
                 "composition_cad_check",
+                "primitive_matrix_cad",
                 "primitive_matrix_no_cad",
                 "cad_plan_fixture_suite_no_cad",
                 "cad_plan_fixture_suite_cad",
@@ -115,13 +116,14 @@ class LocalCadRegressionTests(unittest.TestCase):
         )
 
         self.assertEqual(report["manifest"]["suite_id"], "local_cad_regression")
-        self.assertEqual(report["manifest"]["case_count"], 7)
+        self.assertEqual(report["manifest"]["case_count"], 8)
         self.assertEqual(
             [case["id"] for case in report["manifest"]["cases"]],
             [
                 "baseline_cad_validation",
                 "project_sample_cad_check",
                 "composition_cad_check",
+                "primitive_matrix_cad",
                 "primitive_matrix_no_cad",
                 "cad_plan_fixture_suite_no_cad",
                 "cad_plan_fixture_suite_cad",
@@ -275,11 +277,12 @@ class LocalCadRegressionTests(unittest.TestCase):
         self.assertEqual(report["status"], "pass")
         self.assertTrue(report["summary"]["non_cad_only"])
         self.assertEqual(report["summary"]["geometry_verified_case_count"], 0)
-        self.assertEqual(report["summary"]["deferred_case_count"], 4)
+        self.assertEqual(report["summary"]["deferred_case_count"], 5)
         steps = {step["id"]: step for step in report["steps"]}
         self.assertEqual(steps["baseline_cad_validation"]["status"], "pass")
         self.assertEqual(steps["project_sample_cad_check"]["status"], "deferred")
         self.assertEqual(steps["composition_cad_check"]["status"], "deferred")
+        self.assertEqual(steps["primitive_matrix_cad"]["status"], "deferred")
         self.assertEqual(steps["primitive_matrix_no_cad"]["status"], "pass")
         self.assertEqual(steps["cad_plan_fixture_suite_no_cad"]["status"], "pass")
         self.assertEqual(steps["cad_plan_fixture_suite_cad"]["status"], "deferred")
@@ -344,7 +347,12 @@ class LocalCadRegressionTests(unittest.TestCase):
                     stderr="",
                 )
             if "run_primitive_matrix.py" in command_text:
-                self.assertNotIn("--no-cad", command)
+                if "--no-cad" in command:
+                    return CommandResult(
+                        returncode=0,
+                        stdout=json.dumps({"status": "pass", "geometry_verified": False}),
+                        stderr="",
+                    )
                 return CommandResult(
                     returncode=0,
                     stdout=json.dumps(

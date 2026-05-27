@@ -1,0 +1,8 @@
+{
+  "version": "0.1",
+  "snippet_id": "dining_table_set",
+  "capability_id": "composition.dining_table_set",
+  "ladder_level": "L3",
+  "domain": "residential",
+  "verification_report_path": "output/validation_runs/capability-lab-vproof-20260527/composition_cad_registry/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json"
+}

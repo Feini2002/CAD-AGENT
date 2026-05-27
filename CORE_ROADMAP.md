@@ -1,6 +1,6 @@
 # Core Roadmap
 
-最后更新：2026-05-26
+最后更新：2026-05-27
 
 本文是高层路线图，只描述方向和阶段关系。唯一 `PlanMD` / 具体执行清单见 `CORE_RESTRUCTURE_PLAN.md`，能力成熟度见 `CORE_STATUS.md`。本文不承载独立下一步。
 
@@ -21,7 +21,7 @@ Scene Alpha / Beta 不能替代 Scene Product
 | Core 底座 | 先把通用 CAD_PLAN、执行、验证、benchmark、读图、对象和图块能力打稳 | Alpha 原型较厚，真实 CAD 扩样仍需继续 |
 | Scene Alpha 壳层 | 用 preferences 和解释模板证明多个场景可以复用同一 Core | 已完成三场景 Alpha 验收 |
 | Scene Beta 能力包 | 给单场景补对象、微场景、failure benchmark 和 non-CAD 证据 | office / residential / restaurant 已有 beta benchmark |
-| Scene Product 场景产品 | 面向真实业务场景闭环：项目样本、图块策略、真实 CAD smoke、用户确认流 | `commercial_fitout` 为 Scene Product **Alpha**（C-CFIT 已收口）；其他场景仍为 Alpha/Beta |
+| Scene Product 场景产品 | 面向真实业务场景闭环：项目样本、图块策略、真实 CAD smoke、用户确认流 | `commercial_fitout` 已进入 Scene Product Alpha 边缘：三组脱敏样本、代表对象 smoke 与部分真实 CAD 证据已建立；仍未达到完整产品化交付。其他场景仍为 Alpha/Beta |
 
 ## 已完成路线
 
@@ -117,7 +117,7 @@ Scene Alpha / Beta 不能替代 Scene Product
 | 真实块库 | prototype | 是否接入公司块库，如何处理隐私和路径迁移 |
 | 多方案设计推理 | prototype | 何时从可解释候选进入更复杂设计策略 |
 | 真实项目回归集 | not_started | 哪些项目可作为可提交样本，哪些只能留本机 |
-| 工装 Scene Product Alpha | not_started | 是否确认工装为首个真实业务场景；先做开放办公、会议室、前台接待 |
+| 工装 Scene Product Alpha | partially_verified | 已有开放办公、会议室、前台接待三样本与部分真实 CAD smoke；仍需用户确认流、图块策略和更多项目级 readback 才能称为完整 Scene Product |
 | 换机验收 | blocked_by_cad | 用 `run_cad_validation.py` 在新机器上跑完整 CAD 验证 |
 
 ## 路线约束

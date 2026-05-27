@@ -1,0 +1,19 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "delete_object",
+  "object": {
+    "type": "entity_reference",
+    "name": "Intent Lab Delete",
+    "target_handle": "intent-lab-deferred"
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [5000, 1000, 0]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW"
+  },
+  "confidence": 1.0,
+  "needs_confirmation": true
+}

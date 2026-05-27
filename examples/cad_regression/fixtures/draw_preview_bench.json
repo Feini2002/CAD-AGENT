@@ -1,0 +1,22 @@
+{
+  "version": "0.1",
+  "domain": "office",
+  "intent": "draw_object",
+  "object": {
+    "type": "desk",
+    "name": "Regression Bench",
+    "width": 1200,
+    "depth": 600
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [15000, 6000, 0]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 1.0,
+  "needs_confirmation": false
+}

@@ -1,4 +1,4 @@
-﻿# Phase Y Blank Shell Hardening Plan
+# Phase Y Blank Shell Hardening Plan
 
 状态：由 `CORE_RESTRUCTURE_PLAN.md` 拆分而来
 最后同步：2026-05-26（`Y-MULTI-CANDIDATE` / `Y-MC-05` 收口）

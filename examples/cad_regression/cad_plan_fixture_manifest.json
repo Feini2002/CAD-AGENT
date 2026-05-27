@@ -22,9 +22,27 @@
       "cad_execution": true
     },
     {
+      "id": "draw_preview_storage",
+      "title": "Preview storage cabinet draw_object fixture",
+      "plan_path": "examples/cad_regression/fixtures/draw_preview_storage.json",
+      "cad_execution": true
+    },
+    {
+      "id": "draw_preview_glyph",
+      "title": "Preview draw_symbol_glyph fixture",
+      "plan_path": "examples/cad_regression/fixtures/draw_preview_glyph.json",
+      "cad_execution": true
+    },
+    {
       "id": "insert_block_alpha_preview",
       "title": "Preview insert_block_alpha fixture",
       "plan_path": "examples/cad_regression/fixtures/insert_block_alpha_preview.json",
+      "cad_execution": true
+    },
+    {
+      "id": "draw_preview_bench",
+      "title": "Preview bench draw_object fixture",
+      "plan_path": "examples/cad_regression/fixtures/draw_preview_bench.json",
       "cad_execution": true
     }
   ]

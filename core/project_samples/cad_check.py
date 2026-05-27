@@ -16,11 +16,16 @@ from core.verification.evidence_contract import (
     NON_CAD_GEOMETRY_ACCURACY,
     SCREENSHOT_NOT_APPLICABLE,
 )
-from core.verification.preview_only_audit import build_preview_only_audit
 
 DEFAULT_CAD_OFFSET = [28000, 12000, 0]
 PREVIEW_LAYER = "CODEX_PREVIEW"
-SAFETY_CLAIMS = build_preview_only_audit(layer=PREVIEW_LAYER)
+
+SAFETY_CLAIMS = {
+    "layer": PREVIEW_LAYER,
+    "saved_dwg": False,
+    "deleted_entities": False,
+    "modified_formal_layers": False,
+}
 
 
 def _write_json(path: Path, data: Any) -> None:

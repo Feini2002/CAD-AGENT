@@ -26,7 +26,13 @@ class CadSessionGuardTests(unittest.TestCase):
     def test_capture_snapshot_records_document_and_preview_counts(self) -> None:
         driver = FakeCadDriver()
         driver.draw_line(start_point=[0, 0, 0], end_point=[100, 0, 0], layer=PREVIEW_LAYER)
-        driver.draw_line(start_point=[0, 0, 0], end_point=[0, 100, 0], layer="WALL")
+        driver.entities["H900"] = FakeCadEntity(
+            handle="H900",
+            object_name="AcDbLine",
+            layer="WALL",
+            StartPoint=[0, 0, 0],
+            EndPoint=[0, 100, 0],
+        )
 
         snapshot = capture_active_document_snapshot(driver, phase="after_connect")
 

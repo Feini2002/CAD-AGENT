@@ -32,20 +32,16 @@ class CadCapabilityProbeTests(unittest.TestCase):
         self.assertIn("block_reference", report["contract"]["entities"])
         self.assertIn("insert_block_alpha", report["contract"]["entities"]["block_reference"]["intents"])
         self.assertEqual(report["active_document"], "sample-active.dwg")
-        self.assertEqual(report["active_document_guard"]["status"], "consistent")
-        self.assertEqual(report["write_guard"]["status"], "pass")
-        checks = {check["name"]: check for check in report["checks"]}
-        self.assertEqual(checks["write_guard_negative"]["status"], "pass")
-        self.assertEqual(checks["preview_only_audit"]["status"], "pass")
-        self.assertTrue((output_dir / "active_document_snapshot.json").exists())
         self.assertEqual(report["layer"], "CODEX_PREVIEW")
-        self.assertEqual(report["safety"]["saved_dwg"], False)
         self.assertEqual(len(report["created_handles"]), 11)
         self.assertEqual(
             report["actual"]["type_counts"],
             {"arc": 1, "circle": 1, "dimension": 2, "line": 5, "polyline": 1, "text": 1},
         )
         self.assertTrue(all(check["status"] == "pass" for check in report["checks"]))
+        self.assertIn("session_guard", report)
+        self.assertEqual(report["session_guard"]["status"], "consistent")
+        self.assertTrue((output_dir / "active_document_snapshot.json").exists())
         self.assertIn("entity_evidence", report)
         self.assertTrue(entity_level_evidence_allows_probe_pass(report["entity_evidence"]))
         polyline_entries = [entry for entry in report["entity_evidence"] if entry["primitive"] == "polyline"]

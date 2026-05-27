@@ -1,0 +1,19 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": {
+    "type": "cabinet",
+    "name": "Negative Missing Base",
+    "width": 600,
+    "depth": 400
+  },
+  "placement": {
+    "mode": "absolute"
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW"
+  },
+  "confidence": 1.0,
+  "needs_confirmation": false
+}

@@ -6,6 +6,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from core.agents.fitout_sample_specs import (
+    DEFAULT_FITOUT_SAMPLE_ID,
+    FITOUT_SAMPLE_ID,
+    FitoutSampleSpec,
+    resolve_fitout_sample_spec,
+    resolve_fitout_sample_spec_for_workflow,
+)
 from core.project_samples.loader import load_sample_inputs
 from core.project_samples.protocol import scan_project_sample
 from core.proposal_engine.confirmed_finalize import finalize_confirmed_cad_plans
@@ -19,8 +26,6 @@ from core.schemas.validator import validate_value
 from core.workflows.blank_shell_pipeline import run_blank_shell_pipeline
 
 BUNDLE_VERSION = "0.1"
-FITOUT_SAMPLE_ID = "commercial_fitout_sample"
-WORKFLOW_REL = Path("examples/workflows/commercial_fitout_sample_confirmation_loop.json")
 DEFAULT_CONFIRMATION_REL = Path("examples/confirmations/commercial_fitout_sample_confirmation.json")
 SCHEMA_NAME = "commercial_fitout_sample_confirmation_bundle.schema.json"
 
@@ -39,12 +44,14 @@ def default_project_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-def default_workflow_path(project_root: Path | None = None) -> Path:
-    return (project_root or default_project_root()) / WORKFLOW_REL
+def default_workflow_path(project_root: Path | None = None, *, sample_id: str | None = None) -> Path:
+    spec = resolve_fitout_sample_spec(sample_id)
+    return (project_root or default_project_root()) / spec.workflow_rel
 
 
-def default_sample_dir(project_root: Path | None = None) -> Path:
-    return (project_root or default_project_root()) / "projects" / FITOUT_SAMPLE_ID
+def default_sample_dir(project_root: Path | None = None, *, sample_id: str | None = None) -> Path:
+    spec = resolve_fitout_sample_spec(sample_id)
+    return (project_root or default_project_root()) / "projects" / spec.sample_id
 
 
 def _write_json(path: Path, data: Any) -> None:
@@ -122,6 +129,7 @@ def assert_pre_confirmation_gate(result: dict[str, Any]) -> list[str]:
 def build_confirmation_for_sample_proposal(
     proposal: dict[str, Any],
     *,
+    spec: FitoutSampleSpec,
     action: str = "accept_with_risks",
     risk_notes: list[str] | None = None,
 ) -> dict[str, Any]:
@@ -133,7 +141,7 @@ def build_confirmation_for_sample_proposal(
         {
             "candidate_id": str(item.get("candidate_id", "")),
             "reason_code": "user_rejected",
-            "reason_note": "Not selected in commercial fitout sample confirmation.",
+            "reason_note": f"Not selected in {spec.sample_id} confirmation.",
         }
         for item in candidates
         if str(item.get("candidate_id", "")) != selected
@@ -144,12 +152,8 @@ def build_confirmation_for_sample_proposal(
         action=action,
         rejected_candidates=rejected,
     )
-    confirmation["confirmation_id"] = "confirm-commercial-fitout-sample-open-office"
-    notes = [
-        "Risk: shell obstacles are hand-authored and not CAD-verified.",
-        "Risk: FITOUT_* blocks are placeholders until company block library is bound.",
-        "Assumption: open-office zone sizing is indicative for layout preview only.",
-    ]
+    confirmation["confirmation_id"] = spec.confirmation_id
+    notes = list(spec.default_notes)
     if risk_notes:
         notes.extend(risk_notes)
     confirmation.setdefault("local_preferences", {})
@@ -162,11 +166,18 @@ def run_fitout_sample_pre_confirmation(
     output_dir: Path,
     project_root: Path | None = None,
     workflow_path: Path | None = None,
+    sample_id: str | None = None,
 ) -> dict[str, Any]:
     """Run blank-shell pipeline until DESIGN_PROPOSAL; block CAD_PLAN until user confirms."""
 
     root = project_root or default_project_root()
-    sample_dir = default_sample_dir(root)
+    workflow = workflow_path or default_workflow_path(root, sample_id=sample_id)
+    spec = (
+        resolve_fitout_sample_spec_for_workflow(workflow, project_root=root)
+        if workflow_path is not None
+        else resolve_fitout_sample_spec(sample_id)
+    )
+    sample_dir = root / "projects" / spec.sample_id
     scan = scan_project_sample(sample_dir, projects_root=root / "projects")
     if scan["status"] != "pass":
         return {
@@ -174,10 +185,9 @@ def run_fitout_sample_pre_confirmation(
             "errors": [f"sample protocol scan failed: {scan}"],
             "artifacts": {},
         }
-    load_sample_inputs(FITOUT_SAMPLE_ID, projects_root=root / "projects")
-    workflow = workflow_path or default_workflow_path(root)
+    load_sample_inputs(spec.sample_id, projects_root=root / "projects")
     result = run_blank_shell_pipeline(workflow, output_dir=output_dir)
-    result["sample_id"] = FITOUT_SAMPLE_ID
+    result["sample_id"] = spec.sample_id
     result["workflow_path"] = str(workflow)
     gate_errors = assert_pre_confirmation_gate(result)
     if gate_errors:
@@ -194,11 +204,12 @@ def build_sample_confirmation_bundle(
     finalize_report: dict[str, Any],
     confirmed_bundle: dict[str, Any],
     pre_confirmation: dict[str, Any],
+    spec: FitoutSampleSpec,
 ) -> dict[str, Any]:
     assumptions_risks = build_assumptions_risks(brief=brief, confirmation=confirmation)
     return {
         "version": BUNDLE_VERSION,
-        "sample_id": FITOUT_SAMPLE_ID,
+        "sample_id": spec.sample_id,
         "workflow_path": str(pre_confirmation.get("workflow_path", "")),
         "proposal_id": str(confirmed_bundle.get("proposal_id", "")),
         "confirmation_id": str(confirmed_bundle.get("confirmation_id", "")),
@@ -222,12 +233,20 @@ def run_fitout_sample_confirmation_closure(
     confirmation_path: Path,
     *,
     project_root: Path | None = None,
+    sample_id: str | None = None,
+    workflow_path: Path | None = None,
 ) -> dict[str, Any]:
     """Apply user confirmation and emit confirmed CAD_PLAN bundle plus assumptions/risks record."""
 
     root = project_root or default_project_root()
+    workflow = workflow_path or default_workflow_path(root, sample_id=sample_id)
+    spec = (
+        resolve_fitout_sample_spec_for_workflow(workflow, project_root=root)
+        if workflow_path is not None
+        else resolve_fitout_sample_spec(sample_id)
+    )
     artifact_dir = artifact_dir.resolve()
-    brief_path = default_sample_dir(root) / "fixtures" / "design_brief.json"
+    brief_path = root / "projects" / spec.sample_id / "fixtures" / "design_brief.json"
     brief = _read_json(brief_path)
     proposal = _read_json(artifact_dir / "design_proposal.json")
     confirmation = load_user_confirmation(confirmation_path)
@@ -241,7 +260,7 @@ def run_fitout_sample_confirmation_closure(
 
     confirmed_bundle = _read_json(artifact_dir / "confirmed_cad_plan_bundle.json")
     pre_confirmation = {
-        "workflow_path": str(default_workflow_path(root)),
+        "workflow_path": str(workflow),
         "confirmation_gate": {
             "cad_plan_generation": "blocked",
             "needs_confirmation": True,
@@ -254,6 +273,7 @@ def run_fitout_sample_confirmation_closure(
         finalize_report=finalize_report,
         confirmed_bundle=confirmed_bundle,
         pre_confirmation=pre_confirmation,
+        spec=spec,
     )
     schema_path = root / "core" / "schemas" / SCHEMA_NAME
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
@@ -261,10 +281,9 @@ def run_fitout_sample_confirmation_closure(
     if schema_errors:
         return {"status": "invalid", "errors": schema_errors, "finalize_report": finalize_report}
 
-    _write_json(artifact_dir / "commercial_fitout_sample_confirmation_bundle.json", sample_bundle)
-    finalize_report["sample_confirmation_bundle_path"] = str(
-        artifact_dir / "commercial_fitout_sample_confirmation_bundle.json"
-    )
+    bundle_path = artifact_dir / spec.bundle_filename
+    _write_json(bundle_path, sample_bundle)
+    finalize_report["sample_confirmation_bundle_path"] = str(bundle_path)
     return finalize_report
 
 
@@ -273,12 +292,24 @@ def run_fitout_sample_confirmation_loop(
     confirmation_path: Path | None = None,
     *,
     project_root: Path | None = None,
+    sample_id: str | None = None,
+    workflow_path: Path | None = None,
 ) -> dict[str, Any]:
     """Full C-CFIT-05 loop: pre-confirmation gate -> user confirmation -> confirmed bundle."""
 
     root = project_root or default_project_root()
+    workflow = workflow_path or default_workflow_path(root, sample_id=sample_id)
+    spec = (
+        resolve_fitout_sample_spec_for_workflow(workflow, project_root=root)
+        if workflow_path is not None
+        else resolve_fitout_sample_spec(sample_id)
+    )
     output_dir = output_dir.resolve()
-    pre = run_fitout_sample_pre_confirmation(output_dir=output_dir, project_root=root)
+    pre = run_fitout_sample_pre_confirmation(
+        output_dir=output_dir,
+        project_root=root,
+        workflow_path=workflow,
+    )
     if pre.get("status") != "confirmation_pending":
         return pre
 
@@ -286,8 +317,13 @@ def run_fitout_sample_confirmation_loop(
     if confirmation_path and confirmation_path.is_file():
         confirmation = load_user_confirmation(confirmation_path)
     else:
-        confirmation = build_confirmation_for_sample_proposal(proposal)
+        confirmation = build_confirmation_for_sample_proposal(proposal, spec=spec)
         confirmation_path = output_dir / "user_confirmation.json"
         save_user_confirmation(confirmation_path, confirmation)
 
-    return run_fitout_sample_confirmation_closure(output_dir, confirmation_path, project_root=root)
+    return run_fitout_sample_confirmation_closure(
+        output_dir,
+        confirmation_path,
+        project_root=root,
+        workflow_path=workflow,
+    )
