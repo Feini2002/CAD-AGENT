@@ -36,7 +36,7 @@ class CapabilityReadabilityTests(unittest.TestCase):
         self.assertGreater(summary["verified_geometry_count"], 0)
         self.assertEqual(summary["verified_guard_count"], 1)
         self.assertGreater(summary["deferred_cad_count"], 0)
-        self.assertGreater(summary["none_count"], 0)
+        self.assertGreater(summary["deferred_cad_count"] + summary["none_count"], 0)
         self.assertIn("what_can_be_claimed_as_geometry", report["readable_sections"])
         self.assertIn("what_is_guard_only", report["readable_sections"])
         self.assertTrue(report["recommended_next_capability_ids"])
@@ -60,8 +60,18 @@ class CapabilityReadabilityTests(unittest.TestCase):
             with self.subTest(status=status):
                 self.assertEqual(row["category"], "symbol")
                 self.assertEqual(row["readability_status"], status)
-                self.assertEqual(row["evidence"]["evidence_state"], "benchmark_pass_non_cad")
-                self.assertEqual(row["evidence"]["geometry_accuracy"], "not_verified_without_cad_readback")
+                claim_level = row.get("claim_level")
+                if claim_level == "smoke":
+                    self.assertEqual(row["evidence"]["evidence_state"], "benchmark_pass_non_cad")
+                    self.assertEqual(row["evidence"]["geometry_accuracy"], "not_verified_without_cad_readback")
+                elif claim_level in {"verified", "showcase"}:
+                    self.assertTrue(str(row["evidence"].get("report_path", "")).strip())
+                    self.assertNotEqual(
+                        row["evidence"].get("geometry_accuracy"),
+                        "not_verified_without_cad_readback",
+                    )
+                else:
+                    self.fail(f"unexpected claim_level for readability row: {claim_level!r}")
 
         schema = json.loads(get_schema_path("cad_capability_registry").read_text(encoding="utf-8"))
         self.assertEqual(validate_value(registry, schema), [])

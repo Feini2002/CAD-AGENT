@@ -1,0 +1,14 @@
+{
+  "model_type": "cross_machine_report",
+  "data": {
+    "version": "0.1",
+    "package_id": "broken",
+    "status": "pass",
+    "generated_at": "2026-05-28T00:00:00Z",
+    "machine": {},
+    "no_cad_steps": [],
+    "coverage_recalc": {},
+    "user_gate": {},
+    "summary": {}
+  }
+}

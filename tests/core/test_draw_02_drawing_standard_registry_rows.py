@@ -14,6 +14,7 @@ from core.drawing_standard.drawing_standard_registry import (
     build_drawing_standard_registry_rows,
     build_smoke_writeback_requests_from_suite_output,
     capability_id_for_drawing_standard_beta_case,
+    expected_drawing_standard_beta_case_ids,
     run_drawing_standard_registry_no_cad_sync,
     sync_drawing_standard_registry_from_suite,
     SmokeEvidenceWritebackRequest,
@@ -29,6 +30,20 @@ from tests.helpers import artifact_path
 
 
 class Draw02DrawingStandardRegistryRowsTests(unittest.TestCase):
+    def _drawing_standard_claim_counts(self, registry: dict) -> tuple[int, int]:
+        ids = {DRAWING_STANDARD_SUITE_CAPABILITY_ID}
+        ids.update(
+            capability_id_for_drawing_standard_beta_case(case_id)
+            for case_id in expected_drawing_standard_beta_case_ids(project_root=PROJECT_ROOT)
+        )
+        rows = [
+            row
+            for row in registry.get("capabilities", [])
+            if isinstance(row, dict) and row.get("capability_id") in ids
+        ]
+        smoke_count = sum(1 for row in rows if row.get("claim_level") == "smoke")
+        return smoke_count, len(rows) - smoke_count
+
     def test_draw_02_registry_contract(self) -> None:
         assert_drawing_standard_boundary_contract(project_root=PROJECT_ROOT)
         assert_drawing_standard_registry_contract(project_root=PROJECT_ROOT)
@@ -120,11 +135,12 @@ class Draw02DrawingStandardRegistryRowsTests(unittest.TestCase):
             project_root=PROJECT_ROOT,
             dry_run=True,
         )
+        expected_applied, expected_rejected = self._drawing_standard_claim_counts(registry)
         self.assertEqual(len(results), 7)
         applied = [item for item in results if item.status == "applied"]
         rejected = [item for item in results if item.status == "rejected"]
-        self.assertEqual(len(applied), 5)
-        self.assertEqual(len(rejected), 2)
+        self.assertEqual(len(applied), expected_applied)
+        self.assertEqual(len(rejected), expected_rejected)
         self.assertTrue(all("claim_level=smoke" in item.message for item in rejected))
 
         requests = build_smoke_writeback_requests_from_suite_output(
@@ -145,10 +161,16 @@ class Draw02DrawingStandardRegistryRowsTests(unittest.TestCase):
             output_dir=output_root,
             dry_run=True,
         )
+        registry = json.loads(
+            (
+                PROJECT_ROOT / "examples/capability_proof/cad_capability_registry.json"
+            ).read_text(encoding="utf-8")
+        )
+        expected_applied, expected_rejected = self._drawing_standard_claim_counts(registry)
         self.assertEqual(summary["package_id"], DRAW_02_PACKAGE_ID)
         self.assertEqual(summary["suite_status"], "pass")
-        self.assertEqual(summary["writeback_applied_count"], 5)
-        self.assertEqual(summary["writeback_rejected_count"], 2)
+        self.assertEqual(summary["writeback_applied_count"], expected_applied)
+        self.assertEqual(summary["writeback_rejected_count"], expected_rejected)
 
     def test_handoff_indexes_draw_02(self) -> None:
         handoff = (PROJECT_ROOT / "docs/handoffs/CURSOR_PACKAGE_HANDOFFS.md").read_text(encoding="utf-8")

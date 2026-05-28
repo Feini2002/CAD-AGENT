@@ -1,0 +1,14 @@
+{
+  "model_type": "capability_lab_report",
+  "data": {
+    "version": "0.1",
+    "package_id": "broken-lab",
+    "tier": "L1",
+    "status": "pass",
+    "generated_at": "2026-05-28T00:00:00Z",
+    "requires_real_cad": false,
+    "output_root": "output/validation_runs/broken",
+    "steps": [],
+    "summary": {}
+  }
+}

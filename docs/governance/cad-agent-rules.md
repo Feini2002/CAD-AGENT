@@ -6,6 +6,8 @@
 
 本文件夹是通用 CAD Agent 开发包，不绑定当前家装图、不绑定当前 DWG、不绑定当前电脑。
 
+本仓库也不绑定单一 agent 软件。Codex、Cursor 或其它同类 agent 工具都应遵守同一套 `CAD_PLAN`、Core、训练、验证和交接规则；文档中的具体工具名只代表可选载体、历史文件名或某个工具专属能力，不得被解释为强制单一软件。
+
 任何规则、Schema、脚本和对象库都应优先服务可迁移能力。具体项目的信息必须进入项目上下文文件，例如 `cad_context.json`，不要写死在通用规则里。
 
 适用范围包括但不限于：
@@ -58,13 +60,25 @@
 
 如果未来判断根目录 Markdown 过多，优先迁移到 `docs/history/`、`docs/architecture/`、`docs/decisions/` 或 `docs/verification/`，不要直接删除仍有历史依据的文档。
 
-## 0.4 交付进度百分比估算口径
+## 0.4 开发状态查询与进度口径
 
-后续每次完成 CAD Agent 相关改动后，Codex 都要顺手模拟估算一次开发进度，并在最终回复中给出大概百分比。该百分比是产品和工程节奏判断工具，不是严格项目管理 KPI，允许有 5-10 个百分点的主观误差。
+后续每次完成 CAD Agent 相关改动后，Codex 可以在内部判断是否影响开发进度、任务台账或表 C，但**不要在普通最终回复里默认输出进度表、表单或百分比表格**。普通交付优先用自然段说明本轮完成内容、验证证据和风险边界。
 
-聊天最终回复默认按 `AGENTS.md`「交付默认精简进度」使用 **1 张轻量表**，结构是：**表 C 主指标** → 本轮进展 / 验证 → 表 A 折叠工程节奏 → 表 B 本轮相关中文轨道。这样减少低价值重复表格，但保留「真实 CAD 实力」的安全阀。
+只有用户明确点名 **开发状态查询 / 进度 / 完整状态 / 交接 / 审计 / 表 A / 表 B / 表 C / 真实 CAD 实力 / 刷新表 C / 报进度表** 时，最终回复才使用进度表格。该百分比是产品和工程节奏判断工具，不是严格项目管理 KPI，允许有 5-10 个百分点的主观误差。
 
-**默认必须保留：**
+**Agent 训练期：** 见 `AGENTS.md` 与 `docs/training/README.md`——未点名开发状态或表 C 时，不附进度表。
+
+**训练期 / CAD 会话截图默认：**
+
+1. **默认保留布局**：左 CAD / 右 IDE 分屏时，**不要**把 AutoCAD 全屏或强置顶；仅当窗口最小化时 `SW_RESTORE`。
+2. **再**按 `execution_summary` 的 handles **`ZoomWindow` 重取景**（用户中途误拖/误缩也须自动拉回）。
+3. **只截** AutoCAD 客户区（`--capture-autocad-window` + 默认 **`PrintWindow`**，IDE 挡在 CAD 上也不会被拍进去）；禁止默认整屏 `--capture-screen`（仅 fallback）。
+4. **仅当 PrintWindow 失败或 CAD 完全被遮挡**时，才用 `--force-foreground` 置顶一次并重试。
+5. 截完后用户可立即切到其它软件；Agent 不得长时间占前台。
+
+推荐：`prepare_autocad_for_capture` / CLI 一条命令（默认 `preserve_layout`）。截图仍 `visual_aid_only`。
+
+**状态查询必须保留：**
 
 - **表 C 主指标**：`cad_strength_headline_percent`，必须先报；机器值以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准。
 - **本轮证据**：说明跑了哪些测试、benchmark、coverage、CAD readback；百分比不得替代证据。
@@ -100,11 +114,11 @@
 当前基准估算见 `CORE_STATUS.md` 与 `docs/status/current.md`。截至 2026-05-28 文档架构重构后的同步口径为：
 
 ```text
-总进度：约 95% = 96% * 0.70 + 93% * 0.30（工程节奏）
-Core 底座开发进度：约 96%（工程完备度）
+总进度：约 97% = 100% * 0.70 + 93% * 0.30（工程节奏）
+Core 底座开发进度：100%（工程完备度；见 core_platform_completion_gate.md）
 Agent 多场景实现进度：约 93%
-CAD 证明覆盖率：约 48.58%（137/282；112 verified + 25 showcase）
-真实 CAD 实力主指标：约 8.87%
+CAD 证明覆盖率：约 62.78%（317 行；199 showcase）
+真实 CAD 实力主指标：约 62.78%
 展示等级 Ladder：最高已证 L4
 ```
 

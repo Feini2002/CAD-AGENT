@@ -1,0 +1,20 @@
+{
+  "round": "round10",
+  "audit_pass": true,
+  "agent_review_all_pass": false,
+  "delivery_allowed": false,
+  "checks": {
+    "visual_match_brief": {
+      "pass": false,
+      "note": "待 Agent 读图确认"
+    },
+    "same_product_family_as_reference": {
+      "pass": false,
+      "note": "待 Agent 读图确认"
+    },
+    "no_schematic_shortcut": {
+      "pass": false,
+      "note": "机器未命中 schematic"
+    }
+  }
+}

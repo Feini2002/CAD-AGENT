@@ -22,6 +22,10 @@ def module_available(module_name: str) -> bool:
 
 AUTOCAD_WINDOW_TITLE_MARKERS = ("Autodesk AutoCAD", "AutoCAD", ".dwg", ".dwt")
 
+# PrintWindow flags (winuser.h)
+PW_CLIENTONLY = 0x00000001
+PW_RENDERFULLCONTENT = 0x00000002
+
 
 def _window_matches_autocad(title: str) -> bool:
     normalized = title.strip()
@@ -112,6 +116,33 @@ def _restore_and_focus_window(hwnd: int, win32gui_module: Any) -> None:
     sleep(0.3)
 
 
+def ensure_autocad_visible(
+    *,
+    autocad_window_finder: Callable[[], dict[str, object] | None] | None = None,
+    settle_seconds: float = 0.15,
+) -> dict[str, object]:
+    """Restore AutoCAD only when minimized; do not steal desktop foreground or resize."""
+
+    if autocad_window_finder is None:
+        try:
+            import win32gui
+        except ImportError as exc:
+            raise RuntimeError("win32gui is required to locate AutoCAD.") from exc
+        target = find_autocad_window(win32gui_module=win32gui, include_minimized=True)
+        if target is None:
+            raise RuntimeError("AutoCAD window is not visible; cannot capture.")
+        hwnd = int(target["hwnd"])
+        if hasattr(win32gui, "IsIconic") and win32gui.IsIconic(hwnd):
+            win32gui.ShowWindow(hwnd, 9)  # SW_RESTORE only
+            sleep(settle_seconds)
+        return _target_from_hwnd(hwnd, win32gui)
+
+    target = autocad_window_finder()
+    if target is None:
+        raise RuntimeError("AutoCAD window is not visible; cannot capture.")
+    return target
+
+
 def get_preview_capabilities(
     output: Path,
     *,
@@ -123,6 +154,7 @@ def get_preview_capabilities(
     dependencies = {
         "pillow_imagegrab": module_checker("PIL.ImageGrab"),
         "win32gui": module_checker("win32gui"),
+        "win32ui": module_checker("win32ui"),
     }
     capture_modes: list[str] = []
     if dependencies["pillow_imagegrab"]:
@@ -130,7 +162,7 @@ def get_preview_capabilities(
 
     autocad_window: dict[str, object] = {"status": "unavailable"}
     autocad_viewport_or_client: dict[str, object] = {"status": "unavailable"}
-    if dependencies["pillow_imagegrab"] and dependencies["win32gui"]:
+    if dependencies["pillow_imagegrab"] and dependencies["win32gui"] and dependencies["win32ui"]:
         try:
             target = autocad_window_finder()
         except Exception as exc:
@@ -159,8 +191,65 @@ def get_preview_capabilities(
         "capture_modes": capture_modes,
         "autocad_window": autocad_window,
         "autocad_viewport_or_client": autocad_viewport_or_client,
-        "note": "Screenshot geometry remains visual aid only; CAD accuracy requires created-handle readback.",
+        "note": (
+            "AutoCAD capture uses PrintWindow on the client area so IDE overlays are not baked in. "
+            "Screenshot geometry remains visual aid only; CAD accuracy requires created-handle readback."
+        ),
     }
+
+
+def capture_hwnd_client_printwindow(hwnd: int) -> CapturableImage:
+    """Capture a window client area via PrintWindow (not occluded by other apps on screen)."""
+
+    try:
+        import win32gui
+        import win32ui
+        from ctypes import windll
+        from PIL import Image
+    except ImportError as exc:
+        raise RuntimeError("win32gui, win32ui, and Pillow are required for PrintWindow capture.") from exc
+
+    left, top, right, bottom = win32gui.GetClientRect(hwnd)
+    width = int(right - left)
+    height = int(bottom - top)
+    if width < 1 or height < 1:
+        raise RuntimeError(f"AutoCAD client rect is empty: {(left, top, right, bottom)}")
+
+    hwnd_dc = win32gui.GetWindowDC(hwnd)
+    mfc_dc = win32ui.CreateDCFromHandle(hwnd_dc)
+    save_dc = mfc_dc.CreateCompatibleDC()
+    bitmap = win32ui.CreateBitmap()
+    bitmap.CreateCompatibleBitmap(mfc_dc, width, height)
+    save_dc.SelectObject(bitmap)
+
+    flags = PW_CLIENTONLY | PW_RENDERFULLCONTENT
+    ok = bool(windll.user32.PrintWindow(hwnd, save_dc.GetSafeHdc(), flags))
+    if not ok:
+        ok = bool(windll.user32.PrintWindow(hwnd, save_dc.GetSafeHdc(), PW_CLIENTONLY))
+    if not ok:
+        win32gui.DeleteObject(bitmap.GetHandle())
+        save_dc.DeleteDC()
+        mfc_dc.DeleteDC()
+        win32gui.ReleaseDC(hwnd, hwnd_dc)
+        raise RuntimeError("PrintWindow failed for AutoCAD hwnd.")
+
+    bmpinfo = bitmap.GetInfo()
+    bmpstr = bitmap.GetBitmapBits(True)
+    image = Image.frombuffer(
+        "RGB",
+        (bmpinfo["bmWidth"], bmpinfo["bmHeight"]),
+        bmpstr,
+        "raw",
+        "BGRX",
+        0,
+        1,
+    )
+
+    win32gui.DeleteObject(bitmap.GetHandle())
+    save_dc.DeleteDC()
+    mfc_dc.DeleteDC()
+    win32gui.ReleaseDC(hwnd, hwnd_dc)
+    return image
 
 
 def capture_screen(
@@ -191,31 +280,59 @@ def capture_screen(
     }
 
 
-def capture_autocad_window(
-    output: Path,
+def bring_autocad_to_foreground(
     *,
     autocad_window_finder: Callable[[], dict[str, object] | None] | None = None,
-    grabber: Callable[..., CapturableImage] | None = None,
+    settle_seconds: float = 0.35,
 ) -> dict[str, object]:
-    """Capture the AutoCAD client area instead of the whole desktop."""
-
-    if grabber is None:
-        try:
-            from PIL import ImageGrab
-        except ImportError as exc:
-            raise RuntimeError("Pillow ImageGrab is required for AutoCAD window capture.") from exc
-        grabber = ImageGrab.grab
+    """Restore AutoCAD and bring it to the desktop foreground before capture or zoom."""
 
     if autocad_window_finder is None:
         try:
             import win32gui
         except ImportError as exc:
+            raise RuntimeError("win32gui is required to focus AutoCAD.") from exc
+        target = find_autocad_window(win32gui_module=win32gui, include_minimized=True)
+        if target is None:
+            raise RuntimeError("AutoCAD window is not visible; cannot bring to foreground.")
+        hwnd = int(target["hwnd"])
+        _restore_and_focus_window(hwnd, win32gui)
+        sleep(settle_seconds)
+        return _target_from_hwnd(hwnd, win32gui)
+
+    target = autocad_window_finder()
+    if target is None:
+        raise RuntimeError("AutoCAD window is not visible; cannot bring to foreground.")
+    return target
+
+
+def capture_autocad_window(
+    output: Path,
+    *,
+    autocad_window_finder: Callable[[], dict[str, object] | None] | None = None,
+    grabber: Callable[..., CapturableImage] | None = None,
+    hwnd_capturer: Callable[[int], CapturableImage] | None = None,
+    foreground_first: bool = True,
+    settle_seconds: float = 0.2,
+    use_screen_grab: bool = False,
+) -> dict[str, object]:
+    """Capture AutoCAD client area.
+
+    Default: PrintWindow on hwnd (immune to other windows drawn on top in screen space).
+    Legacy: ``use_screen_grab=True`` or inject ``grabber`` for desktop bbox capture (can include IDE overlay).
+    """
+
+    if foreground_first:
+        target = bring_autocad_to_foreground(
+            autocad_window_finder=autocad_window_finder,
+            settle_seconds=settle_seconds,
+        )
+    elif autocad_window_finder is None:
+        try:
+            import win32gui
+        except ImportError as exc:
             raise RuntimeError("win32gui is required for AutoCAD window capture.") from exc
         target = find_autocad_window(win32gui_module=win32gui, include_minimized=True)
-        if target is not None:
-            hwnd = int(target["hwnd"])
-            _restore_and_focus_window(hwnd, win32gui)
-            target = _target_from_hwnd(hwnd, win32gui)
     else:
         target = autocad_window_finder()
     if target is None:
@@ -229,14 +346,32 @@ def capture_autocad_window(
         raise RuntimeError(f"AutoCAD window bbox is invalid: {bbox}")
 
     output.parent.mkdir(parents=True, exist_ok=True)
-    image = grabber(bbox=bbox)
+    hwnd = int(target["hwnd"])
+    capture_mode = "autocad_window_printwindow"
+
+    if grabber is not None or use_screen_grab:
+        if grabber is None:
+            try:
+                from PIL import ImageGrab
+            except ImportError as exc:
+                raise RuntimeError("Pillow ImageGrab is required for screen-grab capture.") from exc
+            grabber = ImageGrab.grab
+        image = grabber(bbox=bbox)
+        capture_mode = "autocad_window_screen_grab"
+    else:
+        capturer = hwnd_capturer or capture_hwnd_client_printwindow
+        image = capturer(hwnd)
+
     image.save(output)
     return {
         "status": "captured",
         "output": str(output),
-        "mode": "autocad_window",
+        "mode": capture_mode,
         "window_title": str(target.get("title", "")),
         "bbox": list(bbox),
+        "hwnd": hwnd,
+        "foreground_first": foreground_first,
+        "occlusion_safe": capture_mode == "autocad_window_printwindow",
     }
 
 
@@ -253,10 +388,11 @@ def _load_created_handles(execution_summary: Path) -> list[str]:
 def focus_autocad_view_from_execution_summary(
     execution_summary: Path,
     *,
-    layer: str = "CODEX_PREVIEW",
+    layer: str | None = None,
+    padding_ratio: float = 0.12,
     driver_factory: Callable[[], Any] | None = None,
 ) -> dict[str, object]:
-    """Zoom AutoCAD to the entities created in the current execution summary."""
+    """Zoom AutoCAD to handles listed in an execution summary (reference + preview allowed)."""
 
     handles = _load_created_handles(execution_summary)
     if not handles:
@@ -267,9 +403,66 @@ def focus_autocad_view_from_execution_summary(
 
         driver_factory = lambda: AutoCADComDriver(connect_existing_only=True)
     driver = driver_factory()
+    if hasattr(driver, "zoom_to_handles_extents"):
+        return driver.zoom_to_handles_extents(handles=handles, padding_ratio=padding_ratio)
     if not hasattr(driver, "zoom_to_handles"):
         return {"status": "not_run", "reason": "driver does not support zoom_to_handles"}
-    return driver.zoom_to_handles(handles=handles, layer=layer)
+    return driver.zoom_to_handles(handles=handles, layer=layer, padding_ratio=padding_ratio)
+
+
+def prepare_autocad_for_capture(
+    output: Path,
+    *,
+    execution_summary: Path | None = None,
+    padding_ratio: float = 0.12,
+    autocad_window_finder: Callable[[], dict[str, object] | None] | None = None,
+    driver_factory: Callable[[], Any] | None = None,
+    preserve_layout: bool = True,
+) -> dict[str, object]:
+    """Re-frame CAD view and capture client area.
+
+    Default ``preserve_layout=True``: keep user's CAD/IDE split; only restore if minimized,
+    zoom via COM, capture with PrintWindow (no SetForegroundWindow). If PrintWindow fails,
+    fall back to bringing AutoCAD to foreground once.
+    """
+
+    if preserve_layout:
+        window = ensure_autocad_visible(autocad_window_finder=autocad_window_finder)
+    else:
+        window = bring_autocad_to_foreground(autocad_window_finder=autocad_window_finder)
+    focus: dict[str, object] = {"status": "not_run", "reason": "no execution summary"}
+    if execution_summary is not None:
+        focus = focus_autocad_view_from_execution_summary(
+            execution_summary,
+            layer=None,
+            padding_ratio=padding_ratio,
+            driver_factory=driver_factory,
+        )
+        sleep(0.25)
+    try:
+        capture = capture_autocad_window(
+            output,
+            autocad_window_finder=lambda: window,
+            foreground_first=False,
+            settle_seconds=0.15,
+        )
+    except Exception as exc:
+        if not preserve_layout:
+            raise
+        window = bring_autocad_to_foreground(autocad_window_finder=autocad_window_finder)
+        capture = capture_autocad_window(
+            output,
+            autocad_window_finder=lambda: window,
+            foreground_first=False,
+            settle_seconds=0.15,
+        )
+        capture["foreground_fallback"] = True
+        capture["foreground_fallback_reason"] = str(exc)
+    capture["window"] = {"hwnd": window.get("hwnd"), "title": window.get("title", "")}
+    capture["focus"] = focus
+    capture["prepared"] = True
+    capture["preserve_layout"] = preserve_layout
+    return capture
 
 
 def main() -> int:
@@ -279,7 +472,23 @@ def main() -> int:
     parser.add_argument("--capture-screen", action="store_true", help="Capture the visible screen to --output.")
     parser.add_argument("--capture-autocad-window", action="store_true", help="Capture the visible AutoCAD client area to --output.")
     parser.add_argument("--execution-summary", type=Path, help="Optional execute_plan summary used to focus CAD view before capture.")
-    parser.add_argument("--layer", default="CODEX_PREVIEW", help="Layer used when focusing by created handles.")
+    parser.add_argument("--layer", default=None, help="Optional layer filter when focusing (default: all handles in summary).")
+    parser.add_argument(
+        "--padding-ratio",
+        type=float,
+        default=0.12,
+        help="Padding around ZoomWindow when focusing from --execution-summary.",
+    )
+    parser.add_argument(
+        "--no-foreground",
+        action="store_true",
+        help="Alias for default preserve-layout capture (no SetForegroundWindow).",
+    )
+    parser.add_argument(
+        "--force-foreground",
+        action="store_true",
+        help="Bring AutoCAD to desktop foreground before capture (use only if PrintWindow fails or CAD is fully occluded).",
+    )
     parser.add_argument("--fallback-screen", action="store_true", help="Use full-screen capture if AutoCAD window capture fails.")
     args = parser.parse_args()
 
@@ -292,12 +501,24 @@ def main() -> int:
         return 0
 
     if args.capture_autocad_window:
+        preserve_layout = not args.force_foreground
         focus_result: dict[str, object] | None = None
         try:
             if args.execution_summary:
-                focus_result = focus_autocad_view_from_execution_summary(args.execution_summary, layer=args.layer)
-            result = capture_autocad_window(args.output)
-            if focus_result is not None:
+                result = prepare_autocad_for_capture(
+                    args.output,
+                    execution_summary=args.execution_summary,
+                    padding_ratio=args.padding_ratio,
+                    preserve_layout=preserve_layout,
+                )
+                focus_result = result.get("focus") if isinstance(result.get("focus"), dict) else None
+            elif preserve_layout or args.no_foreground:
+                ensure_autocad_visible()
+                result = capture_autocad_window(args.output, foreground_first=False)
+            else:
+                bring_autocad_to_foreground()
+                result = capture_autocad_window(args.output, foreground_first=False)
+            if focus_result is not None and "focus" not in result:
                 result["focus"] = focus_result
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0

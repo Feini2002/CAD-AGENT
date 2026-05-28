@@ -1,0 +1,67 @@
+{
+  "version": "0.1",
+  "manifest_id": "project-regression-manifest-v1",
+  "package_id": "V-PROOF-70-PROJECT-MANIFEST",
+  "description": "Submittable de-identified project regression manifest (PROJ-02). Lists projects/ samples for capability proof and LCAD-08 rollup cross-reference.",
+  "projects_root": "projects",
+  "minimum_sample_count": 2,
+  "cad_regression_rollup_path": "examples/cad_regression/project_sample_cad_rollup.json",
+  "samples": [
+    {
+      "sample_id": "sample_blank_shell",
+      "sample_root": "projects/sample_blank_shell",
+      "manifest_path": "projects/sample_blank_shell/sample.manifest.json",
+      "display_name": "Blank Shell Layout Sample (De-identified)",
+      "domain": "generic",
+      "deidentified": true,
+      "evidence_claim": "non_cad_pipeline_only",
+      "submittable": true,
+      "in_cad_regression_rollup": true
+    },
+    {
+      "sample_id": "commercial_fitout_sample",
+      "sample_root": "projects/commercial_fitout_sample",
+      "manifest_path": "projects/commercial_fitout_sample/sample.manifest.json",
+      "display_name": "Commercial Fitout Open Office (De-identified)",
+      "domain": "office",
+      "deidentified": true,
+      "evidence_claim": "non_cad_with_optional_cad_preview",
+      "submittable": true,
+      "in_cad_regression_rollup": true
+    },
+    {
+      "sample_id": "commercial_fitout_meeting_sample",
+      "sample_root": "projects/commercial_fitout_meeting_sample",
+      "manifest_path": "projects/commercial_fitout_meeting_sample/sample.manifest.json",
+      "display_name": "Commercial Fitout Meeting Room (De-identified)",
+      "domain": "office",
+      "deidentified": true,
+      "evidence_claim": "non_cad_with_optional_cad_preview",
+      "submittable": true,
+      "in_cad_regression_rollup": true
+    },
+    {
+      "sample_id": "commercial_fitout_reception_sample",
+      "sample_root": "projects/commercial_fitout_reception_sample",
+      "manifest_path": "projects/commercial_fitout_reception_sample/sample.manifest.json",
+      "display_name": "Commercial Fitout Reception (De-identified)",
+      "domain": "office",
+      "deidentified": true,
+      "evidence_claim": "non_cad_with_optional_cad_preview",
+      "submittable": true,
+      "in_cad_regression_rollup": true
+    },
+    {
+      "sample_id": "sample_blank_shell_too_small",
+      "sample_root": "projects/sample_blank_shell_too_small",
+      "manifest_path": "projects/sample_blank_shell_too_small/sample.manifest.json",
+      "display_name": "Blank Shell Too Small (negative fixture)",
+      "domain": "generic",
+      "deidentified": true,
+      "evidence_claim": "non_cad_pipeline_only",
+      "submittable": false,
+      "in_cad_regression_rollup": false,
+      "notes": "Included for benchmark blocked_expected_non_cad; not part of CAD rollup."
+    }
+  ]
+}

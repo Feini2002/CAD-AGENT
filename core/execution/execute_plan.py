@@ -74,17 +74,20 @@ def execute_plan_file(
     driver: CadPreviewDriver,
     preview_only: bool = True,
     allow_unconfirmed: bool = False,
+    allow_destructive: bool = False,
 ) -> dict[str, object]:
     plan = load_json(plan_path)
     errors = validate_plan(plan)
     if errors:
         raise ValueError("Invalid CAD_PLAN: " + "; ".join(errors))
 
+    intent = str(plan.get("intent", ""))
     assert_plan_is_safe(
         plan,
         approval={
             "allow_formal_layer": not preview_only,
             "allow_unconfirmed": allow_unconfirmed,
+            "allow_delete": allow_destructive or intent == "delete_object",
             "approved_by": "execute_plan_file_options",
         },
     )
@@ -108,9 +111,40 @@ def execute_plan_file(
             preview_only=preview_only,
         )
 
+    if plan["intent"] == "draw_annotation":
+        from core.execution.intent_extended_execute import execute_draw_annotation_plan
+
+        return execute_draw_annotation_plan(
+            plan,
+            plan_path=plan_path,
+            driver=driver,  # type: ignore[arg-type]
+            preview_only=preview_only,
+        )
+
+    if plan["intent"] == "modify_object":
+        from core.execution.intent_extended_execute import execute_modify_object_plan
+
+        return execute_modify_object_plan(
+            plan,
+            plan_path=plan_path,
+            driver=driver,  # type: ignore[arg-type]
+            preview_only=preview_only,
+        )
+
+    if plan["intent"] == "delete_object":
+        from core.execution.intent_extended_execute import execute_delete_object_plan
+
+        return execute_delete_object_plan(
+            plan,
+            plan_path=plan_path,
+            driver=driver,  # type: ignore[arg-type]
+            preview_only=preview_only,
+        )
+
     if plan["intent"] != "draw_object":
         raise ValueError(
-            "execute_plan.py currently supports draw_object, draw_symbol_glyph, and insert_block_alpha only."
+            "execute_plan.py currently supports draw_object, draw_symbol_glyph, insert_block_alpha, "
+            "draw_annotation, modify_object, and delete_object only."
         )
     obj = plan["object"]
     placement = plan["placement"]

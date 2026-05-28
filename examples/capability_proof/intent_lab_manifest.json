@@ -23,22 +23,19 @@
       "intent": "draw_annotation",
       "registry_capability_id": "intent.draw_annotation",
       "plan_path": "examples/plans/intent_lab/draw_annotation.json",
-      "cad_execution": false,
-      "deferred_reason": "execution path not wired; validate and dry-run only"
+      "cad_execution": true
     },
     {
       "intent": "modify_object",
       "registry_capability_id": "intent.modify_object",
       "plan_path": "examples/plans/intent_lab/modify_object.json",
-      "cad_execution": false,
-      "deferred_reason": "execution path not wired; validate and dry-run only"
+      "cad_execution": true
     },
     {
       "intent": "delete_object",
       "registry_capability_id": "intent.delete_object",
       "plan_path": "examples/plans/intent_lab/delete_object.json",
-      "cad_execution": false,
-      "deferred_reason": "destructive intent deferred until target-handle contract is stable"
+      "cad_execution": true
     },
     {
       "intent": "insert_block_alpha",

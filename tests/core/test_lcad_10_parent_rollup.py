@@ -31,6 +31,7 @@ class Lcad10ParentRollupTests(unittest.TestCase):
             "不新增真实 CAD 几何结论",
             "不计入几何证明",
             "LCAD-11.1",
+            "父包已于 2026-05-28 收口",
         ]
 
         for phrase in required_phrases:

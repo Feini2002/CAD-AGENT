@@ -2,7 +2,7 @@
 
 最后更新：2026-05-27
 
-> 机器入口：`core/verification/evidence_trend.py`、`run_local_cad_regression.py`、`run_cad_validation.py`、`run_capability_coverage.py`  
+> 机器入口：`core/verification/evidence_trend.py`、`run_local_cad_regression.py`、`run_cad_validation.py`、`run_capability_coverage.py`
 > 当前趋势证据：
 > - `output/validation_runs/lcad-11-2-regression-trend-json/evidence_trend/local_cad_regression_trend.json`
 > - `output/validation_runs/lcad-11-3-validation-trend-index/evidence_trend/cad_validation_trend_index.json`
@@ -19,6 +19,7 @@
 | `LCAD-11.3` | done | `run_cad_validation` 输出 `cad_validation_trend_index.json` | `output/validation_runs/lcad-11-3-validation-trend-index/evidence_trend/cad_validation_trend_index.json` |
 | `LCAD-11.4` | done | `run_capability_coverage` 输出 `capability_coverage_trend.json` | `output/validation_runs/lcad-11-4-coverage-trend-hook/evidence_trend/capability_coverage_trend.json` |
 | `LCAD-11.5` | done | 本文：趋势报告「不能声称」说明 | `tests.core.test_evidence_trend_boundaries_doc` |
+| `LCAD-11` 父包 | done | `docs/verification/evidence_trend_acceptance.md` | `tests.core.test_lcad_11_parent_rollup` |
 
 ## 三类趋势报告
 

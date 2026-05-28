@@ -1,14 +1,23 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 
 from tests.bootstrap import PROJECT_ROOT
 
 
 
-from core.verification.render_preview import capture_autocad_window, capture_screen, get_preview_capabilities
+from core.verification.render_preview import (
+    bring_autocad_to_foreground,
+    capture_autocad_window,
+    capture_screen,
+    ensure_autocad_visible,
+    get_preview_capabilities,
+    prepare_autocad_for_capture,
+)
 from tests.helpers import artifact_path
 
 
@@ -89,13 +98,74 @@ class RenderPreviewTests(unittest.TestCase):
                 "bbox": [10, 20, 1010, 820],
             },
             grabber=grabber,
+            foreground_first=False,
+            use_screen_grab=True,
         )
 
         self.assertEqual(result["status"], "captured")
-        self.assertEqual(result["mode"], "autocad_window")
+        self.assertEqual(result["mode"], "autocad_window_screen_grab")
         self.assertEqual(result["window_title"], "Autodesk AutoCAD 2026 - [Drawing1.dwg]")
         self.assertEqual(grabber.bbox, (10, 20, 1010, 820))
         self.assertTrue(output.exists())
+
+    @patch("core.verification.render_preview.capture_autocad_window")
+    def test_prepare_autocad_for_capture_preserve_layout_zoom_then_capture(self, mock_capture: Any) -> None:
+        output = artifact_path("render_preview", "prepared", "preview.png")
+        focus_calls: list[str] = []
+
+        class FakeDriver:
+            def zoom_to_handles_extents(self, *, handles: list[str], padding_ratio: float = 0.12) -> dict[str, object]:
+                focus_calls.append(",".join(handles))
+                return {"status": "zoomed_to_bbox", "handle_count": len(handles), "method": "com_geometric_extents"}
+
+        mock_capture.return_value = {
+            "status": "captured",
+            "output": str(output),
+            "mode": "autocad_window_printwindow",
+        }
+
+        summary = artifact_path("render_preview", "prepared", "execution_summary.json")
+        summary.write_text('{"created_handles":["REF","P1"]}', encoding="utf-8")
+
+        prepared = prepare_autocad_for_capture(
+            output,
+            execution_summary=summary,
+            autocad_window_finder=lambda: {
+                "hwnd": 99,
+                "title": "Autodesk AutoCAD 2026 - [Drawing1.dwg]",
+                "bbox": [10, 20, 1010, 820],
+            },
+            driver_factory=lambda: FakeDriver(),
+            preserve_layout=True,
+        )
+        self.assertEqual(prepared["status"], "captured")
+        self.assertTrue(prepared.get("prepared"))
+        self.assertTrue(prepared.get("preserve_layout"))
+        self.assertEqual(focus_calls, ["REF,P1"])
+        mock_capture.assert_called_once()
+        self.assertIs(mock_capture.call_args.kwargs.get("foreground_first"), False)
+
+    def test_ensure_autocad_visible_uses_injected_window_without_foreground(self) -> None:
+        target = ensure_autocad_visible(
+            autocad_window_finder=lambda: {
+                "hwnd": 7,
+                "title": "Autodesk AutoCAD 2026 - [Drawing2.dwg]",
+                "bbox": [0, 0, 800, 600],
+            },
+            settle_seconds=0.0,
+        )
+        self.assertEqual(target["hwnd"], 7)
+
+    def test_bring_autocad_to_foreground_uses_injected_window(self) -> None:
+        target = bring_autocad_to_foreground(
+            autocad_window_finder=lambda: {
+                "hwnd": 7,
+                "title": "Autodesk AutoCAD 2026 - [Drawing2.dwg]",
+                "bbox": [0, 0, 800, 600],
+            },
+            settle_seconds=0.0,
+        )
+        self.assertEqual(target["hwnd"], 7)
 
     def test_capture_autocad_window_reports_missing_window(self) -> None:
         output = artifact_path("render_preview", "window", "missing.png")

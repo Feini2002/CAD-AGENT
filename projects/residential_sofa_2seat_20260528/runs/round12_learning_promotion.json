@@ -1,0 +1,21 @@
+{
+  "case_id": "residential_sofa_2seat_20260528",
+  "round": "round12",
+  "scene": "residential",
+  "failure": {
+    "summary": "round12 is blocked before CAD execution until Visual-First artifacts and reference_match are honored.",
+    "root_cause": "链路：Execute must stay blocked until visual_parts, style_target, and reference_match are ready.",
+    "fix": "Use visual_contract gate before delivery gate."
+  },
+  "decision": {
+    "category": "pipeline",
+    "scope": "global_pipeline",
+    "promotion_target": "docs/training/pipeline-changelog.md",
+    "requires_human_review": true
+  },
+  "mutated_targets": [],
+  "notes": [
+    "This report records promotion intent only.",
+    "Apply target edits in a separate reviewed package."
+  ]
+}

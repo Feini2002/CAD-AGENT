@@ -6,6 +6,7 @@
 
 | 文档 | 用途 |
 | --- | --- |
+| `cad-agent-rules.md` | CAD Agent 规则正文、进度口径与禁止声称（机器入口仍为根目录 `AGENTS.md`） |
 | `multi-agent-contribution.md` | 多 agent 协作协议、可写边界、审查门禁和冲突处理 |
 
 治理文档只写稳定规则和工作流，不写长历史。长历史进入 `docs/status/changelog.md`，失败教训进入 `docs/status/issues.md`。

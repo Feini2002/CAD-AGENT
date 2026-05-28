@@ -1,0 +1,39 @@
+# .understandignore - local architecture graph exclusions
+# Syntax follows .gitignore patterns. Keep active source, tests, and current docs visible.
+
+# Tool caches and generated graph internals
+.git/
+.codegraph/
+.understand-anything/intermediate/
+.understand-anything/tmp/
+
+# Runtime and generated artifacts
+output/
+cad_mcp.log
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+
+# Archived documentation noise after the 2026-05-28 architecture upgrade
+docs/archive/
+docs/history/snapshots/
+docs/planning/archive/
+docs/handoffs/archive/
+
+# Binary/media artifacts
+*.dwg
+*.dwl
+*.dwl2
+*.bak
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.zip
+
+# Optional: uncomment if the graph feels too document-heavy.
+# docs/history/
+# docs/handoffs/
+# showcase/

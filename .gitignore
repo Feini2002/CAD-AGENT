@@ -1,6 +1,16 @@
 # Local CAD/project history that should not ship with the portable kit
 docs/archive/
 
+# Training case round memory is portable evidence and should be trackable.
+# Ignore only caches/temp files inside runs/.
+projects/*/runs/__pycache__/
+projects/*/runs/*.py[cod]
+projects/*/runs/*.tmp
+projects/*/runs/*.log
+
+# Obsolete generated style targets are not valid Visual-First evidence.
+projects/*/expected/style_target_2seat.png
+
 # Generated preview/output artifacts
 output/*
 !output/
@@ -8,8 +18,14 @@ output/*
 output/previews/*
 !output/previews/README.md
 
-# Local CodeGraph index
+# Local CodeGraph index/cache. Rebuild per machine with `codegraph init -i`.
 .codegraph/
+
+# Understand Anything local/generated files.
+# Keep config files trackable, but do not commit generated graph snapshots by default.
+.understand-anything/*
+!.understand-anything/.understandignore
+!.understand-anything/config.json
 
 # Local tool logs
 cad_mcp.log
@@ -28,3 +44,9 @@ venv/
 *.dwl
 *.dwl2
 *.bak
+
+# Project-local DWG/DXF sources are local CAD context, not portable repo evidence.
+projects/**/*.dwg
+projects/**/*.dxf
+cad_floor_plan_reference_pack/files/*.dwg
+cad_floor_plan_reference_pack/files/*.dxf

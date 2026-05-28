@@ -1,0 +1,32 @@
+{
+  "id": "pipeline_context_curator",
+  "name": "Context Curator",
+  "type": "global_pipeline_agent",
+  "role": "每轮开始先整理有效上下文，过滤历史施工期噪声，避免 Agent 读错状态",
+  "inputs": [
+    "AGENTS.md",
+    "CORE_CONTEXT_BRIEF.md",
+    "docs/training/README.md",
+    "docs/planning/任务清单.md",
+    "projects/<case>/brief.md",
+    "projects/<case>/feedback.md",
+    "projects/<case>/runs/roundN-1_*"
+  ],
+  "outputs": [
+    "roundN_context_pack.json"
+  ],
+  "pass_gate": {
+    "active_case_state_identified": true,
+    "latest_round_detected": true,
+    "stale_status_conflicts_listed": true,
+    "history_only_docs_excluded": true
+  },
+  "must_not": [
+    "execute_cad",
+    "edit_geometry",
+    "treat_history_snapshots_as_current_next",
+    "ignore_case_feedback_when_task_ledger_is_stale",
+    "start_visual_intent_without_current_case_state"
+  ],
+  "doc": "docs/training/learning-loop.md"
+}

@@ -25,6 +25,7 @@ from core.cad_io.autocad_block_alpha import (
     block_insert_failure,
 )
 from core.cad_io.preview_write_guard_mixin import PreviewWriteGuardMixin
+from core.safety.write_guard import CadWriteGuardViolation
 
 
 ACI_COLORS = {
@@ -89,14 +90,20 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
                 raise RuntimeError(f"Unable to dispatch AutoCAD.Application. COM detail: {detail}")
         self.doc = self.app.ActiveDocument
         self.model_space = self.doc.ModelSpace
+        self._ensured_layers: set[str] = set()
         self._init_preview_write_guard(preview_layer=PREVIEW_LAYER)
 
     def ensure_layer(self, layer: str, *, layer_role: str = "preview") -> None:
         self._guard_preview_layer_write(layer, layer_role=layer_role)
+        ensured_layers: set[str] = getattr(self, "_ensured_layers", set())
+        if layer in ensured_layers:
+            return
         try:
             self.doc.Layers.Item(layer)
         except Exception:
             self.doc.Layers.Add(layer)
+        ensured_layers.add(layer)
+        self._ensured_layers = ensured_layers
 
     def _apply_common(
         self,
@@ -396,3 +403,63 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         result = self.zoom_to_bbox(bbox, padding_ratio=padding_ratio)
         result["handle_count"] = len(handles)
         return result
+
+    def zoom_to_handles_extents(
+        self,
+        *,
+        handles: list[str],
+        padding_ratio: float = 0.15,
+    ) -> dict[str, object]:
+        """Zoom using COM GeometricExtents so block references and preview geometry align."""
+
+        xs: list[float] = []
+        ys: list[float] = []
+        resolved = 0
+        for handle in handles:
+            try:
+                entity = self.doc.HandleToObject(str(handle))
+                bbox = entity.GetBoundingBox()
+                minimum = list(bbox[0])
+                maximum = list(bbox[1])
+            except Exception:
+                continue
+            if len(minimum) < 2 or len(maximum) < 2:
+                continue
+            xs.extend([float(minimum[0]), float(maximum[0])])
+            ys.extend([float(minimum[1]), float(maximum[1])])
+            resolved += 1
+        if not xs or not ys:
+            self.app.ZoomExtents()
+            return {
+                "status": "zoom_extents",
+                "reason": "handle extents unavailable",
+                "handle_count": len(handles),
+                "resolved_count": resolved,
+            }
+        result = self.zoom_to_bbox({"min": [min(xs), min(ys)], "max": [max(xs), max(ys)]}, padding_ratio=padding_ratio)
+        result["handle_count"] = len(handles)
+        result["resolved_count"] = resolved
+        result["method"] = "com_geometric_extents"
+        return result
+
+    def set_entity_color_by_handle(self, *, handle: str, color: str) -> None:
+        entity = self.doc.HandleToObject(str(handle))
+        layer = str(getattr(entity, "Layer", ""))
+        self._guard_preview_layer_write(layer, layer_role="preview")
+        color_value = ACI_COLORS.get(color.lower())
+        if color_value is None:
+            raise ValueError(f"Unsupported preview color: {color!r}")
+        entity.Color = color_value
+
+    def delete_entity_by_handle(self, handle: str) -> None:
+        self.write_guard.assert_delete_allowed()
+        try:
+            entity = self.doc.HandleToObject(str(handle))
+        except Exception as exc:
+            raise ValueError(f"Unable to resolve handle for delete: {handle}") from exc
+        layer = str(getattr(entity, "Layer", ""))
+        if layer != PREVIEW_LAYER:
+            message = f"Delete blocked: handle {handle!r} is on layer {layer!r}, not {PREVIEW_LAYER!r}"
+            self.write_guard._record_block("delete", message)
+            raise CadWriteGuardViolation(message)
+        entity.Delete()

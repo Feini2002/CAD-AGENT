@@ -1,0 +1,19 @@
+{
+  "case_id": "residential_sofa_2seat_20260528",
+  "round": "round5",
+  "ready_to_draw": true,
+  "execution_route": "semantic_clean",
+  "reference": {
+    "handle": "4A2",
+    "block_name": "5S03232",
+    "role": "read_dimensions_only"
+  },
+  "target": {
+    "seats": 2,
+    "preview_offset_mm": 400,
+    "layer": "CODEX_PREVIEW",
+    "save_dwg": false
+  },
+  "method": "参数化圆角矩形 + 真弧；禁止 clone 343 段产品碎线",
+  "acceptance": "意思对、线条干净顺滑；相似度接近即可，不要求与供应商块完全一致"
+}

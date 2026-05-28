@@ -5,7 +5,8 @@
   "object": {
     "type": "entity_reference",
     "name": "Intent Lab Delete",
-    "target_handle": "intent-lab-deferred"
+    "width": 400,
+    "depth": 200
   },
   "placement": {
     "mode": "absolute",

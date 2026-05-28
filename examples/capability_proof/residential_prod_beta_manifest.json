@@ -1,0 +1,12 @@
+{
+  "manifest_id": "residential-prod-beta-01",
+  "package_id": "RESIDENTIAL-PROD-02-RESIDENTIAL-BETA-BOUNDARY",
+  "scenario": "residential",
+  "benchmark_suite_path": "examples/benchmarks/residential_scene_beta_benchmark.json",
+  "benchmark_suite_id": "residential-scene-beta-benchmark",
+  "expected_case_count": 8,
+  "required_case_tiers": ["object", "bedroom", "dining", "storage", "blank_shell", "failure"],
+  "boundary_doc": "docs/verification/residential_prod_02_residential_beta_boundary.md",
+  "prerequisite_package": "RESIDENTIAL-PROD-01-RESIDENTIAL-ALPHA-BOUNDARY",
+  "proof_packages": ["BETA-SCENE-02"]
+}

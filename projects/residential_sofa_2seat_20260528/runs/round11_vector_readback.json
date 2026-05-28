@@ -1,0 +1,89 @@
+{
+  "status": "executed_pending_agent_review",
+  "method": "semantic_open_assembly_v11_visual_sized",
+  "round": "round11",
+  "reference_handle": "4A2",
+  "created_count": 41,
+  "audit": {
+    "entity_count": 41,
+    "entity_total": 41,
+    "line_count": 23,
+    "arc_count": 18,
+    "micro_line_count": 0,
+    "open_endpoint_count": 34,
+    "preview_width_mm": 1870.0,
+    "preview_height_mm": 960.0,
+    "seat_split_ratio": 0.821,
+    "back_band_ratio": 0.179,
+    "arm_width_left_mm": 120.0,
+    "arm_width_right_mm": 120.0,
+    "max_inset_mm": 30.0,
+    "arc_r_min": 28.0,
+    "rounded_rect_shell": true,
+    "seat_front_bow_count": 0,
+    "schema_version": 2,
+    "engine": "core.verification.training_geometry_audit",
+    "case_id": "residential_sofa_2seat_20260528",
+    "preview_profile": {
+      "entity_count": 41,
+      "entity_total": 41,
+      "line_count": 23,
+      "arc_count": 18,
+      "micro_line_count": 0,
+      "open_endpoint_count": 34,
+      "preview_width_mm": 1870.0,
+      "preview_height_mm": 960.0,
+      "seat_split_ratio": 0.821,
+      "back_band_ratio": 0.179,
+      "arm_width_left_mm": 120.0,
+      "arm_width_right_mm": 120.0,
+      "max_inset_mm": 30.0,
+      "arc_r_min": 28.0,
+      "rounded_rect_shell": true,
+      "seat_front_bow_count": 0
+    },
+    "reference_profile": {
+      "arm_width_mm": 120.0,
+      "seat_split_ratio": 0.821,
+      "back_band_ratio": 0.179,
+      "fillet_r_mm": 30.0,
+      "ref_width_mm": 2800.0,
+      "ref_height_mm": 960.0
+    },
+    "profile_deltas": {
+      "seat_split_ratio": 0.0,
+      "back_band_ratio": 0.0,
+      "arm_width_mm": 0.0
+    },
+    "forbidden_pattern_hits": [],
+    "cleanliness_pass": true,
+    "semantic_pass": true,
+    "audit_failures": [],
+    "audit_pass": true,
+    "agent_review_required": [
+      "visual_match_brief",
+      "same_product_family_as_reference",
+      "no_schematic_shortcut"
+    ]
+  },
+  "agent_review": {
+    "round": "round11",
+    "audit_pass": true,
+    "agent_review_all_pass": false,
+    "delivery_allowed": false,
+    "checks": {
+      "visual_match_brief": {
+        "pass": false,
+        "note": "待 Agent 读图确认"
+      },
+      "same_product_family_as_reference": {
+        "pass": false,
+        "note": "待 Agent 读图确认"
+      },
+      "no_schematic_shortcut": {
+        "pass": false,
+        "note": "机器未命中 schematic"
+      }
+    }
+  }
+}

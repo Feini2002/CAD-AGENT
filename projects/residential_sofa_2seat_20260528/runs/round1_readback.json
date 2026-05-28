@@ -1,0 +1,77 @@
+{
+  "status": "preview_generated",
+  "case_id": "residential_sofa_2seat_20260528",
+  "round": 1,
+  "reference": {
+    "handle": "4A2",
+    "block_name": "5S03232",
+    "role": "three_seater_original",
+    "layer": "产品图框"
+  },
+  "generated": {
+    "handle": "4A5",
+    "block_name": "5S03232",
+    "role": "two_seater_scaled",
+    "layer": "CODEX_PREVIEW",
+    "scale_x_factor": 0.6666666666666666
+  },
+  "method": "Same block 5S03232; uniform X scale 2/3; placed 400mm right of reference bbox; original untouched.",
+  "entities": [
+    {
+      "handle": "4A2",
+      "object_name": "AcDbBlockReference",
+      "layer": "产品图框",
+      "type": "block_reference",
+      "block_name": "5S03232",
+      "insertion_point": [
+        -160059.59177702677,
+        133080.02651079174,
+        0.0
+      ],
+      "rotation": 180.0,
+      "scale": [
+        -1.0,
+        1.0,
+        1.0
+      ],
+      "bbox": {
+        "min": [
+          2173.3497749242524,
+          1178.2632960615156
+        ],
+        "max": [
+          4973.349774924252,
+          2138.2632960615883
+        ]
+      }
+    },
+    {
+      "handle": "4A5",
+      "object_name": "AcDbBlockReference",
+      "layer": "CODEX_PREVIEW",
+      "type": "block_reference",
+      "block_name": "5S03232",
+      "insertion_point": [
+        -102781.9445930431,
+        133080.0265107917,
+        0.0
+      ],
+      "rotation": 180.0,
+      "scale": [
+        -0.6666666666666666,
+        1.0,
+        1.0
+      ],
+      "bbox": {
+        "min": [
+          5373.349774924252,
+          1178.2632960615156
+        ],
+        "max": [
+          7240.016441590924,
+          2138.2632960615592
+        ]
+      }
+    }
+  ]
+}

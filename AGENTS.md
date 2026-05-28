@@ -2,6 +2,8 @@
 
 本目录是可迁移的 CAD Agent 开发包，不绑定某一张 DWG、某一套家装图纸或某一台电脑。
 
+本仓库的规则、训练链路和交接材料面向 Codex、Cursor 及其它同类 agent 工具通用；不得把开发流程强制绑定到某一个软件。文档中如出现 Codex / Cursor 名称，应理解为可选载体或历史文件名，除非上下文明确是在描述该工具专属能力。
+
 ## 默认中文输出
 
 面向用户的说明、状态汇报、方案讨论、结论和追问默认使用中文。只有以下内容保留英文或原文：
@@ -49,20 +51,15 @@
 - 新增待办、调整优先级、改变退出标准或拆分未来小包时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD 的引用或状态说明。
 - 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
 
-## 交付默认精简进度
+## 交付默认简洁回复
 
-每次 CAD Agent 相关交付的**最终回复**，默认使用 **1 张精简进度表**，先报 **表 C 真实 CAD 实力主指标**，再说明本轮完成内容、验证证据和风险边界。详细口径见 `docs/governance/cad-agent-rules.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
+面向用户的最终回复默认**不要附进度表、表单或表 A/B/C**。普通开发、调查、修复、绘图或规则更新完成后，用简洁自然段说明：本轮做了什么、关键证据、有没有风险或未验证项。
 
-**默认精简模板：**
+只有用户明确点名 **开发状态查询 / 进度 / 完整状态 / 交接 / 审计 / 表 A / 表 B / 表 C / 真实 CAD 实力 / 刷新表 C / 报进度表** 时，才使用进度表格；其中涉及真实 CAD 能力时，必须先报 **表 C 真实 CAD 实力主指标**。详细口径见 `docs/governance/cad-agent-rules.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
 
-| 口径 | 当前值 | 说明 |
-| --- | --- | --- |
-| 真实 CAD 实力 | 约 xx%，最高 Lx | 表 C 主指标，必须先报；机器值以 coverage JSON 为准 |
-| 本轮进展 | 完成了什么 / 没改什么 | 不用百分比代替成果与证据 |
-| 工程节奏 | 总约 xx%（Core xx%，Agent xx%） | 表 A 折叠口径 |
-| 任务台账 | 本轮相关中文轨道约 xx%（done/总量） | 轨道名用“能力证明 / 代码轨 / CAD 补验”；CAD 补验 **≠ 画图实力** |
+**Agent 训练期例外（方案 A）：** 当 `docs/training/README.md` 所指的 **Agent 训练**（任意场景案例 `projects/<case_id>/`、`开一轮训练`、用户未点名表 C/A/B）时，最终回复同样不要附进度表或表 A/B/C；只汇报案例进展、CAD 证据路径与待你验收项。落图工序必须遵循该文档 **「理想链路（全局 · 训练期）」**（机器审计 → 截图 → Agent 自检 → 未过则自修，再请你验收）。
 
-**完整展开条件：** 遇到下列情况，才展开完整 **表 A / 表 B / 表 C**；其中用户问「真实 CAD 实力 / 推进表 C / 表 C / 刷新表 C」时，必须先展开完整表 C。
+**展开条件：** 遇到下列情况，才展开完整 **表 A / 表 B / 表 C**；其中用户问「真实 CAD 实力 / 推进表 C / 表 C / 刷新表 C」时，必须先展开完整表 C。
 
 - 用户要求完整状态汇报、交接、审计、进度盘点或对比。
 - 完成或更新能力证明、代码轨、CAD 补验包，并改变 `docs/planning/任务清单.md` §0 的计数或 next。
@@ -79,7 +76,7 @@
 
 - 表 A 的「工程完备度 / 工程节奏」≠ 表 B 的「台账包完成度」≠ 表 C 的「真实 CAD 实力」。
 - 表 B 的 RCAD 烟囱通过 ≠ `cad_capability_registry` 已满 `verified`，也不等于“已经能画准施工图”。
-- 无论精简或展开，都不得省略表 C 主指标；不得用 Core 进度、RCAD 高完成度、截图、dry-run 或 no-CAD benchmark 暗示真实 CAD 几何已证明。
+- 普通回复可以不附表 C 数字，但只要进入开发状态查询、真实 CAD 能力汇报或表格口径，就不得省略表 C 主指标；任何时候都不得用 Core 进度、RCAD 高完成度、截图、dry-run 或 no-CAD benchmark 暗示真实 CAD 几何已证明。
 - 各表百分比均不替代测试、benchmark、截图、created handles 回读或 `geometry_verified` 证据。
 
 完成能力证明 / 代码轨 / CAD 补验相关包后，应同步更新 `docs/planning/任务清单.md` §0 的计数与 next；改登记表或 showcase 后须复跑 `run_capability_coverage.py` 并更新表 C。
@@ -113,7 +110,7 @@
 - `scripts/dry_run_plan.py` 结果
 - 使用新架构时，对应的 `core.plan_engine` 入口结果
 - `CODEX_PREVIEW` 上的实际 CAD 输出
-- `scripts/render_preview.py --capture-screen` 截图，或检查路径中的 CAD 实体回读
+- `scripts/render_preview.py --capture-autocad-window`（必要时加 `--execution-summary`）截图；**默认保留 CAD/IDE 分屏**，仅 COM 重取景 + `PrintWindow`；PrintWindow 失败时才 `--force-foreground`。整屏 `--capture-screen` 仅作 fallback
 - 实际输出与预期 `CAD_PLAN` 或结构化意图的对比
 
 如果实际输出和预期不一致，Codex 不得把错误结果当成完成品交给用户。必须诊断差异，做最小安全修复，重新绘制或运行，并再次验证。
@@ -134,7 +131,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 ```powershell
 $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
-& $py 'scripts\render_preview.py' --capture-screen --output 'output\previews\manual-check.png'
+& $py 'scripts\render_preview.py' --capture-autocad-window --output 'output\previews\manual-check.png'
 ```
 
 如果截图或回读不可用，应说明暂时无法证明准确性，并优先补齐缺失的验证机制，再声称完成。
@@ -154,7 +151,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 - `docs/status/changelog.md`
 - 如果变更源自失败、风险或调试教训，更新 `docs/status/issues.md`
 
-每完成一个 PlanMD 开发包，还必须更新 Cursor 交接包汇总：
+每完成一个 PlanMD 开发包，还必须更新 Agent 交接包汇总：
 
 - `docs/handoffs/current.md`（按固定 9 项模板追加该包章节，供 Codex 校验）
 - `docs/handoffs/package-index.md`（同步全量包索引）

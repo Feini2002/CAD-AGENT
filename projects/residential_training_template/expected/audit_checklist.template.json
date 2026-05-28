@@ -1,0 +1,38 @@
+{
+  "schema_version": 2,
+  "case_id": "your_case_id",
+  "description": "机器审计门槛 — 从 brief/intent 派生；阈值在此，探针在 core",
+  "reference": {
+    "handle": "REFERENCE_HANDLE",
+    "read_profile": true
+  },
+  "checks": {
+    "semantic": {
+      "reference_profile_match": {
+        "seat_split_ratio_tol": 0.08,
+        "back_band_ratio_tol": 0.08,
+        "back_band_min": 0.10,
+        "back_band_max": 0.35,
+        "arm_width_tol_mm": 35,
+        "max_inset_mm": 38
+      },
+      "min_entity_count": 15,
+      "forbidden_patterns": ["schematic_equal_grid"]
+    },
+    "cleanliness": {
+      "preview_width_mm": { "min": 0, "max": 999999 },
+      "micro_line_count_max": 0,
+      "open_endpoint_count_max": 20,
+      "entity_total_max": 120
+    }
+  },
+  "agent_review_required": [
+    "visual_match_brief",
+    "no_schematic_shortcut"
+  ],
+  "notes": {
+    "semantic": "brief 语义：尺寸、分区、参考 profile 容差（案例填数）",
+    "cleanliness": "全局洁净度探针（微线、端点、实体上限）",
+    "promotion": " repeatable 失败模式 → 提 PR 加 core 探针，不是复制 case 脚本"
+  }
+}

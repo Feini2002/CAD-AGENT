@@ -1,8 +1,10 @@
-# residential Agent
+# residential Agent（家装 · 主训）
 
-Lightweight scene agent for residential interior CAD work.
+**训练状态：`primary_training`**（2026-05-28 方案 A）。其它场景见 `agents/AGENT_TRAINING_STATUS.md`。
 
-This agent only records residential vocabulary, defaults, and preferences. It must reuse core capabilities for drawing analysis, project models, object generation, layout, CAD_PLAN creation, execution, safety, and verification.
+轻量场景层：只存家装词汇、默认参数、偏好；执行与回读一律走 `core/`。
+
+训练入口：`docs/training/residential-primary.md`。案例目录：`projects/residential_training_template/`（复制后用）。
 
 ## Scope
 
@@ -14,4 +16,3 @@ This agent only records residential vocabulary, defaults, and preferences. It mu
 
 - Use core for CAD IO, drawing parsing, model building, layout solving, CAD_PLAN validation, dry-run, execution, and verification.
 - Do not duplicate core schemas or execution logic in this agent.
-

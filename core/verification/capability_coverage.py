@@ -14,6 +14,7 @@ from core.verification.capability_registry import (
     load_capability_registry,
     validate_capability_registry,
 )
+from core.verification.capability_evidence_audit import audit_capability_evidence
 from core.verification.evidence_trend import (
     build_evidence_trend_report,
     build_evidence_trend_snapshot,
@@ -287,6 +288,8 @@ def run_capability_coverage(
     registry_path: Path | None = None,
     output_path: Path | None = None,
     generated_at: str | None = None,
+    require_evidence_audit_pass: bool = False,
+    evidence_audit_output_path: Path | None = None,
 ) -> dict[str, Any]:
     root = project_root.resolve()
     registry_file = registry_path or (root / DEFAULT_REGISTRY_PATH)
@@ -302,12 +305,39 @@ def run_capability_coverage(
             "errors": validation_errors,
         }
 
+    evidence_audit: dict[str, Any] | None = None
+    if require_evidence_audit_pass:
+        evidence_audit = audit_capability_evidence(
+            root,
+            registry_path=registry_file,
+            output_path=evidence_audit_output_path,
+            generated_at=generated_at,
+        )
+        if evidence_audit.get("status") != "pass":
+            report = {
+                "version": COVERAGE_VERSION,
+                "report_id": "cad-capability-coverage",
+                "status": "fail",
+                "generated_at": generated_at or _utc_now_iso(),
+                "registry_path": str(registry_file),
+                "evidence_audit": evidence_audit,
+                "errors": ["capability evidence audit failed"],
+            }
+            if output_path is not None:
+                target = resolve_under_project_output(root, output_path, label="output_path")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                report["output_path"] = str(target.resolve().relative_to(root)).replace("\\", "/")
+            return report
+
     report = build_capability_coverage_report(
         registry,
         registry_path=registry_file,
         project_root=root,
         generated_at=generated_at,
     )
+    if evidence_audit is not None:
+        report["evidence_audit"] = evidence_audit
 
     if output_path is not None:
         target = resolve_under_project_output(root, output_path, label="output_path")

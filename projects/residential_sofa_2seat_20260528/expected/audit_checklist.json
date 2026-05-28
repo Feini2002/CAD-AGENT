@@ -1,0 +1,36 @@
+{
+  "schema_version": 2,
+  "case_id": "residential_sofa_2seat_20260528",
+  "description": "两座沙发 round12 — Visual-First 部件契约；机器 audit 辅助",
+  "sizing_mode": "visual_approx_rounded",
+  "reference": {
+    "handle": "4A2",
+    "read_profile": true
+  },
+  "checks": {
+    "semantic": {
+      "min_entity_count": 40,
+      "min_seat_front_bow_count": 0,
+      "forbidden_patterns": ["closed_outer_shell", "split_as_backrest", "missing_required_parts"],
+      "visual_parts_summary": {
+        "required_part_count": 7,
+        "closed_part_count": 7,
+        "seat_cushion_count": 2,
+        "back_cushion_count": 2,
+        "full_width_split_count": 0
+      }
+    },
+    "cleanliness": {
+      "preview_width_mm": { "min": 1830, "max": 1900 },
+      "entity_total_max": 80,
+      "micro_line_count_max": 0,
+      "open_endpoint_count_max": 5
+    }
+  },
+  "agent_review_required": [
+    "visual_match_brief",
+    "same_product_family_as_reference",
+    "no_schematic_shortcut"
+  ],
+  "non_blocking_when_visual_pass": ["preview_width_mm", "reference_profile_match"]
+}

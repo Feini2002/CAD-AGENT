@@ -1,0 +1,24 @@
+{
+  "version": "0.1",
+  "case_id": "residential_sofa_2seat_20260528",
+  "round": "round4",
+  "source": "brief.md",
+  "understanding": {
+    "goal_one_line": "左侧三座旁矢量重绘两座，线条与参考块一样干净顺滑",
+    "reference": { "block": "5S03232", "handle": "4A2", "layer": "产品图框" },
+    "target": {
+      "seats": 2,
+      "width_mm": 1867,
+      "method": "vector_redraw_drop_middle_seat",
+      "quality": ["无中缝碎线", "无叠线", "扶手/坐垫角部无断线杂线", "圆角以弧为主"]
+    },
+    "constraints": ["仅 CODEX_PREVIEW", "不保存 DWG", "不动参考块"]
+  },
+  "execution_route": "case_script",
+  "artifacts": {
+    "case_script": "runs/vector_redraw_two_seater.py",
+    "audit_checklist": "expected/audit_checklist.json"
+  },
+  "open_questions": [],
+  "ready_to_draw": true
+}

@@ -1,0 +1,12 @@
+{
+  "version": "0.1",
+  "shell_id": "intake_template_shell",
+  "display_name": "Intake template placeholder shell",
+  "bbox": {
+    "min": [0, 0, 0],
+    "max": [12000, 8000, 0]
+  },
+  "openings": [],
+  "columns": [],
+  "notes": "Replace with de-identified shell geometry before running project workflows."
+}

@@ -1,0 +1,122 @@
+{
+  "version": "0.1",
+  "suite_id": "healthcare-scene-beta-benchmark",
+  "description": "BETA-SCENE-04: healthcare clinical objects, waiting combos, blank-shell and failure samples in one suite.",
+  "scene_beta": {
+    "scenario": "healthcare",
+    "preferences_path": "agents/healthcare/preferences.json"
+  },
+  "expected_evidence_summary": {
+    "case_count": 6,
+    "benchmark_pass_non_cad_count": 5,
+    "blocked_expected_non_cad_count": 1,
+    "readback_geometry_verified_count": 0,
+    "non_cad_only": true
+  },
+  "cases": [
+    {
+      "case_id": "beta_healthcare_cabinet_object",
+      "case_tier": "object",
+      "pipeline": "object_spec",
+      "object_type": "cabinet",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "cabinet"
+      }
+    },
+    {
+      "case_id": "beta_healthcare_chair_object",
+      "case_tier": "object",
+      "pipeline": "object_spec",
+      "object_type": "chair",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "chair"
+      }
+    },
+    {
+      "case_id": "beta_healthcare_clinical_desk",
+      "case_tier": "clinical",
+      "pipeline": "object_spec",
+      "object_type": "desk",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "desk"
+      }
+    },
+    {
+      "case_id": "beta_healthcare_waiting_dining_combo",
+      "case_tier": "waiting",
+      "pipeline": "composition_spec",
+      "composition_id": "dining_table_set",
+      "persona_role": "healthcare_planner",
+      "request_text": "候诊区桌椅组合",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "dining_table_set",
+        "object_count": 5,
+        "contains_object_types": ["table", "chair"]
+      }
+    },
+    {
+      "case_id": "beta_healthcare_clinic_waiting_blank_shell",
+      "case_tier": "blank_shell",
+      "pipeline": "blank_shell",
+      "workflow": "examples/workflows/blank_shell_healthcare_layout_loop.json",
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "healthcare",
+        "preferences_path_contains": "agents/healthcare/preferences.json",
+        "selected_circulation_strategy": "straight_spine",
+        "shell_id": "shell-healthcare-clinic-waiting",
+        "minimums": {
+          "candidate_count": 2,
+          "placement_count": 4,
+          "cad_plan_count": 4
+        },
+        "contains_object_types": ["cabinet", "chair", "desk"]
+      }
+    },
+    {
+      "case_id": "beta_healthcare_clearance_conflict_failure",
+      "case_tier": "failure",
+      "pipeline": "composition_spec",
+      "composition_id": "cabinet_pullback_conflict",
+      "persona_role": "healthcare_planner",
+      "request_text": "诊区收纳与椅后净空冲突（预期 blocked）",
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "clearance_conflict",
+        "contains_blocked_reason": "clearance_conflict"
+      }
+    }
+  ]
+}

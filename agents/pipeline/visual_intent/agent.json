@@ -1,0 +1,42 @@
+{
+  "id": "pipeline_visual_intent",
+  "name": "Visual Intent Agent",
+  "type": "global_pipeline_agent",
+  "role": "把白话、参考截图和 style_target 转成可执行的部件级视觉契约",
+  "inputs": [
+    "roundN_context_pack.json",
+    "brief.md",
+    "reference_screenshot_or_cad_capture",
+    "expected/style_target_*.png",
+    "agents/<scene>/rules.md"
+  ],
+  "outputs": [
+    "roundN_visual_parts.json",
+    "roundN_visual_style_brief.md"
+  ],
+  "pass_gate": {
+    "style_target_present_for_reference_match": true,
+    "visual_parts_present": true,
+    "parts_have_id_role_shape_closed": true,
+    "forbidden_visual_patterns_declared": true,
+    "target_dimensions_rounded": true
+  },
+  "required_visual_parts_fields": [
+    "schema_version",
+    "object",
+    "seat_count",
+    "parts",
+    "layout",
+    "forbidden",
+    "sizing"
+  ],
+  "must_not": [
+    "execute_cad",
+    "emit_sub_mm_probe_as_shape_rule",
+    "use_split_line_as_backrest",
+    "emit_closed_outer_shell_for_reference_match",
+    "invent_style_match_without_style_target",
+    "omit_required_common_sense_parts"
+  ],
+  "doc": "docs/training/vision-first-style.md"
+}

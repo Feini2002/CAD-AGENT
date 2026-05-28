@@ -1,0 +1,48 @@
+{
+  "version": "0.1",
+  "manifest_id": "cross-machine-playbook-v1",
+  "package_id": "V-PROOF-73-CROSS-MACHINE",
+  "description": "Machine-readable cross-machine playbook steps (PROJ-03). Links human runbook docs/onboarding/migration-checklist.md.",
+  "human_runbook_path": "docs/onboarding/migration-checklist.md",
+  "machine_report_schema": "core/schemas/cross_machine_report.schema.json",
+  "no_cad_steps": [
+    {
+      "step_id": "git_available",
+      "title": "Git available",
+      "check": "git --version"
+    },
+    {
+      "step_id": "cad_mcp_venv",
+      "title": "CAD-MCP venv python exists",
+      "check": "cad_mcp_python"
+    },
+    {
+      "step_id": "self_check",
+      "title": "Repository self_check",
+      "script": "scripts/self_check.py"
+    },
+    {
+      "step_id": "coverage_recalc",
+      "title": "Capability coverage recalc vs baseline",
+      "script": "scripts/run_capability_coverage.py"
+    }
+  ],
+  "user_gate_steps": [
+    {
+      "step_id": "autocad_session",
+      "title": "AutoCAD open with CODEX_PREVIEW DWG",
+      "requires_real_cad": true
+    },
+    {
+      "step_id": "cad_validation_full",
+      "title": "run_cad_validation.py full or geometry-gate pass",
+      "script": "scripts/run_cad_validation.py",
+      "requires_real_cad": true
+    },
+    {
+      "step_id": "mcp_draw_smoke",
+      "title": "CAD-MCP draw smoke in Cursor/Codex",
+      "requires_real_cad": true
+    }
+  ]
+}

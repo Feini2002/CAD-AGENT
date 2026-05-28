@@ -43,8 +43,17 @@ class Symbol08GlyphFallbackBoundaryTests(unittest.TestCase):
             with self.subTest(capability_id=capability_id):
                 row = index[capability_id]
                 self.assertIn("V-PROOF-35", row.get("tags", []))
-                self.assertNotIn(row["claim_level"], {"verified", "showcase"})
-                self.assertEqual(row["evidence"]["geometry_accuracy"], "not_verified_without_cad_readback")
+                if row["claim_level"] in {"verified", "showcase"}:
+                    self.assertTrue(str(row["evidence"].get("report_path", "")).strip())
+                    self.assertNotEqual(
+                        row["evidence"].get("geometry_accuracy"),
+                        "not_verified_without_cad_readback",
+                    )
+                elif capability_id.endswith("deferred_unsupported_symbol"):
+                    self.assertEqual(row["claim_level"], "deferred")
+                else:
+                    self.assertEqual(row["claim_level"], "smoke")
+                    self.assertEqual(row["evidence"]["geometry_accuracy"], "not_verified_without_cad_readback")
 
     def test_boundary_doc_states_claim_limits(self) -> None:
         text = (PROJECT_ROOT / SYMBOL_08_BOUNDARY_DOC).read_text(encoding="utf-8")

@@ -1,6 +1,6 @@
 # LCAD-10-NEGATIVE-SAFETY 父包收口
 
-最后更新：2026-05-27
+最后更新：2026-05-28
 
 本文是 `LCAD-10-NEGATIVE-SAFETY` 的父包 acceptance / rollup。它只收口负向 CAD 安全链路，不新增真实 CAD 几何结论，不把 `negative_guard_verified` 计入几何证明。
 
@@ -47,16 +47,15 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `RCAD-20` | verified（2026-05-27） | 真实 CAD 负向安全 runner 已在用户 CAD 会话通过；证据：`output/validation_runs/rcad-20-negative-cad-20260527-escalated/negative_cad_runner_report.json` |
 | `V-PROOF-50` | scheduled | 负向 plan 清单进 registry；每类 `failure_category` 一行 |
 | `V-PROOF-51` | scheduled | 真实 CAD：无 handles、不保存 |
-| `LCAD-11.1` | done | 进入 evidence trend rollup，先对齐趋势 JSON 字段与 evidence 词表 |
-| `LCAD-11.2` | next | 把本地 CAD regression 历史结果输出为 trend JSON |
+| `LCAD-11.1`~`11.5` | done | evidence trend 子包与 `LCAD-11-EVIDENCE-TREND-ROLLUP` 父包已收口；见 `evidence_trend_acceptance.md` |
 
 ## Acceptance 判定
 
 `LCAD-10-NEGATIVE-SAFETY` 可以标为代码轨父包收口，当且仅当：
 
-1. `LCAD-10.1` 到 `LCAD-10.4` 均为 done。
+1. `LCAD-10.1` 到 `LCAD-10.5` 均为 done。
 2. 本文与 `negative_cad_safety_boundaries.md` 均存在并通过文档契约测试。
 3. focused 负向测试通过。
-4. 状态页、任务清单、CHANGELOG 和 handoff 均把 next 推到 `LCAD-11.1`。
+4. 状态页、任务清单、CHANGELOG 和 handoff 均把 `LCAD-10-NEGATIVE-SAFETY` 标为 done。
 
-本 acceptance 不新增真实 CAD 几何结论。
+本 acceptance 不新增真实 CAD 几何结论。父包已于 2026-05-28 收口。

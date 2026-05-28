@@ -5,7 +5,11 @@
   "object": {
     "type": "property_patch",
     "name": "Intent Lab Modify",
-    "target_handle": "intent-lab-deferred"
+    "width": 400,
+    "depth": 200,
+    "patch": {
+      "color": "cyan"
+    }
   },
   "placement": {
     "mode": "absolute",

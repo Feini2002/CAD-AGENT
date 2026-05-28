@@ -2,7 +2,8 @@
   "id": "residential",
   "name": "Residential Agent",
   "type": "scene_agent",
-  "status": "scaffold",
+  "status": "primary_training",
+  "trainingNote": "See docs/training/residential-primary.md; other scenes paused per agents/AGENT_TRAINING_STATUS.md",
   "coreReuseRequired": true,
   "scope": [
     "home_interior",

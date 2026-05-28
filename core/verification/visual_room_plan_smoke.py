@@ -25,13 +25,71 @@ from core.verification.preview_only_audit import (
     with_legacy_safety_aliases,
 )
 from core.verification.visual_room_plan_scene import (
+    BATHROOM_PLAN_BASE_POINT,
+    BATHROOM_PLAN_EXPECTED_TYPE_COUNTS,
+    BATHROOM_PLAN_REQUIRED_GROUPS,
+    BATHROOM_PLAN_SIZE,
+    KITCHEN_PLAN_BASE_POINT,
+    KITCHEN_PLAN_EXPECTED_TYPE_COUNTS,
+    KITCHEN_PLAN_REQUIRED_GROUPS,
+    KITCHEN_PLAN_SIZE,
     PREVIEW_LAYER,
+    RETAIL_SHOWROOM_BASE_POINT,
+    RETAIL_SHOWROOM_EXPECTED_TYPE_COUNTS,
+    RETAIL_SHOWROOM_REQUIRED_GROUPS,
+    RETAIL_SHOWROOM_SIZE,
     ROOM_PLAN_BASE_POINT,
     ROOM_PLAN_EXPECTED_TYPE_COUNTS,
     ROOM_PLAN_REQUIRED_GROUPS,
     ROOM_PLAN_SIZE,
+    _draw_bathroom_plan,
+    _draw_kitchen_plan,
+    _draw_retail_showroom,
     _draw_room_plan,
 )
+
+VISUAL_PLAN_SCENES = {
+    "office": {
+        "suite_id": "visual_room_plan_smoke",
+        "base_point": ROOM_PLAN_BASE_POINT,
+        "room_size": ROOM_PLAN_SIZE,
+        "required_groups": ROOM_PLAN_REQUIRED_GROUPS,
+        "expected_type_counts": ROOM_PLAN_EXPECTED_TYPE_COUNTS,
+        "min_created_handles": 120,
+        "draw": _draw_room_plan,
+        "visual_goal": "annotated room plan: segmented walls, door swing, window symbol, dimensions, labels, and furniture cluster",
+    },
+    "retail": {
+        "suite_id": "visual_retail_showroom_smoke",
+        "base_point": RETAIL_SHOWROOM_BASE_POINT,
+        "room_size": RETAIL_SHOWROOM_SIZE,
+        "required_groups": RETAIL_SHOWROOM_REQUIRED_GROUPS,
+        "expected_type_counts": RETAIL_SHOWROOM_EXPECTED_TYPE_COUNTS,
+        "min_created_handles": 70,
+        "draw": _draw_retail_showroom,
+        "visual_goal": "retail showroom plan: display islands, cashier, fitting room, dimensions, and labels",
+    },
+    "bathroom": {
+        "suite_id": "visual_bathroom_plan_smoke",
+        "base_point": BATHROOM_PLAN_BASE_POINT,
+        "room_size": BATHROOM_PLAN_SIZE,
+        "required_groups": BATHROOM_PLAN_REQUIRED_GROUPS,
+        "expected_type_counts": BATHROOM_PLAN_EXPECTED_TYPE_COUNTS,
+        "min_created_handles": 55,
+        "draw": _draw_bathroom_plan,
+        "visual_goal": "residential bathroom plan: walls, door, window, WC/lavatory/tub/shower symbols, dimensions, labels",
+    },
+    "kitchen": {
+        "suite_id": "visual_kitchen_plan_smoke",
+        "base_point": KITCHEN_PLAN_BASE_POINT,
+        "room_size": KITCHEN_PLAN_SIZE,
+        "required_groups": KITCHEN_PLAN_REQUIRED_GROUPS,
+        "expected_type_counts": KITCHEN_PLAN_EXPECTED_TYPE_COUNTS,
+        "min_created_handles": 65,
+        "draw": _draw_kitchen_plan,
+        "visual_goal": "residential kitchen plan: L-counter, appliances, island, dining nook, dimensions, labels",
+    },
+}
 
 DriverFactory = Callable[[], Any]
 
@@ -47,10 +105,21 @@ def _default_driver_factory() -> Any:
     return AutoCADComDriver(connect_existing_only=True)
 
 
-def _empty_report(*, layer: str, output_dir: Path | None, base_point: list[float]) -> dict[str, Any]:
+def _scene_profile(scene: str) -> dict[str, Any]:
+    key = scene if scene in VISUAL_PLAN_SCENES else "office"
+    return VISUAL_PLAN_SCENES[key]
+
+
+def _empty_report(
+    *,
+    layer: str,
+    output_dir: Path | None,
+    base_point: list[float],
+    profile: dict[str, Any],
+) -> dict[str, Any]:
     return {
         "version": "0.1",
-        "suite_id": "visual_room_plan_smoke",
+        "suite_id": profile["suite_id"],
         "status": "failed",
         "failure_category": "",
         "generated_at": datetime.now().isoformat(timespec="seconds"),
@@ -59,18 +128,18 @@ def _empty_report(*, layer: str, output_dir: Path | None, base_point: list[float
         "output_dir": str(output_dir) if output_dir else "",
         "expected": {
             "base_point": base_point,
-            "room_size": ROOM_PLAN_SIZE,
-            "type_counts": ROOM_PLAN_EXPECTED_TYPE_COUNTS,
-            "min_created_handles": 80,
+            "room_size": profile["room_size"],
+            "type_counts": profile["expected_type_counts"],
+            "min_created_handles": profile["min_created_handles"],
             "min_visual_detail_score_percent": 85,
-            "required_visual_groups": list(ROOM_PLAN_REQUIRED_GROUPS),
+            "required_visual_groups": list(profile["required_groups"]),
         },
-        "visual_goal": "annotated room plan: segmented walls, door swing, window symbol, dimensions, labels, and furniture cluster",
+        "visual_goal": profile["visual_goal"],
         "visual_detail_score_percent": 0,
         "geometry_verified": False,
         "created_handles": [],
         "created_handle_count": 0,
-        "required_visual_groups": {"hit_counts": {}, "missed": list(ROOM_PLAN_REQUIRED_GROUPS)},
+        "required_visual_groups": {"hit_counts": {}, "missed": list(profile["required_groups"])},
         "actual": {
             "entity_count": 0,
             "type_counts": {},
@@ -113,8 +182,8 @@ def _write_outputs(output_dir: Path | None, report: dict[str, Any], *, visual_in
     )
 
 
-def _required_group_summary(draw_log: list[dict[str, Any]]) -> dict[str, Any]:
-    hit_counts: dict[str, int] = {group: 0 for group in ROOM_PLAN_REQUIRED_GROUPS}
+def _required_group_summary(draw_log: list[dict[str, Any]], *, required_groups: tuple[str, ...]) -> dict[str, Any]:
+    hit_counts: dict[str, int] = {group: 0 for group in required_groups}
     for record in draw_log:
         group = str(record.get("visual_group", ""))
         if group in hit_counts:
@@ -140,8 +209,8 @@ def _visual_detail_score(type_counts: dict[str, int], *, created_handle_count: i
     return min(score, 100)
 
 
-def _deferred_report(*, layer: str, output_dir: Path | None, base_point: list[float]) -> dict[str, Any]:
-    report = _empty_report(layer=layer, output_dir=output_dir, base_point=base_point)
+def _deferred_report(*, layer: str, output_dir: Path | None, base_point: list[float], profile: dict[str, Any]) -> dict[str, Any]:
+    report = _empty_report(layer=layer, output_dir=output_dir, base_point=base_point, profile=profile)
     report.update(
         {
             "status": "deferred",
@@ -165,16 +234,19 @@ def run_visual_room_plan_smoke(
     layer: str = PREVIEW_LAYER,
     include_cad: bool = True,
     base_point: list[float | int] | None = None,
+    scene: str = "office",
 ) -> dict[str, Any]:
     """Draw and verify an annotated CAD room plan through created handles."""
 
-    resolved_base = [float(value) for value in (base_point or ROOM_PLAN_BASE_POINT)]
+    profile = _scene_profile(scene)
+    default_base = profile["base_point"]
+    resolved_base = [float(value) for value in (base_point or default_base)]
     if len(resolved_base) == 2:
         resolved_base.append(0.0)
     if not include_cad:
-        return _deferred_report(layer=layer, output_dir=output_dir, base_point=resolved_base)
+        return _deferred_report(layer=layer, output_dir=output_dir, base_point=resolved_base, profile=profile)
 
-    report = _empty_report(layer=layer, output_dir=output_dir, base_point=resolved_base)
+    report = _empty_report(layer=layer, output_dir=output_dir, base_point=resolved_base, profile=profile)
     if layer != PREVIEW_LAYER:
         report["failure_category"] = "safety_policy_failed"
         report["checks"].append(_check("layer_policy", "fail", f"Only {PREVIEW_LAYER} is allowed."))
@@ -204,11 +276,12 @@ def run_visual_room_plan_smoke(
         if hasattr(driver, "ensure_layer"):
             driver.ensure_layer(layer)
         report["checks"].append(_check("layer_ensure", "pass", f"Layer {layer} is available."))
-        created_handles, draw_log, visual_intent = _draw_room_plan(driver, base_point=resolved_base, layer=layer)
+        draw_fn = profile["draw"]
+        created_handles, draw_log, visual_intent = draw_fn(driver, base_point=resolved_base, layer=layer)
         report["created_handles"] = created_handles
         report["created_handle_count"] = len(created_handles)
         report["draw_log"] = draw_log
-        report["required_visual_groups"] = _required_group_summary(draw_log)
+        report["required_visual_groups"] = _required_group_summary(draw_log, required_groups=profile["required_groups"])
     except Exception as exc:
         report["failure_category"] = "execution_failed"
         report["error"] = str(exc)
@@ -260,11 +333,12 @@ def run_visual_room_plan_smoke(
             f"Layer counts: {report['actual']['layer_counts']}",
         )
     )
+    expected_type_counts = profile["expected_type_counts"]
     report["checks"].append(
         _check(
             "readback_type_counts",
-            "pass" if type_counts == ROOM_PLAN_EXPECTED_TYPE_COUNTS else "fail",
-            f"expected={ROOM_PLAN_EXPECTED_TYPE_COUNTS} actual={type_counts}",
+            "pass" if type_counts == expected_type_counts else "fail",
+            f"expected={expected_type_counts} actual={type_counts}",
         )
     )
     report["checks"].append(
@@ -302,22 +376,28 @@ def run_visual_room_plan_smoke(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run VCAD-02 visual room plan smoke.")
+    parser = argparse.ArgumentParser(description="Run VCAD visual plan smoke (office, retail, bathroom, kitchen).")
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output") / "validation_runs" / f"visual-room-plan-smoke-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
     )
-    parser.add_argument("--base-x", type=float, default=ROOM_PLAN_BASE_POINT[0])
-    parser.add_argument("--base-y", type=float, default=ROOM_PLAN_BASE_POINT[1])
+    parser.add_argument("--scene", choices=tuple(VISUAL_PLAN_SCENES.keys()), default="office")
+    parser.add_argument("--base-x", type=float, default=None)
+    parser.add_argument("--base-y", type=float, default=None)
     parser.add_argument("--no-cad", action="store_true", help="Emit a deferred report without connecting to AutoCAD.")
     args = parser.parse_args()
 
+    profile = _scene_profile(args.scene)
+    base = profile["base_point"]
+    base_x = float(args.base_x) if args.base_x is not None else float(base[0])
+    base_y = float(args.base_y) if args.base_y is not None else float(base[1])
     output_dir = resolve_room_plan_output_dir(args.output_dir)
     report = run_visual_room_plan_smoke(
         output_dir=output_dir,
         include_cad=not args.no_cad,
-        base_point=[args.base_x, args.base_y, 0.0],
+        base_point=[base_x, base_y, 0.0],
+        scene=args.scene,
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if report["status"] in {"visual_geometry_verified", "deferred"}:

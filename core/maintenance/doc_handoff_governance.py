@@ -23,6 +23,15 @@ def _finding(code: str, path: str, message: str, *, severity: str = "medium") ->
     return {"code": code, "severity": severity, "path": path, "message": message}
 
 
+def _package_lookup_key(package_name: str) -> str:
+    cleaned = package_name.replace("`", "").strip()
+    cleaned = re.sub(r"^\d+\.\s*", "", cleaned)
+    for separator in ("：", "（", "(", " ", " / "):
+        if separator in cleaned:
+            return cleaned.split(separator, 1)[0].strip()
+    return cleaned
+
+
 def _handoff_sections(text: str) -> list[tuple[str, str]]:
     matches = list(re.finditer(r"(?m)^##\s+(.+)$", text))
     sections: list[tuple[str, str]] = []
@@ -37,7 +46,7 @@ def check_handoff_document(text: str, *, path: str) -> dict[str, Any]:
     findings: list[dict[str, str]] = []
     checked_sections = 0
     ignored_titles = {"目录", "交接包标准模板（每包 9 项）", "当前交接说明", "Codex 校验快速指引"}
-    package_markers = ("V-PROOF", "RCAD", "STRUCT", "CAD-VAL", "LCAD", "R-", "SCENE", "REST", "OFFICE", "CORE", "RBLOCK", "DRAW", "CFIT", "VCAD")
+    package_markers = ("V-PROOF", "RCAD", "STRUCT", "CAD-VAL", "CAD-EVIDENCE", "LCAD", "R-", "SCENE", "REST", "OFFICE", "CORE", "RBLOCK", "DRAW", "CFIT", "VCAD")
     for title, body in _handoff_sections(text):
         if title in ignored_titles or not any(marker in title for marker in package_markers):
             continue
@@ -152,6 +161,18 @@ def check_handoff_package_index(root: Path) -> dict[str, Any]:
                     f"Handoff package {package_name!r} points to a missing file: {target}.",
                 )
             )
+            continue
+        if target == "current.md":
+            current_text = _read_text(target_path)
+            package_key = _package_lookup_key(package_name)
+            if package_key and package_key not in current_text:
+                findings.append(
+                    _finding(
+                        "handoff_index_current_missing_package_section",
+                        _rel(path, root),
+                        f"Handoff package {package_name!r} points to current.md, but the current handoff window does not contain {package_key!r}. Move the row to archive or restore the current section.",
+                    )
+                )
 
     return {
         "status": "pass" if not findings else "findings",

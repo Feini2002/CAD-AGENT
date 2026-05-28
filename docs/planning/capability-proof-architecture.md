@@ -1,8 +1,10 @@
 # 能力证明体系（Capability Proof）架构说明
 
+> **HISTORY-ONLY（Lab 参考）**：当前默认 next 是 Agent 训练，见 [`../training/README.md`](../training/README.md)。§3 V-PROOF 已收口。
+
 最后更新：2026-05-26
 
-本文是 **Phase V / 路线 F** 的架构说明；**任务包与执行顺序**以 [`任务清单.md`](任务清单.md) §3 为准。主计划登记见 `CORE_RESTRUCTURE_PLAN.md`「路线 F」。
+本文是 **Phase V / 路线 F** 的架构说明；done 包见 [`archive/vproof-packages-done.md`](archive/vproof-packages-done.md)。
 
 ## 为什么要单独建体系
 

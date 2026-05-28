@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "description": "Global pipeline agents — role definitions for context→visual intent→CAD→audit→repair→delivery→learning. No Python in agents/; execution via core/.",
+  "orchestration": {
+    "principle": "precision_first",
+    "principle_doc": "docs/training/precision-first.md",
+    "default_flow": [
+      "pipeline_context_curator",
+      "pipeline_orchestrator",
+      "pipeline_visual_intent",
+      "pipeline_intent",
+      "pipeline_execute",
+      "pipeline_audit",
+      "pipeline_repair",
+      "pipeline_delivery",
+      "pipeline_learning_promoter"
+    ],
+    "visual_contract_required": true,
+    "reference_style_brief_required": true,
+    "reference_style_doc": "docs/training/vision-first-style.md",
+    "hard_gates": {
+      "context": {
+        "requires": ["context_pack"],
+        "blocks": ["pipeline_orchestrator", "pipeline_visual_intent", "pipeline_intent", "pipeline_execute"]
+      },
+      "reference_match": {
+        "requires": ["style_target", "visual_parts", "visual_style_brief"],
+        "blocks": ["pipeline_execute"]
+      },
+      "intent": {
+        "requires": ["ready_to_draw", "open_questions_empty"],
+        "blocks": ["pipeline_execute"]
+      },
+      "cad_execution": {
+        "requires": ["validate_pass", "dry_run_pass_or_declared_case_script", "CODEX_PREVIEW_only"],
+        "blocks": ["pipeline_audit", "pipeline_delivery"]
+      },
+      "delivery": {
+        "requires": ["agent_review_all_pass", "audit_pass_or_approximate_ok"],
+        "blocks": ["user_feedback_request", "case_done"]
+      },
+      "learning": {
+        "requires": ["feedback_or_agent_review", "root_cause_recorded"],
+        "blocks": ["next_round_when_fail"]
+      }
+    },
+    "sizing_policy": {
+      "visual_over_exact": true,
+      "round_dimensions_to_mm": 10,
+      "machine_size_fail_non_blocking_when_visual_pass": true
+    },
+    "loop_on_audit_fail": ["pipeline_repair", "pipeline_execute", "pipeline_audit"],
+    "max_auto_repair_rounds": 3,
+    "terminal_on": ["user_feedback_pass", "max_rounds_exceeded"]
+  },
+  "agents": [
+    {
+      "agent_id": "pipeline_context_curator",
+      "path": "context_curator/agent.json",
+      "role": "上下文整理",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_orchestrator",
+      "path": "orchestrator/agent.json",
+      "role": "编排",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_visual_intent",
+      "path": "visual_intent/agent.json",
+      "role": "视觉语义拆分",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_intent",
+      "path": "intent/agent.json",
+      "role": "需求拆分",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_execute",
+      "path": "execute/agent.json",
+      "role": "落图执行",
+      "may_invoke_cad": true
+    },
+    {
+      "agent_id": "pipeline_audit",
+      "path": "audit/agent.json",
+      "role": "机器审计",
+      "may_invoke_cad": true
+    },
+    {
+      "agent_id": "pipeline_repair",
+      "path": "repair/agent.json",
+      "role": "修复回环",
+      "may_invoke_cad": true
+    },
+    {
+      "agent_id": "pipeline_delivery",
+      "path": "delivery/agent.json",
+      "role": "交付汇报",
+      "may_invoke_cad": true
+    },
+    {
+      "agent_id": "pipeline_learning_promoter",
+      "path": "learning_promoter/agent.json",
+      "role": "训练沉淀",
+      "may_invoke_cad": false
+    }
+  ],
+  "scene_plugins": {
+    "description": "Scene agents supply vocabulary only; mounted by pipeline_intent and checklist defaults.",
+    "registry": "../AGENT_TRAINING_STATUS.md",
+    "primary": "residential"
+  },
+  "artifacts": {
+    "context_pack": "projects/<case>/runs/roundN_context_pack.json",
+    "route": "projects/<case>/runs/roundN_route.json",
+    "style_target": "projects/<case>/expected/style_target_*.png",
+    "visual_parts": "projects/<case>/runs/roundN_visual_parts.json",
+    "intent": "projects/<case>/runs/roundN_intent.json",
+    "visual_style_brief": "projects/<case>/runs/roundN_visual_style_brief.md",
+    "cad_plan": "projects/<case>/runs/roundN_cad_plan.json",
+    "checklist": "projects/<case>/expected/audit_checklist.json",
+    "execution_summary": "projects/<case>/runs/roundN_execution_summary.json",
+    "geometry_audit": "projects/<case>/runs/roundN_geometry_audit.json",
+    "agent_review": "projects/<case>/runs/roundN_agent_review.json",
+    "style_compare": "projects/<case>/runs/roundN_style_compare.md",
+    "audit_review": "projects/<case>/runs/roundN_audit_review.md",
+    "repair_plan": "projects/<case>/runs/roundN_repair_plan.json",
+    "learning_patch": "projects/<case>/runs/roundN_learning_patch.json",
+    "preview": "projects/<case>/runs/roundN_preview.png",
+    "feedback": "projects/<case>/feedback.md"
+  },
+  "forbidden_patterns": {
+    "probe_drives_styling": "Do not use read_block_layout_profile to choose component shapes.",
+    "machine_green_delivery": "Machine audit pass alone must not request user acceptance.",
+    "style_match_without_target": "Reference-match work requires a style_target or explicit user waiver.",
+    "split_as_backrest": "Split lines must not replace semantic back cushions.",
+    "clone_reference_fragments": "Do not clone fragmented supplier geometry when a semantic redraw is requested.",
+    "size_only_repair_loop": "Visual failures must not be repaired by size-only changes."
+  }
+}

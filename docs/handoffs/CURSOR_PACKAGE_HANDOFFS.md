@@ -17,12 +17,16 @@
 
 | 包 | 证据页 / 位置 |
 | --- | --- |
-| STRUCT-AUDIT-01 | `docs/verification/struct_audit_01.md`；`current.md` |
-| STRUCT-MERGE-PREP-01 | `docs/verification/struct_merge_keep_rules.md`；`docs/verification/struct_merge_candidates.md`；`current.md` |
-| STRUCT-MERGE-01 | `docs/verification/struct_merge_01_drawing_policy.md`；`current.md` |
+| DOC-FINISH-ARCH-01 | `docs/history/snapshots/finished-architecture-2026-05-28/`；`current.md` |
+| CAD-EVIDENCE-01 | `docs/verification/table_c_evidence_gate.md`；`current.md` |
+| V-PROOF-73 | `docs/verification/vproof_73_cross_machine.md`；`current.md` |
+| STRUCT-AUDIT-01 | `docs/verification/struct_audit_01.md`；`archive/2026-05.md` |
+| STRUCT-MERGE-PREP-01 | `docs/verification/struct_merge_keep_rules.md`；`docs/verification/struct_merge_candidates.md`；`archive/2026-05.md` |
+| STRUCT-MERGE-01 | `docs/verification/struct_merge_01_drawing_policy.md`；`archive/2026-05.md` |
 | CFIT-13 | `docs/verification/commercial_fitout_p2_wave_acceptance.md`；`archive/2026-05.md` |
 | DRAW-02 | `docs/verification/draw_02_drawing_standard_registry_rows.md`；`archive/2026-05.md` |
-| LCAD-10.5 | `docs/verification/negative_cad_safety_acceptance.md`；`archive/2026-05.md` |
+| LCAD-10.5 / LCAD-10 父包 | `docs/verification/negative_cad_safety_acceptance.md`；`archive/2026-05.md` |
+| LCAD-11 父包 | `docs/verification/evidence_trend_acceptance.md`；`archive/2026-05.md` |
 | OFFICE-PROD-01 | `docs/verification/office_prod_01_office_alpha_boundary.md`；`archive/2026-05.md` |
 | OFFICE-PROD-02 | `docs/verification/office_prod_02_office_beta_boundary.md`；`archive/2026-05.md` |
 | OFFICE-PROD-03 | `docs/verification/office_prod_03_p3_wave_acceptance.md`；`archive/2026-05.md` |
@@ -34,6 +38,10 @@
 | RBLOCK-07 | `docs/verification/rblock_07_block_matrix_registry_rows.md`；`archive/2026-05.md` |
 | RBLOCK-08 | `docs/verification/block_p5_wave_acceptance.md`；`archive/2026-05.md` |
 | REST-PROD-01 | `docs/verification/restaurant_prod_01_restaurant_alpha_boundary.md`；`archive/2026-05.md` |
+| RESIDENTIAL-PROD-01 | `docs/verification/residential_prod_01_residential_alpha_boundary.md`；`archive/2026-05.md` |
+| RESIDENTIAL-PROD-02 | `docs/verification/residential_prod_02_residential_beta_boundary.md`；`archive/2026-05.md` |
+| RESIDENTIAL-PROD-03 | `docs/verification/residential_prod_03_p3_wave_acceptance.md`；`archive/2026-05.md` |
+| V-PROOF-43 | `output/validation_runs/vproof-43-tablec-20260528/writeback_apply.json`；`archive/2026-05.md` |
 | REST-PROD-02 | `docs/verification/restaurant_prod_02_restaurant_beta_boundary.md`；`archive/2026-05.md` |
 | REST-PROD-03 | `docs/verification/restaurant_prod_03_p3_wave_acceptance.md`；`archive/2026-05.md` |
 | REST-PROD-04 | `docs/verification/rest_prod_04_multi_scene_p3_rollup_acceptance.md`；`archive/2026-05.md` |

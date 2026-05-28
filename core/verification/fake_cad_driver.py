@@ -322,6 +322,24 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         )
         return {"handle": handle}
 
+    def set_entity_color_by_handle(self, *, handle: str, color: str) -> None:
+        entity = self.entities.get(str(handle))
+        if entity is None:
+            raise ValueError(f"Unknown handle: {handle}")
+        self._assert_layer(str(entity.Layer))
+        entity.Color = color
+
+    def delete_entity_by_handle(self, handle: str) -> None:
+        self.write_guard.assert_delete_allowed()
+        entity = self.entities.get(str(handle))
+        if entity is None:
+            raise ValueError(f"Unknown handle: {handle}")
+        if str(entity.Layer) != PREVIEW_LAYER:
+            message = f"Delete blocked: handle {handle!r} is not on {PREVIEW_LAYER!r}"
+            self.write_guard._record_block("delete", message)
+            raise CadWriteGuardViolation(message)
+        del self.entities[str(handle)]
+
     def snapshot_modelspace(self, *, layer: str | None = None) -> list[dict[str, Any]]:
         from core.verification.inspect_dwg import normalize_com_entity
 

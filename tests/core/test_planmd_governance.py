@@ -41,7 +41,8 @@ class PlanMdGovernanceTests(unittest.TestCase):
         self.assertIn("cad_strength_headline_percent", core_status)
         self.assertIn("cad_proof_coverage", core_status)
         self.assertIn("禁止", core_status)
-        self.assertIn("95%", core_status)
+        self.assertIn("100%", core_status)
+        self.assertIn("97%", core_status)
         self.assertIn("≠", core_status)
 
     def test_handoff_has_capability_proof_extension_template(self) -> None:

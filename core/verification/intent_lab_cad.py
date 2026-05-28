@@ -29,7 +29,14 @@ def _run_intent_no_cad(*, plan_path: Path) -> dict[str, Any]:
     plan = load_json(plan_path)
     errors = validate_plan(plan)
     intent = str(plan.get("intent", ""))
-    if intent in {"draw_object", "draw_symbol_glyph", "insert_block_alpha"}:
+    if intent in {
+        "draw_object",
+        "draw_symbol_glyph",
+        "insert_block_alpha",
+        "draw_annotation",
+        "modify_object",
+        "delete_object",
+    }:
         dry_run = create_dry_run_report(plan_path)
         dry_run_status = str(dry_run.get("status", ""))
     else:

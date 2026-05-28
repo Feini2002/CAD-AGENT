@@ -17,6 +17,7 @@ MODEL_SCHEMAS = {
     "project_model": "project_model.schema.json",
     "object_spec": "object_spec.schema.json",
     "style_profile": "style_profile.schema.json",
+    "visual_parts": "visual_parts.schema.json",
     "block_library": "block_library.schema.json",
     "layer_preset": "layer_preset.schema.json",
     "drawing_standard_profile": "drawing_standard_profile.schema.json",
@@ -44,6 +45,10 @@ MODEL_SCHEMAS = {
     "commercial_fitout_product_alpha_boundary": "commercial_fitout_product_alpha_boundary.schema.json",
     "commercial_fitout_sample_confirmation_bundle": "commercial_fitout_sample_confirmation_bundle.schema.json",
     "commercial_fitout_scope": "commercial_fitout_scope.schema.json",
+    "project_regression_manifest": "project_regression_manifest.schema.json",
+    "capability_trend_dashboard": "capability_trend_dashboard.schema.json",
+    "capability_lab_report": "capability_lab_report.schema.json",
+    "cross_machine_report": "cross_machine_report.schema.json",
     "project_sample_cad_rollup": "project_sample_cad_rollup.schema.json",
     "project_sample_cad_rollup_report": "project_sample_cad_rollup_report.schema.json",
     "request_context": "request_context.schema.json",
@@ -79,6 +84,8 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "object_spec"
     if "style_id" in data:
         return "style_profile"
+    if "object" in data and "parts" in data and "layout" in data and "forbidden" in data:
+        return "visual_parts"
     if "library_id" in data and "blocks" in data:
         return "block_library"
     if "preset_id" in data and "layers" in data:

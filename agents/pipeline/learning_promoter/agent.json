@@ -1,0 +1,40 @@
+{
+  "id": "pipeline_learning_promoter",
+  "name": "Learning Promoter",
+  "type": "global_pipeline_agent",
+  "role": "把每轮失败或通过后的教训分流到 case、scene、pipeline 或 core，确保训练真的沉淀",
+  "inputs": [
+    "feedback.md",
+    "roundN_agent_review.json",
+    "roundN_geometry_audit.json",
+    "roundN_repair_plan.json",
+    "TRAINING_ERRORS.md",
+    "docs/training/pipeline-changelog.md",
+    "agents/<scene>/rules.md"
+  ],
+  "outputs": [
+    "roundN_learning_patch.json"
+  ],
+  "promotion_targets": [
+    "case_feedback",
+    "training_errors",
+    "scene_rules",
+    "pipeline_changelog",
+    "core_probe_candidate",
+    "regression_test_candidate"
+  ],
+  "pass_gate": {
+    "root_cause_recorded_for_fail": true,
+    "promotion_target_selected": true,
+    "case_specific_numbers_not_promoted_to_core": true,
+    "next_round_blocked_until_fail_is_recorded": true
+  },
+  "must_not": [
+    "execute_cad",
+    "mark_case_done_without_user_feedback_pass",
+    "promote_case_specific_dimensions_to_core",
+    "ignore_repeat_failures",
+    "write_pipeline_changelog_for_pure_geometry_bug"
+  ],
+  "doc": "docs/training/learning-loop.md"
+}

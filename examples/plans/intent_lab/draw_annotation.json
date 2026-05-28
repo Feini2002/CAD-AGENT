@@ -4,7 +4,11 @@
   "intent": "draw_annotation",
   "object": {
     "type": "leader_note",
-    "name": "Intent Lab Annotation"
+    "name": "Intent Lab Annotation",
+    "annotation_text": "TABLE-C intent lab annotation",
+    "text_height": 120,
+    "width": 1,
+    "depth": 1
   },
   "placement": {
     "mode": "absolute",

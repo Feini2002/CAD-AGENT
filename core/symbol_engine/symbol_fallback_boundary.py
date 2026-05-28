@@ -99,8 +99,9 @@ def assert_symbol_glyph_fallback_boundary_contract(*, project_root: Path) -> Non
         row = index.get(capability_id)
         if row is None:
             raise AssertionError(f"missing V-PROOF-35 fallback tier row: {capability_id}")
-        if row.get("claim_level") in {"verified", "showcase"}:
-            raise AssertionError(f"{capability_id} must not claim geometry proof without CAD readback")
+        from core.verification.registry_claim_contract import assert_no_geometry_claim_without_cad_evidence
+
+        assert_no_geometry_claim_without_cad_evidence(row, capability_id)
 
     schema_errors = validate_capability_registry(registry)
     if schema_errors:

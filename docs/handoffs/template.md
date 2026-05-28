@@ -1,8 +1,8 @@
 # 交接包模板
 
 最后更新：2026-05-28
-维护者：Cursor / Codex Agent 会话
-用途：供 Codex 或其它 agent **按开发包**做高智力校验、审计与换机接手。
+维护者：任意 Agent 会话（Codex / Cursor / 同类工具）
+用途：供 Codex、Cursor 或其它 agent **按开发包**做高智力校验、审计与换机接手。
 
 > 本文是交接包填写模板。当前活跃交接写入 `docs/handoffs/current.md`，全量索引写入 `docs/handoffs/package-index.md`；机器可读证据在 `output/validation_runs/`，简版流水在 `docs/status/changelog.md`。
 

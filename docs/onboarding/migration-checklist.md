@@ -2,7 +2,20 @@
 
 # 换机清单（与本机同等级，全量配置）
 
-**最后更新：2026-05-26**
+**最后更新：2026-05-28**
+
+### P0 一键复验（BETA-CROSS-MACHINE-02）
+
+换机/回家优先跑：
+
+```powershell
+$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
+& $py scripts\run_beta_cross_machine_02_gate.py --output-dir output\validation_runs\beta-cross-machine-02-<日期>
+```
+
+说明见 `docs/runbooks/cross-machine-reverify.md`。`status=partial` 时还需在 IDE 里 **手动画一次 MCP**（见下文第四步）。
+
+---
 
 本文只描述 **与本机开发环境同等、百分百对齐** 的换机方式：不接受「最低配置」「仅逻辑开发」「暂不装 CAD」等缩水方案。少装任何一项，都不算换机完成。
 
@@ -55,7 +68,7 @@
 | Pillow | 12.2.0 |
 | pywin32 / win32gui | 正常 import |
 | AutoCAD | COM 已连上活动图纸 |
-| 单元测试 | `unittest discover -s tests` → 223 passed |
+| 单元测试 | `unittest discover -s tests` → **969** passed（2026-05-28） |
 
 ### 换机流程总览
 
@@ -117,8 +130,8 @@ Write-Host "AutoCAD 进程:" ($null -ne $acad)
 
 **常见误区：**
 
-- 新机 **已经装过 AutoCAD** → 不会也不能被本仓库「再装一遍」；重复的是 **验收**，不是安装程序。  
-- 新机 **已经有 CAD-MCP** → 通常 **不用** 再下载一份；缺的是 **venv 依赖** 或 **MCP 开关**，用 `pip` / IDE 设置补齐即可。  
+- 新机 **已经装过 AutoCAD** → 不会也不能被本仓库「再装一遍」；重复的是 **验收**，不是安装程序。
+- 新机 **已经有 CAD-MCP** → 通常 **不用** 再下载一份；缺的是 **venv 依赖** 或 **MCP 开关**，用 `pip` / IDE 设置补齐即可。
 - `$py` **必须固定用 CAD-MCP 的 venv**；若你已有 MCP 但 Python 在别的路径，以 **能 import pywin32 + Pillow 且能 COM** 为准，路径写在个人笔记里，不要混用系统 Python。
 
 ### 第三步：clone 本仓库
@@ -137,8 +150,8 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 # 若你排查时 MCP 不在默认路径，改成实测通过的那个 python.exe，但仍是 CAD-MCP 的 venv
 ```
 
-1. **打开 AutoCAD** 并加载一张测试 DWG（活动文档）。  
-2. 执行下文 **全量验收命令**（**每一项都必须通过**）。  
+1. **打开 AutoCAD** 并加载一张测试 DWG（活动文档）。
+2. 执行下文 **全量验收命令**（**每一项都必须通过**）。
 3. 在 Cursor/Codex 里用 **CAD-MCP** 手动画一次简单图（矩形/直线），确认 MCP 链路与脚本链都可用。
 
 只有 **第四步全部通过**，才算换机完成；前面三步允许「已有则跳过安装」。
@@ -192,7 +205,7 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 | `validate_plan` | 输出 `VALID CAD_PLAN` |
 | `dry_run_plan` | 正常预演输出 |
 | `render_preview --check` | `"status": "ready"`，且 `pillow_imagegrab: true` |
-| `unittest` | `OK`，227 tests |
+| `unittest` | `OK`（当前约 **969** tests；或 `run_core_platform_gate.py`） |
 | repo audit | `0 findings` |
 | benchmark suites | `non_cad_core_benchmark`、`blank_shell_core_benchmark`、`office_alpha_benchmark`、`interior_delivery_benchmark` 均 pass；office alpha 为 `4/4 cases`，interior delivery 为 `3/3 cases` |
 | COM 探测 | 打印当前活动 DWG 文件名 |
@@ -215,6 +228,6 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 ### 换机后接新项目
 
-1. 在 `projects/<项目名>/` 放输入输出与 `cad_context.json`。  
-2. 不要把具体家装/工装上下文写进本仓库通用规则。  
+1. 在 `projects/<项目名>/` 放输入输出与 `cad_context.json`。
+2. 不要把具体家装/工装上下文写进本仓库通用规则。
 3. 继续默认只画 `CODEX_PREVIEW`；正式图层须用户明确批准。

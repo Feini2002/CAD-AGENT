@@ -1,115 +1,122 @@
 # CAD Agent Core Lab
 
-CAD Agent Core Lab 是一个可迁移的通用 CAD Agent 开发包，用结构化 `CAD_PLAN` 连接自然语言需求、设计模型、CAD 执行和可验证结果。它不绑定某一张 DWG、某一套家装图纸或某一台电脑，也不把办公、工装、家装等场景做成彼此割裂的独立系统。
+CAD Agent Core Lab 是一个面向多 Agent 的 CAD 绘图训练底座。它不把一句白话直接丢给 AutoCAD 硬画，而是把“听懂需求、识别真实参考、生成结构化意图、落到 CAD、机器审计、截图自检、用户验收”拆成可审计、可训练、可迁移的链路。
 
-本仓库的核心原则是：白话需求必须先进入 `CAD_PLAN` 或更高层结构化绘图意图，再经过校验、dry-run、真实 CAD 执行和实体回读验证。真实 CAD 输出默认只写入 `CODEX_PREVIEW`，不默认保存 DWG、不覆盖原始文件、不删除已有实体、不修改正式图层。
+当前阶段是 **Visual-First Agent 训练期**：先让系统看懂真实 CAD 参考，再生成可执行的绘图约束和预览结果。每一轮失败都会留下证据、归因和修正入口，让多个 Agent 在大量真实测试任务中逐步变聪明。
 
-## 当前状态
+## 它要解决什么
 
-最后状态快照以 `CORE_STATUS.md`、`CAD_AGENT_STATUS.md` 和 `docs/planning/任务清单.md` 为准。当前公开口径：
+- 让用户用自然语言提出 CAD 绘图目标，而不是手写脚本。
+- 让 Agent 先形成 `CAD_PLAN` 或结构化绘图意图，再执行真实 CAD。
+- 让 CAD 输出默认写入 `CODEX_PREVIEW`，保护用户原图和正式图层。
+- 让每次落图都有 handles、bbox、图层、实体类型、截图和审计证据。
+- 让失败 round 能继续自修，直到用户目视确认 pass。
 
-| 口径 | 当前值 | 说明 |
-| --- | --- | --- |
-| 真实 CAD 实力主指标 | 约 **8.87%**，最高已证 **L4** | 表 C 机器口径；不能用工程进度或 RCAD 烟囱替代 |
-| CAD 证明覆盖率 | 约 **48.58%** | 282 行能力登记中，112 verified + 25 showcase |
-| 工程节奏 | 总约 **95%**（Core 96%，Agent 93%） | 表 A 折叠口径，不等于真实 CAD 几何已全面证明 |
-| 任务台账 | 能力证明约 78%；代码轨约 89%；RCAD 烟囱 29/29 verified | 表 B 口径；RCAD 烟囱不等于施工图能力 |
+理想状态下，用户只说“照这个真实参考，在旁边生成同款两座沙发，只写预览层，不保存 DWG”，系统就能完成从理解、规划、执行、核验到交付的闭环。这个目标仍在训练中，但仓库已经把底座、边界和证据链铺好。
 
-最近主线已经覆盖：
+## 端到端链路
 
-- Core 底座：`core.plan_engine`、benchmark runner、composition engine、CAD validation runner、write guard、capability registry。
-- 多场景能力：office / restaurant / residential 的 alpha、beta、P3 rollup 与多场景回归门禁。
-- 真实 CAD 证据：baseline、基础图元探针、block alpha/beta、hatch、symbol block-first、drawing standard、composition refresh、VCAD 视觉表达 smoke。
-- 文档治理：根文档拆分、交接包索引、状态/计划/验证/历史目录分层。
+```mermaid
+flowchart TD
+    U["用户白话 / 截图 / CAD参考"] --> C["Context Curator<br/>恢复上下文和案例状态"]
+    C --> V["Visual Intent<br/>真实参考 + style_target + visual_parts"]
+    V --> P["Intent / CAD_PLAN<br/>结构化绘图意图"]
+    P --> G["Validate + Dry-run<br/>安全与可执行检查"]
+    G --> E["Execute<br/>只写 CODEX_PREVIEW"]
+    E --> R["Readback<br/>handles / bbox / layers / entity types"]
+    R --> A["Audit<br/>机器审计 + checklist"]
+    A --> S["Screenshot<br/>AutoCAD 预览截图"]
+    S --> J["Agent Review<br/>读图自检"]
+    J --> D{"Delivery Gate"}
+    D -->|fail| F["Repair<br/>最小修复并进入下一轮"]
+    D -->|pass| H["User Review<br/>用户目视验收"]
+    H -->|fail| F
+    H -->|pass| L["Learning Promotion<br/>沉淀规则和证据"]
+```
 
-仍需注意：这些证据不能扩大解释为“任意真实项目图纸、公司块库、复杂施工图或任意 `CAD_PLAN` 都已经准确”。当前系统是 Core Lab / Alpha 原型，不是完整自动设计大脑。
+## 架构分层
 
-## 目录导览
+- `core/`：通用能力层，负责 CAD IO、执行、安全、schema、审计、训练 gate 和能力登记。
+- `agents/pipeline/`：全局多 Agent 流水线，定义理解、视觉约束、意图、执行、审计、修复、交付、学习晋升等角色。
+- `agents/<scenario>/`：轻量场景 Agent，保存住宅、展陈、医疗等场景偏好和词汇，不复制 Core 能力。
+- `libraries/`：共享样式、图层、尺寸、材料、块库和可复用资源。
+- `projects/`：真实或脱敏训练案例，每个案例保存 brief、feedback、expected、runs 和必要脚本。
+- `scripts/`：验证、gate、coverage、CAD smoke、截图和迁移检查入口。
+- `tests/`：单元测试、契约测试、训练 gate 测试和回归测试。
+- `docs/`：架构、训练、治理、状态、交接和历史记录。
 
-| 路径 | 用途 |
-| --- | --- |
-| `core/` | 通用 CAD Agent 能力底座：模型、布局、对象、符号、执行、验证、安全边界 |
-| `agents/` | 轻量场景 Agent，只保留场景差异，复用 Core |
-| `libraries/` | 跨场景资源，如对象默认值、块库、风格、材料、尺寸和图层标准 |
-| `projects/` | 真实或样例项目资料 |
-| `scripts/` | CLI 验证、benchmark、registry writeback、CAD smoke 入口 |
-| `tests/` | 单元测试与场景/验证契约测试 |
-| `docs/` | 架构、计划、治理、交接、验证、状态和历史 |
-| `examples/` | 能力证明、CAD_PLAN、manifest 和样例数据 |
+## 多 Agent 角色
 
-关键入口：
+- `pipeline_orchestrator`：调度链路，不直接落图。
+- `pipeline_context_curator`：读取规则、计划、案例状态和历史反馈。
+- `pipeline_visual_intent`：从真实参考产出 `style_target`、`visual_parts` 和视觉约束。
+- `pipeline_intent`：把白话和视觉约束转成结构化绘图意图。
+- `pipeline_execute`：只执行已通过 gate 的绘图任务。
+- `pipeline_audit`：检查几何、语义、图层和交付证据。
+- `pipeline_repair`：基于失败证据做最小修复。
+- `pipeline_delivery`：截图、Agent 自检和交付阻断。
+- `pipeline_learning_promoter`：把通过或失败的经验沉淀到规则和案例资料。
 
-- 日常上下文：`CORE_CONTEXT_BRIEF.md`
-- 唯一主计划：`CORE_RESTRUCTURE_PLAN.md`
-- 当前状态：`CORE_STATUS.md`、`CAD_AGENT_STATUS.md`
-- 当前交接：`docs/handoffs/current.md`
-- 包索引：`docs/handoffs/package-index.md`
-- 执行台账：`docs/planning/任务清单.md`
-- 规则边界：`AGENTS.md`、`docs/governance/cad-agent-rules.md`
+## Visual-First 训练
 
-## 开发与验证
+Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 reference-match 任务，`style_target` 不能是凭空生成的示意图，必须来自 AutoCAD 截图裁剪、用户提供参考图或真实 CAD 参考块。
 
-常用入口如下，运行前可按本机环境设置 Python：
+典型 round 产物：
+
+```text
+projects/<case_id>/
+  brief.md
+  feedback.md
+  expected/audit_checklist.json
+  expected/style_target_reference_crop.png
+  runs/roundN_visual_parts.json
+  runs/roundN_intent.json
+  runs/roundN_execution_summary.json
+  runs/roundN_vector_readback.json
+  runs/roundN_geometry_audit.json
+  runs/roundN_preview.png
+  runs/roundN_agent_review.json
+  runs/roundN_style_compare.md
+```
+
+## 当前主训案例
+
+当前第一条闭环案例是 `projects/residential_sofa_2seat_20260528/`。round12 已完成真实 CAD 预览、机器审计、截图和 Agent 自检，并把 `style_target` 修正为真实 AutoCAD 截图 crop。用户尚未确认视觉 pass，所以第一闭环还没有结束；后续应继续 round13、round14，直到用户目视通过。
+
+## 安全边界
+
+- 默认只写 `CODEX_PREVIEW`。
+- 默认不保存当前 DWG。
+- 不覆盖原始 DWG。
+- 不修改正式图层，不删除用户原有实体。
+- 截图只能作为视觉辅助，不能替代 geometry/readback 证据。
+- 对外声称 CAD 完成前，必须有结构化意图、validate、dry-run、真实输出、created handles 回读、审计和必要截图。
+
+## 换电脑继续
+
+仓库按可迁移开发包设计。新电脑 clone 后，需要恢复 AutoCAD / CAD-MCP / Python 环境，打开对应案例 DWG，再读取 `CORE_CONTEXT_BRIEF.md` 和案例 `feedback.md`，从最后一个 round 继续。训练证据会随仓库提交；`.codegraph/`、Understand Anything 生成图、`output/`、缓存、CAD 锁文件和备份文件不会提交。
+
+## 常用命令
 
 ```powershell
 $env:PYTHONIOENCODING='utf-8'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
-```
-
-常用验证命令：
-
-```powershell
 & $py -m unittest discover -s tests
-& $py scripts\self_check.py
-& $py scripts\render_preview.py --check
-& $py scripts\run_repo_audit.py --max-python-lines 500 --fail-on-findings
-& $py scripts\run_dev_volume_audit.py
-& $py scripts\run_capability_coverage.py --output output\validation_runs\capability-lab\cad_capability_coverage.json
+& $py scripts\run_doc_governance_audit.py --fail-on-findings
+& $py scripts\run_training_round_gate.py --case-dir projects\residential_sofa_2seat_20260528 --round round12 --stage visual_contract --fail-on-blocked
+& $py scripts\run_training_round_gate.py --case-dir projects\residential_sofa_2seat_20260528 --round round12 --stage delivery --fail-on-blocked
 ```
 
-真实 CAD 验证默认只写 `CODEX_PREVIEW`，提交或对外声明前必须能给出：
+## 关键入口
 
-- `validate_plan.py` 与 `dry_run_plan.py` 结果。
-- `core.plan_engine` 对应入口结果。
-- 实际 CAD 输出、created handles 回读、实体类型和 bbox / geometry checks。
-- 截图只能作为视觉辅助，不能替代 `geometry_verified`。
-
-## CodeGraph
-
-本仓库已加入 CodeGraph 使用规则。`.codegraph/` 是每台机器的本地 SQLite 索引，已经被 `.gitignore` 忽略，不会随 GitHub 提交。
-
-新电脑 clone 后，如果要使用 CodeGraph，在仓库根目录重新初始化本地索引：
-
-```powershell
-codegraph.cmd init -i
-```
-
-如果当前 PowerShell 允许运行 npm 的 `.ps1` shim，也可以使用：
-
-```powershell
-codegraph init -i
-```
-
-常用命令：
-
-```powershell
-codegraph.cmd status
-codegraph.cmd query AutoCAD --limit 8
-codegraph.cmd files --max-depth 2
-codegraph.cmd sync
-```
-
-当前 Codex / MCP 会话如果尚未暴露 `codegraph_*` 工具，可以先用 CLI 查询；重新加载 MCP 配置后再使用 CodeGraph MCP 工具。
-
-## 交付口径
-
-每次 CAD Agent 相关交付默认用 1 张精简进度表，先报表 C 真实 CAD 实力主指标，再说明本轮完成内容、验证证据和风险边界。完整表 A/B/C 只在状态汇报、交接、审计、进度盘点或表 C 专题时展开。
-
-三套进度禁止混用：
-
-- 表 A：工程节奏，回答模块和流程成熟度。
-- 表 B：任务台账，回答能力证明 / 代码轨 / CAD 补验包推进情况。
-- 表 C：真实 CAD 实力，回答对外“能画多厉害”的诚实上限。
-
-百分比不替代测试、benchmark、截图、created handles 回读或 `geometry_verified` 证据。
+- `AGENTS.md`：Agent 行为规则和 CAD 安全边界。
+- `CORE_CONTEXT_BRIEF.md`：短上下文入口，新会话优先读。
+- `CORE_RESTRUCTURE_PLAN.md`：唯一 PlanMD / 主计划。
+- `CORE_STATUS.md`：能力状态和表 C 口径。
+- `docs/training/README.md`：训练期主链路。
+- `docs/training/global-agent-pipeline.md`：多 Agent 流水线说明。
+- `docs/planning/任务清单.md`：当前训练 backlog 和 next。
+- `docs/status/current.md`：当前状态摘要。
+- `docs/status/issues.md`：失败教训和活跃风险。
+- `docs/handoffs/current.md`：最近包交接。

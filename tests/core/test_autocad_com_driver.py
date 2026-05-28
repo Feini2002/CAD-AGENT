@@ -77,6 +77,32 @@ class AutoCADComDriverConnectionTests(unittest.TestCase):
             ("variant", 0x2000 | 5, (1.0, 2.5, 0.0)),
         )
 
+    def test_ensure_layer_caches_successful_layer_lookup(self) -> None:
+        class FakeLayers:
+            def __init__(self) -> None:
+                self.item_calls = 0
+                self.add_calls = 0
+
+            def Item(self, _layer: str) -> object:
+                self.item_calls += 1
+                return object()
+
+            def Add(self, _layer: str) -> object:
+                self.add_calls += 1
+                return object()
+
+        layers = FakeLayers()
+        driver = object.__new__(AutoCADComDriver)
+        driver.doc = types.SimpleNamespace(Layers=layers)
+        driver._init_preview_write_guard(preview_layer=PREVIEW_LAYER)
+        driver._ensured_layers = set()
+
+        driver.ensure_layer(PREVIEW_LAYER)
+        driver.ensure_layer(PREVIEW_LAYER)
+
+        self.assertEqual(layers.item_calls, 1)
+        self.assertEqual(layers.add_calls, 0)
+
     def test_draw_methods_pass_converted_points_to_modelspace(self) -> None:
         class FakeEntity:
             Handle = "H"

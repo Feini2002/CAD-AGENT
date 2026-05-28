@@ -6,7 +6,7 @@
 
 | 风险 | 当前影响 | 处理口径 |
 | --- | --- | --- |
-| 根目录 MD 过长 | 旧完成流水会撑大每轮上下文，稀释当前主线 | 根目录只保留短摘要；旧记录查 `docs/history/snapshots/root-md-2026-05-26/` |
+| 活跃入口 MD 过长 | 旧完成流水会撑大每轮上下文，稀释当前主线 | PlanMD、任务清单、Core Status、current status 只保留控制面；旧记录查 `docs/history/snapshots/finished-architecture-2026-05-28/` 和 `docs/planning/archive/`；`run_doc_governance_audit.py` 校验体量预算 |
 | 场景 Alpha / Beta 被误读为 Scene Product | 可能误以为工装、办公、住宅、餐饮 Agent 已产品化 | 统一四级成熟度；Scene Product 必须有真实项目样本、图块 metadata、真实 CAD smoke、用户确认流 |
 | 真实 CAD 校验样本不足 | 不能证明任意项目 DWG 或任意 `CAD_PLAN` 几何准确 | 继续推进 §5 `RCAD-22+` 与 §3 `V-PROOF` 链式回写 |
 | ActiveDocument / guard 仍需真实会话复验 | `LCAD-13/14` 已有 snapshot 与 strict guard 包装，但仍需更多真实 CAD 场景确认 | 优先用 `RCAD-21/22` 和后续真实 CAD smoke 扩样，不把 guard-only 当几何 verified |
@@ -15,13 +15,67 @@
 | 路径边界回归 | runner 新增参数时可能越界读写 | 复用 `core.path_safety`，真实 CAD 连接前先做路径预检 |
 | Schema 未登记 | schema 文件可能存在但 validator 不知道 | 新 schema 必须同步 registry、example、invalid fixture 和 tests |
 | Markdown 进度漂移 | 表 A/B/C、RCAD 烟囱和 coverage JSON 容易被旧快照覆盖 | 表 C 以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准；任务 next 以 PlanMD + 任务清单同步为准 |
-| 精简回复漏报表 C | 聊天输出变短后，可能又用 Core 96% 或 RCAD 76% 暗示画图实力 | 精简表第一行必须是表 C 主指标；完整状态、交接、审计和表 C 专题再展开 A/B/C |
+| guard / negative 行误升 showcase | 安全守卫或负例拦截会被误算成几何能力，抬高表 C | negative / guard registry 行必须保持 `smoke`；只证明 guard-only，不得写成 `geometry_verified` / `showcase` |
+| 普通回复表格噪声 / 状态查询漏报表 C | 普通交付若默认带表，会淹没用户真正关心的结论；但状态查询若漏表 C，又可能混淆真实 CAD 实力 | 普通最终回复默认不附进度表；只有用户点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C 或真实 CAD 实力时才展开表格，并先报表 C 主指标 |
 | 结构合并误伤边界 | 为减少文件数而合并 CLI / safety / evidence / CAD runner，会破坏可审计入口 | 按 `struct_merge_keep_rules.md` 执行；每个 `STRUCT-MERGE-xx` 只处理 1-3 组候选，必须 focused tests + repo audit |
 | writeback 不识别 showcase 行 | registry 行从 verified/smoke 升到 showcase 后，旧绑定逻辑可能把它当 unsupported claim_level | 绑定类写回应把 showcase 视为“保留 evidence、只追加来源”的已验证类行；已有 RBLOCK-07 回归测试覆盖 |
 | 文档迁移断链 | 大量 Markdown 移动后，旧路径、handoff、表 C 数字和新人入口可能漂移 | 旧根路径保留 stub；`output/validation_runs/**` 不移动；新增 `run_doc_governance_audit.py` 做链接、主从、表 C 和 handoff 检查 |
 | coverage 证据路径缺失未成硬门 | coverage JSON 已统计 `report_path_missing`，但当前仍以 registry claim_level 计算表 C | 表 C 汇报必须同时看 `evidence_path_audit`；后续若把缺失路径改成硬门，需要先补齐历史证据路径，避免误降级 |
+| 历史 verified/showcase 证据不满足新硬审计 | 新增 hard audit 后，旧报告可能缺 `checks`、`actual.created_handles`、`actual.entities` 或实际文件路径 | 新一轮表 C writeback 先过 `run_table_c_evidence_gate.py`；旧证据债另开补齐包，不用截图或旧 coverage 直接掩盖 |
 
 ## 最近修复教训
+### Visual contract 不能只检查字段，必须检查证据文件
+
+日期：2026-05-28
+
+现象：round12 的 `round12_visual_parts.json` 已声明 `style_target`，但对应 `expected/style_target_2seat.png` 原本不存在；补齐时又临时生成了示意图，仍不是来自真实参考截图；`round12_style_compare.md` 也曾停在 `pending execution` 模板态，却没有被 delivery gate 阻断。
+影响：Agent 容易把“字段存在”或“有一张生成目标图”误当成“视觉契约闭环”，导致 `delivery_allowed=true` 与真实参考证据状态矛盾。
+修复 / 计划：`run_training_round_gate.py` 的 visual contract stage 现在会解析 `visual_parts` 并检查 `style_target` 必须是 case 内真实文件，且 `style_target_source` 必须是 `reference_crop` / `user_reference` / `reference_screenshot`；generated target、缺少真实截图来源、source image 缺失都会阻断。delivery stage 仍要求 `style_compare` 存在且不能包含 pending/未勾选模板标记。
+以后规则：视觉契约类字段只算索引，不算证据；证据必须能在仓库中解析、打开或被 gate 检查。reference-match 任务不得把 Agent 生成图作为 style target 交付证据。
+相关文件：`core/training/learning_promotion.py`、`projects/residential_sofa_2seat_20260528/expected/style_target_reference_crop.png`、`projects/residential_sofa_2seat_20260528/runs/round12_style_compare.md`
+
+
+### 机器审计绿后仍要做视觉自检
+
+日期：2026-05-28
+
+现象：round12 初版 `visual_parts` 落图机器审计已过，但同屏截图显示座垫比例像上下四个大矩形，和参考沙发“薄座垫 + 高靠背”的款式仍有差距。
+
+影响：如果只看 `geometry_audit.json`，会把“部件齐全但款式不准”的图交给用户，继续复现早期机器虚绿问题。
+
+修复 / 计划：delivery gate 仍要求 `roundN_preview.png` + Agent 自检；`part_renderer.py` 增加薄座垫/高靠背比例，并用测试约束座垫高度和靠背高度。AutoCAD COM 图层访问也缓存一次，避免高频 `ensure_layer` 触发 `RPC_E_CALL_REJECTED`。
+
+以后规则：训练案例要把“机器审计通过”和“可请用户验收”分开；截图自检发现款式问题时先 Repair，不直接交付。
+
+相关文件：`projects/residential_sofa_2seat_20260528/runs/part_renderer.py`、`tests/core/test_visual_parts_case_contract.py`、`core/cad_io/autocad_com.py`
+
+### 活跃文档要有体量预算，done 明细进 archive
+
+日期：2026-05-28
+
+现象：`CORE_RESTRUCTURE_PLAN.md`、`docs/planning/任务清单.md`、`CORE_STATUS.md`、`docs/status/current.md` 已经声明“不承载长历史 / 只做控制面”，但仍保留大量已完成包明细，默认上下文像施工现场。
+
+影响：后续 Agent 每轮都要扫旧 Phase、旧 done 表和旧状态快照，容易误读 next、混淆表 A/B/C，或把历史包当作当前待办。
+
+修复 / 计划：新增 active doc size budget 检查，活跃入口超预算时 `run_doc_governance_audit.py` 报 `active_doc_over_budget`；瘦身前全文迁入 `docs/history/snapshots/finished-architecture-2026-05-28/`，done 台账索引迁入 `docs/planning/archive/`。
+
+以后规则：完成包明细只进 archive / history / handoff；活跃文件只保留口令、当前值、路由、风险和证据入口。
+
+相关文件：`core/maintenance/doc_governance.py`、`docs/planning/archive/README.md`
+
+### 表 C writeback 必须先过硬证据和视觉复盘门
+
+日期：2026-05-28
+
+现象：coverage JSON 已有 `evidence_path_audit`，但旧流程默认仍按 registry `claim_level=verified/showcase` 计算表 C；截图也容易只作为“看起来画了”的辅助物，未进入 writeback 硬门。
+
+影响：后续 Agent 可能在证据路径缺失、旧报告缺 created handles/checks，或截图复盘失败时仍继续回写 registry，从而让表 C 继续漂移。
+
+修复 / 计划：新增 `run_capability_evidence_audit.py`、`run_visual_cad_review.py`、`run_table_c_evidence_gate.py`；截图复盘失败时 `writeback_allowed=false`，coverage 可通过 `--require-evidence-audit-pass` 启用硬审计。首次审计现有 registry 为 131 audited / 59 pass / 72 fail，旧证据债后续另开补齐包处理。
+
+以后规则：任何新表 C 推进包在 registry writeback 前，必须有 `geometry_verified` / `cad_capability_verified` 证据、硬审计通过、视觉复盘通过；截图仍不得替代 created-handle readback。
+
+相关文件：`core/verification/capability_evidence_audit.py`、`core/verification/visual_cad_review.py`、`core/verification/table_c_evidence_gate.py`、`docs/verification/table_c_evidence_gate.md`
 
 ### 结构治理先立规则，再动文件
 
@@ -169,17 +223,17 @@
 
 以后规则：用户可见生成结果默认纯几何。测试文字、尺寸、箭头、说明只属于诊断层或临时对象；截图和交付口径必须区分当前 created handles、预览层和诊断层，不得把诊断残留当成图块交付结果。
 
-### 聊天最终回复可精简，但表 C 主指标不能消失
+### 普通最终回复默认不附进度表，状态查询再展开表 C
 
-日期：2026-05-27
+日期：2026-05-27；更新：2026-05-28
 
 现象：每轮交付强制输出完整表 A/B/C 后，信息量变大但思考价值下降，容易让真正关键的“本轮做了什么、有没有证据、真实 CAD 实力有没有变化”被表格淹没。
 
-影响：后续 Agent 可能机械复制三表，或者相反地为了省字数漏掉表 C 主指标，导致工程进度 / RCAD 烟囱完成度再次被误读成真实 CAD 能力。
+影响：后续 Agent 可能机械复制三表或精简表，造成普通问答里表格噪声过高；如果状态查询又为了省字数漏掉表 C 主指标，则工程进度 / RCAD 烟囱完成度仍可能被误读成真实 CAD 能力。
 
-修复 / 计划：默认聊天交付改为 1 张精简进度表，第一行固定为表 C 主指标；完整 A/B/C 只在完整状态、交接、审计、进度盘点、表 C 专题或计数变更时展开。本次只改展示口径，不重构 §3 / §4 / §5 的真实任务分母。
+修复 / 计划：2026-05-27 先从完整三表改为 1 张精简进度表；2026-05-28 根据用户反馈继续收紧为：普通最终回复默认不附进度表、表单或表 A/B/C，只有用户点名开发状态查询、进度盘点、完整状态、交接、审计、表 A/B/C、表 C 或真实 CAD 实力时才展开表格。此变更只改展示口径，不重构 §3 / §4 / §5 的真实任务分母。
 
-以后规则：精简不是删除证据。涉及真实 CAD 能力时仍以 coverage JSON、created handles 回读和 `geometry_verified` 为准；handoff、状态页和能力模板保留完整证据结构。
+以后规则：无表格不是删除证据。普通回复仍要说清本轮完成、验证和风险；状态查询或真实 CAD 能力汇报必须以 coverage JSON、created handles 回读和 `geometry_verified` 为准，并先报表 C 主指标。handoff、状态页和能力模板保留完整证据结构。
 
 ### 表 A/B/C 数字必须以机器值和任务台账为准
 

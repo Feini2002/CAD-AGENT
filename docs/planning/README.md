@@ -1,30 +1,29 @@
-# Planning Docs（执行台账与 Phase 路由）
+# Planning Docs（训练期控制面）
 
-本目录只承载执行台账和 Phase 剧本入口。唯一 PlanMD 仍是根目录 `CORE_RESTRUCTURE_PLAN.md`。
+本目录：**案例 backlog 镜像** + Lab 归档索引。唯一 PlanMD：`CORE_RESTRUCTURE_PLAN.md`。
 
-## 当前入口
+## 当前入口（优先）
 
 | 你想… | 读 |
 | --- | --- |
-| 查唯一主线、优先级、退出标准 | [`../../CORE_RESTRUCTURE_PLAN.md`](../../CORE_RESTRUCTURE_PLAN.md) |
-| 执行三指令台账 / 当前 `next` | [`任务清单.md`](任务清单.md) |
-| 查能力证明架构 | [`capability-proof-architecture.md`](capability-proof-architecture.md) |
-| 查仍活跃 Phase 剧本 | [`phases/`](phases/) |
-| 查 Phase R 历史拆解 | [`../history/completed-plans/phase-r/`](../history/completed-plans/phase-r/) |
+| 开训练轮 / 建家装案例 | [`../training/README.md`](../training/README.md) |
+| 案例 backlog、口令 | [`任务清单.md`](任务清单.md) §0 |
+| PlanMD、Decision Gate | [`../../CORE_RESTRUCTURE_PLAN.md`](../../CORE_RESTRUCTURE_PLAN.md) |
+| Lab 后置拆包 | [`post-backlog.md`](post-backlog.md) |
+| 三轨 done 索引 | [`archive/`](archive/) |
 
-## 当前目录职责
+## HISTORY-ONLY（勿当 next）
+
+施工期 Phase 剧本与 stub 索引：[`HISTORY-ONLY.md`](HISTORY-ONLY.md)。
 
 | 路径 | 职责 |
 | --- | --- |
-| `任务清单.md` | §0 三指令进度 + §3 V-PROOF + §4 代码轨 + §5 RCAD |
-| `capability-proof-architecture.md` | 表 C、Ladder、claim_level 的架构说明 |
-| `phases/phase-w-cad-validation.md` | 真实 CAD 回读闭环历史 / 扩展参考 |
-| `phases/phase-x-scene-agent-alpha.md` | Scene Alpha 验收历史 / 边界参考 |
-| `phases/phase-y-blank-shell-hardening.md` | blank-shell 多候选硬化参考 |
-| `phases/phase-z-doc-governance.md` | 文档治理和回归基线参考 |
+| `archive/` | V-PROOF / 代码轨 / RCAD done |
+| `capability-proof-architecture.md` | 表 C 架构（Lab 参考） |
+| `phases/` | Phase W/X/Y/Z 历史参考 |
 
 ## 禁止
 
-- 不在本目录新增第二套 PlanMD。
-- 不在 Phase 剧本里复制未来待办清单。
-- 不在状态页或 handoff 之外记录完成流水。
+- 不新增第二套 PlanMD。
+- 不把 `archive/` done 表抄回活跃任务清单。
+- 训练期默认不全文读 `phase-*-plan.md`。

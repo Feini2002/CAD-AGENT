@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "capability_trend_dashboard.schema.json",
+  "title": "CAPABILITY_TREND_DASHBOARD",
+  "type": "object",
+  "required": [
+    "version",
+    "package_id",
+    "status",
+    "generated_at",
+    "boundary_doc",
+    "panels",
+    "coverage_headline",
+    "summary"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string", "enum": ["0.1"] },
+    "package_id": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["pass", "blocked", "invalid"] },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "boundary_doc": { "type": "string", "minLength": 1 },
+    "panels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "panel_id",
+          "source_kind",
+          "trend_report_path",
+          "trend_status",
+          "present",
+          "required"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "panel_id": { "type": "string" },
+          "source_kind": { "type": "string" },
+          "trend_report_path": { "type": "string" },
+          "trend_status": { "type": "string" },
+          "present": { "type": "boolean" },
+          "required": { "type": "boolean" },
+          "snapshot_count": { "type": "integer", "minimum": 0 },
+          "geometry_verified_count": { "type": "integer", "minimum": 0 },
+          "non_cad_only": { "type": "boolean" },
+          "metrics": { "type": "object" }
+        }
+      }
+    },
+    "coverage_headline": {
+      "type": "object",
+      "required": ["source_path", "cad_strength_headline_percent", "cad_proof_coverage_percent"],
+      "additionalProperties": true,
+      "properties": {
+        "source_path": { "type": "string" },
+        "cad_strength_headline_percent": { "type": "number" },
+        "cad_proof_coverage_percent": { "type": "number" },
+        "highest_proven_ladder_level": { "type": "string" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["panel_count", "required_panel_count", "present_panel_count", "all_required_present"],
+      "additionalProperties": false,
+      "properties": {
+        "panel_count": { "type": "integer", "minimum": 1 },
+        "required_panel_count": { "type": "integer", "minimum": 1 },
+        "present_panel_count": { "type": "integer", "minimum": 0 },
+        "all_required_present": { "type": "boolean" },
+        "all_trend_reports_pass": { "type": "boolean" }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

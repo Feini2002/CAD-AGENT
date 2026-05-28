@@ -1,0 +1,260 @@
+{
+  "status": "executed_pending_agent_review",
+  "method": "round12_visual_parts_renderer",
+  "round": "round12",
+  "reference_handle": "4A2",
+  "visual_parts": "round12_visual_parts.json",
+  "created_count": 56,
+  "part_handles": {
+    "arm_left": [
+      "1E91",
+      "1E92",
+      "1E93",
+      "1E94",
+      "1E95",
+      "1E96",
+      "1E97",
+      "1E98"
+    ],
+    "arm_right": [
+      "1E99",
+      "1E9A",
+      "1E9B",
+      "1E9C",
+      "1E9D",
+      "1E9E",
+      "1E9F",
+      "1EA0"
+    ],
+    "seat_left": [
+      "1EA1",
+      "1EA2",
+      "1EA3",
+      "1EA4",
+      "1EA5",
+      "1EA6",
+      "1EA7",
+      "1EA8"
+    ],
+    "seat_right": [
+      "1EA9",
+      "1EAA",
+      "1EAB",
+      "1EAC",
+      "1EAD",
+      "1EAE",
+      "1EAF",
+      "1EB0"
+    ],
+    "back_left": [
+      "1EB1",
+      "1EB2",
+      "1EB3",
+      "1EB4",
+      "1EB5",
+      "1EB6",
+      "1EB7",
+      "1EB8"
+    ],
+    "back_right": [
+      "1EB9",
+      "1EBA",
+      "1EBB",
+      "1EBC",
+      "1EBD",
+      "1EBE",
+      "1EBF",
+      "1EC0"
+    ],
+    "base_rail": [
+      "1EC1",
+      "1EC2",
+      "1EC3",
+      "1EC4",
+      "1EC5",
+      "1EC6",
+      "1EC7",
+      "1EC8"
+    ]
+  },
+  "audit": {
+    "entity_count": 56,
+    "entity_total": 56,
+    "line_count": 28,
+    "arc_count": 28,
+    "micro_line_count": 0,
+    "open_endpoint_count": 0,
+    "preview_width_mm": 1870.0,
+    "preview_height_mm": 960.0,
+    "seat_split_ratio": 0.05,
+    "back_band_ratio": 0.95,
+    "arm_width_left_mm": 120.0,
+    "arm_width_right_mm": 120.0,
+    "max_inset_mm": 18.0,
+    "arc_r_min": 26.0,
+    "rounded_rect_shell": true,
+    "seat_front_bow_count": 4,
+    "schema_version": 2,
+    "engine": "core.verification.training_geometry_audit",
+    "case_id": "residential_sofa_2seat_20260528",
+    "preview_profile": {
+      "entity_count": 56,
+      "entity_total": 56,
+      "line_count": 28,
+      "arc_count": 28,
+      "micro_line_count": 0,
+      "open_endpoint_count": 0,
+      "preview_width_mm": 1870.0,
+      "preview_height_mm": 960.0,
+      "seat_split_ratio": 0.05,
+      "back_band_ratio": 0.95,
+      "arm_width_left_mm": 120.0,
+      "arm_width_right_mm": 120.0,
+      "max_inset_mm": 18.0,
+      "arc_r_min": 26.0,
+      "rounded_rect_shell": true,
+      "seat_front_bow_count": 4
+    },
+    "reference_profile": {
+      "arm_width_mm": 120.0,
+      "seat_split_ratio": 0.821,
+      "back_band_ratio": 0.179,
+      "fillet_r_mm": 30.0,
+      "ref_width_mm": 2800.0,
+      "ref_height_mm": 960.0
+    },
+    "profile_deltas": {},
+    "forbidden_pattern_hits": [],
+    "cleanliness_pass": true,
+    "semantic_pass": true,
+    "audit_failures": [],
+    "audit_pass": true,
+    "agent_review_required": [
+      "visual_match_brief",
+      "same_product_family_as_reference",
+      "no_schematic_shortcut"
+    ]
+  },
+  "agent_review": {
+    "round": "round12",
+    "audit_pass": true,
+    "agent_review_all_pass": false,
+    "delivery_allowed": false,
+    "blocked_reason": "agent_visual_review_pending",
+    "visual_parts": "round12_visual_parts.json",
+    "component_checks": {
+      "arm_left": {
+        "declared": true,
+        "created_handles": [
+          "1E91",
+          "1E92",
+          "1E93",
+          "1E94",
+          "1E95",
+          "1E96",
+          "1E97",
+          "1E98"
+        ],
+        "pass": true
+      },
+      "arm_right": {
+        "declared": true,
+        "created_handles": [
+          "1E99",
+          "1E9A",
+          "1E9B",
+          "1E9C",
+          "1E9D",
+          "1E9E",
+          "1E9F",
+          "1EA0"
+        ],
+        "pass": true
+      },
+      "seat_left": {
+        "declared": true,
+        "created_handles": [
+          "1EA1",
+          "1EA2",
+          "1EA3",
+          "1EA4",
+          "1EA5",
+          "1EA6",
+          "1EA7",
+          "1EA8"
+        ],
+        "pass": true
+      },
+      "seat_right": {
+        "declared": true,
+        "created_handles": [
+          "1EA9",
+          "1EAA",
+          "1EAB",
+          "1EAC",
+          "1EAD",
+          "1EAE",
+          "1EAF",
+          "1EB0"
+        ],
+        "pass": true
+      },
+      "back_left": {
+        "declared": true,
+        "created_handles": [
+          "1EB1",
+          "1EB2",
+          "1EB3",
+          "1EB4",
+          "1EB5",
+          "1EB6",
+          "1EB7",
+          "1EB8"
+        ],
+        "pass": true
+      },
+      "back_right": {
+        "declared": true,
+        "created_handles": [
+          "1EB9",
+          "1EBA",
+          "1EBB",
+          "1EBC",
+          "1EBD",
+          "1EBE",
+          "1EBF",
+          "1EC0"
+        ],
+        "pass": true
+      },
+      "base_rail": {
+        "declared": true,
+        "created_handles": [
+          "1EC1",
+          "1EC2",
+          "1EC3",
+          "1EC4",
+          "1EC5",
+          "1EC6",
+          "1EC7",
+          "1EC8"
+        ],
+        "pass": true
+      }
+    },
+    "checks": {
+      "visual_match_brief": {
+        "pass": false,
+        "note": "待 Agent 读 round12_preview.png 确认"
+      },
+      "same_product_family_as_reference": {
+        "pass": false,
+        "note": "待 Agent 对照左侧参考块确认"
+      },
+      "no_schematic_shortcut": {
+        "pass": false,
+        "note": "机器未命中 schematic"
+      }
+    }
+  }
+}

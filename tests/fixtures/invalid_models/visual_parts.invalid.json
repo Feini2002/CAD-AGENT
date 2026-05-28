@@ -1,0 +1,20 @@
+{
+  "model_type": "visual_parts",
+  "data": {
+    "schema_version": 1,
+    "object": "sofa_plan",
+    "parts": [
+      {
+        "id": "seat_left",
+        "shape": "pill_horizontal"
+      }
+    ],
+    "layout": {
+      "assembly": "open"
+    },
+    "forbidden": [],
+    "sizing": {
+      "target_width_mm": 1870
+    }
+  }
+}

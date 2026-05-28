@@ -1,185 +1,127 @@
 # 当前交接包窗口
 
-本文件只保留最近活跃结构治理包。完整历史见 `archive/2026-05.md`，全量索引见 `package-index.md`。
+## VCAD-ROUND12-VISUAL-FIRST-SOFA
 
-## STRUCT-AUDIT-01：全仓 Python 结构审计
-
-1. **本次开发包名**
-
-`STRUCT-AUDIT-01`：全仓 Python 结构审计。
-
-2. **修改文件列表**
-
-| 类型 | 文件 |
-| --- | --- |
-| 新增 | `docs/verification/struct_audit_01.md` |
-| 新增 | `output/validation_runs/struct-audit-01/struct_audit_report.json` |
-| 新增 | `output/validation_runs/struct-audit-01/python_inventory.csv` |
-| 新增 | `output/validation_runs/struct-audit-01/struct_audit_fragments.md` |
-| 修改 | `docs/status/current.md`、`docs/status/changelog.md`、本文 |
-
-3. **关键设计说明**
-
-- 用 AST 做只读结构扫描，覆盖 Python 行数、模块职责、内部 import 图和测试入口近似关系。
-- 全量逐文件结果落在机器 JSON / CSV；人工报告只保留总览、风险和后续建议。
-- 测试覆盖入口是静态近似，不把 subprocess、字符串路径或动态 import 误报成直接覆盖。
-
-4. **新增/修改测试**
-
-未新增测试；本包是只读结构审计与文档产物。
-
-5. **实际运行的命令和结果**
-
-| 命令 | 结果 |
-| --- | --- |
-| `rg --files -g '*.py'` | 枚举 Python 文件 |
-| 自定义 AST 静态审计脚本（CAD-MCP venv Python） | 505 个 Python 文件、56,247 行、1,523 条内部 import 边、AST 解析错误 0 |
-
-6. **是否运行真实 CAD**
-
-否。
-
-7. **机器可读证据路径**
-
-- `output/validation_runs/struct-audit-01/struct_audit_report.json`
-- `output/validation_runs/struct-audit-01/python_inventory.csv`
-- `output/validation_runs/struct-audit-01/struct_audit_fragments.md`
-
-8. **结论分类表**
-
-| 结论 | 证据类型 | geometry_verified |
-| --- | --- | --- |
-| 全仓 Python 结构审计报告完成；未发现 AST 解析错误；识别 import 图和静态测试入口风险 | `non_cad_only` | 否 |
-
-9. **剩余风险**
-
-- 这是静态结构审计，不能证明运行时覆盖率，也不能证明 CAD 几何准确。
-- `core/verification/composition_cad_registry.py` 与 `scripts/run_composition_cad_registry.py` 未发现静态测试入口；推进 `V-PROOF-43` 前建议补 focused no-CAD contract test。
-- 多个 verification / CAD runner 接近 500 行维护阈值，后续新增逻辑应避免继续堆大文件。
+1. **包名**：`VCAD-ROUND12-VISUAL-FIRST-SOFA`
+2. **修改文件列表**：`agents/pipeline/*`；`core/schemas/visual_parts.schema.json`；`core/drawing/part_primitives.py`；`core/verification/training_geometry_audit.py`；`core/training/learning_promotion.py`；`scripts/run_training_round_gate.py`；`projects/residential_sofa_2seat_20260528/**`；相关 tests 与文档治理文件。
+3. **验证命令**：81 个相关 tests OK；`scripts/run_doc_governance_audit.py --fail-on-findings` pass；`scripts/run_training_round_gate.py --stage delivery --fail-on-blocked` pass。
+4. **证据路径**：`projects/residential_sofa_2seat_20260528/runs/round12_preview.png`；`round12_execution_summary.json`；`round12_geometry_audit.json`；`round12_agent_review.json`；`round12_style_compare.md`；`expected/style_target_reference_crop.png`。
+5. **风险边界**：训练案例待用户目视验收；不写 registry、不改变表 C；截图是视觉辅助，几何证据看 created handles 和 audit。
+6. **真实 CAD**：是；只写 `CODEX_PREVIEW`，56 preview handles，7 个声明部件均有 handle 映射，未保存 DWG。
+7. **输出**：Visual-First 多 Agent gate、visual_parts schema、学习晋升 gate、round12 真实 CAD 证据链。
+8. **结论分类**：训练案例 round12 delivery gate pass；`feedback.md` 状态为 `待你验收`。
+9. **后续接手**：用户若 fail，按 `round12_agent_review.json` + 新反馈进入 Repair；若 pass，再沉淀少量规则到 `agents/residential/rules.md`。
 
 ---
 
-## STRUCT-MERGE-PREP-01：合并规则与候选清单
+## TABLE-C-FINAL-GAP：表 C 末 4 行收口
 
-1. **本次开发包名**
-
-`STRUCT-MERGE-PREP-01`：执行结构治理第 2 / 3 步，制定合并 / 保留规则并生成候选清单。
-
-2. **修改文件列表**
-
-| 类型 | 文件 |
-| --- | --- |
-| 新增 | `docs/verification/struct_merge_keep_rules.md` |
-| 新增 | `docs/verification/struct_merge_candidates.md` |
-| 新增 | `output/validation_runs/struct-audit-01/merge_candidate_table.csv` |
-| 修改 | `docs/verification/struct_audit_01.md` |
-| 修改 | `docs/status/current.md`、`docs/status/changelog.md`、本文 |
-
-3. **关键设计说明**
-
-- 规则页把“小文件合并”和“必须保留的边界”分开，避免为了减少文件数破坏 CLI、CAD safety、evidence contract 或 registry / coverage 入口。
-- 候选表按 `应合并`、`应拆分 / 抽公共层`、`应保留`、`观察 / 延后` 分类，而不是直接执行批量移动。
-- 首批建议只把 `core/composition_engine/drawing_policy.py` 列为真正合并候选；`composition_cad_registry` 先补测试，VCAD / benchmark / CAD runner 走拆分或保留路线。
-
-4. **新增/修改测试**
-
-未新增测试；本包只产出规则和候选表，不改 Python 行为。
-
-5. **实际运行的命令和结果**
-
-| 命令 | 结果 |
-| --- | --- |
-| `rg` / AST 审计 JSON 人工复核 | 形成 16 条候选记录 |
-| `Select-String` / 文件抽查 | 确认 `drawing_policy` 单一内部使用、`composition_cad_registry` 缺静态测试入口、VCAD 私有 helper 跨模块等依据 |
-
-6. **是否运行真实 CAD**
-
-否。
-
-7. **机器可读证据路径**
-
-- `docs/verification/struct_merge_keep_rules.md`
-- `docs/verification/struct_merge_candidates.md`
-- `output/validation_runs/struct-audit-01/merge_candidate_table.csv`
-- `output/validation_runs/struct-audit-01/struct_audit_report.json`
-
-8. **结论分类表**
-
-| 结论 | 证据类型 | geometry_verified |
-| --- | --- | --- |
-| 结构治理第 2 / 3 步完成：规则页 + 候选表已落盘 | `non_cad_only` | 否 |
-
-9. **剩余风险**
-
-- 候选表不是执行结果；任何 `STRUCT-MERGE-xx` 小包仍需 focused tests + repo audit。
-- 不得把规则页或候选表当成真实 CAD 几何证明。
-- 高风险 CAD runner 只能先拆 helper / 补测试，不能与真实 CAD 补验混在同一个结构包中。
+1. **包名**：`TABLE-C-FINAL-GAP`
+2. **修改文件列表**：`core/execution/intent_extended_execute.py`；`execute_plan.py`；`autocad_com.py`；`fake_cad_driver.py`；`intent_lab_manifest.json` + 3×intent_lab plan；`scripts/run_tablec_final_gap_cad.py`、`build_tablec_final_gap_writeback.py`；registry writeback 4 行；`docs/status/changelog.md`。
+3. **关键设计说明**：`delete_object` 在 `CODEX_PREVIEW` 上 bootstrap 矩形后 scoped delete；`verification_no_cad_report` 用 no-CAD API 报告 + `draw_test_cabinet` 真实 CAD 镜像升 showcase。
+4. **真实 CAD**：是；只写 `CODEX_PREVIEW`，未保存 DWG。
+5. **证据**：`output/validation_runs/tablec-final-gap-20260528-cad/`；writeback `writeback_apply.json`（4/4 applied）。
+6. **表 C**：**98.42%→99.68%**（316/317）；`negative.cad_plan.real_cad_guard` 仍 smoke。
+7. **风险**：全库 `evidence_audit` 仍有 **99** 行旧债 fail；全量 gate `writeback_allowed=false`，后续 writeback 须先还债或分批审计。
 
 ---
 
-## STRUCT-MERGE-01：drawing_policy 合并小包 + BUG 筛查
+## CORE-PLATFORM-CLOSEOUT：Core 平台开发收尾
 
-1. **本次开发包名**
-
-`STRUCT-MERGE-01-DRAWING-POLICY`：执行第 4 步小批合并验证，并完成第 5 步状态 / 交接写回。
-
-2. **修改文件列表**
-
-| 类型 | 文件 |
-| --- | --- |
-| 修改 | `core/composition_engine/templates.py` |
-| 修改 | `core/block_engine/block_matrix_registry.py` |
-| 删除 | `core/composition_engine/drawing_policy.py` |
-| 修改 | `tests/core/test_composition_catalog.py` |
-| 新增 | `docs/verification/struct_merge_01_drawing_policy.md` |
-| 新增 | `output/validation_runs/struct-merge-01/struct_merge_01_report.json` |
-| 修改 | `docs/verification/struct_merge_candidates.md`、`output/validation_runs/struct-audit-01/merge_candidate_table.csv` |
-| 修改 | `docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、本文 |
-
-3. **关键设计说明**
-
-- `drawing_policy.py` 只有 21 行，策略固定且只被 composition templates / 测试使用，没有独立运行价值。
-- 合并后 `resolve_composition_object_drawing_flags()` 从 `templates.py` 导出，composition behavior 保持 label-free / dimension-free。
-- 本包只处理 C01 一个高确定性候选；BUG 筛查另修复 RBLOCK-07 registry binding 对 `showcase` claim_level 的兼容，不触碰 registry JSON / coverage / 真实 CAD。
-
-4. **新增/修改测试**
-
-- 修改 `tests/core/test_composition_catalog.py`：从 `templates.py` 导入策略函数，并断言旧 `drawing_policy.py` 文件不存在。
-- 红灯已确认：旧文件存在时 focused test 失败。
-
-5. **实际运行的命令和结果**
-
-| 命令 | 结果 |
-| --- | --- |
-| `python -m unittest tests.core.test_composition_catalog`（RED） | 失败：`drawing_policy.py` 仍存在 |
-| `python -m unittest tests.core.test_composition_catalog`（GREEN） | 5 tests OK |
-| `python -m unittest tests.core.test_composition_catalog tests.core.test_composition_engine tests.core.test_composition_cad_check tests.core.test_composition_cad_case_ids tests.core.test_run_composition_cad_check` | 15 tests OK |
-| `rg "from core\.composition_engine\.drawing_policy\|import core\.composition_engine\.drawing_policy" core tests scripts` | 无旧 import 残留 |
-| `python -m unittest tests.core.test_rblock_07_block_matrix_registry_rows -v` | 9 tests OK；修复前该 focused suite 有 2 failures |
-| `python -m unittest discover -s tests` | 864 tests OK |
-| `python scripts/run_repo_audit.py --max-python-lines 500 --fail-on-findings` | pass，0 findings |
-| `python scripts/run_dev_volume_audit.py` | findings：当前工作树整体变更量偏大 |
-
-6. **是否运行真实 CAD**
-
-否。
-
-7. **机器可读证据路径**
-
-- `docs/verification/struct_merge_01_drawing_policy.md`
-- `output/validation_runs/struct-merge-01/struct_merge_01_report.json`
-
-8. **结论分类表**
+1. **包名**：`CORE-PLATFORM-CLOSEOUT`
+2. **修改文件列表**：`registry_claim_contract.py`；`run_core_platform_gate.py`；`core_platform_completion_gate.md`；`docs/planning/archive/core-platform-closed.md`；对齐 15 项 registry 契约测试；更新 `CORE_STATUS.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`README.md`、`docs/status/*`。
+3. **关键设计说明**：**Core 100%** = 三轨收口 + 969 tests + doc governance + coverage 可复跑；**禁止**与表 C / 施工图能力混称。后续默认走 PlanMD 后置 Backlog 或表 C，不再开 Core 施工包。
+4. **新增/修改测试**：`test_capability_coverage`、`test_planmd_governance`、`test_symbol_08` 等对齐 showcase-first registry；全量 **969** tests OK。
+5. **实际运行的命令和结果**：`scripts/run_core_platform_gate.py` → `status=pass`；`run_doc_governance_audit.py` → pass；`python -m unittest discover -s tests` → 969 OK。
+6. **是否运行真实 CAD**：否（本包为平台收尾，非表 C 扩样）。
+7. **机器可读证据路径**：`output/validation_runs/core-platform-gate/core_platform_gate_report.json`；表 C 快照 `output/validation_runs/capability-lab/cad_capability_coverage.json`（headline **62.78%**，仅作并列参考）。
+8. **结论分类表**：
 
 | 结论 | 证据类型 | geometry_verified |
 | --- | --- | --- |
-| C01 高确定性候选已完成小批合并，composition 行为 focused tests 通过 | `non_cad_only` | 否 |
-| 未发现旧 `drawing_policy` import 残留，repo audit 0 findings，全量 864 tests OK | `non_cad_only` | 否 |
-| RBLOCK-07 showcase claim_level binding 回归已修复 | `non_cad_only` | 否 |
+| Core 平台工程底座 100% 收口 | platform gate / unittest | 否 |
+| 三轨 45/52/29 已 done | planning archive 索引 | 否 |
+| 表 C 主指标仍为 62.78% | coverage JSON | 否（本包未改几何证明） |
 
-9. **剩余风险**
+9. **剩余风险**：表 C 旧 evidence audit 债（约 72 fail）仍须另包；Agent 约 93%；公司块库 / 正式图层 / 自动读图不在 Core 收口范围内。
 
-- 本包不证明 CAD 几何准确，不改变表 C。
-- `run_dev_volume_audit.py` 仍提示工作树整体变更量偏大，后续应继续小批收口，避免 handoff/status 文件继续膨胀。
+10. **能力登记表**：本包不新增 registry 行。
+11. **CAD 证明覆盖率**：未以本包为目标；当前机器值见 coverage JSON。
+12. **展示等级 Ladder**：最高已证仍为 L4；本包不提升 Ladder。
 
 ---
+
+## DOC-FINISH-ARCH-01：完工后文档架构瘦身
+
+1. **包名**：`DOC-FINISH-ARCH-01-FINISHED-ARCHITECTURE-SLIM`
+2. **修改文件列表**：瘦身 `CORE_RESTRUCTURE_PLAN.md`、`docs/planning/任务清单.md`、`CORE_STATUS.md`、`docs/status/current.md`；新增 `docs/planning/archive/*`；新增历史快照 `docs/history/snapshots/finished-architecture-2026-05-28/`；更新 doc governance、handoff index、changelog、issues 和入口 README。
+3. **关键设计说明**：活跃入口只保留规则、口令、路由、当前表 C、风险和证据入口；done 包明细迁入 archive/history。新增 active doc size budget，防止 PlanMD、任务清单、Core Status、current status 重新长成施工期明细页；handoff index 指向 `current.md` 时必须能在当前窗口找到对应包名。
+4. **新增/修改测试**：新增 `check_active_doc_size_budgets()` 行数预算测试；新增 handoff index 当前窗口一致性测试。
+5. **实际运行的命令和结果**：`python -m unittest tests.core.test_doc_governance tests.core.test_planmd_governance -v`：25 tests OK；`scripts/run_doc_governance_audit.py --fail-on-findings`：`status=pass`、0 findings；`scripts/run_capability_coverage.py --output output/validation_runs/capability-lab/cad_capability_coverage.json`：`status=pass`、表 C 主指标 9.15%；全量 `python -m unittest discover -s tests` 首轮在沙箱内因系统临时目录权限报 2 个 `PermissionError`，按权限规则提权复跑后 **969 tests OK**。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：`docs/history/snapshots/finished-architecture-2026-05-28/`、`docs/planning/archive/`；本包不新增 `output/validation_runs/**` CAD 证据。
+8. **结论分类表**：
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 活跃文档控制面已瘦身 | doc governance / Markdown audit | 否 |
+| done 明细已迁入 archive/history | history snapshot / planning archive | 否 |
+| 表 C 机器值未改变 | existing coverage JSON | 否 |
+
+9. **剩余风险**：本包不清理旧 `docs/verification/*.md` 路径和历史 changelog 大文件；这些仍是后续可选治理包。旧 verified/showcase 证据债仍需通过 table C hard gate 单独补齐。
+
+---
+
+## CAD-EVIDENCE-01-HARD-AUDIT-VISUAL-GATE
+
+1. **包名**：`CAD-EVIDENCE-01-HARD-AUDIT-VISUAL-GATE`
+2. **修改文件列表**：新增 `core/verification/capability_evidence_audit.py`、`core/verification/visual_cad_review.py`、`core/verification/table_c_evidence_gate.py`、`scripts/run_capability_evidence_audit.py`、`scripts/run_visual_cad_review.py`、`scripts/run_table_c_evidence_gate.py`、`docs/verification/table_c_evidence_gate.md`、`tests/core/test_table_c_evidence_gate.py`；修改 `core/verification/capability_coverage.py`、`scripts/run_capability_coverage.py` 与状态 / 交接文档。
+3. **关键设计说明**：表 C writeback 前必须先过两道硬门：`verified/showcase` 证据报告硬审计，以及截图视觉复盘。截图失败或视觉复盘失败时 `writeback_allowed=false`；截图仍只是 `visual_aid_only`，不能替代 created handles readback。
+4. **新增/修改测试**：`tests/core/test_table_c_evidence_gate.py` 覆盖有效 readback、缺失报告、伪 `geometry_verified`、截图缺失、visual fail 阻止 gate、coverage 强制 evidence audit。
+5. **实际运行的命令和结果**：focused `tests.core.test_doc_governance` + `tests.core.test_capability_coverage` + `tests.core.test_table_c_evidence_gate` 共 25 tests OK；`run_doc_governance_audit.py` 0 findings；现有 registry 硬审计实际为 fail（131 audited，59 pass，72 fail），总 gate 因 hard audit fail + visual missing 阻止 writeback；合成通过样例 gate `writeback_allowed=true`。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：`output/validation_runs/table-c-evidence-gate/evidence_audit_report.json`、`output/validation_runs/table-c-evidence-gate/table_c_evidence_gate_report.json`、`output/validation_runs/table-c-evidence-gate-visual-cli/visual_review_report.json`、`output/validation_runs/table-c-evidence-gate-cli-pass/table_c_evidence_gate_report.json`、`output/test_artifacts/table_c_evidence_gate/`。
+8. **结论分类表**：
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 表 C hard audit / visual gate 入口已建立 | `non_cad_only` / unit tests | 否 |
+| 当前历史 registry 未通过新 hard audit | `evidence_contract_failed` / `report_path_missing` | 否 |
+| visual review 失败会阻止 writeback | `visual_review_failed` gate | 否 |
+
+9. **剩余风险**：旧 `verified/showcase` 证据存在历史债，首次硬审计 72 行失败；本包不自动降级 registry、不改变表 C，后续需单独补齐或迁移旧证据格式。新表 C 推进包必须在 writeback 前提供真实 CAD readback + visual review pass。
+
+---
+
+## V-PROOF-73-CROSS-MACHINE
+
+1. **包名**：`V-PROOF-73-CROSS-MACHINE`（PROJ-03）
+2. **产物**：`cross_machine_proof.py`、`run_vproof_73_cross_machine_sync.py`、`vproof_73_cross_machine.md`、`cross_machine_playbook_manifest.json`
+3. **证据**：`output/validation_runs/vproof-73-cross-machine/cross_machine_report.json`（no-CAD 4/4；coverage delta 0）
+4. **registry**：2 行 `project.cross_machine.*` smoke；2/2 writeback
+5. **测试**：`test_vproof_73_cross_machine.py` 7/7 OK
+6. **表 C**：headline **约 9.15%**（317 行；smoke 不计证明率）
+7. **§3**：**45/45 能力证明轨已收口**
+8. **结论分类表**：
+
+| 结论 | 证据类型 | geometry_verified |
+| --- | --- | --- |
+| 换机 playbook + coverage baseline 复算入口已建立 | `benchmark_pass_non_cad` | 否 |
+| 2 行 `project.cross_machine.*` registry smoke 回写完成 | `smoke` / `benchmark_pass_non_cad` | 否 |
+
+9. **剩余风险**：本包未执行真实 AutoCAD 换机落图；真实 CAD 会话、`run_cad_validation` 全量与 CAD-MCP 落图仍是人工换机 gate。
+
+10. **能力登记表（registry）**：`examples/capability_proof/cad_capability_registry.json`；触及行如下。
+
+| `capability_id` | `claim_level` | `ladder_level` | `evidence.report_path` |
+| --- | --- | --- | --- |
+| `project.cross_machine.*` | smoke | L0 | `output/validation_runs/vproof-73-cross-machine/cross_machine_report.json` |
+
+11. **CAD 证明覆盖率**：本包 coverage delta 0；最新机器口径见 `output/validation_runs/capability-lab/cad_capability_coverage.json`。
+12. **展示等级 Ladder**：本包不提升对外 Ladder 声称；最高已证仍为 L4。
+
+**user_gate（换机人工，未在本包执行）**：AutoCAD 会话、`run_cad_validation` 全量、CAD-MCP 落图 → 见 `docs/onboarding/migration-checklist.md`
+
+---
+
+历史见 `archive/2026-05.md`。

@@ -5,41 +5,49 @@
   "fixtures": [
     {
       "id": "unsupported_version",
+      "failure_category": "unsupported_version",
       "plan_path": "examples/plans/negative/unsupported_version.json",
       "expected_validate_substrings": ["version must be '0.1'."]
     },
     {
       "id": "unsupported_domain",
+      "failure_category": "unsupported_domain",
       "plan_path": "examples/plans/negative/unsupported_domain.json",
       "expected_validate_substrings": ["domain is not supported."]
     },
     {
       "id": "unsupported_intent",
+      "failure_category": "unsupported_intent",
       "plan_path": "examples/plans/negative/unsupported_intent.json",
       "expected_validate_substrings": ["intent is not supported."]
     },
     {
       "id": "missing_base_point",
+      "failure_category": "missing_base_point",
       "plan_path": "examples/plans/negative/missing_base_point.json",
       "expected_validate_substrings": ["placement.base_point is required"]
     },
     {
       "id": "zero_width",
+      "failure_category": "zero_width",
       "plan_path": "examples/plans/negative/zero_width.json",
       "expected_validate_substrings": ["object.width must be greater than 0"]
     },
     {
       "id": "confidence_out_of_range",
+      "failure_category": "confidence_out_of_range",
       "plan_path": "examples/plans/negative/confidence_out_of_range.json",
       "expected_validate_substrings": ["confidence must be between 0 and 1"]
     },
     {
       "id": "glyph_missing_primitives",
+      "failure_category": "glyph_missing_primitives",
       "plan_path": "examples/plans/negative/glyph_missing_primitives.json",
       "expected_validate_substrings": ["object.glyph_primitives must be a non-empty array"]
     },
     {
       "id": "block_alpha_wrong_layer",
+      "failure_category": "block_alpha_wrong_layer",
       "plan_path": "examples/plans/negative/block_alpha_wrong_layer.json",
       "expected_validate_substrings": ["insert_block_alpha only allows drawing.layer=CODEX_PREVIEW"]
     }

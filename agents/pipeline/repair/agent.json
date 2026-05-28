@@ -1,0 +1,37 @@
+{
+  "id": "pipeline_repair",
+  "name": "Repair Agent",
+  "type": "global_pipeline_agent",
+  "role": "先修视觉/结构/断线；禁止仅为尺寸或弧度微调而 Repair",
+  "inputs": [
+    "runs/roundN_geometry_audit.json",
+    "runs/roundN_agent_review.json",
+    "runs/roundN_style_compare.md",
+    "runs/roundN_visual_parts.json",
+    "runs/roundN_visual_style_brief.md",
+    "feedback.md",
+    "TRAINING_ERRORS.md"
+  ],
+  "outputs": ["runs/roundN_repair_plan.json", "updated intent/checklist/runs script diff"],
+  "repair_priority": [
+    "forbidden_visual_patterns",
+    "missing_furniture_parts",
+    "broken_open_endpoints",
+    "visual_agent_review_fail",
+    "machine_forbidden_patterns",
+    "machine_cleanliness",
+    "machine_size_drift_only"
+  ],
+  "uses_core": ["verification.training_geometry_audit", "execution"],
+  "must_not": [
+    "rewrite_entire_case_without_root_cause",
+    "disable_audit_checks_to_pass",
+    "clone_reference_fragmented_geometry",
+    "tighten_checklist_numeric_limits_to_force_pass",
+    "ignore_style_target_mismatch",
+    "repair_size_or_fillet_when_visual_still_fail",
+    "repair_size_only_when_visual_all_pass"
+  ],
+  "promotion_rule": "repeatable failure → core probe or pipeline rule, not new case audit script",
+  "doc": "docs/training/vision-first-style.md"
+}

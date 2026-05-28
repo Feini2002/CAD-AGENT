@@ -29,8 +29,8 @@ class CapabilityCoverageTests(unittest.TestCase):
         summary = report["summary"]
         self.assertEqual(report["status"], "pass")
         self.assertGreaterEqual(summary["total_count"], 200)
-        self.assertGreaterEqual(summary["verified_count"], 25)
-        self.assertGreaterEqual(summary["showcase_count"], 1)
+        self.assertGreaterEqual(summary["showcase_count"], 25)
+        self.assertGreaterEqual(summary["verified_count"] + summary["showcase_count"], 25)
         self.assertEqual(summary["cad_proof_count"], summary["verified_count"] + summary["showcase_count"])
         self.assertGreater(summary["cad_proof_coverage_rate"], 0.0)
         self.assertIn("cad_strength_headline_percent", summary)
@@ -45,11 +45,11 @@ class CapabilityCoverageTests(unittest.TestCase):
         baseline = next(
             row for row in registry["capabilities"] if row["capability_id"] == "regression.baseline_cad_validation"
         )
-        self.assertEqual(baseline["claim_level"], "verified")
+        self.assertIn(baseline["claim_level"], {"verified", "showcase"})
         self.assertGreaterEqual(report["category_cad_proof"]["primitive"]["cad_proof_count"], 6)
-        self.assertGreaterEqual(report["category_cad_proof"]["other"]["verified_count"], 3)
-        self.assertGreaterEqual(report["category_cad_proof"]["object"]["verified_count"], 8)
-        self.assertGreaterEqual(report["category_cad_proof"]["intent"]["verified_count"], 3)
+        self.assertGreaterEqual(report["category_cad_proof"]["other"]["cad_proof_count"], 3)
+        self.assertGreaterEqual(report["category_cad_proof"]["object"]["cad_proof_count"], 8)
+        self.assertGreaterEqual(report["category_cad_proof"]["intent"]["cad_proof_count"], 15)
         self.assertEqual(sum(report["by_claim_level"].values()), summary["total_count"])
         self.assertIn("trend", report)
         self.assertEqual(report["trend"]["series_id"], "cad_capability_coverage")

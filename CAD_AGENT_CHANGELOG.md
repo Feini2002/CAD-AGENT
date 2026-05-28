@@ -5,6 +5,6 @@
 旧日期流水和历史归档以后统一从以下入口追溯：
 
 - `docs/status/changelog.md`
-- `docs/history/changelog/`
+- `docs/history/snapshots/root-md-2026-05-26/CAD_AGENT_CHANGELOG.md`
 
 本文件只保留兼容入口，不承载新的变更流水。

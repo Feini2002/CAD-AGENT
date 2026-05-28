@@ -188,6 +188,8 @@ def scan_projects_root(projects_root: Path) -> dict[str, Any]:
             continue
         if child.name.startswith("."):
             continue
+        if not (child / "sample.manifest.json").is_file():
+            continue
         samples.append(scan_project_sample(child, projects_root=projects_root))
 
     sample_failures = [sample for sample in samples if sample["status"] != "pass"]
