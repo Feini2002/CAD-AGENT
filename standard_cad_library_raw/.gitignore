@@ -1,0 +1,9 @@
+*.tmp
+*.download
+*.part
+*.crdownload
+*.dwl
+*.dwl2
+Thumbs.db
+.DS_Store
+__MACOSX/

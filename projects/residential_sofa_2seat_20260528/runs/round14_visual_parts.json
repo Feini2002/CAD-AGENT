@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "case_id": "residential_sofa_2seat_20260528",
+  "round": "round14",
+  "object": "sofa_plan",
+  "seat_count": 2,
+  "style_target": "expected/style_target_reference_crop.png",
+  "style_target_source": "reference_crop",
+  "style_target_evidence": {
+    "source_image": "runs/round12_preview.png",
+    "crop_box_px": [95, 470, 620, 235],
+    "reference_handle": "4A2",
+    "reference_block": "5S03232",
+    "derived_from_real_cad_screenshot": true,
+    "generated": false
+  },
+  "visual_semantics": {
+    "plan_view_front_direction": "+Y",
+    "layer_order_back_to_front": ["hard_back", "back_cushion", "seat_cushion"],
+    "human_note": "In plan view, the rear hard back is at low Y, the soft back cushions sit in front of it, and the large seat cushions occupy the high-Y/front zone."
+  },
+  "parts": [
+    {
+      "id": "base_rail",
+      "role": "hard_back",
+      "material_semantics": "structural",
+      "shape": "base_curved_rail",
+      "closed": true,
+      "position": "rear",
+      "bounds_ratio": [0.0, 0.0, 1.0, 0.06],
+      "bow_mm": 8
+    },
+    {
+      "id": "arm_left",
+      "role": "arm",
+      "material_semantics": "structural",
+      "shape": "curved_arm",
+      "closed": true,
+      "position": "left",
+      "bounds_ratio": [0.0, 0.06, 0.064171, 1.0]
+    },
+    {
+      "id": "back_left",
+      "role": "back_cushion",
+      "material_semantics": "soft",
+      "shape": "back_soft_panel",
+      "closed": true,
+      "position": "middle_left",
+      "bounds_ratio": [0.064171, 0.06, 0.5, 0.24],
+      "bow_mm": 18
+    },
+    {
+      "id": "back_right",
+      "role": "back_cushion",
+      "material_semantics": "soft",
+      "shape": "back_soft_panel",
+      "closed": true,
+      "position": "middle_right",
+      "bounds_ratio": [0.5, 0.06, 0.935829, 0.24],
+      "bow_mm": 18
+    },
+    {
+      "id": "seat_left",
+      "role": "seat_cushion",
+      "material_semantics": "soft",
+      "shape": "seat_bow_cushion",
+      "closed": true,
+      "position": "front_left",
+      "bounds_ratio": [0.064171, 0.24, 0.5, 1.0],
+      "bow_mm": 34
+    },
+    {
+      "id": "seat_right",
+      "role": "seat_cushion",
+      "material_semantics": "soft",
+      "shape": "seat_bow_cushion",
+      "closed": true,
+      "position": "front_right",
+      "bounds_ratio": [0.5, 0.24, 0.935829, 1.0],
+      "bow_mm": 34
+    },
+    {
+      "id": "arm_right",
+      "role": "arm",
+      "material_semantics": "structural",
+      "shape": "curved_arm",
+      "closed": true,
+      "position": "right",
+      "bounds_ratio": [0.935829, 0.06, 1.0, 1.0]
+    }
+  ],
+  "layout": {
+    "assembly": "connected_curved_parts_with_sofa_plan_semantics",
+    "symmetry": "vertical_axis",
+    "part_order": [
+      "base_rail",
+      "arm_left",
+      "back_left",
+      "back_right",
+      "seat_left",
+      "seat_right",
+      "arm_right"
+    ],
+    "connection_policy": "touch_without_gap_or_overlap",
+    "connection_pairs": [
+      ["arm_left", "seat_left", "x"],
+      ["seat_right", "arm_right", "x"],
+      ["base_rail", "back_left", "y"],
+      ["base_rail", "back_right", "y"],
+      ["back_left", "seat_left", "y"],
+      ["back_right", "seat_right", "y"]
+    ]
+  },
+  "forbidden": [
+    "closed_outer_shell",
+    "split_line_as_main_structure",
+    "fake_back_cushion_as_inner_line",
+    "rounded_rect_only_parts",
+    "part_connection_defects",
+    "sofa_direction_semantics_inverted",
+    "clone_reference_fragments",
+    "probe_drives_styling"
+  ],
+  "sizing": {
+    "target_width_mm": 1870,
+    "height_mm": 960,
+    "gap_from_reference_mm": 400,
+    "round_to_mm": 10,
+    "fillet_mm_approx": 30
+  },
+  "audit_expectations": {
+    "required_part_count": 7,
+    "all_parts_closed": true,
+    "visual_review_required": true,
+    "machine_audit_is_necessary_not_sufficient": true,
+    "part_gap_count": 0,
+    "part_overlap_count": 0,
+    "sofa_layer_order_pass": 1,
+    "rounded_rect_only_parts": false
+  }
+}

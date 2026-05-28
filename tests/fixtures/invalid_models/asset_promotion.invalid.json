@@ -1,0 +1,7 @@
+{
+  "model_type": "asset_promotion",
+  "data": {
+    "id": "bad-promotion",
+    "candidate_ref": "asset.demo"
+  }
+}

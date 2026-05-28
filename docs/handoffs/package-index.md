@@ -2,10 +2,20 @@
 
 | 序号 | 开发包 | 位置 |
 | --- | --- | --- |
-| 0 | CORE-PLATFORM-CLOSEOUT：Core 平台开发收尾（100% 工程底座） | `current.md` |
-| 1 | DOC-FINISH-ARCH-01：完工后文档架构瘦身 | `current.md` |
-| 2 | CAD-EVIDENCE-01：HARD-AUDIT-VISUAL-GATE（表 C 硬审计 + 截图复盘门禁） | `current.md` |
-| 3 | V-PROOF-73：CROSS-MACHINE（§3 能力证明轨收口） | `current.md` |
+| 0 | CAD-ASSET-RAW-INTAKE-AUTO-01：标准图库自动 raw intake | `current.md` |
+| 0 | OPENSPEC-CONTRACT-LITE-01：OpenSpec 变更契约轻量护栏 | `current.md` |
+| 0 | ROOT-MD-CHINESE-NAMES-01：根目录历史入口中文化 | `current.md` |
+| 0 | DOC-ROOT-HYGIENE-01：根目录训练长文瘦身与路径债清理 | `current.md` |
+| 0 | CAPABILITY-MAP-HTML-01：根目录能力覆盖清单 V1 | `current.md` |
+| 0 | CAD-COMMONSENSE-ASSET-DEV-PLAN-01：标准图库 raw 输入与自产图库计划书 | `current.md` |
+| 0 | CAD-ASSET-INTELLIGENCE-FOUNDATION-01：资产智能前五项基础落地 | `current.md` |
+| 0 | CAD-ASSET-INTELLIGENCE-ARCH-01：CAD 资产智能架构包 | `current.md` |
+| 0 | CAD-COMMON-SENSE-ARCH-01：CAD 常识底座方法论升级 | `current.md` |
+| 0 | TRAIN-SOFA-ROUND12-CALIBRATION：沙发 round12 审计虚绿校准 | `archive/2026-05.md` |
+| 0 | CORE-PLATFORM-CLOSEOUT：Core 平台开发收尾（100% 工程底座） | `archive/2026-05.md` |
+| 1 | DOC-FINISH-ARCH-01：完工后文档架构瘦身 | `archive/2026-05.md` |
+| 2 | CAD-EVIDENCE-01：HARD-AUDIT-VISUAL-GATE（表 C 硬审计 + 截图复盘门禁） | `archive/2026-05.md` |
+| 3 | V-PROOF-73：CROSS-MACHINE（§3 能力证明轨收口） | `archive/2026-05.md` |
 | 4 | RESIDENTIAL-PROD-03：RESIDENTIAL-P3-WAVE-ROLLUP（P3 住宅父包） | `archive/2026-05.md` |
 | 5 | RESIDENTIAL-PROD-02：RESIDENTIAL-BETA-BOUNDARY（P3 住宅 beta） | `archive/2026-05.md` |
 | 6 | RESIDENTIAL-PROD-01：RESIDENTIAL-ALPHA-BOUNDARY（P3 住宅 alpha） | `archive/2026-05.md` |
@@ -108,4 +118,4 @@
 | 102 | V-PROOF-42-COMPOSITION-EXPAND-CAD-REFRESH | `archive/2026-05.md` |
 | 103 | VCAD-01-VISUAL-OFFICE-CORNER | `archive/2026-05.md` |
 | 104 | VCAD-02-VISUAL-ROOM-PLAN | `archive/2026-05.md` |
-| 105 | VCAD-ROUND12-VISUAL-FIRST-SOFA | `current.md` |
+| 105 | VCAD-ROUND12-VISUAL-FIRST-SOFA | `archive/2026-05.md` |

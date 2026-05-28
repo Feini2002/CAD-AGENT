@@ -26,12 +26,12 @@ Inputs:
 
 - [x] 7/7 required parts are declared by `round12_visual_parts.json`.
 - [x] 7/7 required parts have created CAD preview handles.
-- [x] Machine audit reports `audit_pass=true`.
-- [x] Machine audit reports no `closed_outer_shell`, `split_as_backrest`, or `missing_required_parts` hit.
+- [ ] Machine audit reports `audit_pass=true`.
+- [ ] Machine audit reports no forbidden pattern hit.
 - [x] `expected/style_target_reference_crop.png` exists and is derived from the real AutoCAD screenshot, not generated art.
-- [x] `round12_preview.png` shows an open two-seat sofa: two side arms, two thin seat cushions, two tall back cushions, and a base rail.
-- [x] `round12_agent_review.json` allows delivery only after machine audit and visual self-review both pass.
+- [ ] `round12_preview.png` matches the reference line language and marked connection zones.
+- [ ] `round12_agent_review.json` allows delivery only after machine audit and visual self-review both pass.
 
 ## Notes
 
-This compare file records the round12 Visual-First gate result. It is not a substitute for the user's visual acceptance.
+User review failed round12. The calibrated chain now treats the old pass as a false positive: the renderer is rounded-rectangle-only, and the generated parts have gap/overlap defects around the bottom and side connections.

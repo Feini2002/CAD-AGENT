@@ -2,11 +2,20 @@
   "id": "pipeline_orchestrator",
   "name": "Pipeline Orchestrator",
   "type": "global_pipeline_agent",
-  "role": "编排轮次；参照款任务强制 context_pack → visual_parts → visual_style_brief → 视觉优先于尺寸",
-  "inputs": ["roundN_context_pack.json", "brief.md", "feedback.md", "runs/roundN_*"],
+  "role": "编排轮次；参照任务强制 context_pack -> retrieval_pack -> visual_parts -> visual_style_brief -> 视觉优先于尺寸；遇到 standard_library_intake 时走非绘图分支，只登记 reference intake，不进入 CAD execute",
+  "inputs": ["roundN_context_pack.json", "runs/roundN_retrieval_pack.json", "brief.md", "feedback.md", "runs/roundN_*"],
   "outputs": ["roundN_route.json", "next_agent", "round_plan"],
   "hard_gates": {
     "reference_match_requires": ["style_target", "visual_parts", "visual_style_brief"],
+    "asset_route_requires": ["retrieval_pack", "route", "checked_not_checked_assumptions"],
+    "standard_library_intake_requires": [
+      "intake_folder_scanned",
+      "inferred_object_type_or_unknown",
+      "inferred_drawing_type_or_unknown",
+      "inferred_scope_or_reference_only",
+      "evidence_boundary",
+      "no_system_library_promotion"
+    ],
     "delivery_requires": ["agent_review_all_pass", "audit_pass_or_approximate_ok"],
     "fail_next_round_requires": ["root_cause_recorded", "learning_patch"]
   },
@@ -19,9 +28,14 @@
     "draw_on_cad_directly",
     "skip_intent",
     "skip_context_curator",
+    "skip_asset_retrieval",
+    "route_standard_library_intake_to_cad_execute",
+    "require_visual_parts_for_library_intake_only",
+    "promote_reference_intake_without_promotion_gate",
     "skip_visual_parts_for_reference_match",
     "skip_visual_style_brief_for_reference_match",
     "allow_reference_match_without_style_target",
+    "treat_retrieval_hit_as_capability_proof",
     "request_user_acceptance_when_audit_failed",
     "mark_case_done_without_user_feedback_pass",
     "schedule_size_only_repair_when_visual_failed"

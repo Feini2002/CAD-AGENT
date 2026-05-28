@@ -1,0 +1,19 @@
+schema: spec-driven
+
+context: |
+  Project: portable CAD Agent Core Lab.
+  The primary planning line remains CORE_RESTRUCTURE_PLAN.md.
+  Use OpenSpec for scoped complex changes that need proposal/spec/design/tasks alignment.
+  Do not treat openspec/changes/* as a second master roadmap or backlog.
+  User-facing status and summaries should remain Chinese unless explicitly requested otherwise.
+  Real CAD completion claims still require CAD_PLAN validation, dry-run, CODEX_PREVIEW execution,
+  created-handle readback, entity checks, and screenshots when needed.
+
+rules:
+  proposal:
+    - Reference CORE_RESTRUCTURE_PLAN.md when a change affects development order, exit criteria, or current package scope.
+    - State non-goals and evidence boundaries for CAD capability claims.
+  tasks:
+    - Keep tasks scoped to one OpenSpec change; do not duplicate the global PlanMD backlog.
+  specs:
+    - Specs describe stable capability behavior, not transient implementation chores.

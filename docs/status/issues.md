@@ -6,6 +6,7 @@
 
 | 风险 | 当前影响 | 处理口径 |
 | --- | --- | --- |
+| OpenSpec 被误当第二主计划 | 初始化后若把 `openspec/changes/*` 当全局 next / backlog，会和唯一 PlanMD 冲突 | OpenSpec 只做复杂变更契约；`CORE_RESTRUCTURE_PLAN.md` 仍是唯一主线；`check_openspec_contracts()` 阻断根级 `openspec/tasks.md` 和 active change 自称主计划 |
 | 活跃入口 MD 过长 | 旧完成流水会撑大每轮上下文，稀释当前主线 | PlanMD、任务清单、Core Status、current status 只保留控制面；旧记录查 `docs/history/snapshots/finished-architecture-2026-05-28/` 和 `docs/planning/archive/`；`run_doc_governance_audit.py` 校验体量预算 |
 | 场景 Alpha / Beta 被误读为 Scene Product | 可能误以为工装、办公、住宅、餐饮 Agent 已产品化 | 统一四级成熟度；Scene Product 必须有真实项目样本、图块 metadata、真实 CAD smoke、用户确认流 |
 | 真实 CAD 校验样本不足 | 不能证明任意项目 DWG 或任意 `CAD_PLAN` 几何准确 | 继续推进 §5 `RCAD-22+` 与 §3 `V-PROOF` 链式回写 |
@@ -16,14 +17,134 @@
 | Schema 未登记 | schema 文件可能存在但 validator 不知道 | 新 schema 必须同步 registry、example、invalid fixture 和 tests |
 | Markdown 进度漂移 | 表 A/B/C、RCAD 烟囱和 coverage JSON 容易被旧快照覆盖 | 表 C 以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准；任务 next 以 PlanMD + 任务清单同步为准 |
 | guard / negative 行误升 showcase | 安全守卫或负例拦截会被误算成几何能力，抬高表 C | negative / guard registry 行必须保持 `smoke`；只证明 guard-only，不得写成 `geometry_verified` / `showcase` |
-| 普通回复表格噪声 / 状态查询漏报表 C | 普通交付若默认带表，会淹没用户真正关心的结论；但状态查询若漏表 C，又可能混淆真实 CAD 实力 | 普通最终回复默认不附进度表；只有用户点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C 或真实 CAD 实力时才展开表格，并先报表 C 主指标 |
+| 普通回复表格噪声 / 旧上下文覆盖新规则 | 旧版 `AGENTS.md` 曾要求默认带精简进度表；若会话压缩或早期注入的旧规则仍在上下文中，可能覆盖当前仓库 opt-in 规则，导致普通回复误带表 | 普通最终回复默认不附进度表；只有用户点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C 或真实 CAD 实力时才展开表格，并先报表 C 主指标；文档审计新增 stale output policy 检查 |
+| 常识资料被误当成能力 | 把 GitHub 方法论、图库、PDF、DWG 或截图放进仓库，不会自动让 Agent 稳定使用，可能虚报“已学会” | 常识必须经过 `source_note → knowledge_summary → object_or_rule_candidate → executable_check → evidence_boundary`；未形成可执行检查前只能作为参考知识 |
+| raw 标准图库进 git 的边界风险 | 用户需要 `standard_cad_library_raw/` 随 git 迁移；如果批次说明缺失，可能把临时文件、授权不清资料或下载失败缓存误提交，也可能把 raw 命中误报为系统能力 | 每批次默认跑 `scripts/run_asset_raw_intake.py --write` 生成 `source_note`、reference manifest 和 inferred annotation；提交前检查 `git status --short standard_cad_library_raw libraries/reference_library libraries/system_library`；raw 永远先按 `reference_only` 处理 |
+| HTML 覆盖清单被误当能力证明 | 根目录 `capability-map.html` 是给人看的计划 / 覆盖清单，如果勾选口径不严，可能被误读为真实 CAD 已验证 | 页面只显示阶段；勾选必须来自 raw 导入、常识整理、训练通过或自产资产晋升事实；真实几何能力仍看 CAD 证据和表 C |
+| 参考图库污染自产图库 | 外部标准 CAD 图库、vendor block、用户 DWG 截图或版权不清素材如果直接进入系统图库，会把“看过”伪装成“自产可复用能力” | `reference_library` 与 `system_library` 必须分层；自产资产必须有 lineage、schema、测试、晋升记录和 evidence_boundary；外部资料默认 `reference_only` |
+| 图库驱动导致创造性收缩 | 如果只做 top-1 图库检索再拉伸变形，系统会变成模板变体机，图库没有的对象反而不会生成 | 用对象语法、参数化对象族、style modifiers 和探索模式；图库弱命中时输出候选和 `visual_review_required`，不直接声称完成 |
+| 资产基础设施未测试 | 用户本轮明确排除测试，新增 retrieval / promotion gate 只做非测试检查，可能存在未覆盖边界 | 下一包若继续落地对象族或自动晋升，应补 focused tests；当前不得声称这些入口已完整验证 |
+| 训练反馈低信号 | 只报 `0 gap / 0 overlap`、handles 数、arc 数或贴截图，用户仍不知道该看哪里，也无法高效纠错 | 训练汇报改用低噪声模板：本轮结论、变化、checked/not_checked、重点看点、反馈入口；不把机器绿等同于用户验收 |
 | 结构合并误伤边界 | 为减少文件数而合并 CLI / safety / evidence / CAD runner，会破坏可审计入口 | 按 `struct_merge_keep_rules.md` 执行；每个 `STRUCT-MERGE-xx` 只处理 1-3 组候选，必须 focused tests + repo audit |
 | writeback 不识别 showcase 行 | registry 行从 verified/smoke 升到 showcase 后，旧绑定逻辑可能把它当 unsupported claim_level | 绑定类写回应把 showcase 视为“保留 evidence、只追加来源”的已验证类行；已有 RBLOCK-07 回归测试覆盖 |
 | 文档迁移断链 | 大量 Markdown 移动后，旧路径、handoff、表 C 数字和新人入口可能漂移 | 旧根路径保留 stub；`output/validation_runs/**` 不移动；新增 `run_doc_governance_audit.py` 做链接、主从、表 C 和 handoff 检查 |
 | coverage 证据路径缺失未成硬门 | coverage JSON 已统计 `report_path_missing`，但当前仍以 registry claim_level 计算表 C | 表 C 汇报必须同时看 `evidence_path_audit`；后续若把缺失路径改成硬门，需要先补齐历史证据路径，避免误降级 |
 | 历史 verified/showcase 证据不满足新硬审计 | 新增 hard audit 后，旧报告可能缺 `checks`、`actual.created_handles`、`actual.entities` 或实际文件路径 | 新一轮表 C writeback 先过 `run_table_c_evidence_gate.py`；旧证据债另开补齐包，不用截图或旧 coverage 直接掩盖 |
+| 训练案例部件契约虚绿 | `visual_parts` 部件齐全不等于参考款式准确，profile ratio 对齐也可能放过靠背/坐垫层级方向错误 | round12 已登记 fail；round14 已补 `sofa_direction_semantics_inverted` 并真实重画；仍以用户目视验收为准 |
 
 ## 最近修复教训
+### 标准图库 intake 不能靠用户填表和 prompt 记忆
+
+日期：2026-05-29
+
+现象：资产 intake 模板要求用户填写来源、授权、对象范围、图纸类型等字段，容易让用户误以为“没填表就不能入库”；同时仅靠 Agent prompt，后续工具切换到 Cursor 或其它模型时格式容易漂移。
+
+影响：Agent 可能反复追问表格，或把 raw 文件存在误读成 system asset；manifest 批量示例还可能和现有单对象 schema / retrieval 实现不一致。
+
+修复 / 计划：新增 `core/assets/raw_intake.py` 与 `scripts/run_asset_raw_intake.py`，默认扫描 raw 批次并生成单对象 `reference_asset`、`agent_inferred` annotation 和 `source_note`；缺字段保守写 `unknown` / `reference_only`，不写 `libraries/system_library/`。
+
+以后规则：用户只需给文件夹和一句说明即可启动；Agent 先扫再推断，低置信度字段可入库但必须标为候选，不得当事实或能力证明。
+
+相关文件：`core/assets/raw_intake.py`、`scripts/run_asset_raw_intake.py`、`docs/training/asset-intake-template.md`
+
+### 根目录只保留控制入口，训练长文放回 docs/training
+
+日期：2026-05-28
+
+现象：架构主轴清楚，但根目录同时放控制入口、兼容 stub、训练错误长表和 Visual-First 长计划，会让后续 Agent 第一眼误判为“架构乱”。
+
+影响：训练期文档越写越长时，根目录会重新变成默认上下文噪声源；旧根路径如果直接删除，又会造成历史引用和 agent 配置断链。
+
+修复 / 计划：`TRAINING_ERRORS.md` 与 `VISUAL_FIRST_AGENT_PLAN.md` 正文迁入 `docs/training/`，根目录保留 stub；`run_doc_governance_audit.py` 的 root stub 检查同步纳入这两条迁移。
+
+以后规则：根目录优先保留控制面、短入口和兼容 stub；训练正文、错因台账、专项计划进入 `docs/training/`，再由 README / stub / agent config 指向。
+
+相关文件：`docs/training/training-errors.md`、`docs/training/visual-first-agent-plan.md`、`core/maintenance/doc_governance.py`
+
+### 能力展示页面只展示覆盖，不承载证据台账
+
+日期：2026-05-28
+
+现象：用户希望根目录有一个 HTML 页面展示系统能力覆盖，但纠正了页面范围：只列“沙发、茶几、床铺、墙体绘制、窗户绘制”等具体图块和基础绘图能力，不展示每个对象背后的 raw、manifest、case evidence 细节。
+
+影响：如果页面展示过多内部路径，会变成第二套台账；如果页面写得太宏大，又会提前出现“完整施工节点”“完整平面方案”等当前阶段还不该承诺的能力。
+
+修复 / 计划：新增 `capability-map.html`，作为轻量覆盖清单；左侧能力项就是计划列表，右侧阶段默认全空。内部证据继续放 Markdown / JSON / manifest / promotion 记录。
+
+以后规则：HTML 只做用户扫一眼的覆盖面；MD/JSON 才是证据和训练过程的来源。未来每个能力打勾前，必须先有对应阶段事实。
+
+相关文件：`capability-map.html`
+
+### raw 标准图库可以进 git，但必须和自产图库分层
+
+日期：2026-05-28
+
+现象：用户需要把下载过的标准 CAD 图库随 git 在家和公司两头开发。如果继续沿用“大图库默认不进 git”的旧口径，会妨碍迁移；如果直接散放根目录，又会让后续 Agent 把文件存在误读成系统已经学会。
+
+影响：raw 图库一旦和 `system_library` 混在一起，可能出现三类错误：误追踪临时/重复/失败下载文件，误提交授权不清的资料，误把参考图库命中声明为系统自产能力。
+
+修复 / 计划：新增根目录 `standard_cad_library_raw/` 作为 tracked raw reference input；新增 `docs/planning/cad-commonsense-asset-dev-plan-01.md`，规定 raw → reference manifest → knowledge → benchmark → system_library → promotion gate 的路径。
+
+以后规则：下载文件放 `standard_cad_library_raw/`；自产图库放 `libraries/system_library/`。raw 文件可以进 git，但默认 `reference_only`，不得绕过 source note、manifest、可执行检查和 evidence boundary。
+
+相关文件：`standard_cad_library_raw/README.md`、`docs/planning/cad-commonsense-asset-dev-plan-01.md`、`libraries/reference_library/README.md`
+
+### 资产图库要做成能力管线，不是模板池
+
+日期：2026-05-28
+
+现象：用户提出用市面标准 CAD 图库快速训练系统，但担心自产图库只有少数沙发款式时，后续白话生成会被锁死在旧款式变形里。
+
+影响：如果把图库当答案库，系统会误把参考图、vendor block 或单案例产物当能力证明；如果完全依赖 LLM 自由发挥，又会回到凭空画线和审计虚绿。
+
+修复 / 计划：新增 `docs/architecture/cad-asset-intelligence-architecture.md`，把管线定义为 `reference_library -> knowledge -> benchmarks -> system_library -> retrieval_pack -> OBJECT_SPEC / SYMBOL_SPEC -> CAD_PLAN -> audit -> promotion`。新增生产模式和探索模式，要求图库弱命中时走对象语法、参数变体和用户目视验证。
+
+以后规则：参考图库只能作为 evidence input；自产图库必须是 `metadata + generator/recipe + tests + verified examples + evidence_boundary`。单个截图通过最多到 `case_verified`，不能直接变成 `system_verified`。
+
+相关文件：`docs/architecture/cad-asset-intelligence-architecture.md`、`docs/training/global-agent-pipeline.md`
+
+### 常识底座要可查可测，不是把资料丢进仓库
+
+日期：2026-05-28
+
+现象：用户指出基础物件（沙发、桌子、床等）更像 CAD 常识，不应完全靠测试案例一轮轮训练；同时要求吸收外部 GitHub 项目的好方法，但不 clone、不搬代码。
+
+影响：如果只把外部资料或图库放进根目录，Agent 下一轮未必会读到、理解或调用；如果把单案经验直接写成全局规则，又会污染 Core 或产生无法回归的“口头聪明”。
+
+修复 / 计划：新增 `docs/training/cad-common-sense-upgrade.md`，把 `llm-wiki`、`step.parts`、`CADTestBench`、`CADCLAW` 的方法论改写为本系统口径：资料沉淀、catalog-first、可执行检查、证据声明边界。训练 README、learning loop 和 pipeline 文档已挂入口。
+
+以后规则：基础常识必须形成 summary、候选对象或规则、可执行审计、证据边界；未被测试或审计覆盖的内容只能作为参考，不得作为“会画准”的能力声明。
+
+相关文件：`docs/training/cad-common-sense-upgrade.md`、`docs/training/README.md`、`docs/training/learning-loop.md`
+
+### 训练交付汇报必须帮助用户判断，而不是堆机器数字
+
+日期：2026-05-28
+
+现象：训练反馈曾只说明删了多少旧实体、新建多少曲线、机器审计多少项为 0、截图如下；用户仍无法从回复中快速判断“我应该看哪里、这轮是否真的值得验收、机器证据没覆盖什么”。
+
+影响：低信号汇报会把诊断成本推给用户，且容易把 gap/overlap、arc 数或 handles 数误当成款式准确。
+
+修复 / 计划：训练 README 新增低噪声反馈模板，强制汇报本轮结论、相对上一轮变化、机器证据只证明什么、还没证明什么、请用户重点看哪里、用户一句话怎么反馈最有用。
+
+以后规则：训练期普通回复默认不带表 C或进度表；若可验收，必须告诉用户重点看点；若暂不交付，必须说明阻断原因和下一步修复方向。
+
+相关文件：`docs/training/README.md`、`docs/training/cad-common-sense-upgrade.md`
+
+### 部件存在不等于款式匹配，reference-match 必须审计形态和衔接
+
+日期：2026-05-28
+
+现象：round12 `visual_parts` 声明 7/7 部件且均有 CAD handles，机器审计与 Agent 自检曾放行；用户截图指出下方衔接仍错、参考有弧线和丝滑线条、生成结果仍全靠圆角矩形堆叠，并有重叠或间隙。
+
+影响：如果只检查“部件是否存在”，训练链路会把低丰富度示意图当作参考款式匹配结果，继续把虚绿交给用户验收。
+
+修复 / 计划：新增 `rounded_rect_only_parts` 与 `part_connection_defects` 全局审计反模式；case renderer 输出实际 `audit_summary`；round 脚本合入该摘要；沙发 checklist 启用 `reference_profile_match`。round13 已通过形态丰富度、reference profile 和 gap/overlap 门槛；用户指出“底部硬靠背 / 中间软靠垫 / 上部坐垫”的平面图常识后，已新增 `sofa_direction_semantics_inverted` 和共享边去重。
+
+以后规则：reference-match 任务必须同时检查真实参考 profile、部件装配拓扑、形态丰富度和主要视觉层级方向；Agent 自检不能把 created handles、部件数量或 profile ratio 当作款式匹配。
+
+相关文件：`core/verification/training_geometry_audit.py`、`projects/residential_sofa_2seat_20260528/runs/part_renderer.py`、`projects/residential_sofa_2seat_20260528/expected/audit_checklist.json`
+
 ### Visual contract 不能只检查字段，必须检查证据文件
 
 日期：2026-05-28

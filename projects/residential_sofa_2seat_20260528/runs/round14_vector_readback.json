@@ -1,0 +1,274 @@
+{
+  "status": "executed_agent_review_pass",
+  "method": "round14_semantic_sofa_layer_renderer",
+  "round": "round14",
+  "reference_handle": "4A2",
+  "visual_parts": "round14_visual_parts.json",
+  "deleted_preview_count": 54,
+  "created_count": 54,
+  "part_handles": {
+    "base_rail": [
+      "1F7B",
+      "1F7C",
+      "1F7D",
+      "1F7E",
+      "1F7F",
+      "1F80",
+      "1F81",
+      "1F82"
+    ],
+    "arm_left": [
+      "1F83",
+      "1F84",
+      "1F85",
+      "1F86",
+      "1F87",
+      "1F88",
+      "1F89",
+      "1F8A"
+    ],
+    "back_left": [
+      "1F8B",
+      "1F8C",
+      "1F8D",
+      "1F8E",
+      "1F8F",
+      "1F90",
+      "1F91",
+      "1F92"
+    ],
+    "back_right": [
+      "1F93",
+      "1F94",
+      "1F95",
+      "1F96",
+      "1F97",
+      "1F98",
+      "1F99"
+    ],
+    "seat_left": [
+      "1F9A",
+      "1F9B",
+      "1F9C",
+      "1F9D",
+      "1F9E",
+      "1F9F",
+      "1FA0",
+      "1FA1"
+    ],
+    "seat_right": [
+      "1FA2",
+      "1FA3",
+      "1FA4",
+      "1FA5",
+      "1FA6",
+      "1FA7",
+      "1FA8"
+    ],
+    "arm_right": [
+      "1FA9",
+      "1FAA",
+      "1FAB",
+      "1FAC",
+      "1FAD",
+      "1FAE",
+      "1FAF",
+      "1FB0"
+    ]
+  },
+  "audit_summary": {
+    "required_part_count": 7,
+    "closed_part_count": 7,
+    "seat_cushion_count": 2,
+    "back_cushion_count": 2,
+    "hard_back_count": 1,
+    "sofa_layer_order_pass": 1,
+    "full_width_split_count": 0,
+    "rounded_rect_family_count": 0,
+    "distinct_shape_family_count": 4,
+    "part_gap_count": 0,
+    "part_overlap_count": 0
+  },
+  "audit": {
+    "entity_count": 54,
+    "entity_total": 54,
+    "line_count": 21,
+    "arc_count": 33,
+    "micro_line_count": 0,
+    "open_endpoint_count": 0,
+    "preview_width_mm": 1870.0,
+    "preview_height_mm": 960.0,
+    "seat_split_ratio": 0.24,
+    "back_band_ratio": 0.76,
+    "arm_width_left_mm": 120.0,
+    "arm_width_right_mm": 120.0,
+    "max_inset_mm": 30.0,
+    "arc_r_min": 10.0,
+    "rounded_rect_shell": true,
+    "seat_front_bow_count": 5,
+    "schema_version": 2,
+    "engine": "core.verification.training_geometry_audit",
+    "case_id": "residential_sofa_2seat_20260528",
+    "preview_profile": {
+      "entity_count": 54,
+      "entity_total": 54,
+      "line_count": 21,
+      "arc_count": 33,
+      "micro_line_count": 0,
+      "open_endpoint_count": 0,
+      "preview_width_mm": 1870.0,
+      "preview_height_mm": 960.0,
+      "seat_split_ratio": 0.24,
+      "back_band_ratio": 0.76,
+      "arm_width_left_mm": 120.0,
+      "arm_width_right_mm": 120.0,
+      "max_inset_mm": 30.0,
+      "arc_r_min": 10.0,
+      "rounded_rect_shell": true,
+      "seat_front_bow_count": 5
+    },
+    "reference_profile": {
+      "arm_width_mm": 120.0,
+      "seat_split_ratio": 0.821,
+      "back_band_ratio": 0.179,
+      "fillet_r_mm": 30.0,
+      "ref_width_mm": 2800.0,
+      "ref_height_mm": 960.0
+    },
+    "profile_deltas": {
+      "seat_split_ratio": 0.581,
+      "back_band_ratio": 0.581,
+      "arm_width_mm": 0.0
+    },
+    "forbidden_pattern_hits": [],
+    "cleanliness_pass": true,
+    "semantic_pass": true,
+    "audit_failures": [],
+    "audit_pass": true,
+    "agent_review_required": [
+      "visual_match_brief",
+      "same_product_family_as_reference",
+      "no_schematic_shortcut"
+    ]
+  },
+  "agent_review": {
+    "round": "round14",
+    "audit_pass": true,
+    "agent_review_all_pass": true,
+    "delivery_allowed": true,
+    "blocked_reason": null,
+    "visual_parts": "round14_visual_parts.json",
+    "component_checks": {
+      "base_rail": {
+        "declared": true,
+        "created_handles": [
+          "1F7B",
+          "1F7C",
+          "1F7D",
+          "1F7E",
+          "1F7F",
+          "1F80",
+          "1F81",
+          "1F82"
+        ],
+        "pass": true
+      },
+      "arm_left": {
+        "declared": true,
+        "created_handles": [
+          "1F83",
+          "1F84",
+          "1F85",
+          "1F86",
+          "1F87",
+          "1F88",
+          "1F89",
+          "1F8A"
+        ],
+        "pass": true
+      },
+      "back_left": {
+        "declared": true,
+        "created_handles": [
+          "1F8B",
+          "1F8C",
+          "1F8D",
+          "1F8E",
+          "1F8F",
+          "1F90",
+          "1F91",
+          "1F92"
+        ],
+        "pass": true
+      },
+      "back_right": {
+        "declared": true,
+        "created_handles": [
+          "1F93",
+          "1F94",
+          "1F95",
+          "1F96",
+          "1F97",
+          "1F98",
+          "1F99"
+        ],
+        "pass": true
+      },
+      "seat_left": {
+        "declared": true,
+        "created_handles": [
+          "1F9A",
+          "1F9B",
+          "1F9C",
+          "1F9D",
+          "1F9E",
+          "1F9F",
+          "1FA0",
+          "1FA1"
+        ],
+        "pass": true
+      },
+      "seat_right": {
+        "declared": true,
+        "created_handles": [
+          "1FA2",
+          "1FA3",
+          "1FA4",
+          "1FA5",
+          "1FA6",
+          "1FA7",
+          "1FA8"
+        ],
+        "pass": true
+      },
+      "arm_right": {
+        "declared": true,
+        "created_handles": [
+          "1FA9",
+          "1FAA",
+          "1FAB",
+          "1FAC",
+          "1FAD",
+          "1FAE",
+          "1FAF",
+          "1FB0"
+        ],
+        "pass": true
+      }
+    },
+    "checks": {
+      "visual_match_brief": {
+        "pass": true,
+        "note": "已按用户标注改为低 Y 硬靠背、中间软靠垫、高 Y 坐垫；中间重复白线已消除"
+      },
+      "same_product_family_as_reference": {
+        "pass": true,
+        "note": "保留左右扶手、底部硬靠背、两段靠垫和两段坐垫的参考家族结构"
+      },
+      "no_schematic_shortcut": {
+        "pass": true,
+        "note": "不是圆角矩形单一化；54 个实体、33 条 arc、0 gap/overlap/open endpoint"
+      }
+    }
+  }
+}

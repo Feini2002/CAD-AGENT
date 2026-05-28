@@ -8,6 +8,8 @@ from pathlib import Path
 
 from tests.helpers import PROJECT_ROOT, artifact_path
 
+import core.maintenance.doc_governance as doc_governance
+
 from core.maintenance.doc_governance import (
     check_active_doc_size_budgets,
     build_doc_governance_report,
@@ -23,6 +25,75 @@ from core.maintenance.doc_governance import (
 
 
 class DocGovernanceTests(unittest.TestCase):
+    def test_openspec_contract_check_flags_root_tasks_and_master_plan_claim(self) -> None:
+        root = artifact_path("doc_governance", "openspec_contract_misuse")
+        (root / "openspec" / "changes" / "claim-master-plan").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "changes" / "archive" / "old-claim").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "config.yaml").write_text(
+            "schema: spec-driven\ncontext: CORE_RESTRUCTURE_PLAN.md remains primary.\n",
+            encoding="utf-8",
+        )
+        (root / "openspec" / "tasks.md").write_text("- [ ] global task\n", encoding="utf-8")
+        (root / "openspec" / "changes" / "claim-master-plan" / "proposal.md").write_text(
+            "本文是唯一 PlanMD，承载全局 backlog。\n",
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "archive" / "old-claim" / "proposal.md").write_text(
+            "历史归档里说自己是唯一 PlanMD 不应阻断当前检查。\n",
+            encoding="utf-8",
+        )
+
+        report = doc_governance.check_openspec_contracts(root)
+
+        codes = {finding["code"] for finding in report["findings"]}
+        paths = {finding["path"] for finding in report["findings"]}
+        self.assertIn("openspec_root_tasks_forbidden", codes)
+        self.assertIn("openspec_change_claims_master_plan", codes)
+        self.assertIn("openspec/tasks.md", paths)
+        self.assertNotIn("openspec/changes/archive/old-claim/proposal.md", paths)
+
+    def test_openspec_contract_check_requires_planmd_boundary_in_config(self) -> None:
+        root = artifact_path("doc_governance", "openspec_contract_config")
+        (root / "openspec").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "config.yaml").write_text(
+            "schema: spec-driven\ncontext: contract layer only\n",
+            encoding="utf-8",
+        )
+
+        report = doc_governance.check_openspec_contracts(root)
+
+        codes = {finding["code"] for finding in report["findings"]}
+        self.assertIn("openspec_config_missing_planmd_boundary", codes)
+
+    def test_openspec_contract_check_passes_valid_contract_layer(self) -> None:
+        root = artifact_path("doc_governance", "openspec_contract_pass")
+        (root / "openspec" / "changes" / "scoped-change").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "config.yaml").write_text(
+            "schema: spec-driven\ncontext: CORE_RESTRUCTURE_PLAN.md remains primary.\n",
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "scoped-change" / "proposal.md").write_text(
+            "This change is scoped and does not carry global next.\n",
+            encoding="utf-8",
+        )
+
+        report = doc_governance.check_openspec_contracts(root)
+
+        self.assertEqual(report["status"], "pass", report["findings"])
+        self.assertEqual(report["summary"]["active_change_file_count"], 1)
+
+    def test_build_doc_governance_report_includes_openspec_contracts(self) -> None:
+        root = artifact_path("doc_governance", "openspec_contract_report")
+        (root / "openspec").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "config.yaml").write_text(
+            "schema: spec-driven\ncontext: CORE_RESTRUCTURE_PLAN.md remains primary.\n",
+            encoding="utf-8",
+        )
+
+        report = build_doc_governance_report(root)
+
+        self.assertIn("openspec_contracts", report)
+
     def test_registry_ignores_output_markdown_by_default(self) -> None:
         root = artifact_path("doc_governance", "registry")
         (root / "docs").mkdir(parents=True, exist_ok=True)
@@ -45,7 +116,7 @@ class DocGovernanceTests(unittest.TestCase):
         root = artifact_path("doc_governance", "source_of_truth")
         root.mkdir(parents=True, exist_ok=True)
         (root / "CORE_RESTRUCTURE_PLAN.md").write_text("# Main PlanMD\n", encoding="utf-8")
-        (root / "CAD_AGENT_STATUS.md").write_text("## 下一步计划\nnext=BAD\n", encoding="utf-8")
+        (root / "当前状态入口.md").write_text("## 下一步计划\nnext=BAD\n", encoding="utf-8")
         (root / "docs" / "planning").mkdir(parents=True, exist_ok=True)
         (root / "docs" / "planning" / "phase-extra.md").write_text(
             "# Extra PlanMD\n后置 Backlog\n", encoding="utf-8"
@@ -189,7 +260,7 @@ class DocGovernanceTests(unittest.TestCase):
     def test_root_migration_stub_check_flags_missing_target(self) -> None:
         root = artifact_path("doc_governance", "root_stubs")
         root.mkdir(parents=True, exist_ok=True)
-        (root / "CAD_AGENT_RULES.md").write_text("# Stub\n", encoding="utf-8")
+        (root / "长期规则入口.md").write_text("# Stub\n", encoding="utf-8")
 
         report = check_root_migration_stubs(root)
 
@@ -226,7 +297,7 @@ class DocGovernanceTests(unittest.TestCase):
             "highest_proven_ladder_level": "L4",
         }
         (root / "coverage.json").write_text(json.dumps(coverage), encoding="utf-8")
-        (root / "CAD_AGENT_STATUS.md").write_text(
+        (root / "当前状态入口.md").write_text(
             "真实 CAD 实力 | 约 4.35%，最高 L3\n", encoding="utf-8"
         )
         (root / "docs" / "history" / "old.md").write_text(
@@ -239,7 +310,7 @@ class DocGovernanceTests(unittest.TestCase):
         findings = report["findings"]
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0]["code"], "stale_table_c_headline")
-        self.assertEqual(findings[0]["path"], "CAD_AGENT_STATUS.md")
+        self.assertEqual(findings[0]["path"], "当前状态入口.md")
 
     def test_table_c_check_ignores_templates_and_unrelated_percentages(self) -> None:
         root = artifact_path("doc_governance", "table_c_template")
@@ -276,7 +347,7 @@ class DocGovernanceTests(unittest.TestCase):
             "cad_strength": {"highest_proven_ladder_level": ""},
         }
         (root / "coverage.json").write_text(json.dumps(coverage), encoding="utf-8")
-        (root / "CAD_AGENT_STATUS.md").write_text(
+        (root / "当前状态入口.md").write_text(
             "真实 CAD 实力 | 0%，最高 L0\n", encoding="utf-8"
         )
 
@@ -376,6 +447,36 @@ class DocGovernanceTests(unittest.TestCase):
 
     def test_current_repository_training_context_is_visual_first_aligned(self) -> None:
         report = check_training_context_alignment(PROJECT_ROOT)
+
+        self.assertEqual(report["status"], "pass", report["findings"])
+
+    def test_output_reply_policy_flags_default_progress_table_regression(self) -> None:
+        checker = getattr(doc_governance, "check_output_reply_policy", None)
+        self.assertIsNotNone(checker)
+
+        root = artifact_path("doc_governance", "output_reply_policy")
+        root.mkdir(parents=True, exist_ok=True)
+        (root / "AGENTS.md").write_text(
+            "聊天交付默认用 `AGENTS.md` 的 **1 张精简进度表**，先报表 C 主指标。\n",
+            encoding="utf-8",
+        )
+        (root / "docs" / "history").mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "history" / "old.md").write_text(
+            "聊天交付默认用 `AGENTS.md` 的 **1 张精简进度表**。\n",
+            encoding="utf-8",
+        )
+
+        report = checker(root)
+
+        self.assertEqual(report["status"], "findings")
+        self.assertEqual(report["findings"][0]["code"], "stale_output_reply_policy")
+        self.assertEqual(report["findings"][0]["path"], "AGENTS.md")
+
+    def test_current_repository_output_reply_policy_is_opt_in(self) -> None:
+        checker = getattr(doc_governance, "check_output_reply_policy", None)
+        self.assertIsNotNone(checker)
+
+        report = checker(PROJECT_ROOT)
 
         self.assertEqual(report["status"], "pass", report["findings"])
 

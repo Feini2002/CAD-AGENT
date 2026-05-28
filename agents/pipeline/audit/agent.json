@@ -22,6 +22,7 @@
   "pass_gate": {
     "agent_review_all_pass": true,
     "visual_parts_all_accounted_for": true,
+    "plan_view_semantic_layer_order_pass": true,
     "machine_audit": "required_for_cleanliness_and_forbidden_patterns",
     "machine_size_only_fail_with_visual_pass": "non_blocking_log_approximate_ok"
   },
@@ -32,6 +33,7 @@
     "case_specific_audit_implementation_in_agents",
     "machine_green_delivery",
     "skip_component_by_component_visual_review",
+    "ignore_plan_view_direction_semantics",
     "block_delivery_on_width_drift_when_visual_pass",
     "require_exact_fillet_match_to_reference_probe"
   ],

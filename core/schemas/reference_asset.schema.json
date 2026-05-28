@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "REFERENCE_ASSET",
+  "type": "object",
+  "required": [
+    "id",
+    "source_type",
+    "source_name",
+    "license_status",
+    "domain",
+    "object_tags",
+    "view_type",
+    "usage_boundary",
+    "privacy_boundary"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "source_type": {
+      "type": "string",
+      "enum": ["user_provided", "public_reference", "vendor_catalog", "generated_reference", "self_authored", "synthetic"]
+    },
+    "source_name": { "type": "string" },
+    "source_uri_or_local_ref": { "type": "string" },
+    "license_status": {
+      "type": "string",
+      "enum": ["allowed", "restricted", "unknown", "internal_only", "owned", "permitted"]
+    },
+    "ingest_date": { "type": "string" },
+    "domain": { "type": "string" },
+    "object_tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "part_tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "style_tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "view_type": {
+      "type": "string",
+      "enum": ["plan", "elevation", "perspective", "detail", "unknown"]
+    },
+    "usage_boundary": {
+      "type": "string",
+      "enum": ["reference_only", "annotation_allowed", "derived_summary_only", "metadata_only"]
+    },
+    "privacy_boundary": {
+      "type": "string",
+      "enum": ["raw", "redacted", "synthetic", "public", "anonymized", "project_confidential"]
+    },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -8,10 +8,12 @@
 - Treat TV walls, sofa walls, entry cabinets, wardrobes, and kitchen elevations as common residential targets.
 - Keep living and dining relationships legible before adding decorative detail.
 - **产品块沙发改座数**：必须 **矢量重绘**（按座宽模块保留/删中格/平移拼接），**禁止**整块 X 向缩放冒充两座；原产品块不动，新几何只落 `CODEX_PREVIEW`。
-- **块内 Polyline**：按 **3D** `(x,y,z)` 读点（`len(Coordinates)%3==0` 则 step=3）；禁止 step=2 误读（曾导致跨屏巨三角，见根目录 `TRAINING_ERRORS.md`）。
+- **块内 Polyline**：按 **3D** `(x,y,z)` 读点（`len(Coordinates)%3==0` 则 step=3）；禁止 step=2 误读（曾导致跨屏巨三角，见 `docs/training/training-errors.md`）。
 - **改座数裁切**：禁止「中心落中座就删整段」；跨三座线/弧须 **X 向裁掉中座带**，右座带 **左移一座宽**。
 - **参照款沙发 plan**：必须先写 `visual_parts.json`，默认部件为左右扶手、N 个座垫、N 个靠垫、前底栏；每个部件应有 `id`、`role`、`shape`、`closed=true`。
+- **沙发俯视方向常识**：CAD 平面图里不能只按画面上下猜角色；若参考为靠墙/靠背朝后沙发，默认 **低 Y/后侧 = 硬靠背结构**，中间椭圆/枕形 = **软靠垫**，高 Y/前侧大块 = **坐垫本体**。`visual_parts` 必须显式写 `visual_semantics.plan_view_front_direction` 与 `layer_order_back_to_front=["hard_back","back_cushion","seat_cushion"]`，禁止把坐垫和靠背方向画反。
 - **参照款视觉禁令**：禁止 `closed_outer_shell`、`split_line_as_main_structure`、`fake_back_cushion_as_inner_line`；split 线不能冒充靠垫或靠背语义。
+- **共享边去重**：相邻座垫/靠垫/扶手靠在一起是对的，但同一条共享边只能画一次；禁止重复共线段造成中间亮线、白线或局部加粗。
 - **视觉优先取整**：三座改两座优先保留部件语言和开放总成，宽度按 2/3 取整到 5～10mm；不得用 probe 小数驱动圆角、靠垫或座背形状。
 
 ## Defaults

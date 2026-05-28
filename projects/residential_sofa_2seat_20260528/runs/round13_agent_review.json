@@ -1,0 +1,122 @@
+{
+  "round": "round13",
+  "audit_pass": true,
+  "agent_review_all_pass": false,
+  "delivery_allowed": false,
+  "blocked_reason": "agent_visual_review_failed_visual_layering",
+  "visual_parts": "round13_visual_parts.json",
+  "component_checks": {
+    "base_rail": {
+      "declared": true,
+      "created_handles": [
+        "1F0D",
+        "1F0E",
+        "1F0F",
+        "1F10",
+        "1F11",
+        "1F12",
+        "1F13",
+        "1F14"
+      ],
+      "pass": true
+    },
+    "arm_left": {
+      "declared": true,
+      "created_handles": [
+        "1F15",
+        "1F16",
+        "1F17",
+        "1F18",
+        "1F19",
+        "1F1A",
+        "1F1B",
+        "1F1C"
+      ],
+      "pass": true
+    },
+    "seat_left": {
+      "declared": true,
+      "created_handles": [
+        "1F1D",
+        "1F1E",
+        "1F1F",
+        "1F20",
+        "1F21",
+        "1F22",
+        "1F23",
+        "1F24"
+      ],
+      "pass": true
+    },
+    "seat_right": {
+      "declared": true,
+      "created_handles": [
+        "1F25",
+        "1F26",
+        "1F27",
+        "1F28",
+        "1F29",
+        "1F2A",
+        "1F2B",
+        "1F2C"
+      ],
+      "pass": true
+    },
+    "arm_right": {
+      "declared": true,
+      "created_handles": [
+        "1F2D",
+        "1F2E",
+        "1F2F",
+        "1F30",
+        "1F31",
+        "1F32",
+        "1F33",
+        "1F34"
+      ],
+      "pass": true
+    },
+    "back_left": {
+      "declared": true,
+      "created_handles": [
+        "1F35",
+        "1F36",
+        "1F37",
+        "1F38",
+        "1F39",
+        "1F3A",
+        "1F3B",
+        "1F3C"
+      ],
+      "pass": true
+    },
+    "back_right": {
+      "declared": true,
+      "created_handles": [
+        "1F3D",
+        "1F3E",
+        "1F3F",
+        "1F40",
+        "1F41",
+        "1F42",
+        "1F43",
+        "1F44"
+      ],
+      "pass": true
+    }
+  },
+  "checks": {
+    "visual_match_brief": {
+      "pass": false,
+      "note": "round13 已重画并消除 gap/overlap，但截图显示右侧靠背/坐垫层级仍不像参考，不请用户验收"
+    },
+    "same_product_family_as_reference": {
+      "pass": false,
+      "note": "参考是上部大靠背 + 下部薄坐垫的软体层级；当前生成仍偏机械分层"
+    },
+    "no_schematic_shortcut": {
+      "pass": true,
+      "note": "已不再是圆角矩形单一化，机器审计 0 gap / 0 overlap / 0 open endpoint"
+    }
+  }
+}

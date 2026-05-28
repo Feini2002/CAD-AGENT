@@ -4,11 +4,14 @@
 
 **精度优先：** 不准就不交付。见 [`docs/training/precision-first.md`](../../docs/training/precision-first.md)。
 
-## 六个全局 Agent
+## 全局 Agent
 
 | ID | 职责 |
 | --- | --- |
+| `pipeline_context_curator` | 收束上下文、案例状态和历史噪声 |
+| `pipeline_asset_retriever` | 在 CAD_PLAN 前产出 `retrieval_pack` |
 | `pipeline_orchestrator` | 编排轮次，禁止亲自落图 |
+| `pipeline_visual_intent` | 参考图 / 样式目标 → `visual_parts` |
 | `pipeline_intent` | 白话 → `intent.json` + checklist |
 | `pipeline_execute` | 落 `CODEX_PREVIEW` |
 | `pipeline_audit` | `training_geometry_audit` + checklist |

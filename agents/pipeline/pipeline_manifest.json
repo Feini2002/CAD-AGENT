@@ -1,11 +1,12 @@
 {
   "version": 1,
-  "description": "Global pipeline agents — role definitions for context→visual intent→CAD→audit→repair→delivery→learning. No Python in agents/; execution via core/.",
+  "description": "Global pipeline agents — role definitions for context→asset retrieval / raw intake→visual intent→CAD→audit→repair→delivery→learning. No Python in agents/; execution via core/.",
   "orchestration": {
     "principle": "precision_first",
     "principle_doc": "docs/training/precision-first.md",
     "default_flow": [
       "pipeline_context_curator",
+      "pipeline_asset_retriever",
       "pipeline_orchestrator",
       "pipeline_visual_intent",
       "pipeline_intent",
@@ -15,13 +16,42 @@
       "pipeline_delivery",
       "pipeline_learning_promoter"
     ],
+    "flow_variants": {
+      "standard_library_intake": [
+        "pipeline_context_curator",
+        "pipeline_asset_retriever",
+        "pipeline_orchestrator",
+        "pipeline_delivery"
+      ]
+    },
     "visual_contract_required": true,
     "reference_style_brief_required": true,
     "reference_style_doc": "docs/training/vision-first-style.md",
     "hard_gates": {
       "context": {
         "requires": ["context_pack"],
+        "blocks": ["pipeline_asset_retriever", "pipeline_orchestrator", "pipeline_visual_intent", "pipeline_intent", "pipeline_execute"]
+      },
+      "asset_retrieval": {
+        "requires": ["retrieval_pack", "route", "evidence_boundary"],
         "blocks": ["pipeline_orchestrator", "pipeline_visual_intent", "pipeline_intent", "pipeline_execute"]
+      },
+      "standard_library_intake": {
+        "requires": [
+          "folder_scan_summary",
+          "inferred_object_type_or_unknown",
+          "inferred_drawing_type_or_unknown",
+          "inferred_scope_or_reference_only",
+          "evidence_boundary",
+          "training_state_reference_only"
+        ],
+        "blocks": [
+          "system_library_promotion",
+          "capability_proof_claim",
+          "pipeline_visual_intent",
+          "pipeline_intent",
+          "pipeline_execute"
+        ]
       },
       "reference_match": {
         "requires": ["style_target", "visual_parts", "visual_style_brief"],
@@ -58,6 +88,12 @@
       "agent_id": "pipeline_context_curator",
       "path": "context_curator/agent.json",
       "role": "上下文整理",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_asset_retriever",
+      "path": "asset_retriever/agent.json",
+      "role": "资产检索",
       "may_invoke_cad": false
     },
     {
@@ -116,6 +152,9 @@
   },
   "artifacts": {
     "context_pack": "projects/<case>/runs/roundN_context_pack.json",
+    "retrieval_pack": "projects/<case>/runs/roundN_retrieval_pack.json",
+    "standard_library_intake": "projects/<case>/runs/roundN_standard_library_intake.json",
+    "reference_manifest": "libraries/reference_library/manifests/<source_slug>/ref.*.json",
     "route": "projects/<case>/runs/roundN_route.json",
     "style_target": "projects/<case>/expected/style_target_*.png",
     "visual_parts": "projects/<case>/runs/roundN_visual_parts.json",
@@ -138,7 +177,13 @@
     "machine_green_delivery": "Machine audit pass alone must not request user acceptance.",
     "style_match_without_target": "Reference-match work requires a style_target or explicit user waiver.",
     "split_as_backrest": "Split lines must not replace semantic back cushions.",
+    "sofa_direction_semantics_inverted": "For sofa plan references, do not invert the hard back, soft back cushion, and seat cushion order.",
+    "duplicate_shared_edges": "Adjacent parts may touch, but the same CAD segment must not be emitted twice.",
     "clone_reference_fragments": "Do not clone fragmented supplier geometry when a semantic redraw is requested.",
-    "size_only_repair_loop": "Visual failures must not be repaired by size-only changes."
+    "size_only_repair_loop": "Visual failures must not be repaired by size-only changes.",
+    "retrieval_hit_as_capability": "Retrieval or catalog hit is an upstream contract, not proof that CAD geometry is correct.",
+    "intake_table_required": "When the user provides a folder and a rough description, scan and infer first; do not ask the user to fill a table.",
+    "raw_library_promoted": "Raw standard CAD libraries stay reference_only until a separate promotion gate creates schema, lineage, checks, and evidence_boundary.",
+    "silent_bbox_fallback": "When assets are weak or missing, enter exploration/deferred mode; do not silently draw a blank bbox as the object."
   }
 }

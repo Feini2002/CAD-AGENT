@@ -50,7 +50,7 @@
   Expected: PASS.
 
 - [x] **Step 7: Dispatch independent read-only verifier**
-  Ask a sub-agent to review Package 01A changed files for missing gates, stale state, and divergence from `VISUAL_FIRST_AGENT_PLAN.md`.
+  Ask a sub-agent to review Package 01A changed files for missing gates, stale state, and divergence from `docs/training/visual-first-agent-plan.md`.
 
 ## Package 01B: Case-Local PartRenderer + Style Compare
 

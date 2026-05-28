@@ -51,6 +51,48 @@ class TrainingGeometryAuditTests(unittest.TestCase):
 
         self.assertIn("missing_required_parts", hits)
 
+    def test_detect_rounded_rect_only_visual_contract(self) -> None:
+        profile = {
+            "required_part_count": 7,
+            "closed_part_count": 7,
+            "seat_cushion_count": 2,
+            "back_cushion_count": 2,
+            "rounded_rect_family_count": 7,
+            "distinct_shape_family_count": 1,
+        }
+
+        hits = detect_forbidden_patterns(profile)
+
+        self.assertIn("rounded_rect_only_parts", hits)
+
+    def test_detect_part_connection_defects(self) -> None:
+        profile = {
+            "required_part_count": 7,
+            "closed_part_count": 7,
+            "seat_cushion_count": 2,
+            "back_cushion_count": 2,
+            "part_gap_count": 1,
+            "part_overlap_count": 1,
+        }
+
+        hits = detect_forbidden_patterns(profile)
+
+        self.assertIn("part_connection_defects", hits)
+
+    def test_detect_sofa_direction_semantics_inverted(self) -> None:
+        profile = {
+            "required_part_count": 7,
+            "closed_part_count": 7,
+            "seat_cushion_count": 2,
+            "back_cushion_count": 2,
+            "hard_back_count": 1,
+            "sofa_layer_order_pass": 0,
+        }
+
+        hits = detect_forbidden_patterns(profile)
+
+        self.assertIn("sofa_direction_semantics_inverted", hits)
+
     def test_closed_multi_part_visual_contract_is_not_outer_shell_shortcut(self) -> None:
         profile = {
             "rounded_rect_shell": True,
@@ -82,6 +124,21 @@ class TrainingGeometryAuditTests(unittest.TestCase):
         )
         self.assertIn("semantic_seat_split_ratio", failures)
         self.assertIn("semantic_back_band_ratio", failures)
+
+    def test_reference_profile_match_can_skip_legacy_split_when_visual_semantics_own_layer_order(self) -> None:
+        preview = {"seat_split_ratio": 0.24, "back_band_ratio": 0.76, "arm_width_left_mm": 120, "arm_width_right_mm": 120, "max_inset_mm": 30}
+        reference = {"seat_split_ratio": 0.821, "back_band_ratio": 0.179, "arm_width_mm": 120}
+        failures: list[str] = []
+        deltas: dict[str, float] = {}
+        _evaluate_reference_profile_match(
+            preview,
+            reference,
+            {"check_split_ratios": False, "arm_width_tol_mm": 35, "max_inset_mm": 38},
+            failures,
+            deltas,
+        )
+        self.assertNotIn("semantic_seat_split_ratio", failures)
+        self.assertNotIn("semantic_back_band_ratio", failures)
 
     def test_run_audit_with_fake_driver(self) -> None:
         class FakeEnt:
@@ -136,13 +193,22 @@ class TrainingGeometryAuditTests(unittest.TestCase):
             "case_id": "test",
             "checks": {
                 "semantic": {
-                    "forbidden_patterns": ["split_as_backrest", "missing_required_parts"],
+                    "forbidden_patterns": [
+                        "split_as_backrest",
+                        "missing_required_parts",
+                        "rounded_rect_only_parts",
+                        "part_connection_defects",
+                    ],
                     "visual_parts_summary": {
                         "required_part_count": 7,
                         "closed_part_count": 5,
                         "seat_cushion_count": 2,
                         "back_cushion_count": 0,
                         "full_width_split_count": 1,
+                        "rounded_rect_family_count": 7,
+                        "distinct_shape_family_count": 1,
+                        "part_gap_count": 1,
+                        "part_overlap_count": 0,
                     },
                 },
                 "cleanliness": {"entity_total_max": 5},
@@ -157,8 +223,12 @@ class TrainingGeometryAuditTests(unittest.TestCase):
 
         self.assertIn("split_as_backrest", audit["forbidden_pattern_hits"])
         self.assertIn("missing_required_parts", audit["forbidden_pattern_hits"])
+        self.assertIn("rounded_rect_only_parts", audit["forbidden_pattern_hits"])
+        self.assertIn("part_connection_defects", audit["forbidden_pattern_hits"])
         self.assertIn("forbidden_split_as_backrest", audit["audit_failures"])
         self.assertIn("forbidden_missing_required_parts", audit["audit_failures"])
+        self.assertIn("forbidden_rounded_rect_only_parts", audit["audit_failures"])
+        self.assertIn("forbidden_part_connection_defects", audit["audit_failures"])
 
     def test_load_checklist_from_template_shape(self) -> None:
         checklist = load_training_audit_checklist(

@@ -8,7 +8,8 @@
     "roundN_agent_review.json",
     "roundN_geometry_audit.json",
     "roundN_repair_plan.json",
-    "TRAINING_ERRORS.md",
+    "roundN_retrieval_pack.json",
+    "docs/training/training-errors.md",
     "docs/training/pipeline-changelog.md",
     "agents/<scene>/rules.md"
   ],
@@ -21,7 +22,10 @@
     "scene_rules",
     "pipeline_changelog",
     "core_probe_candidate",
-    "regression_test_candidate"
+    "regression_test_candidate",
+    "reference_asset",
+    "system_asset_candidate",
+    "asset_promotion_gate"
   ],
   "pass_gate": {
     "root_cause_recorded_for_fail": true,

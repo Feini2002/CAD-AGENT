@@ -1,4 +1,4 @@
-# Agent 训练错误记录（根目录）
+# Agent 训练错误记录
 
 面向 `docs/training/` 训练期；每轮验收失败或 CAD 异常在此追加一条。**机器证据**仍在 `projects/<case_id>/runs/`。
 
@@ -12,6 +12,8 @@
 | 2026-05-28 | `residential_sofa_2seat_20260528` | 1 | 用户：**少很多线**、多轮截图一样；Agent 未自检 | `wcs_from_block_local` 误用 `ins[0]+lx+(preview_x0-xmn)`，X 落到约 **-15 万**，裁切后几乎全丢（审计仅 **4** 条线）；却误报 `bottom_rail_present`（补了假底框） | 正确：`preview_x0+(lx-xmn)`、`ref_min_y+(ymx-ly)`；X 向裁中座带、保留全宽水平线；**禁止**无审计声称通过 | **已修复**：预览 **220** Line + 10 Arc + 2 Pline，底框 L=1866.67mm |
 | 2026-05-28 | `residential_sofa_2seat_20260528` | 1 | 目视有两格但仍 **未通过**（用户图：中缝/叠线） | 右座左移后与左座在 **接缝 X** 叠了双层竖线/碎线 | 炸开流程 + **接缝带清理**（`seam_cleanup` 保留最长 2 条） | **round1 第 4 次重跑** |
 | 2026-05-28 | `residential_sofa_2seat_20260528` | 2→3 | 用户：样式对但 **杂线多**，审计 Agent 界定不足 | 中缝带 20 条碎线；顶框 6 组短横线与全宽线叠线 | 洁净度 checklist；seam 清理 + handle 叠线去重（-8） | **round3 审计 pass** |
+| 2026-05-28 | `residential_sofa_2seat_20260528` | 12 | 用户：下方衔接仍错；参考有弧线且线条丝滑，生成仍全靠圆角矩形；部件有重叠或间隙 | 生成链路把所有 `visual_parts.shape` 收敛为 `_rounded_rect`；审计链路未启用 `reference_profile_match`，且没有 gap/overlap 与“全圆角矩形单一化”阻断项；Agent 自检把部件存在误判为款式匹配 | round13 前先补审计硬门槛，再把生成改为带弧线与装配节点的语义重绘 | **待修复** |
+| 2026-05-28 | `residential_sofa_2seat_20260528` | 13→14 | 用户认可“该重合的地方靠在一起”，但指出中间有白线，且沙发方向语义反了：底部是硬靠背，中间椭圆是软靠垫，上方大块是坐垫 | 执行层对相邻部件的同一共享线段重复出图；视觉契约只写 `role`，没有写平面图前后方向和硬/软/坐垫层级，Audit 也没有方向常识门槛；旧 reference split ratio 还带着反向语义假设 | 渲染器去重完全重复线段；新增 `hard_back_count` / `sofa_layer_order_pass` 摘要和 `sofa_direction_semantics_inverted` 全局反模式；round14 visual parts 改为硬靠背→软靠垫→坐垫，并跳过旧 split ratio 阻断 | **已真实 CAD 重画 round14；待用户目视验收** |
 
 ## 教训（写入规则）
 

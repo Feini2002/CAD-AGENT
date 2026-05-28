@@ -33,7 +33,7 @@
 | 1 | | | `链路` / `几何` / `环境` / `需求` |
 
 - **链路** 类：同步 `docs/training/pipeline-changelog.md`
-- **几何** 类：同步根目录 `TRAINING_ERRORS.md` + 视情况改 `agents/<scenario>/rules.md`
+- **几何** 类：同步 `docs/training/training-errors.md` + 视情况改 `agents/<scenario>/rules.md`
 
 ## 案例结论
 

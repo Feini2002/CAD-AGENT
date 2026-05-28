@@ -25,7 +25,7 @@ IGNORED_MARKDOWN_DIRS = {
 HISTORY_PARTS = {"archive", "history", "snapshots", "completed-plans"}
 ACTIVE_TABLE_C_ROOT_FILES = {
     "AGENTS.md",
-    "CAD_AGENT_STATUS.md",
+    "当前状态入口.md",
     "CORE_CONTEXT_BRIEF.md",
     "CORE_STATUS.md",
     "README.md",
@@ -48,14 +48,16 @@ ACTIVE_DOC_LINE_BUDGETS = {
 }
 
 ROOT_MIGRATION_STUB_TARGETS = {
-    "CAD_AGENT_AUTONOMOUS_VALIDATION.md": "docs/runbooks/cad-validation.md",
-    "CAD_AGENT_BLOCKER_PLAYBOOK.md": "docs/runbooks/blocker-playbook.md",
-    "CAD_AGENT_CHANGELOG.md": "docs/status/changelog.md",
-    "CAD_AGENT_ISSUES.md": "docs/status/issues.md",
-    "CAD_AGENT_RULES.md": "docs/governance/cad-agent-rules.md",
-    "CAD_AGENT_STATUS.md": "docs/status/current.md",
-    "CORE_ROADMAP.md": "docs/roadmap/current.md",
-    "SYMBOL_CORE_01_CAD_SYMBOL_GRAMMAR.md": "docs/architecture/symbol-grammar.md",
+    "CAD卡壳排障入口.md": "docs/runbooks/blocker-playbook.md",
+    "CAD符号语法入口.md": "docs/architecture/symbol-grammar.md",
+    "CAD自动验证入口.md": "docs/runbooks/cad-validation.md",
+    "变更记录入口.md": "docs/status/changelog.md",
+    "路线图入口.md": "docs/roadmap/current.md",
+    "视觉优先训练计划入口.md": "docs/training/visual-first-agent-plan.md",
+    "训练错误记录入口.md": "docs/training/training-errors.md",
+    "问题风险入口.md": "docs/status/issues.md",
+    "长期规则入口.md": "docs/governance/cad-agent-rules.md",
+    "当前状态入口.md": "docs/status/current.md",
 }
 
 HISTORICAL_TABLE_C_LINE_MARKERS = (
@@ -88,6 +90,58 @@ TRAINING_CONTEXT_REQUIREMENTS = {
     "docs/planning/任务清单.md": ("Visual-First", "visual_parts"),
 }
 
+OUTPUT_REPLY_POLICY_FORBIDDEN = (
+    "聊天交付默认用 `AGENTS.md` 的 **1 张精简进度表**",
+    "默认 1 张精简进度表",
+    "每次 CAD Agent 相关交付，最终回复必须带",
+    "后续每次 CAD Agent 相关改动后，都要大概估算并汇报",
+    "完成或更新能力证明、代码轨、CAD 补验包，并改变",
+    "完成或更新能力证明 / 代码轨 / CAD 补验包，并改变",
+)
+
+OUTPUT_REPLY_POLICY_EXCLUDED = {
+    "docs/status/changelog.md",
+}
+
+OPENSPEC_MASTER_PLAN_SUBJECT_MARKERS = (
+    "本文",
+    "本文件",
+    "本变更",
+    "该变更",
+    "this change",
+    "this document",
+    "this openspec change",
+)
+
+OPENSPEC_MASTER_PLAN_AUTHORITY_MARKERS = (
+    "唯一 planmd",
+    "only planmd",
+    "master roadmap",
+    "master plan",
+    "主计划",
+    "全局 backlog",
+    "global backlog",
+    "唯一主线",
+    "only master",
+)
+
+OPENSPEC_NEGATION_MARKERS = (
+    "不承载",
+    "不得",
+    "不应",
+    "不能",
+    "不替代",
+    "不要",
+    "防止",
+    "not ",
+    "must not",
+    "shall not",
+    "does not",
+    "do not",
+    "cannot",
+    "rejected",
+)
+
 
 def _rel(path: Path, root: Path) -> str:
     return path.relative_to(root).as_posix()
@@ -101,6 +155,15 @@ def _is_ignored_path(path: Path, root: Path, *, include_output: bool) -> bool:
 
 def _read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace")
+
+
+def _line_claims_openspec_master_plan(line: str) -> bool:
+    lowered = line.lower()
+    if any(marker in lowered for marker in OPENSPEC_NEGATION_MARKERS):
+        return False
+    has_subject = any(marker in lowered for marker in OPENSPEC_MASTER_PLAN_SUBJECT_MARKERS)
+    has_authority = any(marker in lowered for marker in OPENSPEC_MASTER_PLAN_AUTHORITY_MARKERS)
+    return has_subject and has_authority
 
 
 def _first_heading(text: str) -> str:
@@ -198,7 +261,7 @@ def check_doc_source_of_truth(root: Path) -> dict[str, Any]:
             continue
         text = _read_text(path)
 
-        if rel_path in {"CAD_AGENT_STATUS.md", "docs/status/current.md"}:
+        if rel_path in {"当前状态入口.md", "docs/status/current.md"}:
             if "## 下一步计划" in text or re.search(r"(?im)^next\s*=", text):
                 findings.append(
                     _finding(
@@ -335,6 +398,120 @@ def check_training_context_alignment(root: Path) -> dict[str, Any]:
         "status": "pass" if not findings else "findings",
         "summary": {
             "checked_file_count": checked_file_count,
+            "finding_count": len(findings),
+        },
+        "findings": findings,
+    }
+
+
+def check_output_reply_policy(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    findings: list[dict[str, str]] = []
+    checked_file_count = 0
+
+    for path in sorted(root.rglob("*.md")):
+        if _is_ignored_path(path, root, include_output=False):
+            continue
+        rel_path = _rel(path, root)
+        if rel_path in OUTPUT_REPLY_POLICY_EXCLUDED:
+            continue
+        if any(part in HISTORY_PARTS for part in Path(rel_path).parts):
+            continue
+        checked_file_count += 1
+        text = _read_text(path)
+        for forbidden in OUTPUT_REPLY_POLICY_FORBIDDEN:
+            if forbidden in text:
+                findings.append(
+                    _finding(
+                        "stale_output_reply_policy",
+                        rel_path,
+                        "Active docs must keep ordinary final replies opt-in for progress tables; stale default progress-table wording found.",
+                    )
+                )
+                break
+
+    return {
+        "status": "pass" if not findings else "findings",
+        "summary": {
+            "checked_file_count": checked_file_count,
+            "finding_count": len(findings),
+        },
+        "findings": findings,
+    }
+
+
+def check_openspec_contracts(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    openspec_dir = root / "openspec"
+    findings: list[dict[str, str]] = []
+    active_change_file_count = 0
+
+    if not openspec_dir.exists():
+        return {
+            "status": "pass",
+            "summary": {
+                "openspec_present": False,
+                "active_change_file_count": 0,
+                "finding_count": 0,
+            },
+            "findings": findings,
+        }
+
+    config_path = openspec_dir / "config.yaml"
+    config_yml_path = openspec_dir / "config.yml"
+    existing_config_path = config_path if config_path.is_file() else config_yml_path
+    if not existing_config_path.is_file():
+        findings.append(
+            _finding(
+                "openspec_config_missing",
+                "openspec/config.yaml",
+                "OpenSpec is initialized but no config file defines the repository contract boundary.",
+            )
+        )
+    else:
+        config_text = _read_text(existing_config_path)
+        if "CORE_RESTRUCTURE_PLAN.md" not in config_text:
+            findings.append(
+                _finding(
+                    "openspec_config_missing_planmd_boundary",
+                    _rel(existing_config_path, root),
+                    "OpenSpec config must preserve CORE_RESTRUCTURE_PLAN.md as the single PlanMD boundary.",
+                )
+            )
+
+    root_tasks_path = openspec_dir / "tasks.md"
+    if root_tasks_path.is_file():
+        findings.append(
+            _finding(
+                "openspec_root_tasks_forbidden",
+                _rel(root_tasks_path, root),
+                "OpenSpec tasks must live under openspec/changes/<change>/tasks.md, not as a root-level task ledger.",
+            )
+        )
+
+    changes_dir = openspec_dir / "changes"
+    if changes_dir.is_dir():
+        for change_dir in sorted(path for path in changes_dir.iterdir() if path.is_dir()):
+            if change_dir.name == "archive":
+                continue
+            for md_path in sorted(change_dir.rglob("*.md")):
+                active_change_file_count += 1
+                for line in _read_text(md_path).splitlines():
+                    if _line_claims_openspec_master_plan(line):
+                        findings.append(
+                            _finding(
+                                "openspec_change_claims_master_plan",
+                                _rel(md_path, root),
+                                "Active OpenSpec changes must not claim PlanMD, master-roadmap, or global-backlog authority.",
+                            )
+                        )
+                        break
+
+    return {
+        "status": "pass" if not findings else "findings",
+        "summary": {
+            "openspec_present": True,
+            "active_change_file_count": active_change_file_count,
             "finding_count": len(findings),
         },
         "findings": findings,
@@ -616,6 +793,8 @@ def build_doc_governance_report(
     stubs = check_root_migration_stubs(root)
     active_doc_size = check_active_doc_size_budgets(root)
     training_context = check_training_context_alignment(root)
+    output_policy = check_output_reply_policy(root)
+    openspec_contracts = check_openspec_contracts(root)
     reports = {
         "doc_registry": registry,
         "source_of_truth": source,
@@ -625,6 +804,8 @@ def build_doc_governance_report(
         "root_stubs": stubs,
         "active_doc_size": active_doc_size,
         "training_context": training_context,
+        "output_policy": output_policy,
+        "openspec_contracts": openspec_contracts,
     }
     finding_count = sum(report["summary"].get("finding_count", 0) for report in reports.values())
     return {

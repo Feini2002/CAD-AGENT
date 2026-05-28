@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ASSET_EVIDENCE_BOUNDARY",
+  "type": "object",
+  "required": ["boundary_id", "checked", "not_checked", "assumptions"],
+  "properties": {
+    "boundary_id": { "type": "string" },
+    "asset_ref": { "type": "string" },
+    "claim": { "type": "string" },
+    "checked": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "not_checked": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

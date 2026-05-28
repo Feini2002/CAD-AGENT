@@ -1,6 +1,6 @@
 # Agent 训练阶段（方案 A）
 
-最后更新：2026-05-28
+最后更新：2026-05-29
 
 Core Lab 施工已收口。本目录是**默认工作入口**：用真实/脱敏案例训 Agent「指哪打哪」，而不是再开 V-PROOF / 三轨施工包。
 
@@ -27,10 +27,18 @@ Core Lab 施工已收口。本目录是**默认工作入口**：用真实/脱敏
 
 **变聪明逻辑（触发条件 / round20 交付什么）：** 见 [`learning-loop.md`](learning-loop.md)。
 
+**CAD 常识底座（资料 / 图库 / 测试 / 声明边界）：** 见 [`cad-common-sense-upgrade.md`](cad-common-sense-upgrade.md)。常识不是把文件丢进仓库，而是 `source_note → knowledge_summary → object_or_rule_candidate → executable_check → evidence_boundary`。
+
+**CAD 资产智能（参考图库 / 自产图库 / 检索 / 晋升）：** 见 [`../architecture/cad-asset-intelligence-architecture.md`](../architecture/cad-asset-intelligence-architecture.md)。参考图库只作 evidence input，自产图库必须是带 schema、lineage、check 和 evidence_boundary 的 promoted asset。
+
+**资产 intake 默认口径：** 用户给标准图库文件夹、截图、描述或参考块时，不要求用户先填表。用户可以只给“文件夹路径 + 一句大概内容”。Agent 默认先自动扫描文件结构、文件名、可读元数据和少量样本，推断对象类型、图纸类型、适用范围、来源线索和证据边界；无法可靠判断的字段统一写 `unknown`，只能作为参考的字段写 `reference_only`。扫描结果只进入 reference intake / `retrieval_pack`，不晋升 `libraries/system_library/`，也不算能力证明。详见 [`asset-intake-template.md`](asset-intake-template.md) 与 `scripts/run_asset_raw_intake.py`。
+
 本主链路写在 `docs/training/`，会随训练**不断修订**；修订记录见 [`pipeline-changelog.md`](pipeline-changelog.md)（只收 **链路类** 教训）。
 
 ```text
   白话 brief
+      → Step0 查常识 / 查 catalog / 查自产资产：形成 retrieval_pack，基础对象先找已有知识、对象定义、受控块边界和历史失败
+      → Step0b route：exact_reuse / parametric_variant / semantic_redraw / novel_with_constraints / deferred
       → Step1 需求拆分：style_target + roundN_visual_parts.json + roundN_intent.json（+ 可选 CAD_PLAN）
       → Step1b reference_match gate：缺 `visual_parts` 或款式不明则阻断 Execute
       → Step2 落预览（CODEX_PREVIEW）
@@ -45,7 +53,7 @@ Core Lab 施工已收口。本目录是**默认工作入口**：用真实/脱敏
 | 验收 | `feedback.md` §几何 pass/fail | §用户指出的错因 |
 | 指错后 | 可只说一句「靠背少线」 | Agent 补全根因分析 + §修复步骤 + 是否改链路 |
 
-**你说「记反馈」时**，Agent 默认：更新当前案例 `feedback.md` → 追加 `TRAINING_ERRORS.md` 一行 → 若属链路则追加 `pipeline-changelog.md` → **不**把纯几何 bug 写进链路 changelog。
+**你说「记反馈」时**，Agent 默认：更新当前案例 `feedback.md` → 追加 `docs/training/training-errors.md` 一行 → 若属链路则追加 `pipeline-changelog.md` → **不**把纯几何 bug 写进链路 changelog。
 
 ---
 
@@ -97,6 +105,8 @@ Core Lab 施工已收口。本目录是**默认工作入口**：用真实/脱敏
 
 **底座关系：** `core/` 提供 validate / execute / readback / `render_preview` 等**通用能力**；场景差异在 `agents/<scenario>/rules.md`；案例几何在 `projects/<case>/runs/`。理想链路规定的是 **Agent 在训练期必须按顺序调用的工序**，不要求把训练逻辑写进 `core/`。
 
+**常识关系：** 基础物件常识先进入 `libraries/` / `docs/training/cad-common-sense-upgrade.md` 所定义的知识、对象和测试口径；案例训练只校准参考图款式、用户偏好和失败模式。文件存在 ≠ 已学会；只有形成可执行审计或 benchmark，才算能被机器证明。
+
 ### 流程图
 
 ```mermaid
@@ -110,7 +120,7 @@ flowchart TD
     E --> E1[handles / readback / checks]
     E --> E2[几何审计 JSON<br/>案例相关门槛]
     E2 --> F{审计门槛}
-    F -->|未过| G[诊断 → TRAINING_ERRORS / failure_notes]
+    F -->|未过| G[诊断 → training-errors / failure_notes]
     G --> H[最小修复 rules 或 runs 脚本]
     H --> D
     F -->|过| I[截图 render_preview<br/>visual_aid_only]
@@ -226,7 +236,8 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 | 你说 | Agent 默认做 |
 | --- | --- |
 | **开一轮训练** / **家装案例** | Step1 写 `intent.json` → Step2 落图 → Step3 审计环 → 未过自修 |
-| **记反馈** | 写 `feedback.md` §用户指出的错因 + §修复步骤；追加 `TRAINING_ERRORS.md`；链路类再写 `pipeline-changelog.md` |
+| **记反馈** | 写 `feedback.md` §用户指出的错因 + §修复步骤；追加 `docs/training/training-errors.md`；链路类再写 `pipeline-changelog.md` |
+| **优化聪明度** / **校准 Agent** | 找根因并改对应层：Prompt/Agent 配置、`visual_parts`、checklist、Core 探针或场景 rules；不能只口头总结 |
 | **刷新表 C** | 只跑 coverage（Lab 回归，不代替案例 pass） |
 | **画不准** | `docs/runbooks/blocker-playbook.md` |
 
@@ -235,7 +246,38 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 ## 交付汇报（训练期）
 
 - Agent 回复**默认不带** `AGENTS.md` 的表 C / 精简四行进度表；用户点名「表 C / 报进度 / 完整状态」时才展示。
-- 默认只写：本轮做了什么、证据路径（`runs/`、handles）、请你目视什么。
+- 默认必须写清：本轮结论、相对上一轮修了什么、机器证据证明了什么、还没证明什么、请你重点看哪里，以及你怎样反馈最有用。
+
+### 低噪声反馈模板
+
+```text
+本轮结论：可验收 / 暂不交付 / 阻断。
+
+和上一轮相比：
+- 用用户能看懂的话说修了什么，不只写实体数。
+
+机器证据只证明：
+- 例如 handles、图层、bbox、gap、overlap、open endpoint。
+
+它还没证明：
+- 例如款式是否像参考图、用户是否认可、施工图规范是否成立。
+
+请你重点看：
+1. 对象语义是否对。
+2. 关键部件是否缺失或方向反了。
+3. 线条是否干净、是否有多余白线。
+
+如果不准，直接回一句：
+“第 X 点不对，应该是……”
+```
+
+**禁止低信号汇报：**
+
+- 只说 `0 gap / 0 overlap / 0 open endpoint`，不解释这只能证明线条连接和洁净度。
+- 只贴截图，不告诉你看哪里。
+- 把实体数、arc 数或截图存在当作“款式准确”。
+- 机器审计绿就说完成，忽略 Agent 自检或你的目视反馈。
+- 普通训练回复默认带表 C、工程进度或大表格。
 
 ## 截图（训练期默认）
 
@@ -278,7 +320,7 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 
 | 文件 | 何时写 |
 | --- | --- |
-| `TRAINING_ERRORS.md` | 每次 fail 或 CAD 异常 **一行**（现象 / 根因 / 修复 / 状态） |
+| `docs/training/training-errors.md` | 每次 fail 或 CAD 异常 **一行**（现象 / 根因 / 修复 / 状态） |
 | `docs/training/pipeline-changelog.md` | 仅当 §判因类型 含 **链路** |
 | `agents/<scenario>/rules.md` | 几何类、可复现场景规则 |
 | `runs/roundN_failure_notes.json` | 可选；复杂几何细节 |
@@ -289,7 +331,7 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 
 ### 4. 什么 **不算** 链路问题（不必改 README / changelog）
 
-- 单案例裁切公式、坐标、块内解析错误（只记 `TRAINING_ERRORS` + case `runs/`）。
+- 单案例裁切公式、坐标、块内解析错误（只记 `training-errors.md` + case `runs/`）。
 - 某一家具款式特有的造型规则（进 `agents/.../rules.md` 或 `expected_notes`）。
 - 你尚未给出不准点、仅说「再看看」——Agent 应先自检列假设，**不要**空改链路文档。
 
@@ -297,7 +339,7 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 
 ## 训练错误记录
 
-- 根目录：`TRAINING_ERRORS.md`（每次验收 fail / CAD 异常追加一行；含几何与环境）。
+- `docs/training/training-errors.md`（每次验收 fail / CAD 异常追加一行；含几何与环境）。
 - 链路修订：`docs/training/pipeline-changelog.md`（仅工序 / 审计 / 自检类）。
 - 案例内：`projects/<case_id>/runs/*_failure_notes.json` 可写当轮细节。
 

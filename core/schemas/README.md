@@ -28,6 +28,12 @@
 - `verification_report.schema.json`
 - `symbol_spec.schema.json`
 - `symbol_graph.schema.json`
+- `reference_asset.schema.json`
+- `system_asset.schema.json`
+- `asset_annotation.schema.json`
+- `asset_promotion.schema.json`
+- `asset_evidence_boundary.schema.json`
+- `retrieval_pack.schema.json`
 
 旧 `schemas/` 下只保留第一轮兼容副本，不继续扩展为所有高层 schema 的镜像。
 

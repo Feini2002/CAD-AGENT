@@ -276,9 +276,14 @@ def detect_forbidden_patterns(profile: dict[str, float | int | bool]) -> list[st
     bows = int(profile.get("seat_front_bow_count", 0))
     full_width_split_count = int(profile.get("full_width_split_count", 0))
     back_cushion_count = int(profile.get("back_cushion_count", 0))
+    hard_back_count = int(profile.get("hard_back_count", 0))
     required_part_count = int(profile.get("required_part_count", 0))
     closed_part_count = int(profile.get("closed_part_count", 0))
     seat_cushion_count = int(profile.get("seat_cushion_count", 0))
+    rounded_rect_family_count = int(profile.get("rounded_rect_family_count", 0))
+    distinct_shape_family_count = int(profile.get("distinct_shape_family_count", 0))
+    part_gap_count = int(profile.get("part_gap_count", 0))
+    part_overlap_count = int(profile.get("part_overlap_count", 0))
 
     complete_visual_parts = (
         required_part_count
@@ -302,6 +307,16 @@ def detect_forbidden_patterns(profile: dict[str, float | int | bool]) -> list[st
         hits.append("missing_required_parts")
     if required_part_count and (back_cushion_count < 2 or seat_cushion_count < 2):
         hits.append("missing_required_parts")
+    if (
+        required_part_count
+        and rounded_rect_family_count >= required_part_count
+        and distinct_shape_family_count <= 1
+    ):
+        hits.append("rounded_rect_only_parts")
+    if part_gap_count > 0 or part_overlap_count > 0:
+        hits.append("part_connection_defects")
+    if complete_visual_parts and hard_back_count > 0 and int(profile.get("sofa_layer_order_pass", 1)) <= 0:
+        hits.append("sofa_direction_semantics_inverted")
     return hits
 
 
@@ -314,7 +329,13 @@ def _visual_parts_summary_from_checklist(semantic: dict[str, Any]) -> dict[str, 
         "closed_part_count",
         "seat_cushion_count",
         "back_cushion_count",
+        "hard_back_count",
+        "sofa_layer_order_pass",
         "full_width_split_count",
+        "rounded_rect_family_count",
+        "distinct_shape_family_count",
+        "part_gap_count",
+        "part_overlap_count",
     }
     normalized: dict[str, int] = {}
     for key in allowed_keys:
@@ -344,6 +365,7 @@ def _evaluate_reference_profile_match(
     max_inset = float(spec.get("max_inset_mm", 38))
     back_min = float(spec.get("back_band_min", 0.10))
     back_max = float(spec.get("back_band_max", 0.35))
+    check_split_ratios = bool(spec.get("check_split_ratios", True))
 
     split_delta = abs(float(preview.get("seat_split_ratio", 0)) - reference["seat_split_ratio"])
     back_delta = abs(float(preview.get("back_band_ratio", 0)) - reference["back_band_ratio"])
@@ -355,11 +377,12 @@ def _evaluate_reference_profile_match(
     deltas["back_band_ratio"] = round(back_delta, 3)
     deltas["arm_width_mm"] = round(arm_delta, 1)
 
-    if split_delta > split_tol:
-        failures.append("semantic_seat_split_ratio")
-    back = float(preview.get("back_band_ratio", 0))
-    if back_delta > back_tol or back < back_min or back > back_max:
-        failures.append("semantic_back_band_ratio")
+    if check_split_ratios:
+        if split_delta > split_tol:
+            failures.append("semantic_seat_split_ratio")
+        back = float(preview.get("back_band_ratio", 0))
+        if back_delta > back_tol or back < back_min or back > back_max:
+            failures.append("semantic_back_band_ratio")
     if arm_delta > arm_tol:
         failures.append("semantic_arm_width")
     if float(preview.get("max_inset_mm", 999)) > max_inset:

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SYSTEM_ASSET",
+  "type": "object",
+  "required": [
+    "id",
+    "asset_type",
+    "domain",
+    "canonical_name",
+    "parts",
+    "parameters",
+    "representation",
+    "source_lineage",
+    "generation_method",
+    "validation_status",
+    "evidence_refs",
+    "evidence_boundary_ref",
+    "version"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "asset_type": {
+      "type": "string",
+      "enum": ["object", "part", "block", "symbol", "composition", "style_sample"]
+    },
+    "domain": { "type": "string" },
+    "canonical_name": { "type": "string" },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "parts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "parameters": { "type": "object" },
+    "representation": {
+      "type": "object",
+      "properties": {
+        "cad_plan_ref": { "type": "string" },
+        "block_ref": { "type": "string" },
+        "preview_ref": { "type": "string" },
+        "recipe_ref": { "type": "string" },
+        "symbol_spec_ref": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "source_lineage": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "generation_method": {
+      "type": "string",
+      "enum": ["manual", "pipeline", "cad_run", "promoted_from_case", "self_authored", "synthetic"]
+    },
+    "validation_status": {
+      "type": "string",
+      "enum": ["draft", "checked", "candidate", "case_verified", "system_verified", "deprecated"]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "benchmark_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence_boundary_ref": { "type": "string" },
+    "version": { "type": "string" }
+  },
+  "additionalProperties": true
+}

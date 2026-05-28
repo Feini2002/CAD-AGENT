@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAD Agent 能力覆盖清单</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f1ea;
+      --paper: #fffdfa;
+      --ink: #202225;
+      --muted: #6e756f;
+      --line: #d8d2c6;
+      --line-strong: #bdb4a4;
+      --green: #2f6f55;
+      --amber: #a16a1d;
+      --blue: #315f84;
+      --red: #8b3f32;
+      --shadow: 0 18px 45px rgba(35, 31, 24, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(32, 34, 37, 0.035) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(rgba(32, 34, 37, 0.03) 1px, transparent 1px) 0 0 / 32px 32px,
+        var(--bg);
+      color: var(--ink);
+      font-family: "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 36px 0 44px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: end;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(30px, 4vw, 58px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 16px 0 0;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      min-height: 88px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 253, 250, 0.75);
+      box-shadow: 0 10px 28px rgba(35, 31, 24, 0.04);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 22px 0 18px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter {
+      min-height: 36px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .filter[aria-pressed="true"] {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .search {
+      width: min(280px, 100%);
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .board {
+      overflow: hidden;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    thead {
+      background: #e8e0d3;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 13px 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: #3b3731;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: #fbf7ef;
+    }
+
+    .capability {
+      width: 27%;
+    }
+
+    .kind {
+      width: 13%;
+    }
+
+    .stage {
+      width: 10%;
+      text-align: center;
+    }
+
+    .capability-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 850;
+    }
+
+    .priority {
+      flex: 0 0 auto;
+      min-width: 34px;
+      padding: 3px 6px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .name-text {
+      overflow-wrap: anywhere;
+    }
+
+    .type-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .type-object {
+      background: #e5efe8;
+      color: var(--green);
+    }
+
+    .type-draw {
+      background: #e1edf4;
+      color: var(--blue);
+    }
+
+    .type-annotation {
+      background: #f3ead8;
+      color: var(--amber);
+    }
+
+    .mark {
+      display: inline-grid;
+      place-items: center;
+      width: 23px;
+      height: 23px;
+      border: 1.5px solid var(--line-strong);
+      border-radius: 5px;
+      background: #fffdfa;
+      color: transparent;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .mark.done {
+      border-color: var(--green);
+      background: var(--green);
+      color: #fffdfa;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 34px 20px;
+      color: var(--muted);
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--red);
+      background: rgba(255, 253, 250, 0.7);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .note strong {
+      color: var(--ink);
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        width: min(100% - 24px, 720px);
+        padding-top: 22px;
+      }
+
+      .masthead,
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .summary {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .board {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 820px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <section>
+        <p class="eyebrow">CAD Agent Capability Map</p>
+        <h1>能力覆盖清单</h1>
+        <p class="lead">
+          这里只展示“具体图块”和“基础绘图能力”的覆盖状态。内部证据、训练过程、manifest 和 promotion 记录继续放在 Markdown / JSON 文档里。
+        </p>
+      </section>
+
+      <section class="summary" aria-label="能力覆盖统计">
+        <div class="metric">
+          <strong id="totalCount">0</strong>
+          <span>计划能力项</span>
+        </div>
+        <div class="metric">
+          <strong id="rawCount">0</strong>
+          <span>已有标准图库</span>
+        </div>
+        <div class="metric">
+          <strong id="trainedCount">0</strong>
+          <span>训练通过</span>
+        </div>
+        <div class="metric">
+          <strong id="systemCount">0</strong>
+          <span>自产资产</span>
+        </div>
+      </section>
+    </header>
+
+    <section class="toolbar" aria-label="筛选能力清单">
+      <div class="filters" id="filters"></div>
+      <input class="search" id="searchInput" type="search" placeholder="搜索能力项" aria-label="搜索能力项">
+    </section>
+
+    <section class="board" aria-label="能力清单表">
+      <table>
+        <thead>
+          <tr>
+            <th class="capability">能力项</th>
+            <th class="kind">类型</th>
+            <th class="stage">标准图库</th>
+            <th class="stage">常识整理</th>
+            <th class="stage">训练通过</th>
+            <th class="stage">自产资产</th>
+          </tr>
+        </thead>
+        <tbody id="capabilityRows"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState">没有匹配的能力项。</div>
+    </section>
+
+    <p class="note">
+      <strong>当前口径：</strong>左侧清单就是当前训练计划；右侧勾选必须来自后续标准图库导入、常识整理、训练验收或自产资产晋升。空白不代表不能做，只代表尚未沉淀为本系统资产。
+    </p>
+  </main>
+
+  <script>
+    const capabilities = [
+      { name: "沙发", kind: "object", group: "基础家具", priority: "P0", stages: {} },
+      { name: "茶几", kind: "object", group: "基础家具", priority: "P0", stages: {} },
+      { name: "餐桌", kind: "object", group: "基础家具", priority: "P0", stages: {} },
+      { name: "餐椅", kind: "object", group: "基础家具", priority: "P0", stages: {} },
+      { name: "床铺", kind: "object", group: "基础家具", priority: "P0", stages: {} },
+      { name: "床头柜", kind: "object", group: "基础家具", priority: "P1", stages: {} },
+      { name: "衣柜", kind: "object", group: "基础家具", priority: "P1", stages: {} },
+      { name: "电视柜", kind: "object", group: "基础家具", priority: "P1", stages: {} },
+      { name: "书桌", kind: "object", group: "基础家具", priority: "P1", stages: {} },
+      { name: "矮柜", kind: "object", group: "基础家具", priority: "P2", stages: {} },
+      { name: "洗手台", kind: "object", group: "厨卫对象", priority: "P1", stages: {} },
+      { name: "马桶", kind: "object", group: "厨卫对象", priority: "P1", stages: {} },
+      { name: "灶台", kind: "object", group: "厨卫对象", priority: "P2", stages: {} },
+      { name: "冰箱", kind: "object", group: "厨卫对象", priority: "P2", stages: {} },
+      { name: "墙体绘制", kind: "draw", group: "基础绘图", priority: "P0", stages: {} },
+      { name: "门绘制", kind: "draw", group: "基础绘图", priority: "P0", stages: {} },
+      { name: "窗户绘制", kind: "draw", group: "基础绘图", priority: "P0", stages: {} },
+      { name: "门洞绘制", kind: "draw", group: "基础绘图", priority: "P1", stages: {} },
+      { name: "窗洞绘制", kind: "draw", group: "基础绘图", priority: "P1", stages: {} },
+      { name: "房间轮廓绘制", kind: "draw", group: "基础绘图", priority: "P1", stages: {} },
+      { name: "柱子绘制", kind: "draw", group: "基础绘图", priority: "P2", stages: {} },
+      { name: "基础家具摆放", kind: "draw", group: "基础绘图", priority: "P2", stages: {} },
+      { name: "简单尺寸标注", kind: "annotation", group: "标注表达", priority: "P1", stages: {} },
+      { name: "简单文字标注", kind: "annotation", group: "标注表达", priority: "P1", stages: {} },
+      { name: "基础图层归类", kind: "annotation", group: "标注表达", priority: "P2", stages: {} }
+    ];
+
+    const stages = ["raw", "knowledge", "trained", "system"];
+    const groups = ["全部", ...Array.from(new Set(capabilities.map((item) => item.group)))];
+    const kindLabels = {
+      object: "图块对象",
+      draw: "绘图能力",
+      annotation: "标注能力"
+    };
+
+    let activeGroup = "全部";
+
+    const rowsEl = document.getElementById("capabilityRows");
+    const filtersEl = document.getElementById("filters");
+    const searchInput = document.getElementById("searchInput");
+    const emptyState = document.getElementById("emptyState");
+
+    function countStage(stage) {
+      return capabilities.filter((item) => Boolean(item.stages[stage])).length;
+    }
+
+    function renderSummary() {
+      document.getElementById("totalCount").textContent = capabilities.length;
+      document.getElementById("rawCount").textContent = countStage("raw");
+      document.getElementById("trainedCount").textContent = countStage("trained");
+      document.getElementById("systemCount").textContent = countStage("system");
+    }
+
+    function renderFilters() {
+      filtersEl.innerHTML = "";
+      groups.forEach((group) => {
+        const button = document.createElement("button");
+        button.className = "filter";
+        button.type = "button";
+        button.textContent = group;
+        button.setAttribute("aria-pressed", group === activeGroup ? "true" : "false");
+        button.addEventListener("click", () => {
+          activeGroup = group;
+          renderFilters();
+          renderRows();
+        });
+        filtersEl.appendChild(button);
+      });
+    }
+
+    function markCell(item, stage) {
+      const done = Boolean(item.stages[stage]);
+      const label = done ? "已完成" : "未完成";
+      return `<span class="mark${done ? " done" : ""}" title="${label}" aria-label="${label}">${done ? "✓" : ""}</span>`;
+    }
+
+    function renderRows() {
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = capabilities.filter((item) => {
+        const groupMatch = activeGroup === "全部" || item.group === activeGroup;
+        const textMatch = !query || `${item.name} ${kindLabels[item.kind]} ${item.group}`.toLowerCase().includes(query);
+        return groupMatch && textMatch;
+      });
+
+      rowsEl.innerHTML = filtered.map((item) => `
+        <tr>
+          <td class="capability">
+            <div class="capability-name">
+              <span class="priority">${item.priority}</span>
+              <span class="name-text">${item.name}</span>
+            </div>
+          </td>
+          <td class="kind">
+            <span class="type-pill type-${item.kind}">${kindLabels[item.kind]}</span>
+          </td>
+          ${stages.map((stage) => `<td class="stage">${markCell(item, stage)}</td>`).join("")}
+        </tr>
+      `).join("");
+
+      emptyState.style.display = filtered.length ? "none" : "block";
+    }
+
+    searchInput.addEventListener("input", renderRows);
+
+    renderSummary();
+    renderFilters();
+    renderRows();
+  </script>
+</body>
+</html>

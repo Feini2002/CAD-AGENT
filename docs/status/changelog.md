@@ -2,7 +2,111 @@
 
 这个文件记录 CAD Agent 测试工作区的结构、规则、Schema、脚本和重要决策变化。
 
+## 2026-05-29
+
+### CAD-ASSET-RAW-INTAKE-AUTO-01：标准图库自动 raw intake
+
+- **触发**：用户明确希望只告诉 Agent “文件夹是什么、里面大概是什么”，不再手填来源 / 授权 / 对象范围 / 图纸类型表格；同时要求优化链路和 Agent prompt 定义。
+- **执行**：新增 `core/assets/raw_intake.py` 与 `scripts/run_asset_raw_intake.py`，从 `standard_cad_library_raw/<source_slug>/original/` 自动扫描有效文件，保守推断 `object_tags`、`view_type`、`domain`、`part_tags`，并生成 `source_note`、reference source、单对象 `reference_asset` JSON、`agent_inferred` annotation 和 `knowledge/source_notes`。
+- **Agent / 文档**：更新 `asset_retriever`、`context_curator`、`orchestrator` 和 `pipeline_manifest`，把 `standard_library_intake` 设为非绘图分支；重写 asset intake 模板和 raw README，明确“用户只需放文件夹 + 一句说明，Agent 先扫，不追表”。
+- **测试**：新增 `tests/core/test_asset_raw_intake.py`，覆盖跳过锁文件、保守默认、schema 校验、不写 `system_library` 和路径穿越拦截；补齐 asset / retrieval schema invalid fixtures。
+- **边界**：自动 intake 不解析 CAD 几何、不导入真实图库、不晋升自产资产、不改变表 C；推断错误时以 `unknown` / `reference_only` 保守落库。
+
+### OPENSPEC-CONTRACT-LITE-01：OpenSpec 变更契约轻量护栏
+
+- **触发**：用户要求参照 `CodeGraph + OpenSpec` 重大项目治理表单和截图建议，做一个不破坏现有主线的小型架构升级，重点提升变更契约能力。
+- **执行**：新增 OpenSpec change `establish-change-contract-lite`，包含 proposal / design / tasks / specs；在 `AGENTS.md` 与 `CORE_RESTRUCTURE_PLAN.md` 明确 OpenSpec 只作为复杂变更契约层；新增 `check_openspec_contracts()` 并接入 `build_doc_governance_report()`。
+- **机器护栏**：doc governance 现在会检查根级 `openspec/tasks.md`、缺少 `CORE_RESTRUCTURE_PLAN.md` 边界的 OpenSpec config，以及 active change 自称主计划 / 总 backlog。
+- **边界**：不改 CAD 执行逻辑、不改表 C、不改训练案例、不迁移历史文档；本包是治理小优化，不是 OpenSpec 接管仓库。
+
+### ROOT-MD-CHINESE-NAMES-01：根目录历史入口中文化
+
+- **触发**：用户指出根目录很多 Markdown 文件名仍停留在早期开发阶段，无法一眼判断用途，要求先把根目录大量 MD 改成中文说明。
+- **执行**：将 10 个根目录历史 stub 改为中文文件名：`CAD自动验证入口.md`、`CAD卡壳排障入口.md`、`变更记录入口.md`、`问题风险入口.md`、`长期规则入口.md`、`当前状态入口.md`、`路线图入口.md`、`CAD符号语法入口.md`、`训练错误记录入口.md`、`视觉优先训练计划入口.md`。
+- **同步**：更新 `core/maintenance/doc_governance.py` 和 `tests/core/test_doc_governance.py` 的 root stub 检查清单；保留 `AGENTS.md`、`README.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_STATUS.md` 这些机器入口不改名。
+- **边界**：本包只做文件名可读化，不重写 stub 正文，也不改变训练链路、表 C 或 CAD 能力。
+
+### OPENSPEC-INIT-01：根目录 OpenSpec 初始化
+
+- **触发**：用户要求在当前根目录初始化 OpenSpec，用于后续复杂变更的 proposal/spec/design/tasks 契约化。
+- **执行**：运行 `openspec.cmd init . --tools none` 创建 `openspec/changes/`、`openspec/changes/archive/`、`openspec/specs/`；新增 `openspec/config.yaml` 和 `.gitkeep`，让初始化结果可随仓库迁移。
+- **定位**：OpenSpec 只作为单个复杂变更的契约层；`CORE_RESTRUCTURE_PLAN.md` 仍是唯一 `PlanMD` / 主计划，`openspec/changes/*` 不承载第二套总 backlog。
+- **验证**：`openspec.cmd list --json` 已能在根目录识别 OpenSpec，当前返回 `{"changes":[]}`。
+- **边界**：初始化使用 `--tools none`，没有自动改写 Codex / Cursor 工具配置；未创建具体 change，未改变 CAD 能力、表 C 或真实 CAD 证据。
+
 ## 2026-05-28
+
+### DOC-ROOT-HYGIENE-01：根目录训练长文瘦身与路径债清理
+
+- **触发**：用户要求判断架构是否乱，并继续执行整理；当前主轴清楚，但根目录训练长文和兼容入口会增加第一眼噪声。
+- **执行**：将 `TRAINING_ERRORS.md` 正文迁入 `docs/training/training-errors.md`，将 `VISUAL_FIRST_AGENT_PLAN.md` 正文迁入 `docs/training/visual-first-agent-plan.md`，根目录两文件改为兼容 stub；更新训练文档、pipeline agent 配置和资产检索路径；`semantic_clean_two_seater.py` 改为运行共享 `scripts/_bootstrap.py`，避免本地 raw `sys.path.insert`。
+- **治理**：`core/maintenance/doc_governance.py` 将两个新 root stub 纳入迁移检查，后续断链会由 `run_doc_governance_audit.py` 报出。
+- **边界**：本包是目录和入口治理，不改变 CAD 几何、不改变表 C、不运行真实 CAD。
+
+### CAPABILITY-MAP-HTML-01：根目录能力覆盖清单 V1
+
+- **触发**：用户希望根目录有一个简单前端页面，用来展示具体图块和基础绘图能力的计划清单；页面只做覆盖视图，不承载内部证据台账。
+- **执行**：新增 `capability-map.html`，用静态 HTML / CSS / JS 展示 `沙发、茶几、餐桌、床铺、墙体绘制、窗户绘制、简单尺寸标注` 等前期常识型能力项。
+- **关键设计**：左侧能力清单本身就是计划；右侧阶段列只保留 `标准图库 / 常识整理 / 训练通过 / 自产资产`。当前系统尚未开始标准图库训练，因此右侧阶段默认全空。
+- **边界**：该页面不替代表 C，不展示内部证据路径，不声明已有自产资产；详细训练证据仍进入 MD / JSON / manifest / promotion 记录。
+
+### CAD-COMMONSENSE-ASSET-DEV-PLAN-01：标准图库 raw 输入与自产图库计划书
+
+- **触发**：用户明确要求下载的标准 CAD 图库原始文件直接放根目录并进入 git，便于家里和公司两头开发，同时要求计划书提示误追踪、误提交、误当系统能力的风险。
+- **执行**：新增 `docs/planning/cad-commonsense-asset-dev-plan-01.md`；新增根目录 `standard_cad_library_raw/README.md` 和轻量 `.gitignore`；更新 `libraries/reference_library/README.md`、资产智能架构、PlanMD、任务清单、状态页和交接索引。
+- **关键设计**：`standard_cad_library_raw/` 是 tracked raw reference input；`libraries/system_library/` 才是自产图库。raw 文件可以随 git 携带，但必须通过 reference manifest、knowledge summary、executable check、evidence boundary 和 promotion gate 后，才可能变成系统资产。
+- **边界**：本包只做计划书和目录边界；未导入真实标准图库、未创建对象族自产资产、未跑测试、不改变表 C。
+
+### CAD-ASSET-INTELLIGENCE-FOUNDATION-01：资产智能前五项基础落地
+
+- **触发**：用户要求“除了测试，前五个计划一起做”，即目录/schema、轻量检索、Agent 职责、训练 intake、晋升 gate 一起落地，但不写测试、不跑测试。
+- **执行**：新增 `libraries/reference_library/`、`libraries/system_library/`、`libraries/knowledge/`、`libraries/benchmarks/`；新增 `core/schemas/*asset*.schema.json` 与 `retrieval_pack.schema.json` 并登记 schema registry；新增 `core/assets/retrieval.py`、`core/assets/promotion_gate.py`、`scripts/run_asset_retrieval_pack.py`、`scripts/run_asset_promotion_gate.py`；新增 `pipeline_asset_retriever`；新增训练 intake 模板。
+- **边界**：当前是基础设施版本；不导入外部图库、不接 embedding RAG、不自动写回 system_library、不改变表 C。按用户要求未写测试、未跑测试。
+
+### CAD-ASSET-INTELLIGENCE-ARCH-01：CAD 资产智能架构包
+
+- **触发**：用户提出参考图库 / 自产图库 / RAG / 训练晋升会改变目录、调用关系、链路层和 Agent 层，要求多 Agent 评审后形成合理优化方案并写入架构。
+- **执行**：新增 `docs/architecture/cad-asset-intelligence-architecture.md`；更新 `docs/architecture/README.md`、`docs/training/cad-common-sense-upgrade.md`、`docs/training/global-agent-pipeline.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、状态页与交接索引。
+- **关键设计**：明确 `reference_library` 只是 evidence input，`system_library` 才是 promoted asset；新增 `retrieval_pack`、生产 / 探索模式、`reference_only → candidate → case_verified → system_verified → deprecated` 生命周期、Agent 资产检索职责和晋升 gate。
+- **交付口径**：生成架构包只代表方案固化，不代表整套方案完成；后续还要建目录、写 schema、接检索、改 Agent manifest、做训练 intake、跑晋升 gate 和对象族试点。
+- **边界**：未导入外部图库、未新增 RAG、未创建可执行 schema、未运行测试、未改变表 C，也不声明系统已学会任何新对象族。
+
+### CAD-COMMON-SENSE-ARCH-01：CAD 常识底座方法论升级
+
+- **触发**：用户要求先吸收 GitHub 上 4 类好项目的方法论，而不是 clone 或搬代码；重点是 `llm-wiki` 的知识沉淀、`step.parts` 的 catalog-first、`CADTestBench` 的可执行测试、`CADCLAW` 的证据声明边界。
+- **执行**：新增 `docs/training/cad-common-sense-upgrade.md`；`docs/training/README.md` 增 Step0 查常识 / catalog 和低噪声交付汇报模板；`learning-loop.md` 增常识层；`global-agent-pipeline.md` 增上下文收束与 Delivery 汇报边界；PlanMD / 任务清单 / 状态页挂入口。
+- **交付口径**：以后训练反馈必须先说本轮结论，再说相对上一轮修了什么、机器证据证明了什么、没证明什么、请用户重点看哪里，以及一句式反馈入口；禁止只堆 handles、gap/overlap、arc 数或截图。
+- **边界**：本包是文档级架构升级；未导入外部图库、未新增运行依赖、未跑测试、未改变表 C，也不声明系统已经具备自动常识学习能力。
+
+### TRAIN-SOFA-ROUND13-REDRAW：round13 删除旧错图并曲线重画
+
+- **触发**：用户要求继续走 round，并删除之前错误内容后重画。
+- **执行**：`semantic_clean_two_seater.py` 切到 round13，真实 CAD 先删除 56 个旧 `CODEX_PREVIEW` 实体，再用曲线部件渲染器新建 56 个预览实体；修复 `_bow_arc` 角度选择，避免坐垫弧线退化成大圆弧。
+- **证据**：`round13_execution_summary.json`、`round13_geometry_audit.json`、`round13_preview.png`；机器审计为 0 gap / 0 overlap / 0 open endpoint，`distinct_shape_family_count=4`。
+- **状态**：Agent 截图自检仍阻断交付，原因是生成结果虽然连接正确，但靠背/坐垫层级仍不像参考；已写入 `round13_agent_review.json` 和 `feedback.md`。
+- **边界**：这是训练案例重画与链路校准，不改变表 C；下一轮需要新增视觉层级语义审计后再重画。
+
+### TRAIN-SOFA-ROUND13B-COMMONSENSE：沙发俯视常识与共享边去重
+
+- **触发**：用户认可 round13 中“该重合的地方靠在一起了”，同时指出中间白线 bug，以及沙发方向语义反了：底部是硬靠背，中间椭圆是软靠垫，上部大块是坐垫。
+- **根因**：执行层重复输出相邻部件的同一共享竖线；Visual Intent 只写部件 role，没有写平面图前后方向、硬/软层级和坐垫/靠垫顺序，Audit 也缺少方向常识门槛。
+- **修正**：`part_renderer.py` 去重完全重复线段；审计摘要新增 `hard_back_count` 与 `sofa_layer_order_pass`；全局反模式新增 `sofa_direction_semantics_inverted`；`agents/residential/rules.md` 与 pipeline agent 配置写入沙发俯视层级常识；新增并执行 `round14_visual_parts.json`。
+- **状态**：round14 已真实 CAD 重画，54 个 `CODEX_PREVIEW` 实体、33 条 arc、0 gap / 0 overlap / 0 open endpoint；Agent 自检可请用户验收；不改变表 C。
+
+### OUTPUT-RULE-CONTEXT-20260528：旧上下文导致普通回复误带表
+
+- **触发**：用户再次指出普通回复不应汇报开发口径；只有特别点明时才需要。
+- **根因**：仓库当前 `AGENTS.md` 和 `CORE_CONTEXT_BRIEF.md` 已是 opt-in 规则，但会话早期注入过旧版 `AGENTS.md`（默认精简进度表），压缩后的上下文仍可能保留旧规则；同时部分模板和展开条件仍含旧触发语。
+- **修正**：收紧 `AGENTS.md` 与 `docs/governance/cad-agent-rules.md`，明确完成开发包、修改 registry/coverage、处理回归或绘图不准都不自动触发表格；更新能力证明状态模板；文档治理新增 stale output policy 检查。
+- **边界**：状态页、交接和表 C 专题仍保留完整表格结构，但聊天最终回复默认只写自然段。
+
+### TRAIN-SOFA-ROUND12-CALIBRATION：round12 审计虚绿校准
+
+- **触发**：用户指出沙发 round12 下方衔接仍错，参考块有弧线和更丝滑线条，而生成结果仍是圆角矩形堆叠，并存在重叠或间隙。
+- **根因**：生成链路把所有 `visual_parts.shape` 落到 `_rounded_rect`；审计链路未启用 `reference_profile_match`，也没有 part gap/overlap 与圆角矩形单一化探针；Agent 自检把“部件存在”误判为“款式匹配”。
+- **修正**：新增 `rounded_rect_only_parts` 与 `part_connection_defects` 全局审计反模式；`part_renderer.py` 输出实际 `audit_summary`；round 脚本把生成器摘要合入 checklist；当前 case checklist 启用 reference profile 和新 forbidden patterns。
+- **状态**：round12 已登记为 **fail**，`round12_agent_review.json` 已阻断 delivery；下一轮 round13 先过审计硬门槛，再重做弧线/装配节点生成。
+- **边界**：这是训练链路校准，不改变表 C；尚未重画 CAD。
 
 ### TABLE-C-GUARD-CORRECTION：guard / negative 行恢复 smoke
 

@@ -1,9 +1,9 @@
 {
   "round": "round12",
-  "audit_pass": true,
-  "agent_review_all_pass": true,
-  "delivery_allowed": true,
-  "blocked_reason": "",
+  "audit_pass": false,
+  "agent_review_all_pass": false,
+  "delivery_allowed": false,
+  "blocked_reason": "user_feedback_fail_audit_chain_calibrated",
   "visual_parts": "round12_visual_parts.json",
   "style_target": "expected/style_target_reference_crop.png",
   "style_target_source": "reference_crop",
@@ -47,16 +47,16 @@
   },
   "checks": {
     "visual_match_brief": {
-      "pass": true,
-      "note": "round12_preview.png shows the requested two-seat structure: two arms, two thin seat cushions, two tall back cushions, and a base rail."
+      "pass": false,
+      "note": "用户截图指出下方衔接仍错，且参考弧线/丝滑线条未被生成结果表达。"
     },
     "same_product_family_as_reference": {
-      "pass": true,
-      "note": "The result keeps the open sofa-plan family of the reference block without cloning its fragment geometry."
+      "pass": false,
+      "note": "生成结果仍主要是圆角矩形堆叠，缺少参考块的弧线语言与装配关系。"
     },
     "no_schematic_shortcut": {
-      "pass": true,
-      "note": "No closed outer shell or split-line substitute was used; machine audit reports no forbidden pattern hits."
+      "pass": false,
+      "note": "审计链路已校准：round12 命中 rounded_rect_only_parts / part_connection_defects，应阻断交付。"
     }
   }
 }

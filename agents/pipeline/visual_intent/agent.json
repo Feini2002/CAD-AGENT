@@ -5,6 +5,7 @@
   "role": "把白话、参考截图和 style_target 转成可执行的部件级视觉契约",
   "inputs": [
     "roundN_context_pack.json",
+    "runs/roundN_retrieval_pack.json",
     "brief.md",
     "reference_screenshot_or_cad_capture",
     "expected/style_target_*.png",
@@ -18,6 +19,8 @@
     "style_target_present_for_reference_match": true,
     "visual_parts_present": true,
     "parts_have_id_role_shape_closed": true,
+    "reference_match_declares_plan_view_semantics": true,
+    "required_parts_from_retrieval_pack_consumed": true,
     "forbidden_visual_patterns_declared": true,
     "target_dimensions_rounded": true
   },
@@ -27,6 +30,7 @@
     "seat_count",
     "parts",
     "layout",
+    "visual_semantics",
     "forbidden",
     "sizing"
   ],
@@ -34,6 +38,8 @@
     "execute_cad",
     "emit_sub_mm_probe_as_shape_rule",
     "use_split_line_as_backrest",
+    "invert_plan_view_sofa_roles",
+    "omit_back_to_front_layer_order_for_sofa_plan",
     "emit_closed_outer_shell_for_reference_match",
     "invent_style_match_without_style_target",
     "omit_required_common_sense_parts"

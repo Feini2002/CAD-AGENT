@@ -3,7 +3,7 @@
 最后更新：2026-05-28
 状态：**待执行**（用户确认后按 Phase 开工）
 关联案例：`projects/residential_sofa_2seat_20260528`
-关联训练文档：[`docs/training/vision-first-style.md`](docs/training/vision-first-style.md)
+关联训练文档：[`vision-first-style.md`](vision-first-style.md)
 
 ---
 
@@ -30,7 +30,7 @@
 
 ### 0.3 与现有主计划关系
 
-- 本仓库主 PlanMD 仍是 [`CORE_RESTRUCTURE_PLAN.md`](CORE_RESTRUCTURE_PLAN.md)（Core Lab / 表 C / V-PROOF）。
+- 本仓库主 PlanMD 仍是 [`../../CORE_RESTRUCTURE_PLAN.md`](../../CORE_RESTRUCTURE_PLAN.md)（Core Lab / 表 C / V-PROOF）。
 - **本文件**是训练期 **Visual-First 多 Agent 流水线**专项计划，不替代主计划；完成后将规则晋升 `core/` + `agents/pipeline/` + `docs/training/`。
 
 ---
@@ -173,21 +173,21 @@ Execute **不得**绘制不在 `parts[]` 中的结构（如整宽 split、无 id
 - [ ] `default_flow` 首步增加 visual intent 检查（或合并 gate）
 - [ ] 无 `style_target` + 用户说「参照同款」→ 停在 Intent，提示补金标准
 - [ ] Repair 循环分类：`visual | structure | cleanliness | size`；**禁止** 仅 `size` 循环
-- [ ] 更新 [`agents/pipeline/orchestrator/agent.json`](agents/pipeline/orchestrator/agent.json)
+- [ ] 更新 [`agents/pipeline/orchestrator/agent.json`](../../agents/pipeline/orchestrator/agent.json)
 
 ### 4.2 `pipeline_visual_intent`（新增或 Intent 子阶段）
 
 - [ ] 读：参考截图、style_target、用户白话、scene rules
 - [ ] 写：`visual_parts.json`、`visual_style_brief.md`
 - [ ] 内置常识本体（沙发部件 default）
-- [ ] 新增 [`agents/pipeline/visual_intent/agent.json`](agents/pipeline/visual_intent/agent.json)（或扩展 intent）
-- [ ] 注册到 [`agents/pipeline/pipeline_manifest.json`](agents/pipeline/pipeline_manifest.json)
+- [ ] 新增 [`agents/pipeline/visual_intent/agent.json`](../../agents/pipeline/visual_intent/agent.json)（或扩展 intent）
+- [ ] 注册到 [`agents/pipeline/pipeline_manifest.json`](../../agents/pipeline/pipeline_manifest.json)
 
 ### 4.3 `pipeline_intent`
 
 - [ ] 数值意图与 visual 分离：`target_width_mm` 取整写入 intent
 - [ ] **禁止** 从 probe 导出 sub-mm 造型参数
-- [ ] 已部分完成，见 [`agents/pipeline/intent/agent.json`](agents/pipeline/intent/agent.json)
+- [ ] 已部分完成，见 [`agents/pipeline/intent/agent.json`](../../agents/pipeline/intent/agent.json)
 
 ### 4.4 `pipeline_execute`
 
@@ -195,7 +195,7 @@ Execute **不得**绘制不在 `parts[]` 中的结构（如整宽 split、无 id
 - [ ] 实现 **PartRenderer**（Core 或 case runs，Phase A 可先 case）
 - [ ] `read_block_layout_profile` **仅**用于总尺 scale，不驱动圆角/座背形状
 - [ ] 禁止 `_outer_shell` 整圈外框（除非 brief 明确）
-- [ ] 更新 [`agents/pipeline/execute/agent.json`](agents/pipeline/execute/agent.json)
+- [ ] 更新 [`agents/pipeline/execute/agent.json`](../../agents/pipeline/execute/agent.json)
 
 ### 4.5 `pipeline_audit`
 
@@ -203,21 +203,21 @@ Execute **不得**绘制不在 `parts[]` 中的结构（如整宽 split、无 id
 - [ ] Visual：对照 style_target + 参考，填 `agent_review_required`
 - [ ] Machine：cleanliness + forbidden；`reference_profile_match` 降为 warning
 - [ ] `visual_pass` + 仅尺寸 fail → `approximate_ok`，不阻塞 Delivery
-- [ ] 更新 [`agents/pipeline/audit/agent.json`](agents/pipeline/audit/agent.json)
+- [ ] 更新 [`agents/pipeline/audit/agent.json`](../../agents/pipeline/audit/agent.json)
 
 ### 4.6 `pipeline_repair`
 
 - [ ] 修复优先级：缺件 / 全封闭 / shape 错 > 断线 > layout > 尺寸
 - [ ] 输出必须引用 style_target 哪一项不像
 - [ ] 禁止为 machine pass 收紧 checklist 或加 split 线
-- [ ] 已部分完成，见 [`agents/pipeline/repair/agent.json`](agents/pipeline/repair/agent.json)
+- [ ] 已部分完成，见 [`agents/pipeline/repair/agent.json`](../../agents/pipeline/repair/agent.json)
 
 ### 4.7 `pipeline_delivery`
 
 - [ ] 默认三图并排：左参考 / 右预览 / style_target
 - [ ] 汇报先 **部件对照表**（7 行），再尺寸
 - [ ] 前置条件：`agent_review_all_pass`（非仅 `audit_pass`）
-- [ ] 更新 [`agents/pipeline/delivery/agent.json`](agents/pipeline/delivery/agent.json)
+- [ ] 更新 [`agents/pipeline/delivery/agent.json`](../../agents/pipeline/delivery/agent.json)
 
 ---
 
@@ -238,7 +238,7 @@ Execute **不得**绘制不在 `parts[]` 中的结构（如整宽 split、无 id
 
 ## 6. Scene Plugin（residential）
 
-更新 [`agents/residential/rules.md`](agents/residential/rules.md)：
+更新 [`agents/residential/rules.md`](../../agents/residential/rules.md)：
 
 - 参照款沙发 plan 默认部件表与 shape 词汇
 - 禁止 closed_outer_shell
@@ -299,7 +299,7 @@ Execute **不得**绘制不在 `parts[]` 中的结构（如整宽 split、无 id
 
 ## 8. 禁止反模式（pipeline 级）
 
-写入 [`agents/pipeline/pipeline_manifest.json`](agents/pipeline/pipeline_manifest.json) `forbidden_patterns`：
+写入 [`agents/pipeline/pipeline_manifest.json`](../../agents/pipeline/pipeline_manifest.json) `forbidden_patterns`：
 
 | ID | 说明 |
 | --- | --- |
@@ -322,7 +322,7 @@ Execute **不得**绘制不在 `parts[]` 中的结构（如整宽 split、无 id
 
 ### 9.2 与表 A/B/C 关系
 
-本计划属 **训练期 / Agent 流水线**，**不**直接改表 C registry。训练 pass 后，将 `forbidden_closed_outer_shell` 等探针并入 V-PROOF 时再走 [`CORE_RESTRUCTURE_PLAN.md`](CORE_RESTRUCTURE_PLAN.md) 能力证明包。
+本计划属 **训练期 / Agent 流水线**，**不**直接改表 C registry。训练 pass 后，将 `forbidden_closed_outer_shell` 等探针并入 V-PROOF 时再走 [`CORE_RESTRUCTURE_PLAN.md`](../../CORE_RESTRUCTURE_PLAN.md) 能力证明包。
 
 ### 9.3 执行后文档同步
 
@@ -348,7 +348,7 @@ Execute **不得**绘制不在 `parts[]` 中的结构（如整宽 split、无 id
 
 | 文件 | 用途 |
 | --- | --- |
-| 本计划 | `VISUAL_FIRST_AGENT_PLAN.md` |
+| 本计划 | `docs/training/visual-first-agent-plan.md` |
 | 视觉优先细则 | `docs/training/vision-first-style.md` |
 | brief 模板 | `docs/training/visual_style_brief.template.md` |
 | 精度宪章 | `docs/training/precision-first.md` |

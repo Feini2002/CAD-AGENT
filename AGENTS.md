@@ -51,20 +51,24 @@
 - 新增待办、调整优先级、改变退出标准或拆分未来小包时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD 的引用或状态说明。
 - 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
 
+## OpenSpec 变更契约
+
+根目录 `openspec/` 只作为**单个复杂变更的契约层**，不得替代 `CORE_RESTRUCTURE_PLAN.md` 或承载第二套 next、总 backlog、优先级和退出标准。
+
+- 必须优先考虑 OpenSpec：改 `CAD_PLAN` 契约、真实 CAD 验证标准、能力登记 / 表 C 语义、Core 架构边界、跨多个模块的治理包或高风险流程。
+- 可以不用 OpenSpec：单文件小 bugfix、普通训练 round、只刷新表 C、状态 / changelog / handoff 记录、小文案或链接修正。
+- OpenSpec tasks 只允许放在 `openspec/changes/<change>/tasks.md`；不得新增根级 `openspec/tasks.md`。
+- 如果 OpenSpec change 影响开发顺序、退出门槛或当前包范围，必须回写 `CORE_RESTRUCTURE_PLAN.md` 或明确说明它不改变主线。
+
 ## 交付默认简洁回复
 
 面向用户的最终回复默认**不要附进度表、表单或表 A/B/C**。普通开发、调查、修复、绘图或规则更新完成后，用简洁自然段说明：本轮做了什么、关键证据、有没有风险或未验证项。
 
 只有用户明确点名 **开发状态查询 / 进度 / 完整状态 / 交接 / 审计 / 表 A / 表 B / 表 C / 真实 CAD 实力 / 刷新表 C / 报进度表** 时，才使用进度表格；其中涉及真实 CAD 能力时，必须先报 **表 C 真实 CAD 实力主指标**。详细口径见 `docs/governance/cad-agent-rules.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
 
-**Agent 训练期例外（方案 A）：** 当 `docs/training/README.md` 所指的 **Agent 训练**（任意场景案例 `projects/<case_id>/`、`开一轮训练`、用户未点名表 C/A/B）时，最终回复同样不要附进度表或表 A/B/C；只汇报案例进展、CAD 证据路径与待你验收项。落图工序必须遵循该文档 **「理想链路（全局 · 训练期）」**（机器审计 → 截图 → Agent 自检 → 未过则自修，再请你验收）。
+**Agent 训练期例外（方案 A）：** 当 `docs/training/README.md` 所指的 **Agent 训练**（任意场景案例 `projects/<case_id>/`、`开一轮训练`、用户未点名表 C/A/B）时，最终回复同样不要附进度表或表 A/B/C；只汇报案例进展、CAD 证据路径与待你验收项。落图工序必须遵循该文档 **「理想链路（全局 · 训练期）」**（机器审计 → 截图 → Agent 自检 → 未过则自修，再请你验收）。训练交付回复还必须遵循 `docs/training/cad-common-sense-upgrade.md` 的低噪声模板：先说本轮结论，再说相对上一轮变化、机器证据证明了什么、没证明什么、请用户重点看哪里、用户怎样反馈最有用；不得只堆 handles、arc 数、gap / overlap 数字或截图。
 
-**展开条件：** 遇到下列情况，才展开完整 **表 A / 表 B / 表 C**；其中用户问「真实 CAD 实力 / 推进表 C / 表 C / 刷新表 C」时，必须先展开完整表 C。
-
-- 用户要求完整状态汇报、交接、审计、进度盘点或对比。
-- 完成或更新能力证明、代码轨、CAD 补验包，并改变 `docs/planning/任务清单.md` §0 的计数或 next。
-- 修改 `cad_capability_registry`、showcase、coverage JSON，或需要解释真实 CAD 能力瓶颈。
-- 出现回归、绘图不准、口径漂移，或用户质疑“能不能画准”。
+**状态查询口径：** 下列内容只在用户点名时展开为完整 **表 A / 表 B / 表 C**；完成开发包、修改 registry / coverage、处理回归或绘图不准时，也不要自动附进度表。普通交付只用自然段说明本轮结果、证据和风险。用户问「真实 CAD 实力 / 推进表 C / 表 C / 刷新表 C」时，必须先展开完整表 C。
 
 **完整口径定义：**
 

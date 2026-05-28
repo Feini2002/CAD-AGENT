@@ -59,6 +59,12 @@ MODEL_SCHEMAS = {
     "cad_capability_registry": "cad_capability_registry.schema.json",
     "composition_template_catalog": "composition_template_catalog.schema.json",
     "evidence_trend": "evidence_trend.schema.json",
+    "reference_asset": "reference_asset.schema.json",
+    "system_asset": "system_asset.schema.json",
+    "asset_annotation": "asset_annotation.schema.json",
+    "asset_promotion": "asset_promotion.schema.json",
+    "asset_evidence_boundary": "asset_evidence_boundary.schema.json",
+    "retrieval_pack": "retrieval_pack.schema.json",
 }
 
 
@@ -160,4 +166,16 @@ def infer_model_type(data: dict[str, Any]) -> str:
             return "cad_capability_registry"
     if "report_id" in data and "snapshots" in data and "vocabulary" in data:
         return "evidence_trend"
+    if "retrieval_id" in data and "matched_assets" in data and "evidence_boundary" in data:
+        return "retrieval_pack"
+    if "source_type" in data and "usage_boundary" in data and "object_tags" in data:
+        return "reference_asset"
+    if "asset_type" in data and "validation_status" in data and "source_lineage" in data:
+        return "system_asset"
+    if "annotation_id" in data and "asset_ref" in data:
+        return "asset_annotation"
+    if "candidate_ref" in data and "gates_passed" in data and "decision" in data:
+        return "asset_promotion"
+    if "boundary_id" in data and "checked" in data and "not_checked" in data and "assumptions" in data:
+        return "asset_evidence_boundary"
     raise ValueError("Cannot infer model type.")

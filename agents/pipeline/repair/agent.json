@@ -10,11 +10,12 @@
     "runs/roundN_visual_parts.json",
     "runs/roundN_visual_style_brief.md",
     "feedback.md",
-    "TRAINING_ERRORS.md"
+    "docs/training/training-errors.md"
   ],
   "outputs": ["runs/roundN_repair_plan.json", "updated intent/checklist/runs script diff"],
   "repair_priority": [
     "forbidden_visual_patterns",
+    "plan_view_role_direction_errors",
     "missing_furniture_parts",
     "broken_open_endpoints",
     "visual_agent_review_fail",
@@ -29,6 +30,7 @@
     "clone_reference_fragmented_geometry",
     "tighten_checklist_numeric_limits_to_force_pass",
     "ignore_style_target_mismatch",
+    "ignore_user_common_sense_correction",
     "repair_size_or_fillet_when_visual_still_fail",
     "repair_size_only_when_visual_all_pass"
   ],

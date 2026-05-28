@@ -1,25 +1,23 @@
 #!/usr/bin/env python
-"""Two-seater sofa round12 — visual-parts render + audit before delivery."""
+"""Two-seater sofa round14 — redraw with corrected sofa plan-view semantics."""
 
 from __future__ import annotations
 
 import json
-import sys
+import importlib.util
+import runpy
 from pathlib import Path
 
 CASE_ROOT = Path(__file__).resolve().parents[1]
 RUNS = Path(__file__).resolve().parent
 CHECKLIST = CASE_ROOT / "expected" / "audit_checklist.json"
-ROUND = "round12"
+ROUND = "round14"
 REF_HANDLE = "4A2"
 GAP_MM = 400.0
 VISUAL_PARTS = RUNS / f"{ROUND}_visual_parts.json"
 
 _REPO = CASE_ROOT.parents[1]
-if str(_REPO) not in sys.path:
-    sys.path.insert(0, str(_REPO))
-if str(RUNS) not in sys.path:
-    sys.path.insert(0, str(RUNS))
+runpy.run_path(str(_REPO / "scripts" / "_bootstrap.py"))
 
 from core.cad_io.autocad_com import PREVIEW_LAYER, AutoCADComDriver
 from core.verification.training_geometry_audit import (
@@ -27,13 +25,40 @@ from core.verification.training_geometry_audit import (
     merge_legacy_audit_fields,
     run_training_geometry_audit,
 )
-from part_renderer import render_visual_parts
+_PART_RENDERER_SPEC = importlib.util.spec_from_file_location("sofa_part_renderer", RUNS / "part_renderer.py")
+if _PART_RENDERER_SPEC is None or _PART_RENDERER_SPEC.loader is None:
+    raise ImportError(f"Cannot load part renderer from {RUNS / 'part_renderer.py'}")
+_PART_RENDERER = importlib.util.module_from_spec(_PART_RENDERER_SPEC)
+_PART_RENDERER_SPEC.loader.exec_module(_PART_RENDERER)
+render_visual_parts = _PART_RENDERER.render_visual_parts
 
 AGENT_REVIEW_ITEMS = (
     "visual_match_brief",
     "same_product_family_as_reference",
     "no_schematic_shortcut",
 )
+
+
+def merge_render_audit_summary(
+    checklist: dict[str, object],
+    render_report: dict[str, object],
+) -> dict[str, object]:
+    merged = json.loads(json.dumps(checklist, ensure_ascii=False))
+    audit_summary = render_report.get("audit_summary")
+    if not isinstance(audit_summary, dict):
+        return merged
+    checks = merged.setdefault("checks", {})
+    if not isinstance(checks, dict):
+        return merged
+    semantic = checks.setdefault("semantic", {})
+    if not isinstance(semantic, dict):
+        return merged
+    visual_summary = semantic.setdefault("visual_parts_summary", {})
+    if not isinstance(visual_summary, dict):
+        visual_summary = {}
+        semantic["visual_parts_summary"] = visual_summary
+    visual_summary.update(audit_summary)
+    return merged
 
 
 def _write_agent_review(
@@ -92,10 +117,12 @@ def main() -> int:
     checklist = load_training_audit_checklist(CHECKLIST)
     visual_parts = json.loads(VISUAL_PARTS.read_text(encoding="utf-8"))
 
+    deleted_preview_count = 0
     for i in range(ms.Count - 1, -1, -1):
         ent = ms.Item(i)
         if str(ent.Layer) == PREVIEW_LAYER:
             ent.Delete()
+            deleted_preview_count += 1
 
     bb = ref.GetBoundingBox()
     ref_min_y = float(bb[0][1])
@@ -116,12 +143,13 @@ def main() -> int:
         width=w2,
         height=h,
     )
+    audit_checklist = merge_render_audit_summary(checklist, render_report)
     part_handles = render_report["part_handles"]
     created = [handle for handles in part_handles.values() for handle in handles]
 
     audit = run_training_geometry_audit(
         driver,
-        checklist,
+        audit_checklist,
         preview_bounds={"x0": px0, "x1": px1, "y0": py0, "y1": py0 + h},
         reference_handle=REF_HANDLE,
     )
@@ -142,7 +170,7 @@ def main() -> int:
         ready_for_user=False,
         component_checks=component_checks,
         notes={
-            "visual_match_brief": "待 Agent 读 round12_preview.png 确认",
+            "visual_match_brief": f"待 Agent 读 {ROUND}_preview.png 确认",
             "same_product_family_as_reference": "待 Agent 对照左侧参考块确认",
             "no_schematic_shortcut": "机器未命中 schematic" if audit["audit_pass"] else "audit 未过",
         },
@@ -150,12 +178,14 @@ def main() -> int:
 
     report = {
         "status": "executed_pending_agent_review" if audit["audit_pass"] else "audit_failed",
-        "method": "round12_visual_parts_renderer",
+        "method": "round14_semantic_sofa_layer_renderer",
         "round": ROUND,
         "reference_handle": REF_HANDLE,
         "visual_parts": VISUAL_PARTS.name,
+        "deleted_preview_count": deleted_preview_count,
         "created_count": len(created),
         "part_handles": part_handles,
+        "audit_summary": render_report.get("audit_summary", {}),
         "audit": audit_flat,
         "agent_review": agent_review,
     }
@@ -166,6 +196,7 @@ def main() -> int:
             f"{ROUND}_execution_summary.json",
             {
                 "status": "executed",
+                "deleted_preview_count": deleted_preview_count,
                 "created_handles": [REF_HANDLE, *created],
                 "preview_created_handles": created,
                 "part_handles": part_handles,
@@ -179,7 +210,7 @@ def main() -> int:
                 "case_id": CASE_ROOT.name,
                 "round": ROUND,
                 "ready_to_draw": True,
-                "execution_route": "visual_parts_renderer",
+                "execution_route": "semantic_sofa_layer_renderer",
                 "audit_checklist": str(CHECKLIST.relative_to(CASE_ROOT)),
                 "visual_parts": VISUAL_PARTS.name,
                 "target_width_mm": w2,

@@ -12,8 +12,11 @@
     "allow_save_dwg": false
   },
   "round_policy": {
-    "current_round": "round12",
+    "current_round": "round14",
     "user_visual_pass": false,
+    "last_round_status": "redrawn_machine_pass_agent_review_pass_pending_user",
+    "next_round": "round15_if_user_rejects",
+    "next_round_status": "pending_user_feedback",
     "continue_with_next_round_when_user_rejects": true
   },
   "portable_evidence": [

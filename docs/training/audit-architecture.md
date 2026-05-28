@@ -41,7 +41,7 @@ Agent 自检（agent_review_required，任何案例必有）
 
 1. **先在** 本案 `audit_checklist.json` **填阈值**或启用已有探针
 2. **若** 第二个案例也需要 → **在 core 加探针**（如 `forbidden_schematic_equal_grid`）
-3. **写** `pipeline-changelog.md` 一条（链路）+ `TRAINING_ERRORS.md`（案例）
+3. **写** `pipeline-changelog.md` 一条（链路）+ `training-errors.md`（案例）
 4. **禁止** 复制 `sofa_*_audit.py` 到新案例
 
 ## Checklist schema v2（摘要）

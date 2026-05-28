@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "case_id": "residential_sofa_2seat_20260528",
+  "round": "round13",
+  "object": "sofa_plan",
+  "seat_count": 2,
+  "style_target": "expected/style_target_reference_crop.png",
+  "style_target_source": "reference_crop",
+  "style_target_evidence": {
+    "source_image": "runs/round12_preview.png",
+    "crop_box_px": [95, 470, 620, 235],
+    "reference_handle": "4A2",
+    "reference_block": "5S03232",
+    "derived_from_real_cad_screenshot": true,
+    "generated": false
+  },
+  "parts": [
+    {
+      "id": "base_rail",
+      "role": "front_rail",
+      "shape": "base_curved_rail",
+      "closed": true,
+      "position": "front",
+      "bounds_ratio": [0.0, 0.0, 1.0, 0.04],
+      "bow_mm": 8
+    },
+    {
+      "id": "arm_left",
+      "role": "arm",
+      "shape": "curved_arm",
+      "closed": true,
+      "position": "left",
+      "bounds_ratio": [0.0, 0.04, 0.064171, 1.0]
+    },
+    {
+      "id": "seat_left",
+      "role": "seat_cushion",
+      "shape": "seat_bow_cushion",
+      "closed": true,
+      "position": "front_left",
+      "bounds_ratio": [0.064171, 0.04, 0.5, 0.821],
+      "bow_mm": 34
+    },
+    {
+      "id": "seat_right",
+      "role": "seat_cushion",
+      "shape": "seat_bow_cushion",
+      "closed": true,
+      "position": "front_right",
+      "bounds_ratio": [0.5, 0.04, 0.935829, 0.821],
+      "bow_mm": 34
+    },
+    {
+      "id": "arm_right",
+      "role": "arm",
+      "shape": "curved_arm",
+      "closed": true,
+      "position": "right",
+      "bounds_ratio": [0.935829, 0.04, 1.0, 1.0]
+    },
+    {
+      "id": "back_left",
+      "role": "back_cushion",
+      "shape": "back_soft_panel",
+      "closed": true,
+      "position": "back_left",
+      "bounds_ratio": [0.064171, 0.821, 0.5, 1.0],
+      "bow_mm": 12
+    },
+    {
+      "id": "back_right",
+      "role": "back_cushion",
+      "shape": "back_soft_panel",
+      "closed": true,
+      "position": "back_right",
+      "bounds_ratio": [0.5, 0.821, 0.935829, 1.0],
+      "bow_mm": 12
+    }
+  ],
+  "layout": {
+    "assembly": "connected_curved_parts",
+    "symmetry": "vertical_axis",
+    "seat_protrude_past_arm_mm": 0,
+    "part_order": [
+      "base_rail",
+      "arm_left",
+      "seat_left",
+      "seat_right",
+      "arm_right",
+      "back_left",
+      "back_right"
+    ],
+    "connection_policy": "touch_without_gap_or_overlap"
+  },
+  "forbidden": [
+    "closed_outer_shell",
+    "split_line_as_main_structure",
+    "fake_back_cushion_as_inner_line",
+    "rounded_rect_only_parts",
+    "part_connection_defects",
+    "clone_reference_fragments",
+    "probe_drives_styling"
+  ],
+  "sizing": {
+    "target_width_mm": 1870,
+    "height_mm": 960,
+    "gap_from_reference_mm": 400,
+    "round_to_mm": 10,
+    "fillet_mm_approx": 30
+  },
+  "audit_expectations": {
+    "required_part_count": 7,
+    "all_parts_closed": true,
+    "visual_review_required": true,
+    "machine_audit_is_necessary_not_sufficient": true,
+    "part_gap_count": 0,
+    "part_overlap_count": 0,
+    "rounded_rect_only_parts": false
+  }
+}

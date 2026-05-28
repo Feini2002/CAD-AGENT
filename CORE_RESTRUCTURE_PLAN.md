@@ -1,7 +1,7 @@
 # CAD Agent Core PlanMD（唯一开发主线）
 
 状态：完工后治理版（毛坯转精装）；活跃队列从“施工明细”收束为“后置包路由器”。
-最后更新：2026-05-28
+最后更新：2026-05-29
 
 > 本文仍是唯一 `PlanMD`。用户提到 `plan.md`、`PlanMD`、主计划或主 plan 时，默认指本文。执行前先读 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`，再按本文路由打开任务清单、runbook、verification 或 history。
 
@@ -15,6 +15,8 @@
 
 - 真实 CAD 准确性只看 `CAD_PLAN` → validate → dry-run → `CODEX_PREVIEW` → created handles 回读 → `geometry_verified`。
 - 训练期先走 **Visual-First**：`pipeline_visual_intent` 必须产出 `style_target`、`visual_parts` 与 `reference_match` 判定；缺失则阻断 Execute。
+- **CAD 常识底座升级** 已进入训练架构：外部方法论只吸收为知识沉淀、catalog-first、可执行检查和证据边界；用户确认要随 git 迁移的标准图库原始文件放 `standard_cad_library_raw/`，但不能因为 raw 文件存在就声称学会。
+- **CAD 资产智能基础设施** 已进入训练架构：参考图库只做 evidence input，自产图库才是 promoted asset；基础版已落地（目录 / schema / 自动 raw intake / `retrieval_pack` / `pipeline_asset_retriever` / intake 模板 / promotion gate），但 RAG、对象族试点、自动晋升和真实 CAD 能力证明仍未完成。
 - 表 C 机器值只以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准。
 - 截图、no-CAD benchmark、RCAD 烟囱和工程百分比都不能替代真实 CAD 几何证明。
 
@@ -33,12 +35,18 @@
 | L0 规则 | `AGENTS.md` | 不变规则、交付口径、安全边界 |
 | L1 短入口 | `CORE_CONTEXT_BRIEF.md` | 一句话、表 C、训练口令、按需展开表 |
 | L1b 训练 | `docs/training/README.md` | 案例闭环、家装主训、不可声称 |
+| L1c 常识 | `docs/training/cad-common-sense-upgrade.md` | 外部方法论吸收、常识进入系统、低噪声训练反馈 |
+| L1d 资产智能 | `docs/architecture/cad-asset-intelligence-architecture.md` | 参考图库 / 自产图库边界、检索调用链、Agent 职责、训练晋升生命周期 |
+| L1e 资产开发计划 | `docs/planning/cad-commonsense-asset-dev-plan-01.md` | 标准图库 raw 输入、reference 标注、knowledge 编译、自产图库晋升步骤 |
+| L1f OpenSpec 契约 | `openspec/changes/<change>/` | 单个复杂变更的 proposal / design / tasks / specs；不承载总 backlog |
 | L2 主线 | 本文 | Decision Gate、Lab 路由、完成判定 |
 | L3 执行台账 | `docs/planning/任务清单.md` | **案例 backlog**、训练 / 表 C 口令 |
 | L4 证据 | `CORE_STATUS.md`、`docs/status/current.md`、`docs/verification/`、`output/validation_runs/**` | 能力状态、风险、机器证据 |
 | L5 历史 | `docs/planning/archive/`、`docs/history/`、`docs/handoffs/archive/` | done 明细、旧 Phase 剧本、交接归档 |
 
 冲突处理顺序：用户最新明确指令 > `AGENTS.md` 安全规则 > 本文 > 任务清单 > 状态页 / handoff / 历史。其它 MD 不得保留第二套 next、优先级或退出标准。
+
+OpenSpec 只在复杂契约变更时承接 proposal / design / tasks / specs；单文件小修、训练 round、刷新表 C 和状态记录不强制开 change。根级 `openspec/tasks.md` 禁止出现，所有任务必须归属具体 change。
 
 ## 3. 当前可选主线
 
@@ -92,6 +100,9 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 ```
 
 - 训练与案例 backlog：`docs/training/README.md`、`docs/planning/任务清单.md` §0。
+- CAD 常识底座升级：`docs/training/cad-common-sense-upgrade.md`。
+- CAD 资产智能架构包：`docs/architecture/cad-asset-intelligence-architecture.md`。
+- CAD 常识资产开发计划：`docs/planning/cad-commonsense-asset-dev-plan-01.md`。
 - 历史 Phase 剧本（勿当 next）：`docs/planning/HISTORY-ONLY.md`。
 - CAD 卡壳 / 画不准：`docs/runbooks/blocker-playbook.md`。
 - 真实 CAD 验证：`docs/runbooks/cad-validation.md`。

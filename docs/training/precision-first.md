@@ -74,7 +74,7 @@
 案例失败
   → 先改 checklist 阈值 / 几何（本案）
   → 若 repeatable → 晋升 core 探针 或 pipeline 禁止项
-  → 写 TRAINING_ERRORS + pipeline-changelog
+  → 写 training-errors + pipeline-changelog
   → 回归：旧案例 checklist 仍须 pass（防回归）
 ```
 

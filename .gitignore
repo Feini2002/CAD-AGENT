@@ -46,5 +46,6 @@ venv/
 *.bak
 
 # Third-party reference CAD files stay local unless redistribution is confirmed.
+# User-approved, git-portable standard library raw files belong in standard_cad_library_raw/.
 cad_floor_plan_reference_pack/files/*.dwg
 cad_floor_plan_reference_pack/files/*.dxf

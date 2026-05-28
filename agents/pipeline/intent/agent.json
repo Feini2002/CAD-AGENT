@@ -5,6 +5,7 @@
   "role": "白话→结构化意图；参照款先截图视觉分析；尺寸取整写入 brief",
   "inputs": [
     "roundN_context_pack.json",
+    "runs/roundN_retrieval_pack.json",
     "runs/roundN_visual_parts.json",
     "runs/roundN_visual_style_brief.md",
     "brief.md",
@@ -20,6 +21,7 @@
     "open_questions": [],
     "visual_parts_present_for_reference_match": true,
     "visual_style_brief_present": true,
+    "retrieval_route_declared": true,
     "target_dimensions_rounded": true
   },
   "sizing_rules": {
@@ -48,6 +50,7 @@
     "rewrite_visual_parts_semantics_without_visual_intent_update",
     "skip_visual_analysis_for_style_match_brief",
     "allow_reference_match_without_style_target",
+    "emit_bbox_as_object_when_retrieval_route_is_unsupported",
     "emit_sub_mm_targets_from_probe_without_rounding"
   ],
   "doc": "docs/training/vision-first-style.md"

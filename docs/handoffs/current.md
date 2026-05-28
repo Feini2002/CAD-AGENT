@@ -1,127 +1,127 @@
 # 当前交接包窗口
-
-## VCAD-ROUND12-VISUAL-FIRST-SOFA
-
-1. **包名**：`VCAD-ROUND12-VISUAL-FIRST-SOFA`
-2. **修改文件列表**：`agents/pipeline/*`；`core/schemas/visual_parts.schema.json`；`core/drawing/part_primitives.py`；`core/verification/training_geometry_audit.py`；`core/training/learning_promotion.py`；`scripts/run_training_round_gate.py`；`projects/residential_sofa_2seat_20260528/**`；相关 tests 与文档治理文件。
-3. **验证命令**：81 个相关 tests OK；`scripts/run_doc_governance_audit.py --fail-on-findings` pass；`scripts/run_training_round_gate.py --stage delivery --fail-on-blocked` pass。
-4. **证据路径**：`projects/residential_sofa_2seat_20260528/runs/round12_preview.png`；`round12_execution_summary.json`；`round12_geometry_audit.json`；`round12_agent_review.json`；`round12_style_compare.md`；`expected/style_target_reference_crop.png`。
-5. **风险边界**：训练案例待用户目视验收；不写 registry、不改变表 C；截图是视觉辅助，几何证据看 created handles 和 audit。
-6. **真实 CAD**：是；只写 `CODEX_PREVIEW`，56 preview handles，7 个声明部件均有 handle 映射，未保存 DWG。
-7. **输出**：Visual-First 多 Agent gate、visual_parts schema、学习晋升 gate、round12 真实 CAD 证据链。
-8. **结论分类**：训练案例 round12 delivery gate pass；`feedback.md` 状态为 `待你验收`。
-9. **后续接手**：用户若 fail，按 `round12_agent_review.json` + 新反馈进入 Repair；若 pass，再沉淀少量规则到 `agents/residential/rules.md`。
-
----
-
-## TABLE-C-FINAL-GAP：表 C 末 4 行收口
-
-1. **包名**：`TABLE-C-FINAL-GAP`
-2. **修改文件列表**：`core/execution/intent_extended_execute.py`；`execute_plan.py`；`autocad_com.py`；`fake_cad_driver.py`；`intent_lab_manifest.json` + 3×intent_lab plan；`scripts/run_tablec_final_gap_cad.py`、`build_tablec_final_gap_writeback.py`；registry writeback 4 行；`docs/status/changelog.md`。
-3. **关键设计说明**：`delete_object` 在 `CODEX_PREVIEW` 上 bootstrap 矩形后 scoped delete；`verification_no_cad_report` 用 no-CAD API 报告 + `draw_test_cabinet` 真实 CAD 镜像升 showcase。
-4. **真实 CAD**：是；只写 `CODEX_PREVIEW`，未保存 DWG。
-5. **证据**：`output/validation_runs/tablec-final-gap-20260528-cad/`；writeback `writeback_apply.json`（4/4 applied）。
-6. **表 C**：**98.42%→99.68%**（316/317）；`negative.cad_plan.real_cad_guard` 仍 smoke。
-7. **风险**：全库 `evidence_audit` 仍有 **99** 行旧债 fail；全量 gate `writeback_allowed=false`，后续 writeback 须先还债或分批审计。
-
----
-
-## CORE-PLATFORM-CLOSEOUT：Core 平台开发收尾
-
-1. **包名**：`CORE-PLATFORM-CLOSEOUT`
-2. **修改文件列表**：`registry_claim_contract.py`；`run_core_platform_gate.py`；`core_platform_completion_gate.md`；`docs/planning/archive/core-platform-closed.md`；对齐 15 项 registry 契约测试；更新 `CORE_STATUS.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`README.md`、`docs/status/*`。
-3. **关键设计说明**：**Core 100%** = 三轨收口 + 969 tests + doc governance + coverage 可复跑；**禁止**与表 C / 施工图能力混称。后续默认走 PlanMD 后置 Backlog 或表 C，不再开 Core 施工包。
-4. **新增/修改测试**：`test_capability_coverage`、`test_planmd_governance`、`test_symbol_08` 等对齐 showcase-first registry；全量 **969** tests OK。
-5. **实际运行的命令和结果**：`scripts/run_core_platform_gate.py` → `status=pass`；`run_doc_governance_audit.py` → pass；`python -m unittest discover -s tests` → 969 OK。
-6. **是否运行真实 CAD**：否（本包为平台收尾，非表 C 扩样）。
-7. **机器可读证据路径**：`output/validation_runs/core-platform-gate/core_platform_gate_report.json`；表 C 快照 `output/validation_runs/capability-lab/cad_capability_coverage.json`（headline **62.78%**，仅作并列参考）。
-8. **结论分类表**：
-
-| 结论 | 证据类型 | geometry_verified |
-| --- | --- | --- |
-| Core 平台工程底座 100% 收口 | platform gate / unittest | 否 |
-| 三轨 45/52/29 已 done | planning archive 索引 | 否 |
-| 表 C 主指标仍为 62.78% | coverage JSON | 否（本包未改几何证明） |
-
-9. **剩余风险**：表 C 旧 evidence audit 债（约 72 fail）仍须另包；Agent 约 93%；公司块库 / 正式图层 / 自动读图不在 Core 收口范围内。
-
-10. **能力登记表**：本包不新增 registry 行。
-11. **CAD 证明覆盖率**：未以本包为目标；当前机器值见 coverage JSON。
-12. **展示等级 Ladder**：最高已证仍为 L4；本包不提升 Ladder。
-
----
-
-## DOC-FINISH-ARCH-01：完工后文档架构瘦身
-
-1. **包名**：`DOC-FINISH-ARCH-01-FINISHED-ARCHITECTURE-SLIM`
-2. **修改文件列表**：瘦身 `CORE_RESTRUCTURE_PLAN.md`、`docs/planning/任务清单.md`、`CORE_STATUS.md`、`docs/status/current.md`；新增 `docs/planning/archive/*`；新增历史快照 `docs/history/snapshots/finished-architecture-2026-05-28/`；更新 doc governance、handoff index、changelog、issues 和入口 README。
-3. **关键设计说明**：活跃入口只保留规则、口令、路由、当前表 C、风险和证据入口；done 包明细迁入 archive/history。新增 active doc size budget，防止 PlanMD、任务清单、Core Status、current status 重新长成施工期明细页；handoff index 指向 `current.md` 时必须能在当前窗口找到对应包名。
-4. **新增/修改测试**：新增 `check_active_doc_size_budgets()` 行数预算测试；新增 handoff index 当前窗口一致性测试。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_doc_governance tests.core.test_planmd_governance -v`：25 tests OK；`scripts/run_doc_governance_audit.py --fail-on-findings`：`status=pass`、0 findings；`scripts/run_capability_coverage.py --output output/validation_runs/capability-lab/cad_capability_coverage.json`：`status=pass`、表 C 主指标 9.15%；全量 `python -m unittest discover -s tests` 首轮在沙箱内因系统临时目录权限报 2 个 `PermissionError`，按权限规则提权复跑后 **969 tests OK**。
+## CAD-ASSET-RAW-INTAKE-AUTO-01
+1. **包名**：`CAD-ASSET-RAW-INTAKE-AUTO-01`
+2. **修改文件列表**：新增 `core/assets/raw_intake.py`、`scripts/run_asset_raw_intake.py`、`tests/core/test_asset_raw_intake.py`；更新 `core/assets/__init__.py`、asset schema invalid fixtures、`agents/pipeline/*.json`、`docs/training/asset-intake-template.md`、`standard_cad_library_raw/README.md`、资产架构 / 训练 / 计划 / reference README。
+3. **关键设计说明**：标准图库 intake 默认由 Agent 扫描 `standard_cad_library_raw/<source_slug>/original/`，从路径、文件名和一句说明推断对象、图纸类型和适用范围；缺失字段保守写 `unknown` / `reference_only` / `agent_inferred`，每个 raw 文件生成单对象 `reference_asset` JSON，不写 `libraries/system_library/`。
+4. **新增/修改测试**：新增 `tests/core/test_asset_raw_intake.py`；补齐 asset / retrieval schema invalid fixtures。
+5. **实际运行的命令和结果**：`python -m unittest tests.core.test_asset_raw_intake tests.core.test_schema_validation tests.core.test_doc_governance tests.core.test_repo_audit -v` → 46 tests OK；`py_compile` → OK；`scripts/run_doc_governance_audit.py` → pass；`scripts/run_repo_audit.py --max-python-lines 500` → 仅 6 个既有 low `large_python_file` findings。
 6. **是否运行真实 CAD**：否。
-7. **机器可读证据路径**：`docs/history/snapshots/finished-architecture-2026-05-28/`、`docs/planning/archive/`；本包不新增 `output/validation_runs/**` CAD 证据。
-8. **结论分类表**：
-
-| 结论 | 证据类型 | geometry_verified |
-| --- | --- | --- |
-| 活跃文档控制面已瘦身 | doc governance / Markdown audit | 否 |
-| done 明细已迁入 archive/history | history snapshot / planning archive | 否 |
-| 表 C 机器值未改变 | existing coverage JSON | 否 |
-
-9. **剩余风险**：本包不清理旧 `docs/verification/*.md` 路径和历史 changelog 大文件；这些仍是后续可选治理包。旧 verified/showcase 证据债仍需通过 table C hard gate 单独补齐。
-
+7. **机器可读证据路径**：无新增 CAD 证据；测试会在 `output/test_artifacts/` 下使用临时目录。
+8. **结论分类表**：自动 raw intake CLI / core 已落地（code + tests，geometry_verified=否）；raw scan 仍不是能力证明、不改表 C。
+9. **剩余风险**：自动推断可能误判对象或视图类型；不确定项必须保持 `unknown`，真实自产资产仍需后续 promotion gate。
 ---
-
-## CAD-EVIDENCE-01-HARD-AUDIT-VISUAL-GATE
-
-1. **包名**：`CAD-EVIDENCE-01-HARD-AUDIT-VISUAL-GATE`
-2. **修改文件列表**：新增 `core/verification/capability_evidence_audit.py`、`core/verification/visual_cad_review.py`、`core/verification/table_c_evidence_gate.py`、`scripts/run_capability_evidence_audit.py`、`scripts/run_visual_cad_review.py`、`scripts/run_table_c_evidence_gate.py`、`docs/verification/table_c_evidence_gate.md`、`tests/core/test_table_c_evidence_gate.py`；修改 `core/verification/capability_coverage.py`、`scripts/run_capability_coverage.py` 与状态 / 交接文档。
-3. **关键设计说明**：表 C writeback 前必须先过两道硬门：`verified/showcase` 证据报告硬审计，以及截图视觉复盘。截图失败或视觉复盘失败时 `writeback_allowed=false`；截图仍只是 `visual_aid_only`，不能替代 created handles readback。
-4. **新增/修改测试**：`tests/core/test_table_c_evidence_gate.py` 覆盖有效 readback、缺失报告、伪 `geometry_verified`、截图缺失、visual fail 阻止 gate、coverage 强制 evidence audit。
-5. **实际运行的命令和结果**：focused `tests.core.test_doc_governance` + `tests.core.test_capability_coverage` + `tests.core.test_table_c_evidence_gate` 共 25 tests OK；`run_doc_governance_audit.py` 0 findings；现有 registry 硬审计实际为 fail（131 audited，59 pass，72 fail），总 gate 因 hard audit fail + visual missing 阻止 writeback；合成通过样例 gate `writeback_allowed=true`。
+## OPENSPEC-CONTRACT-LITE-01
+1. **包名**：`OPENSPEC-CONTRACT-LITE-01`
+2. **修改文件列表**：新增 `openspec/changes/establish-change-contract-lite/`；更新 `AGENTS.md`、`CORE_RESTRUCTURE_PLAN.md`、`core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、状态 / changelog / handoff 索引。
+3. **关键设计说明**：OpenSpec 只作为单个复杂变更的契约层；`CORE_RESTRUCTURE_PLAN.md` 仍是唯一 PlanMD。新增 `check_openspec_contracts()`，阻断根级 `openspec/tasks.md`、缺少主线边界的 config，以及 active change 自称主计划 / 总 backlog。
+4. **新增/修改测试**：新增 doc governance OpenSpec 契约测试，覆盖 misuse、config boundary、valid layer 和总报告接入。
+5. **实际运行的命令和结果**：先跑新增测试红灯，随后实现后新增测试 4 tests OK；完整验证见本包最终回复。
 6. **是否运行真实 CAD**：否。
-7. **机器可读证据路径**：`output/validation_runs/table-c-evidence-gate/evidence_audit_report.json`、`output/validation_runs/table-c-evidence-gate/table_c_evidence_gate_report.json`、`output/validation_runs/table-c-evidence-gate-visual-cli/visual_review_report.json`、`output/validation_runs/table-c-evidence-gate-cli-pass/table_c_evidence_gate_report.json`、`output/test_artifacts/table_c_evidence_gate/`。
+7. **机器可读证据路径**：OpenSpec change 位于 `openspec/changes/establish-change-contract-lite/`；未新增 `output/validation_runs/**`。
+8. **结论分类表**：变更契约能力已接入（docs + governance tests，geometry_verified=否）；CAD 几何能力提升：未做（geometry_verified=否）。
+9. **剩余风险**：这是轻量护栏，不是完整 OpenSpec 平台；后续复杂包仍需人工判断是否开 change。
+---
+## ROOT-MD-CHINESE-NAMES-01
+1. **包名**：`ROOT-MD-CHINESE-NAMES-01`
+2. **修改文件列表**：重命名根目录 10 个历史 stub：`CAD_AGENT_AUTONOMOUS_VALIDATION.md`→`CAD自动验证入口.md`，`CAD_AGENT_BLOCKER_PLAYBOOK.md`→`CAD卡壳排障入口.md`，`CAD_AGENT_CHANGELOG.md`→`变更记录入口.md`，`CAD_AGENT_ISSUES.md`→`问题风险入口.md`，`CAD_AGENT_RULES.md`→`长期规则入口.md`，`CAD_AGENT_STATUS.md`→`当前状态入口.md`，`CORE_ROADMAP.md`→`路线图入口.md`，`SYMBOL_CORE_01_CAD_SYMBOL_GRAMMAR.md`→`CAD符号语法入口.md`，`TRAINING_ERRORS.md`→`训练错误记录入口.md`，`VISUAL_FIRST_AGENT_PLAN.md`→`视觉优先训练计划入口.md`；更新 `core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、状态 / changelog / handoff 索引。
+3. **关键设计说明**：只把人看的根目录历史入口改成中文文件名；`AGENTS.md`、`README.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_STATUS.md` 是机器和仓库约定入口，暂不改名，避免打断恢复链路。
+4. **新增/修改测试**：更新 `tests/core/test_doc_governance.py` 的中文 stub 断言。
+5. **实际运行的命令和结果**：`python -m unittest tests.core.test_doc_governance -v` → 22 tests OK；`scripts/run_doc_governance_audit.py --fail-on-findings` → pass。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`；验证来自 doc governance CLI 和单测输出。
+8. **结论分类表**：根目录历史 stub 文件名已中文化（rename + docs，geometry_verified=否）；训练 / CAD 能力提升：未做（geometry_verified=否）。
+9. **剩余风险**：主控入口 `CORE_RESTRUCTURE_PLAN.md` 仍是英文旧名；后续如果要继续现代化，建议单独做“主控计划重命名 / stub 兼容”小包。
+---
+## DOC-ROOT-HYGIENE-01
+1. **包名**：`DOC-ROOT-HYGIENE-01`
+2. **修改文件列表**：迁移 `TRAINING_ERRORS.md` 正文到 `docs/training/training-errors.md`；迁移 `VISUAL_FIRST_AGENT_PLAN.md` 正文到 `docs/training/visual-first-agent-plan.md`；根目录两文件保留 stub；更新训练 README、pipeline / learning / precision 文档、pipeline agent 配置、`core/assets/retrieval.py`、`core/maintenance/doc_governance.py`、`semantic_clean_two_seater.py`、状态 / changelog / issues / handoff 索引。
+3. **关键设计说明**：根目录只保留控制入口和兼容 stub，训练错因台账和 Visual-First 专项计划回到 `docs/training/`；资产检索优先读取新错因台账，旧根路径只作 fallback；案例脚本不再本地插入 `sys.path`，改运行共享 bootstrap。
+4. **新增/修改测试**：无新增测试；复用文档治理和 repo audit。
+5. **实际运行的命令和结果**：`run_doc_governance_audit.py` pass；`unittest tests.core.test_doc_governance tests.core.test_repo_audit` 29 tests OK；`py_compile` OK；`run_repo_audit.py --max-python-lines 500` 仍有 6 个既有 low 大文件 findings，raw `sys.path` finding 已消失。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`；主要为文档路径和审计命令输出。
+8. **结论分类表**：根目录训练长文已迁入 `docs/training/`（docs / governance，geometry_verified=否）；案例脚本 raw `sys.path` 债已清理（code / repo audit，geometry_verified=否）。
+9. **剩余风险**：大文件拆分仍有低优先级结构债；本包不做 Core 大重构，也不改变表 C。
+---
+
+## CAPABILITY-MAP-HTML-01
+1. **包名**：`CAPABILITY-MAP-HTML-01`
+2. **修改文件列表**：新增 `capability-map.html`；更新 `README.md`、`CORE_CONTEXT_BRIEF.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md`。
+3. **关键设计说明**：页面只展示具体图块和基础绘图能力的覆盖清单。V1 能力项包括沙发、茶几、餐桌、床铺、衣柜、墙体绘制、门窗绘制、简单尺寸标注等；左侧清单本身就是计划，右侧阶段列为标准图库、常识整理、训练通过、自产资产。当前未开始标准图库训练，因此右侧阶段默认全空。
+4. **新增/修改测试**：无单元测试；这是静态 HTML 页面。
+5. **实际运行的命令和结果**：已做静态 HTML 检查和浏览器打开验证；未运行 CAD 测试。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`；页面文件为 `capability-map.html`。
+8. **结论分类表**：能力覆盖清单 V1 已创建（HTML / docs，geometry_verified=否）；已训练出自产资产：未做（geometry_verified=否）。
+9. **剩余风险**：页面不是表 C 或证据台账；未来勾选必须由 raw 导入、常识整理、训练通过或 system_library 晋升事实驱动。
+---
+## CAD-COMMONSENSE-ASSET-DEV-PLAN-01
+1. **包名**：`CAD-COMMONSENSE-ASSET-DEV-PLAN-01`
+2. **修改文件列表**：新增 `docs/planning/cad-commonsense-asset-dev-plan-01.md`；新增 `standard_cad_library_raw/README.md` 与 `standard_cad_library_raw/.gitignore`；更新 `libraries/reference_library/README.md`、`docs/architecture/cad-asset-intelligence-architecture.md`、`README.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/planning/任务清单.md`、状态 / changelog / issues / handoff 索引。
+3. **关键设计说明**：按用户新约束，标准 CAD 图库原始文件允许放根目录 `standard_cad_library_raw/` 并进入 git，便于家里和公司迁移；自产图库仍只放 `libraries/system_library/`。raw 文件默认 `reference_only`，必须经过 reference manifest、knowledge summary、executable check、evidence boundary 和 promotion gate，才能晋升为系统资产。
+4. **新增/修改测试**：无。本轮是计划书和目录边界，不做测试。
+5. **实际运行的命令和结果**：计划书写入后只做文档一致性检查；未运行 unit tests / CAD tests。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`；主要证据为 `docs/planning/cad-commonsense-asset-dev-plan-01.md` 与 `standard_cad_library_raw/README.md`。
+8. **结论分类表**：标准图库 raw 目录与自产图库边界已明确（docs，geometry_verified=否）；已导入真实图库或对象族能力已提升：未做（geometry_verified=否）。
+
+9. **剩余风险**：raw 图库进 git 后仍需人工确认来源、授权、体积和批次说明；下一步真正开发常识底座时，应按一个对象族一批次推进。
+
+---
+
+## CAD-ASSET-INTELLIGENCE-FOUNDATION-01
+
+1. **包名**：`CAD-ASSET-INTELLIGENCE-FOUNDATION-01`
+2. **修改文件列表**：新增 `libraries/reference_library/`、`libraries/system_library/`、`libraries/knowledge/`、`libraries/benchmarks/`；新增 `core/schemas/reference_asset.schema.json`、`system_asset.schema.json`、`asset_annotation.schema.json`、`asset_promotion.schema.json`、`asset_evidence_boundary.schema.json`、`retrieval_pack.schema.json`；新增 `core/assets/`、`scripts/run_asset_retrieval_pack.py`、`scripts/run_asset_promotion_gate.py`；新增 `agents/pipeline/asset_retriever/agent.json`；新增训练 intake 模板；同步状态、changelog、pipeline 文档和 PlanMD 入口。
+3. **关键设计说明**：按用户要求把前五项一起落地，但排除测试。当前实现只做本地 JSON / Markdown 资产检索和保守晋升 gate；`retrieval_pack` 是 `CAD_PLAN` 前的上游契约，promotion gate 只出报告、不自动写回图库。
+4. **新增/修改测试**：无。用户明确要求“除了测试”。
+5. **实际运行的命令和结果**：未运行 unit tests / CAD tests；仅做非测试类检查。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`；基础入口为 `core/assets/*.py` 与 `scripts/run_asset_*.py`。
+8. **结论分类表**：资产目录 / schema / 检索 / Agent / intake / gate 基础版已落地（code + docs，geometry_verified=否）；已导入图库、RAG 或对象族 verified：未做（geometry_verified=否）。
+
+9. **剩余风险**：未写测试、未跑测试；下一包若继续自动化或对象族试点，应补 focused tests 和真实 CAD 证据。
+
+---
+
+## CAD-ASSET-INTELLIGENCE-ARCH-01
+
+1. **包名**：`CAD-ASSET-INTELLIGENCE-ARCH-01`
+2. **修改文件列表**：新增 `docs/architecture/cad-asset-intelligence-architecture.md`；更新 `docs/architecture/README.md`、`docs/training/cad-common-sense-upgrade.md`、`docs/training/global-agent-pipeline.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、handoff 索引。
+3. **关键设计说明**：本包把“标准参考图库 → 系统自产图库 → 检索 / 生成 / 审计 / 晋升”定为资产化能力管线。`reference_library` 只作 evidence input；`system_library` 才是 promoted asset，必须有 schema、lineage、check 和 evidence_boundary。图库弱命中时进入探索模式，靠对象语法、参数化变体和审计候选保持创造性。
+4. **新增/修改测试**：无。本轮是架构方案固化，不创建目录、不写 schema、不接 RAG、不跑真实 CAD。
+5. **实际运行的命令和结果**：只做文档读取、4 个子 Agent 只读评审、Markdown 修改和轻量文本检查；未运行测试。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`。主要证据是架构文档 `docs/architecture/cad-asset-intelligence-architecture.md`。
 8. **结论分类表**：
 
 | 结论 | 证据类型 | geometry_verified |
 | --- | --- | --- |
-| 表 C hard audit / visual gate 入口已建立 | `non_cad_only` / unit tests | 否 |
-| 当前历史 registry 未通过新 hard audit | `evidence_contract_failed` / `report_path_missing` | 否 |
-| visual review 失败会阻止 writeback | `visual_review_failed` gate | 否 |
+| CAD 资产智能架构已写入 | 文档 / architecture | 否 |
+| 参考图库与自产图库边界已明确 | 文档 / governance | 否 |
+| 已导入图库、RAG 或对象族能力 | 未做 | 否 |
 
-9. **剩余风险**：旧 `verified/showcase` 证据存在历史债，首次硬审计 72 行失败；本包不自动降级 registry、不改变表 C，后续需单独补齐或迁移旧证据格式。新表 C 推进包必须在 writeback 前提供真实 CAD readback + visual review pass。
+9. **剩余风险**：生成架构包不等于方案完成。下一步仍需按小包建目录、写 schema、实现 `retrieval_pack`、调整 Agent manifest、建立训练 intake 和晋升 gate，再用对象族案例与真实 CAD 证据验证。
 
 ---
 
-## V-PROOF-73-CROSS-MACHINE
+## CAD-COMMON-SENSE-ARCH-01
 
-1. **包名**：`V-PROOF-73-CROSS-MACHINE`（PROJ-03）
-2. **产物**：`cross_machine_proof.py`、`run_vproof_73_cross_machine_sync.py`、`vproof_73_cross_machine.md`、`cross_machine_playbook_manifest.json`
-3. **证据**：`output/validation_runs/vproof-73-cross-machine/cross_machine_report.json`（no-CAD 4/4；coverage delta 0）
-4. **registry**：2 行 `project.cross_machine.*` smoke；2/2 writeback
-5. **测试**：`test_vproof_73_cross_machine.py` 7/7 OK
-6. **表 C**：headline **约 9.15%**（317 行；smoke 不计证明率）
-7. **§3**：**45/45 能力证明轨已收口**
+1. **包名**：`CAD-COMMON-SENSE-ARCH-01`
+2. **修改文件列表**：新增 `docs/training/cad-common-sense-upgrade.md`；更新 `docs/training/README.md`、`docs/training/learning-loop.md`、`docs/training/global-agent-pipeline.md`、`docs/training/pipeline-changelog.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/planning/任务清单.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、handoff 索引。
+3. **关键设计说明**：只吸收 GitHub 上 4 类项目的方法论，不 clone、不搬代码：`llm-wiki` → 资料沉淀；`step.parts` → catalog-first；`CADTestBench` → 可执行检查；`CADCLAW` → checked / not_checked / assumptions 的证据边界。常识进入系统必须走 `source_note → knowledge_summary → object_or_rule_candidate → executable_check → evidence_boundary`。
+4. **新增/修改测试**：无。本轮按用户要求只做架构文档升级，不急着测试。
+5. **实际运行的命令和结果**：未运行测试；仅做文档读取、GitHub 方法论梳理和 Markdown 修改。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`。主要证据是 `docs/training/cad-common-sense-upgrade.md` 及训练文档入口。
 8. **结论分类表**：
 
 | 结论 | 证据类型 | geometry_verified |
 | --- | --- | --- |
-| 换机 playbook + coverage baseline 复算入口已建立 | `benchmark_pass_non_cad` | 否 |
-| 2 行 `project.cross_machine.*` registry smoke 回写完成 | `smoke` / `benchmark_pass_non_cad` | 否 |
+| CAD 常识底座方法论已写入架构 | 文档 / training architecture | 否 |
+| 训练反馈汇报模板已升级 | 文档 / workflow rule | 否 |
+| 已导入图库或自动常识学习 | 未做 | 否 |
 
-9. **剩余风险**：本包未执行真实 AutoCAD 换机落图；真实 CAD 会话、`run_cad_validation` 全量与 CAD-MCP 落图仍是人工换机 gate。
-
-10. **能力登记表（registry）**：`examples/capability_proof/cad_capability_registry.json`；触及行如下。
-
-| `capability_id` | `claim_level` | `ladder_level` | `evidence.report_path` |
-| --- | --- | --- | --- |
-| `project.cross_machine.*` | smoke | L0 | `output/validation_runs/vproof-73-cross-machine/cross_machine_report.json` |
-
-11. **CAD 证明覆盖率**：本包 coverage delta 0；最新机器口径见 `output/validation_runs/capability-lab/cad_capability_coverage.json`。
-12. **展示等级 Ladder**：本包不提升对外 Ladder 声称；最高已证仍为 L4。
-
-**user_gate（换机人工，未在本包执行）**：AutoCAD 会话、`run_cad_validation` 全量、CAD-MCP 落图 → 见 `docs/onboarding/migration-checklist.md`
-
----
+9. **剩余风险**：这不是能力证明包；后续仍需在新对话里通过对象族测试、训练案例、审计项和真实 CAD 证据，把常识逐步转为可证明能力。普通训练回复应按低噪声模板汇报，不再只堆 handles、arc 数、gap/overlap 数字。
 
 历史见 `archive/2026-05.md`。
