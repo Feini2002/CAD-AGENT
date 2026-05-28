@@ -198,7 +198,7 @@ flowchart TD
 
 与上文理想链路一致；缩写版：
 
-1. **建案例**：复制 `projects/residential_training_template/` → `projects/<your_case_id>/`，填 `brief.md`（白话需求）、`input/shell.manual.json`（脱敏空壳）；**勿提交 DWG**。
+1. **建案例**：复制 `projects/residential_training_template/` → `projects/<your_case_id>/`，填 `brief.md`（白话需求）、`input/shell.manual.json`（脱敏空壳）；若 DWG/DXF 是非敏感、脱敏且体积可控的训练底图，可以作为 case fixture 提交，锁文件和备份文件仍不提交。
 2. **听懂**：在对话里澄清缺参；把「误解 / 漏问」记进 `feedback.md` §理解。
 3. **出计划**：生成或修订 `CAD_PLAN`；跑 `validate_plan` + `dry_run_plan`；失败只改最小范围。
 4. **落预览 + 机器审计**：真实 CAD 只写 `CODEX_PREVIEW`；写 `roundN_geometry_audit.json`；**审计未过不得进入步骤 5**。
