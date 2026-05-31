@@ -76,7 +76,7 @@ class PlanMdGovernanceTests(unittest.TestCase):
 
     def test_active_cad_docs_use_portable_python_path_examples(self) -> None:
         active_docs = [
-            PROJECT_ROOT / "CAD_AGENT_BLOCKER_PLAYBOOK.md",
+            PROJECT_ROOT / "CAD卡壳排障入口.md",
             PROJECT_ROOT / "CORE_CONTEXT_BRIEF.md",
             PROJECT_ROOT / "README.md",
         ]

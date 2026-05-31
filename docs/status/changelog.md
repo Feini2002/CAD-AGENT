@@ -2,7 +2,50 @@
 
 这个文件记录 CAD Agent 测试工作区的结构、规则、Schema、脚本和重要决策变化。
 
+## 2026-06-01
+
+### ARCH-BOUNDARY-HARDENING-01：架构瘦身与边界加固 01
+
+- **触发**：用户认可“不要做系统重构 2.0”，要求按“架构瘦身与边界加固 01”收束当前架构：区分稳定 Core、训练实验和 case 代码，并先处理 verification、capability-map、资产闭环和 `projects/.../runs` 晋升边界。
+- **OpenSpec**：新增 `openspec/changes/architecture-boundary-hardening-01/`，包含 proposal / design / specs / tasks；新增 capability `module-boundary-contract`，明确该 change 不是第二套主计划。
+- **架构快照**：新增 `docs/architecture/current-module-boundaries.md`，固定 `Stable Core`、`Training Experiments`、`Case-Only` 三桶；为 `core/verification/` 定义 `report contract`、`runner`、`registry writeback`、`visual audit`、CAD/session safety 拆分图；为 capability map 定义 data generator、page shell、display configuration 和证据边界拆分图。
+- **对象资产试点**：选择 `projects/residential_sofa_2seat_20260528` 作为首个对象族候选，但明确必须走 `raw reference -> knowledge summary -> candidate -> executable check -> system asset -> CAD_PLAN -> readback`，不能把 raw reference 或 candidate 直接当系统资产。
+- **守护测试**：新增 `tests/core/test_architecture_boundary_hardening.py`，检查架构快照可发现、三桶分类、拆分图、对象资产试点、case-run 晋升门槛和 OpenSpec 不替代 `CORE_RESTRUCTURE_PLAN.md`。
+- **收尾修复**：`core/verification/render_preview.py` 的 optional module 检测补上 `ModuleNotFoundError` 降级；系统 Python 缺少 `PIL` 时 screenshot tooling 只进入 warn，不再让 self-check 或 wrapper 测试异常失败。
+- **验证**：新增边界测试 5 OK；失败集复测 19 OK；CAD-MCP venv 全量 `unittest discover -s tests` 1044 OK（2 skipped）；`run_doc_governance_audit.py` pass；CAD-MCP venv `scripts/self_check.py` pass。
+- **边界**：本包是收束契约和守护测试，不是大规模移动代码；未改变 CAD 执行、registry、表 C 或真实 CAD 证据。
+
+### REPO-POWER-LOSS-HEALTH-01：断电后仓库健康检查与测试契约修复
+
+- **触发**：用户说明电脑刚刚断电，要求整体检查仓库是否有文件受损，并修复需要修的地方。
+- **检查**：`git fsck --full --strict --no-dangling` 通过；全仓库冲突标记扫描无命中；JSON 文件解析 0 error；UTF-8 抽检确认中文上下文文件未损坏；非测试产物 0 字节文件仅有临时服务输出日志 `tmp-capability-map-server.out.log`。
+- **根因**：全量单测最初失败不是 Git 损坏，而是迁移后的契约未同步：self-check 仍查旧英文根级文件名，pipeline 测试未纳入 `pipeline_asset_retriever`，round12 测试仍按旧“允许交付”口径断言，RCAD-20/21 live contract 在本机缺少未随仓库携带的真实 CAD JSON 时不应伪造证据。
+- **修复**：更新 `core/verification/self_check.py` 的 required files；同步 `tests/core/test_planmd_governance.py`、`tests/agents/test_pipeline_visual_contracts.py`、`tests/core/test_visual_parts_case_contract.py`、`tests/core/test_vproof_51_negative_cad.py`、`tests/core/test_vproof_52_guard_cad.py`；修复 `tests/core/test_route_audit_report.py` 每次全量测试重写 tracked 示例 JSON 时间戳的副作用。
+- **收尾**：`.gitignore` 增加 `tmp-*.log`，让本地临时服务日志不再污染工作区；状态页最近门禁同步为 1039 tests OK（2 skipped）。
+- **验证**：目标失败集 40 tests OK（2 skipped）；全量 `python -m unittest discover -s tests` 1039 tests OK（2 skipped）；`scripts/self_check.py` pass；`git diff --check` 仅有 Windows 换行提示。
+- **边界**：未补造真实 CAD 证据；RCAD-20/21 对应 JSON 不在当前工作区时只跳过 live contract；不改变表 C、不运行真实 CAD、不保存或修改用户 DWG。
+
+## 2026-05-31
+
+### CAPABILITY-MAP-TRAINING-WORKBENCH-03：训练计划表单与智能体 Prompt 工作台
+
+- **触发**：用户指出“CD / CAD 能力训练看板”越改越复杂，真正需要围绕训练计划和智能体 Prompt，看清不同能力项训到哪、谁负责、下一轮怎么练，以及每个智能体 Prompt 和调用能力成熟度如何调整。
+- **方案**：保留用户认可的能力矩阵分组（基础家具 / 储位家具 / 厨卫对象 / 基础绘图 / 标注表达），默认首页改为“训练计划表单”；第二主视图改为“智能体 Prompt 工作台”，左侧选智能体、右侧看当前 Prompt 描述、职责边界、输入输出、硬门槛、禁止事项、调用契约、可调 Prompt 点和源文件入口。
+- **数据生成**：`scripts/build_capability_map_data.py` 升级到 schema v2，新增 `trainingStageColumns`、`trainingPrograms`、`agentProfiles`、`promptContracts`、`tableCBoundary`；为 pipeline / scene / demand 智能体生成自然中文 Prompt 契约，避免前端展示英文碎片。
+- **前端重构**：`capability-map.html` 改为训练工作台：桌面端固定列宽展示能力矩阵和右侧训练详情；移动端隐藏宽表格，改用训练计划卡片展示阶段、下一轮训练、责任智能体和四条沉淀轨道；智能体页前置“本轮最值得调的 3 条 Prompt”。
+- **口径修正**：`Prompt 已定义` 改为 `目标已声明`；训练阶段显示 `第 x/5 阶段` 而非伪百分比；智能体卡片改为 `契约完整度 / 调用契约 / 训练覆盖面 / 证据状态`，并显示依据和缺口；表 C 顶部降权为机器快照，完整解释放入证据边界。
+- **验证**：已跑 `build_capability_map_data.py`、`py_compile`、`node --check capability-map-data.js`、HTML 内联脚本语法检查；Chrome DevTools 验证桌面计划页、桌面智能体页、移动计划页、移动智能体页截图，移动端无明显文本溢出。
+- **边界**：本包只改训练看板可视化和生成数据，不改变表 C、registry、真实 CAD 能力、CAD 执行链路或用户 DWG；页面里的阶段和契约分只用于训练调度与 Prompt 调整。
+
 ## 2026-05-29
+
+### CAPABILITY-MAP-AGENT-COCKPIT-02：智能体控制台详情弹窗
+
+- **触发**：用户指出能力看板里的智能体清单仍不可控，无法知道每个 Agent 背后的 JSON / MD / prompt 规则、运作架构和可优化点。
+- **执行**：`capability-map.html` 的智能体卡片改为可点击详情弹窗，新增“运作架构 / 规则提示词 / 可优化点 / 文件翻译”四个视图；卡片不再用 `+数字` 折叠智能体信息。
+- **数据生成**：扩展 `scripts/build_capability_map_data.py`，从 `agents/**/agent.json`、`rules.md`、pipeline doc 和 demand role 数据生成中文职责、输入输出、通过门槛、禁止事项、文档含义、改动建议和优化提示；重建 `capability-map-data.js`。
+- **验证**：已跑生成器、`py_compile`、`node --check capability-map-data.js`、HTML 内联脚本语法检查和数据断言；浏览器插件因当前额度限制未能完成点击截图验证。
+- **边界**：本包只做控制台可视化和数据快照，不直接编辑源 JSON/MD，不改变真实 CAD 能力表 C，不替代 validate / dry-run / CODEX_PREVIEW / 回读 / 截图链路。
 
 ### CAD-ASSET-RAW-INTAKE-AUTO-01：标准图库自动 raw intake
 

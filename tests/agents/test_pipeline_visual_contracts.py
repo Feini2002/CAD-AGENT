@@ -22,6 +22,7 @@ class PipelineVisualContractTests(unittest.TestCase):
         self.assertTrue(
             {
                 "pipeline_context_curator",
+                "pipeline_asset_retriever",
                 "pipeline_orchestrator",
                 "pipeline_visual_intent",
                 "pipeline_intent",
@@ -37,6 +38,7 @@ class PipelineVisualContractTests(unittest.TestCase):
             manifest["orchestration"]["default_flow"],
             [
                 "pipeline_context_curator",
+                "pipeline_asset_retriever",
                 "pipeline_orchestrator",
                 "pipeline_visual_intent",
                 "pipeline_intent",

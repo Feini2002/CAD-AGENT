@@ -2,6 +2,7 @@
 
 | 序号 | 开发包 | 位置 |
 | --- | --- | --- |
+| 0 | ARCH-BOUNDARY-HARDENING-01：架构瘦身与边界加固 01 | `current.md` |
 | 0 | CAD-ASSET-RAW-INTAKE-AUTO-01：标准图库自动 raw intake | `current.md` |
 | 0 | OPENSPEC-CONTRACT-LITE-01：OpenSpec 变更契约轻量护栏 | `current.md` |
 | 0 | ROOT-MD-CHINESE-NAMES-01：根目录历史入口中文化 | `current.md` |

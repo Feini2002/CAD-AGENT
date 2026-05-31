@@ -6,6 +6,7 @@
 
 | 风险 | 当前影响 | 处理口径 |
 | --- | --- | --- |
+| Core / training / case 边界继续变重 | `core/` 子模块、`core/verification/`、capability map 和 `projects/.../runs` 里的可复用逻辑如果继续混放，会让后续 Agent 不知道该抽到哪里 | 以 `docs/architecture/current-module-boundaries.md` 为当前边界快照；稳定 Core、Training Experiments、Case-Only 三桶先判定，再按 split map 或 promotion gate 移动 |
 | OpenSpec 被误当第二主计划 | 初始化后若把 `openspec/changes/*` 当全局 next / backlog，会和唯一 PlanMD 冲突 | OpenSpec 只做复杂变更契约；`CORE_RESTRUCTURE_PLAN.md` 仍是唯一主线；`check_openspec_contracts()` 阻断根级 `openspec/tasks.md` 和 active change 自称主计划 |
 | 活跃入口 MD 过长 | 旧完成流水会撑大每轮上下文，稀释当前主线 | PlanMD、任务清单、Core Status、current status 只保留控制面；旧记录查 `docs/history/snapshots/finished-architecture-2026-05-28/` 和 `docs/planning/archive/`；`run_doc_governance_audit.py` 校验体量预算 |
 | 场景 Alpha / Beta 被误读为 Scene Product | 可能误以为工装、办公、住宅、餐饮 Agent 已产品化 | 统一四级成熟度；Scene Product 必须有真实项目样本、图块 metadata、真实 CAD smoke、用户确认流 |
@@ -33,6 +34,48 @@
 | 训练案例部件契约虚绿 | `visual_parts` 部件齐全不等于参考款式准确，profile ratio 对齐也可能放过靠背/坐垫层级方向错误 | round12 已登记 fail；round14 已补 `sofa_direction_semantics_inverted` 并真实重画；仍以用户目视验收为准 |
 
 ## 最近修复教训
+### 可选截图依赖缺失要降级，不应让自检失败
+
+日期：2026-06-01
+
+现象：系统 Python 没有安装 `PIL` 时，`importlib.util.find_spec("PIL.ImageGrab")` 会先因父包缺失抛 `ModuleNotFoundError`，导致 `render_preview --check`、`self_check.py` 和相关 wrapper 测试失败。
+
+影响：截图能力是辅助视觉证据，不应因为当前解释器缺少可选截图依赖就让仓库健康检查误判为失败；标准 CAD-MCP venv 仍有完整截图依赖。
+
+修复 / 计划：`module_available()` 捕获 `ModuleNotFoundError` 并返回 `False`；截图能力报告在缺少 `PIL` 时降级为 unavailable / warn；测试改为按 dependency 状态断言 capture mode。
+
+以后规则：截图、窗口捕获和 GUI 依赖都按可选能力处理；缺失时报告能力不可用或 warn，真实 CAD 准确性仍以 created handles readback 和几何证据为准。
+
+相关文件：`core/verification/render_preview.py`、`tests/core/test_render_preview.py`
+
+### 架构瘦身先立边界，再按证据拆文件
+
+日期：2026-06-01
+
+现象：`core/` 子模块数量已接近“什么都往 Core 里放”的临界点；`core/verification/`、capability map、资产智能和 case-run renderer 都出现了职责变重迹象。
+
+影响：如果只按行数机械拆文件，可能把 report contract、runner、registry writeback、visual audit、case 特例和训练实验拆散到更多文件，但职责仍然混在一起；如果直接把 `projects/.../runs` 的可复用片段上移，又可能把单案例假设误升为 Core 能力。
+
+修复 / 计划：新增 `ARCH-BOUNDARY-HARDENING-01` OpenSpec 和 `docs/architecture/current-module-boundaries.md`，先固定 Stable Core / Training Experiments / Case-Only 三桶，再给 verification、capability-map、对象资产试点和 case-run 晋升分别定 split map / promotion gate。
+
+以后规则：后续重构先问“这段逻辑属于哪一桶、是否通过晋升门槛”，再移动文件；对象资产必须走 `raw reference -> knowledge summary -> candidate -> executable check -> system asset -> CAD_PLAN -> readback`，candidate 不能直接当能力。
+
+相关文件：`docs/architecture/current-module-boundaries.md`、`openspec/changes/architecture-boundary-hardening-01/`、`tests/core/test_architecture_boundary_hardening.py`
+
+### 断电排查时先区分文件损坏和迁移口径滞后
+
+日期：2026-06-01
+
+现象：断电后全量单测最初出现 7 failure / 1 error，看起来像文件丢失或证据损坏；追查后发现 Git 对象库正常，失败集中在旧英文根级文件名、pipeline flow 预期、round12 交付口径和本机缺失 RCAD live JSON。
+
+影响：如果直接补造缺失的真实 CAD JSON，会伪造证据；如果只看失败数量，又会把已迁移的文档入口误判为断电损坏。
+
+修复 / 计划：self-check 和测试改为当前中文 root stub / docs 路径；`pipeline_asset_retriever` 纳入默认 flow 预期；round12 测试改为确认用户反馈后应阻断交付；RCAD-20/21 live contract 在真实 JSON 不存在时 skip，不伪造。
+
+以后规则：断电后先跑 `git fsck --no-dangling`、冲突标记 / JSON / 空文件扫描和全量测试；对缺失真实 CAD 证据只能报告缺失或跳过 live contract，不能用 fixture 冒充真实 AutoCAD 会话。
+
+相关文件：`core/verification/self_check.py`、`tests/core/test_planmd_governance.py`、`tests/agents/test_pipeline_visual_contracts.py`、`tests/core/test_vproof_51_negative_cad.py`、`tests/core/test_vproof_52_guard_cad.py`、`tests/core/test_route_audit_report.py`
+
 ### 标准图库 intake 不能靠用户填表和 prompt 记忆
 
 日期：2026-05-29

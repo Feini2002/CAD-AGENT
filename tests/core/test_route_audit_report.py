@@ -78,8 +78,12 @@ class RouteAuditReportTests(unittest.TestCase):
         orchestration = orchestrate_request(context, execute=False)
         audit = build_route_audit_report(context, orchestration, registry=self.registry)
         example_path = PROJECT_ROOT / "examples" / "orchestrator" / "sample_route_audit_report.json"
-        example_path.write_text(json.dumps(audit, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        errors = validate_json(PROJECT_ROOT / "core/schemas/route_audit_report.schema.json", example_path)
+        self.assertEqual(validate_json(PROJECT_ROOT / "core/schemas/route_audit_report.schema.json", example_path), [])
+
+        generated_path = artifact_path("route_audit", "schema_fixture") / "sample_route_audit_report.json"
+        generated_path.parent.mkdir(parents=True, exist_ok=True)
+        generated_path.write_text(json.dumps(audit, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        errors = validate_json(PROJECT_ROOT / "core/schemas/route_audit_report.schema.json", generated_path)
         self.assertEqual(errors, [])
 
 

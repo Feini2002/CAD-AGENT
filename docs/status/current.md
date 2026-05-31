@@ -1,6 +1,6 @@
 # 通用 CAD Agent 开发包当前进展
 
-最后更新：2026-05-29（OpenSpec 变更契约轻量护栏）
+最后更新：2026-06-01（架构瘦身与边界加固 01）
 
 本文只保留“现在到哪、证据是什么、风险边界是什么”。历史流水见 `docs/status/changelog.md`，瘦身前全文快照见 `docs/history/snapshots/finished-architecture-2026-05-28/docs__status__current.md`，能力矩阵见 `CORE_STATUS.md`，唯一 `PlanMD` / 主计划见 `CORE_RESTRUCTURE_PLAN.md`。后续任务和优先级只写入 PlanMD，避免状态页变成第二份计划。
 
@@ -42,6 +42,10 @@
 
 | 包 | 状态 | 证据 | 边界 |
 | --- | --- | --- | --- |
+| `ARCH-BOUNDARY-HARDENING-01` | 架构瘦身与边界加固契约已落地；明确 Stable Core / Training Experiments / Case-Only 三类边界，并给出 verification、capability-map、对象资产试点和 case-run 晋升门槛；顺手修复截图可选依赖缺失时的降级检测 | `openspec/changes/architecture-boundary-hardening-01/`；`docs/architecture/current-module-boundaries.md`；`tests/core/test_architecture_boundary_hardening.py`；`core/verification/render_preview.py`；目标测试 5 OK；全量 1044 OK（2 skipped） | 这是边界收束包，不是系统重构 2.0；未拆所有大文件、不改变表 C、不运行真实 CAD |
+| `REPO-POWER-LOSS-HEALTH-01` | 断电后仓库健康检查已完成；修复 self-check / 单测中的迁移滞后口径 | `git fsck --full --strict --no-dangling` pass；冲突标记扫描无命中；JSON 解析 0 error；`scripts/self_check.py` pass；`unittest discover -s tests` 1039 OK（2 skipped：本机未携带 RCAD-20/21 真实 CAD JSON） | 未伪造真实 CAD 证据；不改变表 C；未触碰用户 DWG；`run_repo_audit.py --fail-on-findings` 仍只报既有低风险大文件 / 大 delta 提示 |
+| `CAPABILITY-MAP-TRAINING-WORKBENCH-03` | 能力看板重构为“训练计划表单 + 智能体 Prompt 工作台” | `capability-map.html`、`capability-map-data.js`、`scripts/build_capability_map_data.py`、`output/previews/capability-map-workbench-*-v2*.png` | 只做训练计划、Prompt 契约和可视化口径；训练阶段 / 智能体契约分不等于表 C 或真实 CAD 几何通过 |
+| `CAPABILITY-MAP-AGENT-COCKPIT-02` | 能力看板升级为可钻取的智能体控制台 | `capability-map.html`、`capability-map-data.js`、`scripts/build_capability_map_data.py` | 只做前端可视化和数据快照生成；不直接编辑源 JSON/MD、不改变表 C、不替代真实 CAD 验证 |
 | `CAD-ASSET-RAW-INTAKE-AUTO-01` | 标准图库自动 raw intake 已落地 | `core/assets/raw_intake.py`、`scripts/run_asset_raw_intake.py`、`tests/core/test_asset_raw_intake.py`、`docs/training/asset-intake-template.md`、`agents/pipeline/*` | 只生成 `reference_only` / `agent_inferred` 资产和标注；不写 `system_library`、不解析 CAD、不改变表 C |
 | `ROOT-MD-CHINESE-NAMES-01` | 根目录历史 stub 已改为中文文件名 | `CAD自动验证入口.md`、`CAD卡壳排障入口.md`、`变更记录入口.md`、`问题风险入口.md`、`长期规则入口.md`、`当前状态入口.md`、`路线图入口.md`、`CAD符号语法入口.md`、`训练错误记录入口.md`、`视觉优先训练计划入口.md` | 仅改文件名和文档治理 stub 清单；`AGENTS.md`、`README.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_STATUS.md` 作为机器入口暂不改名 |
 | `OPENSPEC-CONTRACT-LITE-01` | OpenSpec 变更契约轻量护栏已接入 | `openspec/changes/establish-change-contract-lite/`、`core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py` | 只做治理契约；不改 CAD 执行、不改表 C、不替代 `CORE_RESTRUCTURE_PLAN.md` |
@@ -80,12 +84,13 @@
 
 | 风险 | 影响 | 当前处理 |
 | --- | --- | --- |
+| Core / training / case 边界继续变重 | `core/` 可能继续吸收临界模块，`core/verification/`、capability map、case renderer 可能变成混合层 | 新增 `current-module-boundaries.md` 和 `architecture-boundary-hardening-01` OpenSpec；后续拆分按 report contract、runner、registry writeback、visual audit、data generator、page shell、display configuration 和 case promotion gate 推进 |
 | 表 C 旧证据债 | 旧 verified/showcase 报告缺路径或契约字段会阻止新 writeback | 表 C 新包先跑 hard audit、visual review、table C gate |
 | CAD 画面与几何扩样仍少 | 用户看到的复杂 CAD 图面仍需持续提升 | 需要时优先 `VCAD-*` 或真实 CAD 扩样包 |
 | 训练审计虚绿 | 部件齐全或 profile ratio 对齐仍可能被误判为款式准确，尤其 reference-match 案例 | 已新增 reference profile、形态丰富度、part gap/overlap、共享边去重与沙发方向语义门槛 |
 | 常识文件被误读为已学会 | 把外部资料、图库或 GitHub 方法论放进仓库，不等于 Agent 能稳定使用 | 新增 CAD 常识底座文档，要求 source_note → summary → candidate → executable_check → evidence_boundary |
 | raw 标准图库进 git 后边界变模糊 | 为了家里 / 公司两头开发，`standard_cad_library_raw/` 允许携带下载文件；若未写来源和边界，容易误追踪、误提交或误当能力 | 新增自动 raw intake：先扫描并生成 `source_note` / reference manifest / inferred annotation；raw 只算 reference input，自产资产只进 `libraries/system_library/` |
-| HTML 能力清单被误读为证据 | `capability-map.html` 是计划 / 覆盖视图，若脱离内部 MD/JSON，可能被误读成能力证明 | 页面只列阶段勾选；详细证据仍在 manifest、knowledge、benchmark、case runs 和 promotion 记录里 |
+| 训练工作台被误读为证据 | `capability-map.html` 展示训练计划、智能体 Prompt 契约和阶段状态，若脱离表 C 口径，可能被误读成真实 CAD 能力证明 | 页面顶部、训练详情、智能体成熟度和证据边界均声明“训练阶段 / 契约分不等于 CAD 通过率”；真实证据仍在 registry、coverage、case runs、audit 和 promotion 记录里 |
 | 参考图库被误读为自产能力 | 外部标准图库、用户截图或 vendor block 被混入系统库后，可能被误报为“系统已会画” | 新增资产智能架构：`reference_library` 只作 evidence input，`system_library` 必须有 schema、lineage、check、evidence_boundary 和晋升记录 |
 | 训练反馈低信号 | 只报 handles、gap/overlap 或贴截图，用户仍不知道该判断什么 | README 新增低噪声反馈模板：本轮结论、变化、checked/not_checked、重点看点、反馈入口 |
 | 自动读图未到交付预备 | 未确认 shell candidates 不能直接落 CAD | 保持人工确认 gate |
@@ -108,7 +113,7 @@
 
 ## 最近验证入口
 
-最近完整门禁记录：全量 `unittest discover -s tests` **1018 OK**；`run_doc_governance_audit.py` pass。round14 已真实 CAD 重画并删除上一版预览；用户纠错已沉淀为共享边去重和沙发方向语义门槛。`CAD-ASSET-INTELLIGENCE-FOUNDATION-01` 按用户要求未写测试、未跑测试、未导入图库、未改变表 C；只做基础设施和非测试类一致性检查。当前 coverage 表 C 主指标以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准：**90.99%**。
+最近完整门禁记录：CAD-MCP venv 全量 `unittest discover -s tests` **1044 OK（2 skipped）**；`run_doc_governance_audit.py` pass；CAD-MCP venv `scripts/self_check.py` pass。系统 Python 缺少 `PIL` 时，`self_check.py` 现在会降级为 screenshot tooling warn，而不是异常失败。`CAPABILITY-MAP-TRAINING-WORKBENCH-03` 已跑数据生成器、`py_compile`、`node --check capability-map-data.js`、HTML 内联脚本语法检查，并用 Chrome DevTools 验证桌面 / 移动截图与无明显文本溢出。round14 已真实 CAD 重画并删除上一版预览；用户纠错已沉淀为共享边去重和沙发方向语义门槛。当前 coverage 表 C 主指标以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准：**90.99%**。
 
 ```powershell
 $env:PYTHONIOENCODING='utf-8'

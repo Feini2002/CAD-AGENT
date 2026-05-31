@@ -7,6 +7,7 @@ from pathlib import Path
 from core.verification.evidence_vocabulary import EVIDENCE_NEGATIVE_GUARD_VERIFIED
 from core.verification.negative_plan_registry import (
     NEGATIVE_REAL_CAD_CAPABILITY_ID,
+    RCAD_20_CANONICAL_REPORT,
     VPROOF_51_BOUNDARY_DOC,
     assert_vproof_51_negative_cad_contract,
     apply_negative_real_cad_guard_writeback,
@@ -105,6 +106,8 @@ class Vproof51NegativeCadTests(unittest.TestCase):
             for item in registry.get("capabilities", [])
         ):
             self.skipTest("real_cad_guard row not merged yet")
+        if not (PROJECT_ROOT / RCAD_20_CANONICAL_REPORT).is_file():
+            self.skipTest("RCAD-20 real CAD report is not present in this workspace")
         assert_vproof_51_negative_cad_contract(project_root=PROJECT_ROOT)
 
 

@@ -1,4 +1,15 @@
 # 当前交接包窗口
+## ARCH-BOUNDARY-HARDENING-01
+1. **包名**：`ARCH-BOUNDARY-HARDENING-01`
+2. **修改文件列表**：新增 `openspec/changes/architecture-boundary-hardening-01/`、`docs/architecture/current-module-boundaries.md`、`tests/core/test_architecture_boundary_hardening.py`；更新 `docs/architecture/README.md`、`core/verification/render_preview.py`、`tests/core/test_render_preview.py`、状态 / changelog / issues / handoff 索引。
+3. **关键设计说明**：本包先做边界收成，不做系统重构 2.0。仓库当前按 `Stable Core`、`Training Experiments`、`Case-Only` 三桶判断；`core/verification/` 后续按 report contract、runner、registry writeback、visual audit 和 CAD/session safety 拆；capability map 后续按 data generator、page shell、display configuration 和 evidence boundary 拆。
+4. **新增/修改测试**：新增 `tests/core/test_architecture_boundary_hardening.py`，守护边界快照、README 可发现性、对象资产试点链路、case-run 晋升门槛和 OpenSpec 不替代 `CORE_RESTRUCTURE_PLAN.md`。
+5. **实际运行的命令和结果**：`python -m unittest tests.core.test_architecture_boundary_hardening` → 5 tests OK；失败集复测 `tests.core.test_render_preview tests.core.test_self_check tests.core.test_core_restructure` → 19 tests OK；`run_doc_governance_audit.py` → pass；CAD-MCP venv 全量 `unittest discover -s tests` → 1044 tests OK（2 skipped）；CAD-MCP venv `scripts/self_check.py` → pass。
+6. **是否运行真实 CAD**：否。
+7. **机器可读证据路径**：无新增 `output/validation_runs/**`；OpenSpec 契约在 `openspec/changes/architecture-boundary-hardening-01/`。
+8. **结论分类表**：架构边界契约已落地（OpenSpec + docs + tests，geometry_verified=否）；verification / capability-map 大文件实际拆分：本包未做，后续按 split map 小包推进。
+9. **剩余风险**：边界快照需要后续拆文件包持续执行；对象资产试点只是候选路线，不代表沙发对象族已经 system_verified。
+---
 ## CAD-ASSET-RAW-INTAKE-AUTO-01
 1. **包名**：`CAD-ASSET-RAW-INTAKE-AUTO-01`
 2. **修改文件列表**：新增 `core/assets/raw_intake.py`、`scripts/run_asset_raw_intake.py`、`tests/core/test_asset_raw_intake.py`；更新 `core/assets/__init__.py`、asset schema invalid fixtures、`agents/pipeline/*.json`、`docs/training/asset-intake-template.md`、`standard_cad_library_raw/README.md`、资产架构 / 训练 / 计划 / reference README。

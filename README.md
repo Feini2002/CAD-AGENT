@@ -50,6 +50,8 @@ flowchart TD
 - `tests/`：单元测试、契约测试、训练 gate 测试和回归测试。
 - `docs/`：架构、训练、治理、状态、交接和历史记录。
 
+当前架构边界快照见 `docs/architecture/current-module-boundaries.md`。后续重构先按 `Stable Core`、`Training Experiments`、`Case-Only` 三类判断归属，再决定是否迁移代码；`openspec/changes/architecture-boundary-hardening-01/` 只记录本轮边界加固契约，不替代 `CORE_RESTRUCTURE_PLAN.md`。
+
 ## 资产智能管线
 
 资产智能不是“把图库塞进仓库就算会画”，而是把外部参考、自产对象和可执行证据分开管理：
@@ -103,7 +105,9 @@ Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 refe
 
 ## 换电脑继续
 
-仓库按可迁移开发包设计。新电脑 clone 后，需要恢复 AutoCAD / CAD-MCP / Python 环境，打开对应案例 DWG，再读取 `CORE_CONTEXT_BRIEF.md` 和案例 `feedback.md`，从最后一个 round 继续。用户确认要两地同步的标准图库原始文件放 `standard_cad_library_raw/` 并可随 git 携带；它们仍只是参考输入，不等于系统能力。非敏感、脱敏且体积可控的案例 DWG/DXF 可以作为训练 fixture 随案例提交；`.codegraph/`、Understand Anything 生成图、`output/`、缓存、CAD 锁文件和备份文件不会提交。
+仓库按可迁移开发包设计。新电脑 clone 后，需要恢复 AutoCAD / CAD-MCP / Python 环境，打开对应案例 DWG，再读取 `CORE_CONTEXT_BRIEF.md`、`docs/architecture/current-module-boundaries.md` 和案例 `feedback.md`，从最后一个 round 继续。用户确认要两地同步的标准图库原始文件放 `standard_cad_library_raw/` 并可随 git 携带；它们仍只是参考输入，不等于系统能力。非敏感、脱敏且体积可控的案例 DWG/DXF 可以作为训练 fixture 随案例提交；`.codegraph/`、Understand Anything 生成图、`output/`、缓存、CAD 锁文件和备份文件不会提交。
+
+换机前建议只做三件事：先跑一次 `git status --short` 看是否有遗漏文件；再用 CAD-MCP venv 跑 `python -m unittest discover -s tests`；最后 commit 后由你手动 push 到私人仓库。仓库不依赖本机 `output/`、`.codegraph/` 或 venv 缓存来继续开发。
 
 ## 关键入口
 

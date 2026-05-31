@@ -10,6 +10,7 @@ from core.verification.evidence_vocabulary import (
 )
 from core.verification.guard_cad_registry import (
     GUARD_FULL_STRICT_CAPABILITY_ID,
+    RCAD_21_CANONICAL_REPORT,
     VPROOF_52_BOUNDARY_DOC,
     assert_vproof_52_guard_cad_contract,
     build_guard_cad_registry_rows,
@@ -111,6 +112,8 @@ class Vproof52GuardCadTests(unittest.TestCase):
             for item in registry.get("capabilities", [])
         ):
             self.skipTest("guard registry rows not merged yet")
+        if not (PROJECT_ROOT / RCAD_21_CANONICAL_REPORT).is_file():
+            self.skipTest("RCAD-21 real CAD report is not present in this workspace")
         assert_vproof_52_guard_cad_contract(project_root=PROJECT_ROOT)
 
 

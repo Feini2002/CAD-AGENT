@@ -3,505 +3,2152 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CAD Agent 能力覆盖清单</title>
+  <title>CAD Agent 训练工作台</title>
+  <link rel="icon" href="data:,">
   <style>
     :root {
       color-scheme: light;
-      --bg: #f4f1ea;
-      --paper: #fffdfa;
-      --ink: #202225;
-      --muted: #6e756f;
-      --line: #d8d2c6;
-      --line-strong: #bdb4a4;
-      --green: #2f6f55;
-      --amber: #a16a1d;
-      --blue: #315f84;
-      --red: #8b3f32;
-      --shadow: 0 18px 45px rgba(35, 31, 24, 0.08);
+      --bg: #edf2f3;
+      --surface: #ffffff;
+      --surface-soft: #f6f8f8;
+      --surface-rail: rgba(255, 255, 255, 0.78);
+      --ink: #111820;
+      --ink-soft: #28343e;
+      --muted: #61717d;
+      --line: #d5dde1;
+      --line-strong: #aebbc3;
+      --green: #08765a;
+      --green-soft: #dff0ea;
+      --blue: #245f88;
+      --blue-soft: #dcebf4;
+      --amber: #9a650e;
+      --amber-soft: #f3e8cf;
+      --red: #9b3d33;
+      --red-soft: #f4dedb;
+      --gray-soft: #e9eef0;
+      --shadow: 0 18px 40px rgba(27, 43, 51, 0.08);
+      --mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+      --sans: "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
-      background:
-        linear-gradient(90deg, rgba(32, 34, 37, 0.035) 1px, transparent 1px) 0 0 / 32px 32px,
-        linear-gradient(rgba(32, 34, 37, 0.03) 1px, transparent 1px) 0 0 / 32px 32px,
-        var(--bg);
       color: var(--ink);
-      font-family: "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+      font-family: var(--sans);
+      background:
+        linear-gradient(90deg, rgba(17, 24, 32, 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(rgba(17, 24, 32, 0.03) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(180deg, rgba(255, 255, 255, 0.52), rgba(237, 242, 243, 0.88)),
+        var(--bg);
     }
 
     button,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
-    .page {
-      width: min(1180px, calc(100% - 40px));
-      margin: 0 auto;
-      padding: 36px 0 44px;
+    button {
+      color: inherit;
     }
 
-    .masthead {
+    .page {
+      width: min(2520px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 18px 0 40px;
+    }
+
+    .status-bar {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 28px;
-      align-items: end;
-      padding-bottom: 28px;
-      border-bottom: 1px solid var(--line);
+      grid-template-columns: minmax(280px, 1.1fr) minmax(620px, 1.9fr);
+      gap: 14px;
+      align-items: stretch;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .status-title {
+      padding: 16px 18px;
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 250, 0.92));
     }
 
     .eyebrow {
-      margin: 0 0 10px;
+      margin: 0 0 6px;
       color: var(--green);
-      font-size: 13px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 900;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
     }
 
     h1 {
       margin: 0;
-      max-width: 760px;
-      font-size: clamp(30px, 4vw, 58px);
-      line-height: 1.05;
-      font-weight: 900;
+      font-size: 34px;
+      line-height: 1.12;
       letter-spacing: 0;
     }
 
-    .lead {
-      margin: 16px 0 0;
-      max-width: 720px;
+    .status-title p {
+      margin: 8px 0 0;
+      max-width: 620px;
       color: var(--muted);
-      font-size: 16px;
-      line-height: 1.75;
+      font-size: 13px;
+      line-height: 1.65;
     }
 
-    .summary {
+    .status-metrics {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      min-width: 0;
     }
 
     .metric {
-      min-height: 88px;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: rgba(255, 253, 250, 0.75);
-      box-shadow: 0 10px 28px rgba(35, 31, 24, 0.04);
+      min-width: 0;
+      padding: 15px 14px;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.66);
     }
 
-    .metric strong {
-      display: block;
-      font-size: 30px;
-      line-height: 1;
-      font-weight: 900;
+    .metric:last-child {
+      border-right: 0;
     }
 
     .metric span {
       display: block;
-      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .metric strong {
+      display: block;
+      margin: 4px 0;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 950;
+      color: var(--ink);
+    }
+
+    .metric small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .metric.boundary strong {
+      color: var(--ink-soft);
+      font-size: 18px;
+    }
+
+    .metric.boundary {
+      background: #f2f6f7;
+    }
+
+    .metric.boundary span {
+      color: var(--ink-soft);
+    }
+
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      gap: 8px;
+      margin: 18px 0 14px;
+      padding: 8px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(246, 248, 248, 0.94);
+      backdrop-filter: blur(12px);
+    }
+
+    .tab {
+      flex: 0 0 auto;
+      min-height: 34px;
+      padding: 0 13px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 850;
+      font-size: 13px;
+    }
+
+    .tab[aria-pressed="true"] {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--surface);
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin: 0 0 12px;
+    }
+
+    h2,
+    h3,
+    h4 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    h4 {
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .section-head p,
+    .muted {
+      margin: 5px 0 0;
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.6;
     }
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
+      grid-template-columns: minmax(0, 1fr) 260px 180px;
+      gap: 10px;
       align-items: center;
-      padding: 22px 0 18px;
+      margin-bottom: 12px;
     }
 
     .filters {
       display: flex;
-      gap: 8px;
+      gap: 7px;
       flex-wrap: wrap;
+      min-width: 0;
     }
 
-    .filter {
-      min-height: 36px;
-      padding: 0 13px;
+    .filter,
+    .small-button,
+    .agent-chip {
+      min-height: 30px;
+      padding: 0 10px;
       border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--paper);
+      border-radius: 5px;
+      background: var(--surface);
       color: var(--muted);
       cursor: pointer;
+      font-size: 12px;
+      font-weight: 850;
+      text-align: left;
     }
 
-    .filter[aria-pressed="true"] {
-      border-color: var(--ink);
-      background: var(--ink);
-      color: var(--paper);
+    .filter[aria-pressed="true"],
+    .small-button.primary {
+      border-color: var(--green);
+      background: var(--green);
+      color: var(--surface);
     }
 
-    .search {
-      width: min(280px, 100%);
-      min-height: 36px;
-      padding: 0 12px;
+    .search,
+    .select {
+      width: 100%;
+      min-height: 34px;
+      padding: 0 10px;
       border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--paper);
+      border-radius: 5px;
+      background: var(--surface);
       color: var(--ink);
+      font-size: 13px;
     }
 
-    .board {
-      overflow: hidden;
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) clamp(360px, 22vw, 440px);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
       border: 1px solid var(--line-strong);
-      border-radius: 8px;
-      background: var(--paper);
+      border-radius: 6px;
+      background: var(--surface);
       box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      min-height: 48px;
+      padding: 11px 13px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .panel-head p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: calc(100vh - 220px);
+      background: var(--surface);
     }
 
     table {
       width: 100%;
-      border-collapse: collapse;
       table-layout: fixed;
-    }
-
-    thead {
-      background: #e8e0d3;
+      border-collapse: collapse;
+      min-width: 1080px;
     }
 
     th,
     td {
+      padding: 11px 12px;
       border-bottom: 1px solid var(--line);
-      padding: 13px 12px;
+      vertical-align: top;
       text-align: left;
-      vertical-align: middle;
+      font-size: 13px;
     }
 
     th {
-      color: #3b3731;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: #e7edf0;
+      color: var(--ink-soft);
       font-size: 12px;
       font-weight: 900;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
       white-space: nowrap;
     }
 
-    tbody tr:last-child td {
-      border-bottom: 0;
+    #planTableHead th:nth-child(1),
+    #planRows td:nth-child(1) {
+      width: 19%;
     }
 
-    tbody tr:hover {
-      background: #fbf7ef;
+    #planTableHead th:nth-child(2),
+    #planRows td:nth-child(2) {
+      width: 15%;
     }
 
-    .capability {
-      width: 27%;
+    #planTableHead th:nth-child(3),
+    #planRows td:nth-child(3) {
+      width: 23%;
     }
 
-    .kind {
-      width: 13%;
+    #planTableHead th:nth-child(4),
+    #planRows td:nth-child(4) {
+      width: 21%;
     }
 
-    .stage {
-      width: 10%;
-      text-align: center;
+    #planTableHead th:nth-child(n+5),
+    #planRows td:nth-child(n+5) {
+      width: 5.5%;
+      padding-left: 6px;
+      padding-right: 6px;
     }
 
-    .capability-name {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    tr {
+      cursor: pointer;
+    }
+
+    tr:hover td {
+      background: #f9fbfb;
+    }
+
+    tr.selected td {
+      background: #edf7f3;
+      box-shadow: inset 3px 0 0 var(--green);
+    }
+
+    tr.highlighted td {
+      background: #fff7e6;
+    }
+
+    .capability-title {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 9px;
+      align-items: start;
       min-width: 0;
-      font-weight: 850;
     }
 
     .priority {
-      flex: 0 0 auto;
       min-width: 34px;
-      padding: 3px 6px;
-      border: 1px solid var(--line);
+      padding: 2px 7px;
+      border: 1px solid var(--line-strong);
       border-radius: 5px;
-      color: var(--muted);
-      font-size: 11px;
+      color: var(--ink-soft);
+      background: #f8fafb;
+      font-size: 12px;
+      font-weight: 900;
       text-align: center;
     }
 
-    .name-text {
-      overflow-wrap: anywhere;
+    .capability-title strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.25;
     }
 
-    .type-pill {
+    .subline {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .stage-summary {
+      min-width: 0;
+    }
+
+    .stage-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 850;
+      color: var(--ink-soft);
+    }
+
+    .progress {
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dde5e8;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--green);
+    }
+
+    .agent-list {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .agent-chip {
       display: inline-flex;
       align-items: center;
-      min-height: 26px;
-      padding: 0 9px;
-      border-radius: 5px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
+      min-height: 24px;
+      padding: 0 7px;
+      border-color: transparent;
+      background: var(--blue-soft);
+      color: #175174;
+      white-space: normal;
+      line-height: 1.25;
     }
 
-    .type-object {
-      background: #e5efe8;
+    .agent-chip.owner {
+      background: var(--green-soft);
       color: var(--green);
     }
 
-    .type-draw {
-      background: #e1edf4;
-      color: var(--blue);
+    .agent-chip.more {
+      border-color: var(--line);
+      background: #f6f8f8;
+      color: var(--muted);
+      cursor: default;
     }
 
-    .type-annotation {
-      background: #f3ead8;
+    .agent-chip:hover {
+      border-color: currentColor;
+    }
+
+    .next-round {
+      min-width: 0;
+    }
+
+    .next-round strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .stage-cell {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .state-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      min-height: 26px;
+      padding: 0 6px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--gray-soft);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .plan-card-list {
+      display: none;
+    }
+
+    .plan-card {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      cursor: pointer;
+    }
+
+    .plan-card.selected {
+      background: #edf7f3;
+      box-shadow: inset 3px 0 0 var(--green);
+    }
+
+    .plan-card.highlighted {
+      background: #fff7e6;
+    }
+
+    .plan-card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .plan-card-head strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .plan-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .plan-card-field {
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #fbfcfc;
+    }
+
+    .plan-card-field span:first-child {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .plan-card-field strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .asset-track {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .asset-track .state-chip {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .state-chip.planned {
+      border-color: #dfca96;
+      background: var(--amber-soft);
       color: var(--amber);
     }
 
-    .mark {
-      display: inline-grid;
-      place-items: center;
-      width: 23px;
-      height: 23px;
-      border: 1.5px solid var(--line-strong);
+    .state-chip.training,
+    .state-chip.in_progress,
+    .state-chip.active {
+      border-color: #accce2;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .state-chip.evidence {
+      border-color: #98ccb9;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .state-chip.promoted,
+    .state-chip.systemized {
+      border-color: #98ccb9;
+      background: #cfe7dc;
+      color: var(--green);
+    }
+
+    .state-chip.blocked {
+      border-color: #ddaaa5;
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .inspector {
+      position: sticky;
+      top: 72px;
+      max-height: calc(100vh - 92px);
+      overflow: auto;
+    }
+
+    .inspector-body {
+      padding: 13px;
+    }
+
+    .inspector-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .tag-row,
+    .pill-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 23px;
+      padding: 0 7px;
       border-radius: 5px;
-      background: #fffdfa;
-      color: transparent;
-      font-size: 15px;
-      font-weight: 900;
-      line-height: 1;
+      background: var(--gray-soft);
+      color: var(--ink-soft);
+      font-size: 12px;
+      font-weight: 850;
     }
 
-    .mark.done {
-      border-color: var(--green);
-      background: var(--green);
-      color: #fffdfa;
+    .tag.green {
+      background: var(--green-soft);
+      color: var(--green);
     }
 
-    .empty-state {
-      display: none;
-      padding: 34px 20px;
-      color: var(--muted);
-      text-align: center;
+    .tag.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .tag.amber {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .tag.red {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .detail-block {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfc;
+      overflow: hidden;
+    }
+
+    .detail-block h4 {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .detail-block p,
+    .detail-block ul,
+    .detail-block ol {
+      margin: 0;
+      padding: 10px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .detail-block li + li {
+      margin-top: 6px;
+    }
+
+    .route-list {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+    }
+
+    .route-item {
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--surface);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .agent-workbench {
+      display: grid;
+      grid-template-columns: clamp(340px, 20vw, 420px) minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .agent-sidebar {
+      position: sticky;
+      top: 72px;
+      max-height: calc(100vh - 92px);
+      overflow: auto;
+    }
+
+    .agent-toolbar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .agent-group {
       border-top: 1px solid var(--line);
     }
 
-    .note {
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-left: 4px solid var(--red);
-      background: rgba(255, 253, 250, 0.7);
+    .agent-group:first-of-type {
+      border-top: 0;
+    }
+
+    .agent-group h3 {
+      padding: 10px 11px 6px;
       color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .agent-list-button {
+      display: block;
+      width: 100%;
+      padding: 10px 11px;
+      border: 0;
+      border-top: 1px solid var(--line);
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .agent-list-button:hover {
+      background: #f9fbfb;
+    }
+
+    .agent-list-button[aria-pressed="true"] {
+      background: #edf7f3;
+      box-shadow: inset 3px 0 0 var(--green);
+    }
+
+    .agent-list-button strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .agent-detail {
+      min-height: 680px;
+    }
+
+    .prompt-hero {
+      padding: 15px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 248, 248, 0.96));
+    }
+
+    .prompt-summary {
+      margin: 10px 0 0;
+      max-width: 980px;
+      color: var(--ink-soft);
+      font-size: 15px;
       line-height: 1.7;
     }
 
-    .note strong {
-      color: var(--ink);
+    .prompt-focus {
+      margin-top: 12px;
+      padding: 11px;
+      border: 1px solid #cbded8;
+      border-radius: 6px;
+      background: #f4faf7;
     }
 
-    @media (max-width: 900px) {
+    .prompt-focus h3 {
+      margin-bottom: 7px;
+      color: var(--green);
+      font-size: 13px;
+    }
+
+    .prompt-focus ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .prompt-focus li + li {
+      margin-top: 4px;
+    }
+
+    .maturity-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfc;
+    }
+
+    .maturity-card {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .maturity-card strong {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .maturity-card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .maturity-card .metric-meta {
+      display: block;
+      margin-top: 6px;
+      color: var(--ink-soft);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 12px;
+    }
+
+    .prompt-grid .detail-block {
+      margin: 0;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    details.source-details {
+      margin: 0 12px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfc;
+      overflow: hidden;
+    }
+
+    details.source-details summary {
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--ink-soft);
+      background: var(--surface-soft);
+    }
+
+    .source-list {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .source-item {
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--surface);
+    }
+
+    .source-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #24546f;
+      overflow-wrap: anywhere;
+    }
+
+    .failure-actions {
+      min-width: 1040px;
+    }
+
+    .failure-actions td,
+    .failure-actions th {
+      vertical-align: top;
+    }
+
+    .quiet-map {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .route-card {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .route-card strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .route-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .boundary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .boundary-card {
+      padding: 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .boundary-card h3 {
+      margin-bottom: 8px;
+    }
+
+    .boundary-card p,
+    .boundary-card li {
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .boundary-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .empty {
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 1900px) {
       .page {
-        width: min(100% - 24px, 720px);
-        padding-top: 22px;
+        width: min(2520px, calc(100% - 40px));
       }
 
-      .masthead,
+      .status-bar {
+        grid-template-columns: minmax(380px, 0.8fr) minmax(0, 2.2fr);
+      }
+
+      .status-title p {
+        max-width: 780px;
+      }
+
+      .workbench-grid,
+      .agent-workbench {
+        gap: 16px;
+      }
+
+      .workbench-grid {
+        grid-template-columns: minmax(0, 1fr) clamp(400px, 18vw, 460px);
+      }
+
+      .agent-workbench {
+        grid-template-columns: clamp(380px, 17vw, 440px) minmax(0, 1fr);
+      }
+
+      table {
+        min-width: 1240px;
+      }
+
+      th,
+      td {
+        padding: 12px 14px;
+      }
+
+      .table-wrap {
+        max-height: calc(100vh - 205px);
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .status-bar,
+      .workbench-grid,
+      .agent-workbench {
+        grid-template-columns: 1fr;
+      }
+
+      .status-title {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .status-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .inspector,
+      .agent-sidebar {
+        position: static;
+        max-height: none;
+      }
+
+      .table-wrap {
+        max-height: none;
+      }
+
+      .maturity-grid,
+      .prompt-grid,
+      .boundary-grid,
+      .quiet-map {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 20px, 1500px);
+        padding-top: 12px;
+      }
+
+      .status-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric {
+        padding: 10px;
+        border-right: 0;
+      }
+
+      .metric strong {
+        font-size: 18px;
+      }
+
+      .metric.boundary {
+        grid-column: 1 / -1;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+        overflow-x: visible;
+      }
+
+      .tab {
+        flex: 1 1 calc(50% - 6px);
+        text-align: center;
+      }
+
+      .section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
       .toolbar {
         grid-template-columns: 1fr;
       }
 
-      .summary {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+      .plan-matrix .table-wrap {
+        display: none;
       }
 
-      .search {
-        width: 100%;
+      .plan-card-list {
+        display: grid;
       }
 
-      .board {
-        overflow-x: auto;
+      .agent-detail {
+        order: -1;
+        min-height: auto;
       }
 
-      table {
-        min-width: 820px;
+      .plan-card-grid {
+        grid-template-columns: 1fr;
       }
-    }
 
-    @media (max-width: 640px) {
-      .summary {
+      .asset-track {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .agent-list {
+        min-width: 0;
+      }
+
+      th,
+      td {
+        padding: 9px 10px;
+      }
+
       h1 {
-        font-size: 34px;
+        font-size: 25px;
       }
     }
   </style>
 </head>
 <body>
   <main class="page">
-    <header class="masthead">
-      <section>
-        <p class="eyebrow">CAD Agent Capability Map</p>
-        <h1>能力覆盖清单</h1>
-        <p class="lead">
-          这里只展示“具体图块”和“基础绘图能力”的覆盖状态。内部证据、训练过程、manifest 和 promotion 记录继续放在 Markdown / JSON 文档里。
-        </p>
+    <header class="status-bar" aria-label="CAD Agent 训练工作台状态">
+      <section class="status-title">
+        <p class="eyebrow">CAD Agent 训练期</p>
+        <h1>CAD Agent 训练工作台</h1>
+        <p>围绕训练计划表单和智能体 Prompt 调整推进训练。这里显示训练阶段和契约状态，不把它们当作真实 CAD 几何通过率。</p>
       </section>
-
-      <section class="summary" aria-label="能力覆盖统计">
-        <div class="metric">
-          <strong id="totalCount">0</strong>
-          <span>计划能力项</span>
-        </div>
-        <div class="metric">
-          <strong id="rawCount">0</strong>
-          <span>已有标准图库</span>
-        </div>
-        <div class="metric">
-          <strong id="trainedCount">0</strong>
-          <span>训练通过</span>
-        </div>
-        <div class="metric">
-          <strong id="systemCount">0</strong>
-          <span>自产资产</span>
-        </div>
-      </section>
+      <section class="status-metrics" id="statusMetrics" aria-label="训练状态指标"></section>
     </header>
 
-    <section class="toolbar" aria-label="筛选能力清单">
-      <div class="filters" id="filters"></div>
-      <input class="search" id="searchInput" type="search" placeholder="搜索能力项" aria-label="搜索能力项">
+    <nav class="tabs" aria-label="页面视图">
+      <button class="tab" type="button" data-tab="plan">训练计划表单</button>
+      <button class="tab" type="button" data-tab="agents">智能体 Prompt</button>
+      <button class="tab" type="button" data-tab="failures">失败与沉淀</button>
+      <button class="tab" type="button" data-tab="boundary">证据边界</button>
+    </nav>
+
+    <section class="section" id="view-plan" data-view="plan">
+      <div class="section-head">
+        <div>
+          <h2>训练计划表单</h2>
+          <p>保留能力矩阵的密度：看每个能力项当前阶段、责任智能体、下一轮训练目标，以及标准图库、常识整理、训练沉淀、自产资产四条轨道。</p>
+        </div>
+        <div class="tag-row" id="activePlanFilter"></div>
+      </div>
+
+      <div class="toolbar">
+        <div class="filters" id="planGroupFilters"></div>
+        <input class="search" id="planSearch" type="search" placeholder="搜索能力项、智能体或失败类型">
+        <select class="select" id="planAgentFilter" aria-label="按责任智能体筛选"></select>
+      </div>
+
+      <div class="workbench-grid">
+        <section class="panel plan-matrix">
+          <div class="panel-head">
+            <div>
+              <h3>能力矩阵</h3>
+              <p id="planCount">正在读取训练计划。</p>
+            </div>
+            <button class="small-button" id="clearFailureFilter" type="button">清除问题定位</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr id="planTableHead"></tr>
+              </thead>
+              <tbody id="planRows"></tbody>
+            </table>
+          </div>
+          <div class="plan-card-list" id="planCards" aria-label="移动端训练计划卡片"></div>
+        </section>
+
+        <aside class="panel inspector" id="trainingInspector" aria-live="polite"></aside>
+      </div>
     </section>
 
-    <section class="board" aria-label="能力清单表">
-      <table>
-        <thead>
-          <tr>
-            <th class="capability">能力项</th>
-            <th class="kind">类型</th>
-            <th class="stage">标准图库</th>
-            <th class="stage">常识整理</th>
-            <th class="stage">训练通过</th>
-            <th class="stage">自产资产</th>
-          </tr>
-        </thead>
-        <tbody id="capabilityRows"></tbody>
-      </table>
-      <div class="empty-state" id="emptyState">没有匹配的能力项。</div>
+    <section class="section" id="view-agents" data-view="agents">
+      <div class="section-head">
+        <div>
+          <h2>智能体 Prompt 工作台</h2>
+          <p>左侧选智能体，右侧看中文 Prompt 契约、职责边界、输入输出、硬门槛、禁止事项、调用契约和可调 Prompt 点。</p>
+        </div>
+      </div>
+
+      <div class="agent-workbench">
+        <aside class="panel agent-sidebar">
+          <div class="agent-toolbar">
+            <input class="search" id="agentSearch" type="search" placeholder="搜索智能体、Prompt 或训练项">
+            <select class="select" id="agentGroupFilter" aria-label="按智能体分组筛选"></select>
+          </div>
+          <div id="agentList"></div>
+        </aside>
+        <section class="panel agent-detail" id="agentPromptInspector" aria-live="polite"></section>
+      </div>
     </section>
 
-    <p class="note">
-      <strong>当前口径：</strong>左侧清单就是当前训练计划；右侧勾选必须来自后续标准图库导入、常识整理、训练验收或自产资产晋升。空白不代表不能做，只代表尚未沉淀为本系统资产。
-    </p>
+    <section class="section" id="view-failures" data-view="failures">
+      <div class="section-head">
+        <div>
+          <h2>失败与沉淀</h2>
+          <p>失败模式不再先做热力图，而是直接回答：影响哪些训练计划、归哪些智能体、下一步怎么练、最后应该沉淀到哪里。</p>
+        </div>
+      </div>
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>行动表</h3>
+            <p>点击“定位计划”会跳回训练计划表单并高亮相关能力项。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="failure-actions">
+            <thead>
+              <tr>
+                <th>问题</th>
+                <th>影响能力/计划</th>
+                <th>责任智能体</th>
+                <th>下一步训练</th>
+                <th>沉淀位置</th>
+              </tr>
+            </thead>
+            <tbody id="failureRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top: 14px;">
+        <div class="panel-head">
+          <div>
+            <h3>学习分流路线</h3>
+            <p>单案例反馈、训练错误、场景规则、流水线、Core/tests 和自产资产要分层沉淀。</p>
+          </div>
+        </div>
+        <div class="quiet-map" id="learningRoutes"></div>
+      </section>
+    </section>
+
+    <section class="section" id="view-boundary" data-view="boundary">
+      <div class="section-head">
+        <div>
+          <h2>证据边界</h2>
+          <p>把表 C、训练计划、智能体成熟度、图库/常识的口径拆开，避免把“训练中”误读成“CAD 已经画准”。</p>
+        </div>
+      </div>
+      <div class="boundary-grid" id="boundaryCards"></div>
+    </section>
   </main>
 
+  <script src="capability-map-data.js"></script>
   <script>
-    const capabilities = [
-      { name: "沙发", kind: "object", group: "基础家具", priority: "P0", stages: {} },
-      { name: "茶几", kind: "object", group: "基础家具", priority: "P0", stages: {} },
-      { name: "餐桌", kind: "object", group: "基础家具", priority: "P0", stages: {} },
-      { name: "餐椅", kind: "object", group: "基础家具", priority: "P0", stages: {} },
-      { name: "床铺", kind: "object", group: "基础家具", priority: "P0", stages: {} },
-      { name: "床头柜", kind: "object", group: "基础家具", priority: "P1", stages: {} },
-      { name: "衣柜", kind: "object", group: "基础家具", priority: "P1", stages: {} },
-      { name: "电视柜", kind: "object", group: "基础家具", priority: "P1", stages: {} },
-      { name: "书桌", kind: "object", group: "基础家具", priority: "P1", stages: {} },
-      { name: "矮柜", kind: "object", group: "基础家具", priority: "P2", stages: {} },
-      { name: "洗手台", kind: "object", group: "厨卫对象", priority: "P1", stages: {} },
-      { name: "马桶", kind: "object", group: "厨卫对象", priority: "P1", stages: {} },
-      { name: "灶台", kind: "object", group: "厨卫对象", priority: "P2", stages: {} },
-      { name: "冰箱", kind: "object", group: "厨卫对象", priority: "P2", stages: {} },
-      { name: "墙体绘制", kind: "draw", group: "基础绘图", priority: "P0", stages: {} },
-      { name: "门绘制", kind: "draw", group: "基础绘图", priority: "P0", stages: {} },
-      { name: "窗户绘制", kind: "draw", group: "基础绘图", priority: "P0", stages: {} },
-      { name: "门洞绘制", kind: "draw", group: "基础绘图", priority: "P1", stages: {} },
-      { name: "窗洞绘制", kind: "draw", group: "基础绘图", priority: "P1", stages: {} },
-      { name: "房间轮廓绘制", kind: "draw", group: "基础绘图", priority: "P1", stages: {} },
-      { name: "柱子绘制", kind: "draw", group: "基础绘图", priority: "P2", stages: {} },
-      { name: "基础家具摆放", kind: "draw", group: "基础绘图", priority: "P2", stages: {} },
-      { name: "简单尺寸标注", kind: "annotation", group: "标注表达", priority: "P1", stages: {} },
-      { name: "简单文字标注", kind: "annotation", group: "标注表达", priority: "P1", stages: {} },
-      { name: "基础图层归类", kind: "annotation", group: "标注表达", priority: "P2", stages: {} }
+    const systemData = window.CAD_CAPABILITY_MAP_DATA || {};
+    const programs = systemData.trainingPrograms || systemData.capabilities || [];
+    const agents = systemData.agentProfiles || systemData.agents || [];
+    const contracts = systemData.promptContracts || [];
+    const stageColumns = systemData.trainingStageColumns || systemData.stages || [
+      { id: "raw", label: "标准图库", shortLabel: "图库" },
+      { id: "knowledge", label: "常识整理", shortLabel: "常识" },
+      { id: "trained", label: "训练沉淀", shortLabel: "训练" },
+      { id: "system", label: "自产资产", shortLabel: "自产" }
     ];
+    const tableCBoundary = systemData.tableCBoundary || systemData.coverageSnapshot || {};
 
-    const stages = ["raw", "knowledge", "trained", "system"];
-    const groups = ["全部", ...Array.from(new Set(capabilities.map((item) => item.group)))];
-    const kindLabels = {
-      object: "图块对象",
-      draw: "绘图能力",
-      annotation: "标注能力"
+    const groupOrder = ["全部", "基础家具", "储位家具", "厨卫对象", "基础绘图", "标注表达"];
+    const groupLabels = {
+      scene: "场景智能体",
+      pipeline: "训练流水线智能体",
+      demand: "需求侧角色"
+    };
+    const agentGroupOrder = ["全部", "scene", "pipeline", "demand"];
+    const stateLabels = {
+      none: "未纳入",
+      not_started: "未开训",
+      planned: "计划中",
+      prompt_defined: "目标已声明",
+      training: "训练中",
+      in_progress: "进行中",
+      active: "进行中",
+      case_training: "案例训练中",
+      evidence: "已有证据",
+      user_feedback_pass: "用户反馈通过",
+      promoted: "已沉淀",
+      systemized: "已沉淀",
+      blocked: "阻塞"
+    };
+    const maturityLabels = {
+      promptCompleteness: "契约完整度",
+      callMaturity: "调用契约",
+      trainingCoverage: "训练覆盖面",
+      evidenceMaturity: "证据状态"
+    };
+    const routeTargets = {
+      "case feedback": "案例反馈",
+      "training-errors": "训练错误台账",
+      "scene rules": "场景规则",
+      "pipeline": "流水线规则",
+      "core/tests": "Core / tests",
+      "system library": "自产资产库"
     };
 
-    let activeGroup = "全部";
+    const state = {
+      activeTab: "plan",
+      activeGroup: "全部",
+      planQuery: "",
+      agentFilter: "全部",
+      selectedProgramId: programs[0] ? programs[0].id : null,
+      selectedAgentId: defaultAgentId(),
+      agentQuery: "",
+      agentGroup: "全部",
+      failureFilter: null
+    };
 
-    const rowsEl = document.getElementById("capabilityRows");
-    const filtersEl = document.getElementById("filters");
-    const searchInput = document.getElementById("searchInput");
-    const emptyState = document.getElementById("emptyState");
-
-    function countStage(stage) {
-      return capabilities.filter((item) => Boolean(item.stages[stage])).length;
+    function defaultAgentId() {
+      const primary = agents.find((agent) => agent.status === "primary_training");
+      return (primary || agents[0] || {}).id || null;
     }
 
-    function renderSummary() {
-      document.getElementById("totalCount").textContent = capabilities.length;
-      document.getElementById("rawCount").textContent = countStage("raw");
-      document.getElementById("trainedCount").textContent = countStage("trained");
-      document.getElementById("systemCount").textContent = countStage("system");
+    function byId(id) {
+      return document.getElementById(id);
     }
 
-    function renderFilters() {
-      filtersEl.innerHTML = "";
-      groups.forEach((group) => {
-        const button = document.createElement("button");
-        button.className = "filter";
-        button.type = "button";
-        button.textContent = group;
-        button.setAttribute("aria-pressed", group === activeGroup ? "true" : "false");
-        button.addEventListener("click", () => {
-          activeGroup = group;
-          renderFilters();
-          renderRows();
-        });
-        filtersEl.appendChild(button);
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function asArray(value) {
+      if (Array.isArray(value)) return value;
+      if (value === undefined || value === null || value === "") return [];
+      return [value];
+    }
+
+    function textOf(value, fallback = "暂未写入。") {
+      if (value === undefined || value === null || value === "") return fallback;
+      if (Array.isArray(value)) return value.join("、") || fallback;
+      if (typeof value === "object") {
+        if ("label" in value && "value" in value) return `${value.label}：${value.value}`;
+        return JSON.stringify(value);
+      }
+      return String(value);
+    }
+
+    function listMarkup(items, fallback = "暂未写入。") {
+      const arr = asArray(items).filter((item) => item !== undefined && item !== null && String(textOf(item, "")).trim());
+      if (!arr.length) return `<p>${escapeHtml(fallback)}</p>`;
+      return `<ul>${arr.map((item) => `<li>${escapeHtml(textOf(item, fallback))}</li>`).join("")}</ul>`;
+    }
+
+    function tag(label, tone = "") {
+      return `<span class="tag ${escapeHtml(tone)}">${escapeHtml(label)}</span>`;
+    }
+
+    function agentName(id) {
+      const agent = agents.find((item) => item.id === id);
+      return agent ? agent.name || agent.displayNameZh || agent.rawName || id : id;
+    }
+
+    function programById(id) {
+      return programs.find((item) => item.id === id) || programs[0] || null;
+    }
+
+    function agentById(id) {
+      return agents.find((item) => item.id === id) || agents[0] || null;
+    }
+
+    function contractForAgent(agentId) {
+      return contracts.find((contract) => contract.agentId === agentId) || {};
+    }
+
+    function percent(value) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return 0;
+      return Math.max(0, Math.min(100, Math.round(num)));
+    }
+
+    function stageRank(program) {
+      const rank = Number(program.stageState && program.stageState.rank);
+      if (Number.isFinite(rank)) return rank;
+      const stage = systemData.trainingStages?.find((item) => item.id === program.stageState?.id);
+      return Number(stage?.rank || 0);
+    }
+
+    function stagePercent(program) {
+      const total = Math.max(1, (systemData.trainingStages || []).length - 1 || 4);
+      return Math.round((stageRank(program) / total) * 100);
+    }
+
+    function stageOrdinal(program) {
+      const total = Math.max(1, (systemData.trainingStages || []).length || 5);
+      return `第 ${stageRank(program) + 1}/${total} 阶段`;
+    }
+
+    function stateTone(stateId) {
+      if (["promoted", "systemized", "evidence", "user_feedback_pass"].includes(stateId)) return "evidence";
+      if (["training", "in_progress", "active", "case_training"].includes(stateId)) return "training";
+      if (["planned", "prompt_defined"].includes(stateId)) return "planned";
+      if (stateId === "blocked") return "blocked";
+      return "none";
+    }
+
+    function renderStatusMetrics() {
+      const primary = agents.find((agent) => agent.status === "primary_training");
+      const primaryName = primary ? primary.name : "家装";
+      const headline = tableCBoundary.headlinePercent ?? tableCBoundary.cadStrengthIndexPercent ?? "未生成";
+      const capabilityCount = (systemData.capabilityCatalog || programs).length;
+      const cards = [
+        ["当前主训", primaryName, "默认围绕主训场景调整训练计划"],
+        ["能力项", capabilityCount, "能力矩阵中的训练对象"],
+        ["智能体", agents.length, "参与 Prompt 契约展示"],
+        ["训练计划", programs.length, "下一轮训练入口数量"],
+        ["表 C 机器快照", typeof headline === "number" ? `${headline.toFixed(2)}%` : headline, "只在证据边界里解释，不参与本页训练分", "boundary"]
+      ];
+      byId("statusMetrics").innerHTML = cards.map(([label, value, note, tone]) => `
+        <article class="metric ${tone || ""}">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+          <small>${escapeHtml(note)}</small>
+        </article>
+      `).join("");
+    }
+
+    function renderTabs() {
+      document.querySelectorAll(".tab").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.tab === state.activeTab));
+      });
+      document.querySelectorAll(".section").forEach((section) => {
+        section.classList.toggle("active", section.dataset.view === state.activeTab);
       });
     }
 
-    function markCell(item, stage) {
-      const done = Boolean(item.stages[stage]);
-      const label = done ? "已完成" : "未完成";
-      return `<span class="mark${done ? " done" : ""}" title="${label}" aria-label="${label}">${done ? "✓" : ""}</span>`;
+    function allPlanAgents() {
+      const ids = new Set();
+      programs.forEach((program) => {
+        (program.responsibleAgentIds || []).forEach((id) => ids.add(id));
+        (program.responsibleAgents || []).forEach((agent) => ids.add(agent.id));
+      });
+      return Array.from(ids).sort((a, b) => agentName(a).localeCompare(agentName(b), "zh-CN"));
     }
 
-    function renderRows() {
-      const query = searchInput.value.trim().toLowerCase();
-      const filtered = capabilities.filter((item) => {
-        const groupMatch = activeGroup === "全部" || item.group === activeGroup;
-        const textMatch = !query || `${item.name} ${kindLabels[item.kind]} ${item.group}`.toLowerCase().includes(query);
-        return groupMatch && textMatch;
-      });
-
-      rowsEl.innerHTML = filtered.map((item) => `
-        <tr>
-          <td class="capability">
-            <div class="capability-name">
-              <span class="priority">${item.priority}</span>
-              <span class="name-text">${item.name}</span>
-            </div>
-          </td>
-          <td class="kind">
-            <span class="type-pill type-${item.kind}">${kindLabels[item.kind]}</span>
-          </td>
-          ${stages.map((stage) => `<td class="stage">${markCell(item, stage)}</td>`).join("")}
-        </tr>
+    function renderPlanControls() {
+      byId("planGroupFilters").innerHTML = groupOrder.map((group) => `
+        <button class="filter" type="button" data-group="${escapeHtml(group)}" aria-pressed="${group === state.activeGroup ? "true" : "false"}">${escapeHtml(group)}</button>
       `).join("");
 
-      emptyState.style.display = filtered.length ? "none" : "block";
+      const agentOptions = ["全部", ...allPlanAgents()];
+      byId("planAgentFilter").innerHTML = agentOptions.map((id) => `
+        <option value="${escapeHtml(id)}"${id === state.agentFilter ? " selected" : ""}>${escapeHtml(id === "全部" ? "全部责任智能体" : agentName(id))}</option>
+      `).join("");
+
+      byId("activePlanFilter").innerHTML = state.failureFilter
+        ? `${tag("正在定位问题：" + failureLabel(state.failureFilter), "amber")}`
+        : `${tag("默认显示全部训练计划", "green")}`;
     }
 
-    searchInput.addEventListener("input", renderRows);
+    function renderPlanHead() {
+      const staticHeads = ["能力项", "训练阶段", "责任智能体", "下一轮训练"];
+      const stageHeads = stageColumns.map((stage) => stage.shortLabel || stage.label || stage.id);
+      byId("planTableHead").innerHTML = [...staticHeads, ...stageHeads].map((head) => `<th>${escapeHtml(head)}</th>`).join("");
+    }
 
-    renderSummary();
-    renderFilters();
-    renderRows();
+    function failureLabel(id) {
+      const failure = (systemData.failureModes || []).find((item) => item.id === id);
+      return failure ? failure.label : id;
+    }
+
+    function programHasFailure(program, failureId) {
+      return (program.weaknesses || []).some((item) => item.id === failureId || item === failureId);
+    }
+
+    function filteredPrograms() {
+      const query = state.planQuery.trim().toLowerCase();
+      return programs.filter((program) => {
+        const groupMatch = state.activeGroup === "全部" || (program.matrixGroup || program.group) === state.activeGroup;
+        const agentIds = program.responsibleAgentIds || (program.responsibleAgents || []).map((agent) => agent.id);
+        const agentMatch = state.agentFilter === "全部" || agentIds.includes(state.agentFilter);
+        const failureMatch = !state.failureFilter || programHasFailure(program, state.failureFilter);
+        const searchable = [
+          program.name,
+          program.title,
+          program.priority,
+          program.kindLabel,
+          program.matrixGroup,
+          program.group,
+          program.focus,
+          program.nextTrainingTarget,
+          ...(program.responsibleAgents || []).map((agent) => agent.name),
+          ...(program.weaknesses || []).flatMap((risk) => [risk.id, risk.label, risk.note])
+        ].join(" ").toLowerCase();
+        return groupMatch && agentMatch && failureMatch && (!query || searchable.includes(query));
+      });
+    }
+
+    function renderAgentChips(program, limit = Infinity) {
+      const owner = program.ownerAgentId;
+      const list = program.responsibleAgents || [];
+      const visible = list.slice(0, limit);
+      const hidden = Math.max(0, list.length - visible.length);
+      const chips = visible.map((agent) => `
+        <button class="agent-chip ${agent.id === owner ? "owner" : ""}" type="button" data-agent-jump="${escapeHtml(agent.id)}" title="查看${escapeHtml(agent.name)} Prompt">
+          ${escapeHtml(agent.name)}
+        </button>
+      `).join("");
+      const more = hidden
+        ? `<span class="agent-chip more" title="${escapeHtml(list.slice(visible.length).map((agent) => agent.name).join("、"))}">+${hidden}</span>`
+        : "";
+      return chips + more;
+    }
+
+    function renderStageCell(program, stage) {
+      const stateInfo = (program.assetStates || {})[stage.id] || {};
+      const stateId = stateInfo.state || "none";
+      const label = stateInfo.label || stateLabels[stateId] || "未纳入";
+      const note = stateInfo.note || "暂未沉淀证据。";
+      return `
+        <td class="stage-cell" title="${escapeHtml(note)}">
+          <span class="state-chip ${escapeHtml(stateTone(stateId))}">${escapeHtml(label)}</span>
+          <span class="subline">${escapeHtml(stage.shortLabel || stage.label || stage.id)}</span>
+        </td>
+      `;
+    }
+
+    function renderAssetTrack(program) {
+      return stageColumns.map((stage) => {
+        const stateInfo = (program.assetStates || {})[stage.id] || {};
+        const stateId = stateInfo.state || "none";
+        const label = stateInfo.label || stateLabels[stateId] || "未纳入";
+        return `
+          <div>
+            <span class="subline">${escapeHtml(stage.shortLabel || stage.label || stage.id)}</span>
+            <span class="state-chip ${escapeHtml(stateTone(stateId))}" title="${escapeHtml(stateInfo.note || "暂未沉淀证据。")}">${escapeHtml(label)}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPlanCards(rows) {
+      byId("planCards").innerHTML = rows.map((program) => {
+        const isSelected = program.id === state.selectedProgramId;
+        const highlighted = state.failureFilter && programHasFailure(program, state.failureFilter);
+        const riskTags = (program.weaknesses || []).slice(0, 2).map((risk) => tag(risk.label || risk.id, "amber")).join("");
+        return `
+          <article class="plan-card ${isSelected ? "selected" : ""} ${highlighted ? "highlighted" : ""}" data-program-card="${escapeHtml(program.id)}">
+            <div class="plan-card-head">
+              <div>
+                <strong>${escapeHtml(program.name)}</strong>
+                <span class="subline">${escapeHtml(program.matrixGroup || program.group || "未分组")} · ${escapeHtml(program.kindLabel || "训练项")}</span>
+              </div>
+              <span class="priority">${escapeHtml(program.priority || "P?")}</span>
+            </div>
+            <div class="tag-row">${tag(program.stageState?.label || "未开训", "green")}${tag(stageOrdinal(program), "blue")}${riskTags}</div>
+            <div class="plan-card-grid">
+              <div class="plan-card-field">
+                <span>下一轮训练</span>
+                <strong>${escapeHtml(program.nextTrainingTarget || program.title || "下一轮目标待补")}</strong>
+              </div>
+              <div class="plan-card-field">
+                <span>训练焦点</span>
+                <strong>${escapeHtml(program.focus || "训练焦点待补")}</strong>
+              </div>
+            </div>
+            <div class="agent-list">${renderAgentChips(program)}</div>
+            <div class="asset-track">${renderAssetTrack(program)}</div>
+          </article>
+        `;
+      }).join("") || `<div class="empty">没有匹配的训练计划。</div>`;
+
+      byId("planCards").querySelectorAll("[data-program-card]").forEach((card) => {
+        card.addEventListener("click", () => {
+          state.selectedProgramId = card.dataset.programCard;
+          renderPlanRows();
+          renderTrainingInspector();
+        });
+      });
+
+      byId("planCards").querySelectorAll("[data-agent-jump]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          jumpToAgent(button.dataset.agentJump);
+        });
+      });
+    }
+
+    function renderPlanRows() {
+      const rows = filteredPrograms();
+      byId("planCount").textContent = `显示 ${rows.length} / ${programs.length} 个训练计划。点击行看右侧训练详情。`;
+      renderPlanCards(rows);
+      byId("planRows").innerHTML = rows.map((program) => {
+        const isSelected = program.id === state.selectedProgramId;
+        const highlighted = state.failureFilter && programHasFailure(program, state.failureFilter);
+        const riskTags = (program.weaknesses || []).slice(0, 2).map((risk) => tag(risk.label || risk.id, "amber")).join("");
+        return `
+          <tr data-program="${escapeHtml(program.id)}" class="${isSelected ? "selected" : ""} ${highlighted ? "highlighted" : ""}">
+            <td>
+              <div class="capability-title">
+                <span class="priority">${escapeHtml(program.priority || "P?")}</span>
+                <div>
+                  <strong>${escapeHtml(program.name)}</strong>
+                  <span class="subline">${escapeHtml(program.matrixGroup || program.group || "未分组")} · ${escapeHtml(program.kindLabel || "训练项")}</span>
+                  <div class="tag-row" style="margin-top: 6px;">${riskTags}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="stage-summary">
+                <div class="stage-label"><span>${escapeHtml(program.stageState?.label || "未开训")}</span><span>${escapeHtml(stageOrdinal(program))}</span></div>
+                <div class="progress"><span style="width:${stagePercent(program)}%"></span></div>
+                <span class="subline">${escapeHtml(program.stageState?.note || "阶段状态来自训练计划数据。")}</span>
+              </div>
+            </td>
+            <td><div class="agent-list">${renderAgentChips(program, 4)}</div></td>
+            <td>
+              <div class="next-round">
+                <strong>${escapeHtml(program.nextTrainingTarget || program.title || "下一轮目标待补")}</strong>
+                <span class="subline">${escapeHtml(program.focus || "训练焦点待补")}</span>
+              </div>
+            </td>
+            ${stageColumns.map((stage) => renderStageCell(program, stage)).join("")}
+          </tr>
+        `;
+      }).join("") || `<tr><td colspan="${4 + stageColumns.length}" class="empty">没有匹配的训练计划。</td></tr>`;
+
+      byId("planRows").querySelectorAll("[data-program]").forEach((row) => {
+        row.addEventListener("click", () => {
+          state.selectedProgramId = row.dataset.program;
+          renderPlanRows();
+          renderTrainingInspector();
+        });
+      });
+
+      byId("planRows").querySelectorAll("[data-agent-jump]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          jumpToAgent(button.dataset.agentJump);
+        });
+      });
+    }
+
+    function renderTrainingInspector() {
+      const program = programById(state.selectedProgramId);
+      if (!program) {
+        byId("trainingInspector").innerHTML = `<div class="empty">暂无训练计划。</div>`;
+        return;
+      }
+      const route = [program.ownerAgentId, ...(program.pipeline || [])]
+        .filter(Boolean)
+        .map((agentId) => `<div class="route-item"><strong>${escapeHtml(agentName(agentId))}</strong><span>${escapeHtml(routeRole(agentId, program))}</span></div>`)
+        .join("");
+      const promptHints = [
+        ...(program.weaknesses || []).map((risk) => risk.note || risk.label),
+        `下一轮 Prompt 应围绕：${program.focus || program.nextTrainingTarget || "训练焦点待补"}`
+      ];
+      const stageNotes = stageColumns.map((stage) => {
+        const cell = (program.assetStates || {})[stage.id] || {};
+        return `${stage.label || stage.id}：${cell.label || "未纳入"}。${cell.note || "暂无说明。"}`;
+      });
+      byId("trainingInspector").innerHTML = `
+        <div class="panel-head">
+          <div>
+            <h3>${escapeHtml(program.name)} · 训练详情</h3>
+            <p>${escapeHtml(program.title || program.nextTrainingTarget || "下一轮训练目标待补")}</p>
+          </div>
+          <span class="priority">${escapeHtml(program.priority || "P?")}</span>
+        </div>
+        <div class="inspector-body">
+          <div class="inspector-title">
+            <div class="tag-row">
+              ${tag(program.stageState?.label || "未开训", "green")}
+              ${tag(program.matrixGroup || program.group || "未分组", "blue")}
+              ${tag("训练阶段 " + stageOrdinal(program), "amber")}
+            </div>
+          </div>
+          <section class="detail-block">
+            <h4>本轮训练目标</h4>
+            <p>${escapeHtml(program.trainingObjective || program.nextTrainingTarget || "目标待补。")}</p>
+          </section>
+          <section class="detail-block">
+            <h4>智能体分工</h4>
+            <div class="route-list">${route || "<p>责任链路待补。</p>"}</div>
+          </section>
+          <section class="detail-block">
+            <h4>可调 Prompt 点</h4>
+            ${listMarkup(promptHints, "暂未生成可调 Prompt 点。")}
+          </section>
+          <section class="detail-block">
+            <h4>成功门槛</h4>
+            ${listMarkup(program.successCriteria, "成功门槛待补。")}
+          </section>
+          <section class="detail-block">
+            <h4>不算通过</h4>
+            ${listMarkup(program.notPassConditions, "不通过边界待补。")}
+          </section>
+          <section class="detail-block">
+            <h4>证据边界</h4>
+            ${listMarkup([...(program.evidenceRequired || []), ...stageNotes], "证据要求待补。")}
+          </section>
+        </div>
+      `;
+    }
+
+    function routeRole(agentId, program) {
+      if (agentId === program.ownerAgentId) return "拥有场景规则和本项训练焦点。";
+      const labels = {
+        pipeline_context_curator: "整理案例上下文和上一轮反馈。",
+        pipeline_asset_retriever: "检索标准图库、常识、自产资产和历史失败。",
+        pipeline_visual_intent: "把白话和参考图拆成视觉部件契约。",
+        pipeline_intent: "把需求转为结构化意图和审计清单。",
+        pipeline_execute: "只按声明过的计划落到 CODEX_PREVIEW。",
+        pipeline_audit: "做机器审计和可见效果自检。",
+        pipeline_repair: "按根因最小修复后回到审计。",
+        pipeline_delivery: "按低噪声模板交付证据和边界。",
+        pipeline_learning_promoter: "把失败或通过经验沉淀到正确层级。"
+      };
+      return labels[agentId] || "参与本轮训练链路。";
+    }
+
+    function jumpToAgent(agentId) {
+      state.selectedAgentId = agentId;
+      state.agentQuery = "";
+      state.agentGroup = "全部";
+      byId("agentSearch").value = "";
+      state.activeTab = "agents";
+      renderTabs();
+      renderAgentControls();
+      renderAgentList();
+      renderAgentPromptInspector();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function filteredAgents() {
+      const query = state.agentQuery.trim().toLowerCase();
+      return agents.filter((agent) => {
+        const contract = contractForAgent(agent.id);
+        const groupMatch = state.agentGroup === "全部" || agent.group === state.agentGroup;
+        const searchable = [
+          agent.name,
+          agent.sourceName,
+          agent.statusLabel,
+          agent.groupLabel,
+          agent.trainingRole,
+          agent.roleSummary,
+          contract.promptSummary,
+          contract.roleSetting,
+          ...(contract.responsibilityBoundary || []),
+          ...(contract.inputRequirements || []),
+          ...(contract.outputFormat || []),
+          ...(contract.mustNot || []),
+          ...(contract.adjustablePromptPoints || []),
+          ...(agent.ownedCapabilities || []).map((item) => item.name),
+          ...(agent.activeTrainingItems || []).map((item) => item.name)
+        ].join(" ").toLowerCase();
+        return groupMatch && (!query || searchable.includes(query));
+      });
+    }
+
+    function renderAgentControls() {
+      byId("agentGroupFilter").innerHTML = agentGroupOrder.map((group) => `
+        <option value="${escapeHtml(group)}"${group === state.agentGroup ? " selected" : ""}>${escapeHtml(group === "全部" ? "全部智能体" : groupLabels[group] || group)}</option>
+      `).join("");
+    }
+
+    function groupedAgentList(list) {
+      const groups = {
+        primary: {
+          label: "主训智能体",
+          items: list.filter((agent) => agent.status === "primary_training")
+        },
+        pipeline: {
+          label: "训练流水线智能体",
+          items: list.filter((agent) => agent.group === "pipeline")
+        },
+        paused: {
+          label: "暂停场景智能体",
+          items: list.filter((agent) => agent.group === "scene" && agent.status !== "primary_training")
+        },
+        demand: {
+          label: "需求侧角色",
+          items: list.filter((agent) => agent.group === "demand")
+        }
+      };
+      return groups;
+    }
+
+    function renderAgentList() {
+      const list = filteredAgents();
+      if (!list.some((agent) => agent.id === state.selectedAgentId) && list[0]) {
+        state.selectedAgentId = list[0].id;
+      }
+      const groups = groupedAgentList(list);
+      byId("agentList").innerHTML = Object.values(groups).map((group) => {
+        if (!group.items.length) return "";
+        return `
+          <section class="agent-group">
+            <h3>${escapeHtml(group.label)} · ${group.items.length}</h3>
+            ${group.items.map((agent) => `
+              <button class="agent-list-button" type="button" data-agent="${escapeHtml(agent.id)}" aria-pressed="${agent.id === state.selectedAgentId ? "true" : "false"}">
+                <strong>${escapeHtml(agent.name)}</strong>
+                <span class="subline">${escapeHtml(agent.statusLabel || "状态待补")} · ${escapeHtml(agent.roleSummary || agent.trainingRole || "职责待补")}</span>
+              </button>
+            `).join("")}
+          </section>
+        `;
+      }).join("") || `<div class="empty">没有匹配的智能体。</div>`;
+
+      byId("agentList").querySelectorAll("[data-agent]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.selectedAgentId = button.dataset.agent;
+          renderAgentList();
+          renderAgentPromptInspector();
+        });
+      });
+    }
+
+    function maturityItem(agent, key) {
+      return agent.maturity?.[key] || agent[key] || { percent: 0, note: "暂无成熟度说明。" };
+    }
+
+    function renderMaturityCards(agent) {
+      return Object.entries(maturityLabels).map(([key, label]) => {
+        const item = maturityItem(agent, key);
+        const value = percent(item.percent);
+        return `
+          <article class="maturity-card">
+            <strong><span>${escapeHtml(label)}</span><span>${value}%</span></strong>
+            <div class="progress"><span style="width:${value}%"></span></div>
+            <p>${escapeHtml(item.note || item.explanationZh || "该百分比只表示训练契约状态，不是真实 CAD 通过率。")}</p>
+            <span class="metric-meta">${escapeHtml(item.basis || "训练契约分，不是 CAD 通过率。")}</span>
+            <span class="metric-meta">${escapeHtml(item.gap || "缺口：继续用训练案例验证。")}</span>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderPromptBlock(title, content, fallback) {
+      return `
+        <section class="detail-block">
+          <h4>${escapeHtml(title)}</h4>
+          ${Array.isArray(content) ? listMarkup(content, fallback) : `<p>${escapeHtml(textOf(content, fallback))}</p>`}
+        </section>
+      `;
+    }
+
+    function renderAgentPromptInspector() {
+      const agent = agentById(state.selectedAgentId);
+      if (!agent) {
+        byId("agentPromptInspector").innerHTML = `<div class="empty">暂无智能体。</div>`;
+        return;
+      }
+      const contract = contractForAgent(agent.id);
+      const owned = (agent.ownedCapabilities || []).slice(0, 8).map((item) => `${item.name}：${item.nextTrainingTarget}`).join("；");
+      const active = (agent.activeTrainingItems || []).slice(0, 8).map((item) => `${item.name}：${item.nextTrainingTarget}`).join("；");
+      const promptAdjustments = (contract.adjustablePromptPoints || agent.operation?.optimizationTips || []).slice(0, 3);
+      byId("agentPromptInspector").innerHTML = `
+        <section class="prompt-hero">
+          <div class="tag-row">
+            ${tag(agent.groupLabel || groupLabels[agent.group] || "智能体", agent.group === "pipeline" ? "blue" : "green")}
+            ${tag(agent.statusLabel || "状态待补", agent.status === "primary_training" ? "green" : "amber")}
+            ${tag("这些百分比不是 CAD 通过率", "red")}
+          </div>
+          <h2 style="margin-top: 10px;">${escapeHtml(agent.name)}</h2>
+          <p class="prompt-summary"><strong>当前 Prompt 描述：</strong>${escapeHtml(contract.promptSummary || agent.roleSummary || "Prompt 摘要待补。")}</p>
+          <div class="prompt-focus">
+            <h3>本轮最值得调的 3 条 Prompt</h3>
+            ${listMarkup(promptAdjustments, "暂未生成可调 Prompt 点。")}
+          </div>
+        </section>
+        <section class="maturity-grid" aria-label="智能体成熟度">
+          ${renderMaturityCards(agent)}
+        </section>
+        <section class="prompt-grid">
+          ${renderPromptBlock("角色设定", contract.roleSetting || agent.trainingRole || agent.roleSummary, "角色设定待补。")}
+          ${renderPromptBlock("职责边界", contract.responsibilityBoundary, "职责边界待补。")}
+          ${renderPromptBlock("输入要求", contract.inputRequirements || agent.operation?.inputs, "输入要求待补。")}
+          ${renderPromptBlock("输出格式", contract.outputFormat || agent.operation?.outputs, "输出格式待补。")}
+          ${renderPromptBlock("硬门槛", contract.hardGates || agent.operation?.passGate, "硬门槛待补。")}
+          ${renderPromptBlock("禁止事项", contract.mustNot || agent.operation?.mustNot, "禁止事项待补。")}
+          ${renderPromptBlock("调用能力", contract.callCapabilities || agent.operation?.usesCore, "调用能力待补。")}
+          ${renderPromptBlock("可调 Prompt 点", contract.adjustablePromptPoints || agent.operation?.optimizationTips, "可调 Prompt 点待补。")}
+          ${renderPromptBlock("关联训练项", [owned || active || "暂无关联训练项。"], "暂无关联训练项。")}
+          ${renderPromptBlock("证据边界", contract.evidenceBoundary || "本契约只帮助训练和调 Prompt，不代表真实 CAD 几何通过。", "证据边界待补。")}
+        </section>
+        <details class="source-details">
+          <summary>源文件与维护入口</summary>
+          <div class="source-list">
+            ${(contract.sourceRefs || agent.docs || []).map((source) => {
+              if (typeof source === "string") {
+                return `<article class="source-item"><strong>源文件</strong><code>${escapeHtml(source)}</code></article>`;
+              }
+              return `
+                <article class="source-item">
+                  <strong>${escapeHtml(source.title || "源文件")} · ${escapeHtml(source.kind || "文件")}</strong>
+                  <p class="muted">${escapeHtml(source.meaning || "用于生成本页中文契约。")}</p>
+                  <p class="muted">${escapeHtml(source.changeGuide || "修改后需重新生成数据并复查页面。")}</p>
+                  <code>${escapeHtml(source.path || "")}</code>
+                </article>
+              `;
+            }).join("") || `<div class="empty">暂无源文件。</div>`}
+          </div>
+        </details>
+      `;
+    }
+
+    function impactedPrograms(failure) {
+      return programs.filter((program) => programHasFailure(program, failure.id));
+    }
+
+    function failureSink(failure) {
+      if (failure.id.includes("retrieval") || failure.id.includes("asset") || failure.id.includes("clone")) return "训练错误台账 + 资产检索规则";
+      if (failure.id.includes("layer")) return "执行智能体禁止事项 + CAD 安全检查";
+      if (failure.id.includes("annotation")) return "标注表达训练计划 + 交付检查";
+      if (failure.id.includes("machine") || failure.id.includes("audit")) return "审计规则 + 交付边界";
+      if (failure.id.includes("repair")) return "修复回环规则 + training-errors";
+      if (failure.id.includes("sofa") || failure.id.includes("furniture") || failure.id.includes("direction")) return "家装 rules.md + 视觉语义 Prompt";
+      return "案例反馈 -> 训练错误台账 -> 对应规则";
+    }
+
+    function renderFailures() {
+      const failures = systemData.failureModes || [];
+      byId("failureRows").innerHTML = failures.map((failure) => {
+        const impacted = impactedPrograms(failure);
+        const next = impacted[0]?.nextTrainingTarget || "先开一轮最小案例，明确根因和证据门槛。";
+        return `
+          <tr>
+            <td>
+              <strong>${escapeHtml(failure.label)}</strong>
+              <span class="subline">${escapeHtml(failure.note || "")}</span>
+              <div class="tag-row" style="margin-top: 6px;">${tag("预设风险权重 " + failure.weight, failure.weight >= 70 ? "red" : "amber")}${tag("非当前失败频率", "blue")}</div>
+            </td>
+            <td>
+              ${(impacted.slice(0, 5).map((program) => `<button class="small-button" type="button" data-plan-from-failure="${escapeHtml(failure.id)}" data-program="${escapeHtml(program.id)}">${escapeHtml(program.name)}</button>`).join(" ")) || "暂无直接映射，需人工归因。"}
+            </td>
+            <td><div class="agent-list">${(failure.agents || []).map((id) => `<button class="agent-chip" type="button" data-agent-jump="${escapeHtml(id)}">${escapeHtml(agentName(id))}</button>`).join("")}</div></td>
+            <td>${escapeHtml(next)}</td>
+            <td>
+              <strong>${escapeHtml(failureSink(failure))}</strong>
+              <span class="subline">不要直接晋升 Core，先确认是否只是单案例问题。</span>
+            </td>
+          </tr>
+        `;
+      }).join("") || `<tr><td colspan="5" class="empty">暂无失败模式。</td></tr>`;
+
+      byId("failureRows").querySelectorAll("[data-plan-from-failure]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.failureFilter = button.dataset.planFromFailure;
+          state.selectedProgramId = button.dataset.program;
+          state.activeGroup = "全部";
+          state.agentFilter = "全部";
+          state.planQuery = "";
+          byId("planSearch").value = "";
+          state.activeTab = "plan";
+          renderAll();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+
+      byId("failureRows").querySelectorAll("[data-agent-jump]").forEach((button) => {
+        button.addEventListener("click", () => jumpToAgent(button.dataset.agentJump));
+      });
+    }
+
+    function renderLearningRoutes() {
+      const routes = systemData.learningRoutes || [];
+      byId("learningRoutes").innerHTML = routes.map((route) => `
+        <article class="route-card">
+          <strong>${escapeHtml(route.from)} -> ${escapeHtml(routeTargets[route.to] || route.to)}</strong>
+          <p>${escapeHtml(route.desc || "沉淀说明待补。")}</p>
+          <p><code>${escapeHtml(route.to || "")}</code></p>
+        </article>
+      `).join("") || `<div class="empty">暂无学习分流路线。</div>`;
+    }
+
+    function renderBoundaryCards() {
+      const sourceCards = (systemData.sources || []).map((source) => `
+        <li><strong>${escapeHtml(source.title)}</strong>：${escapeHtml(source.desc)} <code>${escapeHtml(source.path)}</code></li>
+      `).join("");
+      byId("boundaryCards").innerHTML = `
+        <article class="boundary-card">
+          <h3>表 C 机器快照</h3>
+          <p><strong>${escapeHtml(tableCBoundary.label || "表 C 真实 CAD 机器快照")}</strong>：${escapeHtml(tableCBoundary.headlinePercent ?? "未生成")}${typeof tableCBoundary.headlinePercent === "number" ? "%" : ""}</p>
+          <p>${escapeHtml(tableCBoundary.note || "只作为 coverage JSON 和 registry 的机器指标，不参与训练计划和智能体成熟度计算。")}</p>
+          <p><code>${escapeHtml(tableCBoundary.sourcePath || "output/validation_runs/capability-lab/cad_capability_coverage.json")}</code></p>
+        </article>
+        <article class="boundary-card">
+          <h3>训练计划表单</h3>
+          <ul>
+            <li>阶段、四轨道状态和下一轮目标只说明训练安排和沉淀进度。</li>
+            <li>只有标签、计划、图库命中或常识整理，不能说明真实 CAD 几何已经通过。</li>
+            <li>如果进入落图，仍需 validate、dry-run、CODEX_PREVIEW、handles 回读、审计和用户反馈。</li>
+          </ul>
+        </article>
+        <article class="boundary-card">
+          <h3>智能体成熟度</h3>
+          <ul>
+            <li>契约完整度、调用契约、训练覆盖面和证据状态只用于调 Prompt。</li>
+            <li>百分比越高表示契约更完整或训练计划覆盖更多，不等于 CAD 通过率。</li>
+            <li>每轮训练后应回看可调 Prompt 点，而不是只追求百分比上升。</li>
+          </ul>
+        </article>
+        <article class="boundary-card">
+          <h3>图库、常识和来源</h3>
+          <ul>
+            <li>标准图库和参考资料是上游证据，不是系统能力证明。</li>
+            <li>常识文档可以指导训练，但必须经过案例、审计和反馈才算沉淀。</li>
+            ${sourceCards}
+          </ul>
+        </article>
+      `;
+    }
+
+    function renderAll() {
+      renderStatusMetrics();
+      renderTabs();
+      renderPlanControls();
+      renderPlanHead();
+      renderPlanRows();
+      renderTrainingInspector();
+      renderAgentControls();
+      renderAgentList();
+      renderAgentPromptInspector();
+      renderFailures();
+      renderLearningRoutes();
+      renderBoundaryCards();
+    }
+
+    function bindEvents() {
+      document.querySelectorAll(".tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.activeTab = button.dataset.tab;
+          renderTabs();
+        });
+      });
+
+      byId("planSearch").addEventListener("input", (event) => {
+        state.planQuery = event.target.value;
+        renderPlanRows();
+      });
+
+      byId("planGroupFilters").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-group]");
+        if (!button) return;
+        state.activeGroup = button.dataset.group;
+        renderPlanControls();
+        renderPlanRows();
+      });
+
+      byId("planAgentFilter").addEventListener("change", (event) => {
+        state.agentFilter = event.target.value;
+        renderPlanRows();
+      });
+
+      byId("clearFailureFilter").addEventListener("click", () => {
+        state.failureFilter = null;
+        renderPlanControls();
+        renderPlanRows();
+        renderTrainingInspector();
+      });
+
+      byId("agentSearch").addEventListener("input", (event) => {
+        state.agentQuery = event.target.value;
+        renderAgentList();
+        renderAgentPromptInspector();
+      });
+
+      byId("agentGroupFilter").addEventListener("change", (event) => {
+        state.agentGroup = event.target.value;
+        renderAgentList();
+        renderAgentPromptInspector();
+      });
+    }
+
+    function init() {
+      renderAll();
+      bindEvents();
+    }
+
+    init();
   </script>
 </body>
 </html>

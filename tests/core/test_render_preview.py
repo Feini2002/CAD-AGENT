@@ -45,7 +45,11 @@ class RenderPreviewTests(unittest.TestCase):
         self.assertTrue(capabilities["output_dir_exists"])
         self.assertIn("pillow_imagegrab", capabilities["dependencies"])
         self.assertIn("win32gui", capabilities["dependencies"])
-        self.assertIn("screen", capabilities["capture_modes"])
+        if capabilities["dependencies"]["pillow_imagegrab"]:
+            self.assertIn("screen", capabilities["capture_modes"])
+        else:
+            self.assertNotIn("screen", capabilities["capture_modes"])
+            self.assertEqual(capabilities["status"], "unavailable")
 
     def test_check_does_not_report_autocad_window_ready_without_window(self) -> None:
         output = artifact_path("render_preview", "no_window.png")

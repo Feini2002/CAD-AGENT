@@ -121,11 +121,17 @@ class VisualPartsCaseContractTests(unittest.TestCase):
                 self.assertIn(part_id, compare)
                 self.assertIn(part_id, review["component_checks"])
 
-        self.assertTrue(review["delivery_allowed"])
+        self.assertFalse(review["delivery_allowed"])
+        self.assertFalse(review["agent_review_all_pass"])
+        self.assertEqual(review["blocked_reason"], "user_feedback_fail_audit_chain_calibrated")
+        self.assertFalse(review["checks"]["visual_match_brief"]["pass"])
+        self.assertFalse(review["checks"]["same_product_family_as_reference"]["pass"])
+        self.assertFalse(review["checks"]["no_schematic_shortcut"]["pass"])
         self.assertEqual(review["visual_parts"], "round12_visual_parts.json")
         self.assertEqual(review["style_target_source"], "reference_crop")
         self.assertNotIn("pending execution", compare.lower())
-        self.assertNotIn("- [ ]", compare)
+        self.assertIn("- [ ] Machine audit reports `audit_pass=true`.", compare)
+        self.assertIn("User review failed round12", compare)
         self.assertIn("real AutoCAD screenshot", compare)
 
 
