@@ -11,6 +11,9 @@
     "block": "A-BLOCK",
     "clearance": "A-CLEAR",
     "circulation": "A-PATH",
+    "centerline": "A-CNTR",
+    "hidden": "A-HIDN",
+    "guide": "A-GUIDE",
     "annotation": "A-ANNO",
     "dimension": "A-DIMS",
     "hatch": "A-HATCH"

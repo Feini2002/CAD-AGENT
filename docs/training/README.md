@@ -1,16 +1,32 @@
 # Agent 训练阶段（方案 A）
 
-最后更新：2026-05-29
+最后更新：2026-06-01
 
-Core Lab 施工已收口。本目录是**默认工作入口**：用真实/脱敏案例训 Agent「指哪打哪」，而不是再开 V-PROOF / 三轨施工包。
+Core Lab 施工已收口。本目录是**默认工作入口**：用 CAD Designer Agent 成长路径和真实/脱敏案例训 Agent「指哪打哪」，而不是再开 V-PROOF / 三轨施工包。
+
+## 30 秒入口边界
+
+- 开基础课：读本节、`cad-designer-growth-path.md` 和 `agents/cad_designer/rules.md` 即可，不默认全文展开旧案例。
+- 开家装案例：再读 `residential-primary.md`、案例 `brief.md` / `feedback.md` 和必要的 `expected/`。
+- 查训练事实源：读 `training-sources.json`；`capability-map-data.js` 与 `capability-map.html` 只是派生快照。
+- 查历史方案：`visual-first-agent-plan.md` 等标记为 HISTORY-ONLY 的文件只作背景，不当作当前待执行 Phase。
+
+## 总训练对象
+
+当前总训练对象是 **CAD Designer Agent**（`agents/cad_designer/`）：把系统当作一个从 CAD 基础课成长起来、会调用场景规则、资产库、执行、审计和修复流程的电子设计师。
+
+第一阶段毕业目标采用“电子设计师雏形”：基础命令、家装对象和审计自检一起练；但第一批课程必须从 CAD 基础操作开始铺开。详细路径见 [`cad-designer-growth-path.md`](cad-designer-growth-path.md)。
+
+正式训练前的计划已扩为 **V2 训练地图**：工作台保留 `CAD 基础操作 / 基础家具 / 储位家具 / 厨卫对象 / 基础绘图 / 标注表达` 六类，但扩为 217 个训练计划项，足够支撑连续、分层的正式训练。V2.1 已补训练批次依赖图和机器验收器骨架，用来组织先后关系和应检项。详细口径见 [`cad-designer-training-plan-v2.md`](cad-designer-training-plan-v2.md)。V2 / V2.1 只是训练地图，不提升表 C，也不代表已经具备施工图交付能力。
 
 ## 主训场景
 
 | 项 | 约定 |
 | --- | --- |
-| **当前主训** | **家装（`agents/residential/`）** |
+| **总训练对象** | **CAD Designer Agent（`agents/cad_designer/`）** |
+| **当前主场景插件** | **家装（`agents/residential/`）** |
 | **其它场景** | 保留配置，默认 **paused**（见 `agents/AGENT_TRAINING_STATUS.md`） |
-| **底座** | `core/` 不动算法；训练改 `agents/residential/rules.md`、`preferences.json` 与 `projects/<case>/` |
+| **底座** | `core/` 不动算法；成长路径改 `agents/cad_designer/`，场景训练改 `agents/residential/rules.md`、`preferences.json` 与 `projects/<case>/` |
 | **白话落图** | 必须先变成 `CAD_PLAN` 或结构化意图 → validate → dry-run → `CODEX_PREVIEW` → handles 回读 |
 
 家装专项约定：`docs/training/residential-primary.md`。
@@ -33,18 +49,54 @@ Core Lab 施工已收口。本目录是**默认工作入口**：用真实/脱敏
 
 **资产 intake 默认口径：** 用户给标准图库文件夹、截图、描述或参考块时，不要求用户先填表。用户可以只给“文件夹路径 + 一句大概内容”。Agent 默认先自动扫描文件结构、文件名、可读元数据和少量样本，推断对象类型、图纸类型、适用范围、来源线索和证据边界；无法可靠判断的字段统一写 `unknown`，只能作为参考的字段写 `reference_only`。扫描结果只进入 reference intake / `retrieval_pack`，不晋升 `libraries/system_library/`，也不算能力证明。详见 [`asset-intake-template.md`](asset-intake-template.md) 与 `scripts/run_asset_raw_intake.py`。
 
+**系统资产沉淀口径：** 用户明确说“沉淀 XX 资产 / 通用资产 / 收进资产库”时，才进入 `libraries/system_library/`。默认按 [`../architecture/system-asset-sedimentation-protocol.md`](../architecture/system-asset-sedimentation-protocol.md) 执行四件套：机器契约、CAD 原生资产位置、应用 / 验收工具、全局索引。当前通用入口是 `scripts/sediment_system_asset.py`；它可以先登记合同并预留 `*_assets.dwg`，但若 `nativeDwgExists=false`，不得声称原生 DWG 已导出或新 CAD 文件已自动具备该资产。
+
+**资产库守门员：** 沉淀前先过 `pipeline_asset_governor`。它判断来源边界、是否能进入 clean reusable source、是否需要资产馆员 / DWG 编排员 / 复用审计员，以及收尾是否还需继续润色加固。系统资产 DWG 不得把训练面板、训练标题、临时说明、边框、尺寸线或证据文字原封不动搬进可复制源区；来源不清时进入 `metadata_only` / `03_REVIEW_QUARANTINE`。
+
+**分类资产库规则：** 同类资产沉淀到同一个稳定包。比如沙发资产进入 `libraries/system_library/furniture/seating/sofas/`，沙发 A / B 连续沉淀时更新同一个 `assets.json` 和同一个 `sofa_assets.dwg` 位置；绘图标准进入 `libraries/system_library/drawing_standards/basic/`，统一线宽、线型、尺寸样式、文字和引线样式等标准。
+
+**资产晋升门槛：** 系统资产状态必须写成 `candidate` / `systemized` / `verified` / `deprecated`。训练或沉淀刚完成时通常是 `candidate` 或 `systemized`；只有复用验收、CAD readback、插入 / 应用审计或用户验收能证明该资产稳定可用时，才可升为 `verified`。每条资产应带 `retrieval`、`native.layoutPlan`、`versioning`、`verification` 和 `feedbackLoop`；重复 asset id 出现尺寸或 blockName 冲突时，必须显式选择更新、拒绝或生成变体。
+
+**资产源边界门禁：** 对象类资产只有来源边界精确时才允许准备 block 导出，例如用户选中实体、刚创建 handles、明确 bbox 或已有 named block；不得默认把整个 `CODEX_PREVIEW`、全模型空间、当前屏幕、全部可见对象、训练面板或全局预览 bbox 打成 block。来源不清时只登记 `metadata_only`，并在 `exportManifest` / `antiContamination` 里写明缺口。样式类资产必须走 `style_standard` / `style_export`，不做 block。
+
+**基础操作例外：** L0 / CAD 基础操作训练不要求标准图块、参考图库命中或自产资产晋升。它训练的是命令语义、几何参数、图层纪律、created handles、bbox、端点 / 闭合和审计证据；只有明确训练 `block` 命令或参考块使用时，才进入块引用机制，不等同于标准图块资产沉淀。
+
+**基础能力回流复训：** CAD 基础操作 31/31 通过后，不代表这些能力永久封存。复杂对象、场景案例或施工图表达训练中，只要发现基础命令、图层、闭合、回读、block、layout / plot、清理或安全回滚不稳，就要把问题回流到对应基础项：先登记失败症状和触发案例，再改脚本 / Prompt / 检查器 / 规则，随后对基础项做二次或多次加强训练，并回测原复杂任务。旧通过报告作为历史证据保留，新复训报告追加到 `training-sources.json` / learning ledger / 工作台同步链路。
+
+**复训范围硬边界：** 加强训练必须贴近用户点名范围。用户说“任务 12”“只看这个填充图案”“按这个截图做不同比例测试”时，默认是单项 / 子图样的 lightweight focused retraining；不得借用整批脚本把 21 项或 31 项全部重跑。只有用户明确要求“全部、整批、重新跑所有、刷新整个队列”时，才执行 full batch。脚本和报告必须记录 `scope.mode`、`requestedCapabilityIds`、`scopeReason`；focused 结果只追加为补训证据，不直接覆盖整批验收状态。
+
+**轻重链路量化路由：** 训练期不把所有 CAD 小动作都套进完整训练闭环。Agent 每次落图前先选择 `quick_trial`、`focused_retraining` 或 `formal_acceptance`，并按下表执行；能用轻链路证明的，不得默认升到重链路。
+
+| 模式 | 触发词 / 语义 | 默认预算 | 必跑 | 默认跳过 | 不得声称 |
+| --- | --- | ---: | --- | --- | --- |
+| `quick_trial` | “试一下”“快画”“小动作”“先看看”“先别沉淀”“不进训练”“只画这个” | ≤ 2 分钟 | 1 次最小结构化意图、只写 `CODEX_PREVIEW`、1 次 CAD 写入、1 次关键回读（handles / bbox / 图层 / hatch pattern / scale 等） | 完整 validate / dry-run、截图、Agent 自检文档、工作台同步、learning promotion、表 C coverage | 训练通过、已沉淀、可交付准确、工作台已更新 |
+| `focused_retraining` | “训练某项”“任务 X”“加深”“某图案”“某比例测试” | ≤ 8 分钟 | 仅点名能力或显式列表、focused plan / dry-run 或等价校验、真实 CAD 局部落图、关键 readback、`scope.mode=focused` 报告 | 整批队列、覆盖整批验收、完整工作台同步、无关截图 | 整批完成、全队列通过、表 C 提升 |
+| `formal_acceptance` | “验收”“沉淀”“训练通过”“记入工作台”“整批”“全部”“刷新队列”“推进表 C” | 不设总时长；每个子动作仍受 30 秒 watchdog | 完整计划、validate / dry-run、`CODEX_PREVIEW`、readback / audit、必要截图、Agent 自检、报告、post-sync / coverage（按口令） | 无 | 未经证据不得声称完成 |
+
+升级条件：`quick_trial` 若预计新增对象超过 20 个、需要修改已有实体、涉及正式图层 / 保存 / 删除、用户要求“完成 / 准确 / 训练通过”、关键回读失败，或超过 2 分钟仍无法给出关键证据，必须先说明原因并升级到 `focused_retraining` / `formal_acceptance`，或暂停让用户确认。轻链路最终回复不超过 3 句，必须写明“快试未沉淀”。
+
+**临场复合任务：** 训练地图只列原子能力和代表性课程，不穷举所有组合。用户可以随时要求“截图里的沙发标注尺寸”“按参考图补门洞开启方向”“把已有柜体改宽并重标尺寸”等复合任务。Agent 默认把它们拆成已有能力节点来编排，而不是新增一条训练计划：视觉 / 读图输入 → 对象与参照识别 → 尺度来源判断 → 绘图或标注意图 → `CAD_PLAN` / 结构化意图 → validate / dry-run → `CODEX_PREVIEW` → handles 回读 / 审计 → 交付或修复。
+
+复合任务必须声明 `evidence_source`。只有截图时，尺寸和位置属于视觉推断；截图加已知参照尺寸时，属于比例估算；有 DWG、created handles、原 `CAD_PLAN` 或用户明确尺寸时，才能进入对应的几何 / 标注审计。复合任务失败后，先写入案例反馈或 `training-errors.md`；只有重复失败、可机器检查或可泛化为课程时，才更新训练地图、检查器或规则链路。
+
+**原位局部修复优先：** 用户指出局部不准，或 Agent 自检发现局部失败时，默认从上一轮 `roundN_execution_summary.json`、created handles、当前 CAD readback 和截图定位错误对象，生成 `repair_plan`，在原位置执行 `update` / `delete_replace` / `add_missing`。不得因为文字乱码、单条线型错误、某个 hatch 比例不对、局部缺线或局部标注错位，就在旁边再完整画一套。只有 handles 失效、对象被炸开 / 删除、局部修会破坏整体拓扑，或全局比例 / 坐标 / 布局根因错误时，才允许整块重画；重画前要说明原因。
+
 本主链路写在 `docs/training/`，会随训练**不断修订**；修订记录见 [`pipeline-changelog.md`](pipeline-changelog.md)（只收 **链路类** 教训）。
 
+训练主链路只覆盖训练期轮次本身。跨越普通执行、资产复用、资产沉淀、精准复训、规则同步和 A-to-A 校准的完整系统任务链路，统一看 [`../architecture/cad-agent-task-chain.md`](../architecture/cad-agent-task-chain.md)。后续遇到“白话理解 -> 子任务分发 -> 执行”和“训练完成 -> 底座规则 / 单一任务规则 / Agent 校准同步”两类问题时，应同时按该总链路判断，不得只保留其中一半。
+
 ```text
-  白话 brief
-      → Step0 查常识 / 查 catalog / 查自产资产：形成 retrieval_pack，基础对象先找已有知识、对象定义、受控块边界和历史失败
+  训练目标 / 白话 brief
+      → Step-1 判断 CAD Designer Agent 成长阶段：基础课程 / 对象课程 / 场景案例 / 专业表达
+      → Step-1a 若是临场复合任务：拆成已有能力节点，并声明 evidence_source / not_checked
+      → Step0 查常识 / 查 catalog / 查自产资产：形成 retrieval_pack，基础对象先找已有知识、对象定义、受控块边界和历史失败（CAD 基础操作可跳过资产检索；block 仅指命令 / 引用机制训练）
       → Step0b route：exact_reuse / parametric_variant / semantic_redraw / novel_with_constraints / deferred
       → Step1 需求拆分：style_target + roundN_visual_parts.json + roundN_intent.json（+ 可选 CAD_PLAN）
       → Step1b reference_match gate：缺 `visual_parts` 或款式不明则阻断 Execute
       → Step2 落预览（CODEX_PREVIEW）
       → Step3 审计环：geometry_audit.json → audit_review → 截图
       → 【仅审计通过】请你 §几何 feedback
-      → 记错因 → 修 intent / checklist / 脚本 → 下一轮
+      → 记错因 → repair_plan 原位局部修复 / 修 intent / checklist / 脚本 → 下一轮
 ```
 
 | 阶段 | 你的动作 | Agent 必须留痕 |
@@ -190,6 +242,7 @@ flowchart TD
 - 落图后**直接截图**、跳过机器审计或未达标仍截图。
 - 审计 JSON 已红灯仍请你「看一下」——等于把诊断推给你。
 - **多轮只换截图、不改几何或审计项**（沙发案例曾犯）。
+- 局部错误直接在旁边整套重画，导致旧错留在原位、画布噪声变大。
 - 用表 C / Lab 烟囱 pass 代替案例 `feedback.md` pass。
 - 为通过审计写「假几何」（如单独补一条底边而靠背仍空）。
 
@@ -236,12 +289,53 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 | 你说 | Agent 默认做 |
 | --- | --- |
 | **开一轮训练** / **家装案例** | Step1 写 `intent.json` → Step2 落图 → Step3 审计环 → 未过自修 |
+| **试一下** / **快画** / **小动作** / **先别沉淀** | 走 `quick_trial`：≤2 分钟，只写 `CODEX_PREVIEW`，做 1 次关键回读，跳过完整训练沉淀 |
+| **CAD 基础课** / **总设计师训练** | CAD 基础操作已 31/31 训练沉淀；默认进入对象课程或案例训练。若复杂任务暴露基础薄弱，回流到对应 L0 项复训，再回测原任务 |
+| **跑前 10 项队列** / **监督式基础队列** | 运行 `& $py scripts\run_training_queue.py --preset cad-foundation-first-10`；每次只推进 1 项，脚本在需要你验收或反馈时暂停 |
 | **记反馈** | 写 `feedback.md` §用户指出的错因 + §修复步骤；追加 `docs/training/training-errors.md`；链路类再写 `pipeline-changelog.md` |
 | **优化聪明度** / **校准 Agent** | 找根因并改对应层：Prompt/Agent 配置、`visual_parts`、checklist、Core 探针或场景 rules；不能只口头总结 |
 | **刷新表 C** | 只跑 coverage（Lab 回归，不代替案例 pass） |
 | **画不准** | `docs/runbooks/blocker-playbook.md` |
 
 执行台账与案例 backlog：`docs/planning/任务清单.md` §0。
+
+### 监督式基础队列
+
+第一版队列入口是 `scripts/run_training_queue.py`，默认预设为 `cad-foundation-first-10`，覆盖工作台框选的 10 个 CAD 基础操作训练项。它只做监督式编排：生成 / 恢复 `output/training_queues/cad-foundation-first-10/queue_state.json`，每次暂停在一个训练项，并输出需要你在 Codex 对话框验收的 checklist 和下一步命令。
+
+```powershell
+& $py scripts\run_training_queue.py --preset cad-foundation-first-10
+& $py scripts\run_training_queue.py --preset cad-foundation-first-10 --decision pass --feedback "本项通过"
+& $py scripts\run_training_queue.py --preset cad-foundation-first-10 --decision fail --feedback "第 X 点不准"
+```
+
+队列脚本不无人值守保存或覆盖 DWG；真实落图仍必须只写 `CODEX_PREVIEW`，并按本页理想链路保留 validate、dry-run、handles 回读、审计和用户反馈。
+
+通过项的收尾由脚本自动做：`--decision pass` 会触发训练工作台同步，并在 JSON 输出里写入 `postTrainingSync`；中间项采用轻量同步，最后一项通过并完成队列时会跑完整 `scripts/sync_training_workbench.py`，自动完成 learning promotion、`capability-map-data.js` 重建和 Agent check。除非调试时显式传 `--no-post-sync`，不要再让用户额外提醒“同步前端 / 沉淀 Prompt”。
+
+正式训练、focused 复训或纠错收尾还必须生成 `promotionGate`。它负责把“是否写训练事实源、是否刷新工作台、是否同步 Agent 校准、是否需要 reviewed package 改底座规则 / 单项规则 / 检查器、是否回测原任务”写成机器可读决策。`quick_trial` 的 gate 只能是 `observation`；缺 handles/readback、缺 Agent 自检、只有截图推断或用户明确“先别沉淀”时，不得写入 Agent 校准或工作台已沉淀状态。规则 delta 和检查器 delta 只进入 `needs_reviewed_package`，不能由训练脚本静默改全局规则。
+
+剩余 21 项基础操作已改用批量无监督入口 `scripts/run_cad_foundation_remaining_training.py`。该脚本默认连接当前 AutoCAD，只写 `CODEX_PREVIEW`，生成 `cad-foundation-remaining-21` 的结构化训练计划、dry-run、execution summary、验收报告、队列状态和预览截图，并在通过后自动运行 `scripts/sync_training_workbench.py`。当前最终证据为 `output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json`，21/21 pass、235/235 句柄回读，中文标注复训后 `chinese_labels=text_labels=65 latin_terms=0`；它让 CAD 基础操作 31/31 进入训练沉淀，但不提升表 C。
+
+### 可选流式演示模式
+
+剩余 21 项入口默认仍按高速批量模式执行；只有显式传入 `--stream-demo` 时，才开启面向旁观查看的 hybrid streaming。该模式支持每个训练面板完成后短暂停顿、演示用 refresh 和可选 zoom，也可以在每个面板内对有限数量关键图元做短暂停顿，便于观察脚本正在画什么；默认高速模式不插入这些演示动作。
+
+```powershell
+& $py scripts\run_cad_foundation_remaining_training.py --stream-demo --stream-item-delay 0.35 --stream-operation-delay 0.12 --stream-operation-budget 5
+```
+
+如需保留停顿但不自动缩放，可加 `--stream-no-zoom`。流式演示只改变显示节奏，不改变验收口径：真实通过仍看 `CODEX_PREVIEW` handles/readback、图层守卫、dry-run、watchdog 和最终报告；不保存 DWG、不覆盖原图、不写正式图层。截图只作 visual aid，不能替代机器回读证据。
+
+第 12 项“填充与边界”允许针对 CAD 自带 hatch 图样做加强复训：当前样板使用 8 个小方格覆盖 `ANSI31`、`ANSI32`、`ANSI37`、`AR-CONC`、`BRICK`、`GRAVEL`、`EARTH`，并用同一 `ANSI31` 做不同比例对比。验收不能只看截图，应回读 hatch pattern 和 `PatternScale`。
+
+用户为了查看方便可以手动移动已经生成的训练面板；只要不是炸开、删除或重画，原实体句柄通常仍可回读。复训脚本应优先读取上一轮 `execution_summary` 的 created handles，并以这些 handles 的当前位置 / bbox 作为训练停放区参考，避免训练目标按全画布最右侧一路漂移。找不到旧 handles 时才退回当前 `CODEX_PREVIEW` 全局 bbox 右侧空白区，并在报告里记录 `parking_anchor.source`。
+
+收尾后还要执行训练产物保留策略：长期只保留最终验收报告、队列状态、learning ledger / Agent memory / Prompt addendum，以及最近一份人工复核预览图；中间 retry 目录、临时 `CAD_PLAN` / dry-run / execution summary、旧截图和一次性脚本应在确认不再被引用后清理。默认入口是 `scripts/run_training_artifact_retention.py`：先 dry-run 写 `retention_report.json`，确认未引用旧图后才允许显式 `--write` 归档到 `archive/training_artifacts/`；训练队列 pass 后会把 dry-run 摘要写入 `postTrainingArtifactRetention`。清理前必须先把失败根因或可复用教训写入 `training-errors.md`、learning promotion 或对应规则，不能把教训随临时文件一起删掉。
+
+自动化训练还必须带超时与熔断保护：队列里的每个 CAD / 脚本 / 截图 / 回读 / 同步子动作默认最多等待 30 秒。超时后先由 Agent 读取 stdout / stderr、最近报告、队列状态和 CAD 会话状态，自行尝试一次有限恢复，例如重连、刷新、重取景、重跑该子步骤或改用 deferred；不得无限 retry。
+
+同一训练项连续 2 次 30 秒超时，或同一队列连续 3 个子动作超时 / 失败，必须熔断暂停到 `blocked` / `needs_user_review` 或等价状态，并在脚本输出或训练记录里写清 `timeoutSeconds: 30`、`selfRecoveryAttempted`、`circuitBreakerTriggered`、`blockedReason`、卡点、已保留证据和下一步建议。熔断后不得继续无人值守落图，也不得把 partial output 当作训练通过或工作台已同步。
 
 ## 交付汇报（训练期）
 
@@ -313,7 +407,7 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 | --- | --- |
 | **§用户指出的错因** | 你的原话 / 不准点（不替换成技术黑话） |
 | **§Agent 根因分析** | 机器证据（审计 JSON、handle、截图路径）+ 推断 |
-| **§修复步骤** | 本轮实际做了什么（改 rules / 改 runs 脚本 / 改审计项 / 重跑 round） |
+| **§修复步骤** | 本轮实际做了什么（优先 `repair_plan` 原位局部修复；必要时才改 rules / 改 runs 脚本 / 改审计项 / 重跑 round） |
 | **§判因类型** | `链路` / `几何` / `环境` / `需求`（可多选；**链路**才触发 pipeline 修订） |
 
 ### 2. 仓库级
@@ -354,6 +448,7 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 | 需要 | 路径 |
 | --- | --- |
 | 家装主训说明 | `docs/training/residential-primary.md` |
+| 总设计师成长路径 | `docs/training/cad-designer-growth-path.md` |
 | **链路修订记录** | `docs/training/pipeline-changelog.md` |
 | 场景 Agent 边界 | `agents/SCENE_AGENT_RULES.md` |
 | PlanMD 路由 | `CORE_RESTRUCTURE_PLAN.md` |

@@ -2,15 +2,16 @@
 
 CAD Agent Core Lab 是一个可迁移的 CAD Agent 开发包，用来训练“白话需求 -> 结构化绘图意图 -> CAD 预览落图 -> 机器审计 -> 截图自检 -> 用户验收”的完整闭环。它不把一句自然语言直接丢给 AutoCAD 硬画，而是把 CAD 生成拆成可审计、可回放、可修复、可跨机器迁移的工程链路。
 
-当前最新架构是 **Visual-First + CAD 常识底座 + 资产智能管线 + 多 Agent 编排**：
+当前最新架构是 **CAD Designer Agent 成长路径 + Visual-First + CAD 常识底座 + 资产智能管线 + 多 Agent 编排**：
 
+- **CAD Designer Agent**：把系统当作电子设计师训练，从基础图元、选择、移动、旋转、偏移、修剪、图层、闭合和回读开始，逐步进入对象符号、房间平面、专业表达和施工图。
 - **Visual-First**：先看真实参考、截图裁剪或 CAD 参考块，再生成 `style_target`、`visual_parts` 和绘图约束。
 - **CAD 常识底座**：把“沙发要有座面和靠背”“参考不等于复制”等基础知识沉淀为可查、可测、可声明边界的规则候选。
 - **资产智能管线**：把 `standard_cad_library_raw/`、`reference_library`、`system_library`、`retrieval_pack`、promotion gate 串起来，区分“参考输入”和“系统已验证自产能力”。
 - **多 Agent 编排**：由 Context / Asset Retrieval / Visual Intent / Intent / Execute / Audit / Repair / Delivery / Learning Promotion 分工协作，但所有落图仍必须经过 Core 验证链。
 - **证据优先**：截图、dry-run、Markdown、图库命中都不能单独证明真实 CAD 能力；对外声称完成前必须有结构化意图、真实输出、created handles 回读、审计和必要截图。
 
-一句话：这个仓库训练的不是“会画一张图的脚本”，而是一套能在真实 CAD 约束下逐轮变准的 Agent 系统。
+一句话：这个仓库训练的不是“会画一张图的脚本”，而是一个能调用流程 Agent、场景规则和资产库，并在真实 CAD 约束下逐轮变准的电子设计师。
 
 ## 最新端到端架构
 
@@ -41,6 +42,7 @@ flowchart TD
 ## 架构分层
 
 - `core/`：通用能力层，负责 CAD IO、执行、安全、schema、审计、训练 gate 和能力登记。
+- `agents/cad_designer/`：总设计师 Agent 契约，定义成长阶段、第一阶段毕业目标、基础课程和证据边界。
 - `agents/pipeline/`：全局多 Agent 流水线，定义理解、视觉约束、意图、执行、审计、修复、交付、学习晋升等角色。
 - `agents/<scenario>/`：轻量场景 Agent，保存住宅、展陈、医疗等场景偏好和词汇，不复制 Core 能力。
 - `standard_cad_library_raw/`：用户下载的标准 CAD 图库原始文件，允许随 git 迁移，但只算 raw reference input。
@@ -83,9 +85,9 @@ standard_cad_library_raw
 
 Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 reference-match 任务，`style_target` 不能是凭空生成的示意图，必须来自 AutoCAD 截图裁剪、用户提供参考图或真实 CAD 参考块。典型 round 产物保存在 `projects/<case_id>/runs/`：`visual_parts`、`intent`、`execution_summary`、`vector_readback`、`geometry_audit`、`preview`、`agent_review` 和 `style_compare`。
 
-## 当前主训案例
+## 历史训练样例
 
-当前第一条闭环案例是 `projects/residential_sofa_2seat_20260528/`。round13 解决了部分衔接问题，但用户指出仍有白线和方向语义错误；round14 已按共享边去重和方向语义修复重新落图，保留 `round14_execution_summary.json`、`round14_vector_readback.json`、`round14_geometry_audit.json`、`round14_preview.png` 和 `round14_agent_review.json` 作为证据，可进入用户目视验收。
+`projects/residential_sofa_2seat_20260528/` 是第一条完整训练闭环样例，不是当前唯一主线。当前主线以 `CAD Designer Agent` 成长路径、V2 训练地图和 `docs/planning/任务清单.md` §0 为准；沙发 round14 只作为历史证据和训练教训来源。
 
 这个案例的主要价值不是“仓库里多了一个沙发脚本”，而是把训练期教训推进到全局链路：
 
@@ -107,7 +109,9 @@ Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 refe
 
 仓库按可迁移开发包设计。新电脑 clone 后，需要恢复 AutoCAD / CAD-MCP / Python 环境，打开对应案例 DWG，再读取 `CORE_CONTEXT_BRIEF.md`、`docs/architecture/current-module-boundaries.md` 和案例 `feedback.md`，从最后一个 round 继续。用户确认要两地同步的标准图库原始文件放 `standard_cad_library_raw/` 并可随 git 携带；它们仍只是参考输入，不等于系统能力。非敏感、脱敏且体积可控的案例 DWG/DXF 可以作为训练 fixture 随案例提交；`.codegraph/`、Understand Anything 生成图、`output/`、缓存、CAD 锁文件和备份文件不会提交。
 
-换机前建议只做三件事：先跑一次 `git status --short` 看是否有遗漏文件；再用 CAD-MCP venv 跑 `python -m unittest discover -s tests`；最后 commit 后由你手动 push 到私人仓库。仓库不依赖本机 `output/`、`.codegraph/` 或 venv 缓存来继续开发。
+换机前不要只看 `git clone` 是否成功，还要确认当前工作树已经形成可复现 checkpoint：先跑 `git status --short`，把有效源码、文档、Agent 契约、OpenSpec、系统资产索引和必要 fixture 纳入 commit；未确认来源和再分发边界的第三方 DWG 仍留在本机或 raw intake 区，不直接 push。提交后推送当前分支，再在新电脑重新安装 AutoCAD / CAD-MCP / Python 依赖，并重建 `.codegraph/`。
+
+换机后建议先用固定 CAD-MCP venv 跑最小复验：`scripts/self_check.py`、`scripts/render_preview.py --check`、`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-severity medium`、`scripts/run_capability_coverage.py --output output/validation_runs/capability-lab/cad_capability_coverage.json`。仓库不依赖本机 `output/`、`.codegraph/` 或 venv 缓存来继续开发；真实 CAD 能力声明仍以 validate / dry-run / `CODEX_PREVIEW` / created handles 回读 / audit 为准。
 
 ## 关键入口
 
@@ -116,10 +120,12 @@ Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 refe
 - `CORE_RESTRUCTURE_PLAN.md`：唯一 PlanMD / 主计划。
 - `CORE_STATUS.md`：能力状态和表 C 口径。
 - `docs/training/README.md`：训练期主链路。
+- `docs/training/cad-designer-growth-path.md`：总设计师 Agent 成长路径和第一批基础 CAD 课程。
 - `docs/training/global-agent-pipeline.md`：多 Agent 流水线说明。
 - `docs/architecture/cad-asset-intelligence-architecture.md`：参考图库、自产图库、检索、审计和晋升架构。
 - `docs/planning/cad-commonsense-asset-dev-plan-01.md`：标准图库 raw 输入到自产图库晋升的计划书。
-- `capability-map.html`：具体图块和基础绘图能力的覆盖清单，作为训练计划视图，不替代内部证据文档。
+- `capability-map.html`：具体图块和基础绘图能力的训练工作台，作为训练计划视图，不替代内部证据文档；日常打开优先用 `start_training_workbench.bat`，或先跑 `scripts/sync_training_workbench.py` 刷新数据。
+- `scripts/sync_training_workbench.py`、`scripts/run_training_workbench_agent_check.py`：刷新训练工作台数据快照并校验是否跑偏。
 - `scripts/run_asset_raw_intake.py`、`scripts/run_asset_retrieval_pack.py`、`scripts/run_asset_promotion_gate.py`：标准图库自动 intake、资产检索包和晋升 gate 的基础入口。
 - `docs/planning/任务清单.md`：当前训练 backlog 和 next。
 - `docs/status/current.md`：当前状态摘要。

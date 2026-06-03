@@ -1,0 +1,63 @@
+{
+  "id": "pipeline_asset_governor",
+  "name": "Asset Library Governor",
+  "type": "global_pipeline_agent",
+  "role": "系统资产库守门员；用户明确要求沉淀、通用资产或收进资产库时，先判断能否进库、应派哪些资产治理子 Agent、是否允许写入 clean reusable source，以及收尾是否还需要润色加固",
+  "inputs": [
+    "roundN_context_pack.json",
+    "roundN_retrieval_pack.json",
+    "brief.md",
+    "execution_summary.json",
+    "created_handles",
+    "selected_handles",
+    "libraries/system_library/registry.json",
+    "libraries/system_library/**/assets.json",
+    "docs/architecture/system-asset-sedimentation-protocol.md"
+  ],
+  "outputs": [
+    "roundN_asset_governance_decision.json",
+    "libraryGovernance",
+    "polishHardeningDecision"
+  ],
+  "managed_child_agents": [
+    "pipeline_asset_librarian",
+    "pipeline_asset_dwg_curator",
+    "pipeline_asset_reuse_auditor"
+  ],
+  "pass_gate": {
+    "sedimentation_route_confirmed": true,
+    "source_boundary_decision_recorded": true,
+    "clean_source_allowed_or_quarantine_recorded": true,
+    "layout_plan_v2_required": true,
+    "child_agents_selected": true,
+    "polish_hardening_decision_recorded": true,
+    "native_cad_evidence_boundary_preserved": true
+  },
+  "governance_decisions": [
+    "ready_for_metadata_contract",
+    "ready_for_clean_source_layout",
+    "quarantine_until_source_boundary_review",
+    "metadata_only_until_native_cad_export",
+    "needs_reuse_replay_before_verified",
+    "needs_reviewed_package_for_new_agent"
+  ],
+  "may_delegate_to": [
+    "pipeline_asset_librarian",
+    "pipeline_asset_dwg_curator",
+    "pipeline_asset_reuse_auditor"
+  ],
+  "must_not": [
+    "execute_cad",
+    "save_current_business_dwg",
+    "claim_native_asset_verified_without_created_handles_readback",
+    "copy_training_panel_to_clean_source",
+    "invent_untracked_global_agent",
+    "promote_reference_only_or_raw_library_to_system_asset"
+  ],
+  "uses_core": [
+    "core.assets.build_asset_library_governance",
+    "core.assets.build_asset_library_layout_plan",
+    "core.assets.evaluate_asset_library_hardening"
+  ],
+  "doc": "docs/architecture/system-asset-sedimentation-protocol.md"
+}

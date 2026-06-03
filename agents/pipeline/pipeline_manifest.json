@@ -4,9 +4,40 @@
   "orchestration": {
     "principle": "precision_first",
     "principle_doc": "docs/training/precision-first.md",
+    "main_agent_identity": {
+      "agent_id": "pipeline_orchestrator",
+      "identity": "pipeline_orchestrator_main_agent",
+      "mission": "classify request, build task contract, dispatch responsible agents, and block unsupported completion claims",
+      "responsibility_boundary": {
+        "may_dispatch_registered_agents": true,
+        "may_invoke_cad": false,
+        "may_activate_unregistered_agents": false,
+        "may_claim_complete_without_required_agent_outputs": false
+      }
+    },
+    "dynamic_dispatch_policy": {
+      "mode": "high_risk_only",
+      "high_risk_task_kinds": [
+        "system_asset_sedimentation",
+        "asset_dwg_layout",
+        "visual_layout_review"
+      ],
+      "registered_agent_only": true,
+      "reason_required": true,
+      "effective_required_agents_must_be_registered": true
+    },
+    "unregistered_agent_request_policy": {
+      "allowed_statuses": [
+        "needs_reviewed_package",
+        "needs_openspec_change"
+      ],
+      "activation_allowed_in_current_task": false,
+      "must_not_enter_effective_required_agents": true
+    },
     "default_flow": [
       "pipeline_context_curator",
       "pipeline_asset_retriever",
+      "pipeline_asset_governor",
       "pipeline_orchestrator",
       "pipeline_visual_intent",
       "pipeline_intent",
@@ -22,6 +53,25 @@
         "pipeline_asset_retriever",
         "pipeline_orchestrator",
         "pipeline_delivery"
+      ],
+      "system_asset_sedimentation": [
+        "pipeline_context_curator",
+        "pipeline_asset_retriever",
+        "pipeline_asset_governor",
+        "pipeline_asset_librarian",
+        "pipeline_asset_dwg_curator",
+        "pipeline_asset_reuse_auditor",
+        "pipeline_delivery"
+      ],
+      "asset_dwg_layout": [
+        "pipeline_context_curator",
+        "pipeline_asset_retriever",
+        "pipeline_asset_governor",
+        "pipeline_asset_librarian",
+        "pipeline_asset_dwg_curator",
+        "pipeline_asset_reuse_auditor",
+        "pipeline_visual_layout_reviewer",
+        "pipeline_delivery"
       ]
     },
     "visual_contract_required": true,
@@ -35,6 +85,75 @@
       "asset_retrieval": {
         "requires": ["retrieval_pack", "route", "evidence_boundary"],
         "blocks": ["pipeline_orchestrator", "pipeline_visual_intent", "pipeline_intent", "pipeline_execute"]
+      },
+      "asset_governance": {
+        "requires": [
+          "assetGovernanceDecision",
+          "sourceBoundaryDecision",
+          "layoutPlanV2",
+          "polishHardeningDecision",
+          "evidence_boundary"
+        ],
+        "blocks": [
+          "system_library_contract_write",
+          "native_asset_dwg_write",
+          "verified_status_claim"
+        ]
+      },
+      "asset_library_indexing": {
+        "requires": [
+          "assetPackageUpdate",
+          "registryUpdate",
+          "retrievalMetadata",
+          "lifecycleDecision"
+        ],
+        "blocks": [
+          "system_library_contract_write",
+          "verified_status_claim",
+          "reuse_workflow_ready_claim"
+        ]
+      },
+      "asset_dwg_curation": {
+        "requires": [
+          "nativeDwgLayoutPlan",
+          "cleanAssetZoneBoundary",
+          "previewCardZoneBoundary",
+          "sourceBoundaryEvidence",
+          "savedDwgReadback"
+        ],
+        "blocks": [
+          "asset_dwg_layout_pass_claim",
+          "native_style_definition_written_claim",
+          "verified_status_claim"
+        ]
+      },
+      "asset_reuse_audit": {
+        "requires": [
+          "reuseWorkflowProbe",
+          "sourceSpec",
+          "readyTaskCount",
+          "savedCurrentDwg_false",
+          "encodingPreflight"
+        ],
+        "blocks": [
+          "verified_status_claim",
+          "asset_reused_claim",
+          "delivery_complete_claim"
+        ]
+      },
+      "main_agent_dispatch_awareness": {
+        "requires": [
+          "mainAgentSelfCheck",
+          "dispatchDecision",
+          "registered_agent_only",
+          "reason_required",
+          "unregistered_agents_as_reviewed_package_candidates"
+        ],
+        "blocks": [
+          "workflow_dispatch",
+          "delivery_complete_claim",
+          "unregistered_agent_activation"
+        ]
       },
       "standard_library_intake": {
         "requires": [
@@ -69,6 +188,28 @@
         "requires": ["agent_review_all_pass", "audit_pass_or_approximate_ok"],
         "blocks": ["user_feedback_request", "case_done"]
       },
+      "visual_layout_review": {
+        "requires": [
+          "visualLayoutReviewDecision",
+          "layoutMatchesMetaphor",
+          "primaryShelvesClear",
+          "layoutReadabilityAcceptable",
+          "aisleClearanceAcceptable",
+          "contentDensityAcceptable",
+          "sourceProofRolesSeparated",
+          "layerSemanticsAcceptable",
+          "futureExpansionClear",
+          "retrievalPathReadable",
+          "visualNoiseAcceptable",
+          "nonScreenshotEvidenceChecked",
+          "blockingReasons_when_fail"
+        ],
+        "blocks": [
+          "delivery_complete_claim",
+          "asset_dwg_layout_pass_claim",
+          "user_acceptance_request"
+        ]
+      },
       "learning": {
         "requires": ["feedback_or_agent_review", "root_cause_recorded"],
         "blocks": ["next_round_when_fail"]
@@ -97,6 +238,30 @@
       "may_invoke_cad": false
     },
     {
+      "agent_id": "pipeline_asset_governor",
+      "path": "asset_governor/agent.json",
+      "role": "资产库守门员",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_asset_librarian",
+      "path": "asset_librarian/agent.json",
+      "role": "资产馆员",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_asset_dwg_curator",
+      "path": "asset_dwg_curator/agent.json",
+      "role": "资产 DWG 编排员",
+      "may_invoke_cad": true
+    },
+    {
+      "agent_id": "pipeline_asset_reuse_auditor",
+      "path": "asset_reuse_auditor/agent.json",
+      "role": "资产复用审计员",
+      "may_invoke_cad": true
+    },
+    {
       "agent_id": "pipeline_orchestrator",
       "path": "orchestrator/agent.json",
       "role": "编排",
@@ -106,6 +271,12 @@
       "agent_id": "pipeline_visual_intent",
       "path": "visual_intent/agent.json",
       "role": "视觉语义拆分",
+      "may_invoke_cad": false
+    },
+    {
+      "agent_id": "pipeline_visual_layout_reviewer",
+      "path": "visual_layout_reviewer/agent.json",
+      "role": "Visual layout reviewer",
       "may_invoke_cad": false
     },
     {
@@ -153,6 +324,10 @@
   "artifacts": {
     "context_pack": "projects/<case>/runs/roundN_context_pack.json",
     "retrieval_pack": "projects/<case>/runs/roundN_retrieval_pack.json",
+    "asset_governance_decision": "projects/<case>/runs/roundN_asset_governance_decision.json",
+    "asset_layout_plan": "projects/<case>/runs/roundN_asset_layout_plan.json",
+    "asset_reuse_audit": "projects/<case>/runs/roundN_asset_reuse_audit.json",
+    "visual_layout_review": "projects/<case>/runs/roundN_visual_layout_review.json",
     "standard_library_intake": "projects/<case>/runs/roundN_standard_library_intake.json",
     "reference_manifest": "libraries/reference_library/manifests/<source_slug>/ref.*.json",
     "route": "projects/<case>/runs/roundN_route.json",
@@ -184,6 +359,11 @@
     "retrieval_hit_as_capability": "Retrieval or catalog hit is an upstream contract, not proof that CAD geometry is correct.",
     "intake_table_required": "When the user provides a folder and a rough description, scan and infer first; do not ask the user to fill a table.",
     "raw_library_promoted": "Raw standard CAD libraries stay reference_only until a separate promotion gate creates schema, lineage, checks, and evidence_boundary.",
-    "silent_bbox_fallback": "When assets are weak or missing, enter exploration/deferred mode; do not silently draw a blank bbox as the object."
+    "silent_bbox_fallback": "When assets are weak or missing, enter exploration/deferred mode; do not silently draw a blank bbox as the object.",
+    "training_canvas_as_asset_library": "Do not copy a training panel, title block, note, border, dimension, or evidence text into the clean reusable system asset source area.",
+    "untracked_agent_derivation": "When asset governance needs a new global Agent, record a reviewed-package requirement instead of silently inventing an untracked role.",
+    "screenshot_captured_as_visual_layout_pass": "Do not treat a captured or nonblank screenshot as visual layout acceptance without the visual_layout_review hard gate.",
+    "unregistered_agent_activated": "The main Agent must not activate or require an Agent absent from pipeline_manifest.json; record it as a reviewed-package or OpenSpec candidate.",
+    "self_check_free_completion_claim": "High-risk orchestration must not claim completion without mainAgentSelfCheck and dispatchDecision evidence."
   }
 }

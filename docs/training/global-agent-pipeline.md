@@ -34,6 +34,8 @@
 
 **尺寸政策：** 见 [`vision-first-style.md`](vision-first-style.md) — 视觉 > 取整近似 > probe 精确。
 
+完整系统任务链路见 [`../architecture/cad-agent-task-chain.md`](../architecture/cad-agent-task-chain.md)。该文档把“白话 -> 语义拆分 -> 单一子任务 -> 分发执行”和“训练 / 复训 -> 规则同步 -> A-to-A 校准 -> 事实源同步”合并为总流程；本文件只描述多 Agent 分层和训练期流水线形态。
+
 ---
 
 ## 分层（谁干什么）
@@ -89,6 +91,10 @@
 | --- | --- | --- | --- | --- |
 | `pipeline_orchestrator` | 编排 | brief、case 状态 | 下一步指令、轮次计划 | — |
 | `pipeline_asset_retriever` | 资产检索 / raw intake | brief、附件、标准图库文件夹、已有常识、catalog、case 历史 | `retrieval_pack`；或 standard library intake：扫描摘要、`reference_only` manifest、`agent_inferred` 标注、not_checked | `core.assets.build_retrieval_pack` / `core.assets.build_raw_reference_intake` |
+| `pipeline_asset_governor` | 资产库守门员 | 沉淀请求、retrieval_pack、source boundary、资产合同、registry | `assetGovernanceDecision`、子 Agent 派发、`polishHardeningDecision` | `core.assets.build_asset_library_governance` |
+| `pipeline_asset_librarian` | 资产馆员 | assetGovernanceDecision、资产名、分类、别名、用途、证据 | 分类、命名、去重、检索合同、状态流 | `core.assets.sediment_system_asset` |
+| `pipeline_asset_dwg_curator` | 资产 DWG 编排员 | layoutPlan、source boundary、included/excluded handles、native DWG | 分区排版、清洗策略、资产卡、native 写入证据边界 | `core.assets.build_asset_library_layout_plan` |
+| `pipeline_asset_reuse_auditor` | 资产复用审计员 | registry、复用计划、created handles、readback | `reuseWorkflowProbe` / `reuseReplayEvidence` / verified 判断 | `core.assets.build_system_asset_reuse_workflow` |
 | `pipeline_context_curator` | 上下文收束 | brief、附件、标准图库文件夹、已有常识、case 历史 | 本轮相关对象常识、风险边界、需打开的证据；识别 standard_library_intake 时只提取 folder + rough note，不要求用户补表格 | — |
 | `pipeline_intent` | 需求拆分 | 白话、场景 rules、**参考截图** | `roundN_intent.json`、**`roundN_visual_style_brief.md`**、checklist | `plan_engine` validate |
 | `pipeline_execute` | 落图 | intent、CAD_PLAN / case_script | `execution_summary` | `execution`、`cad_io` |
@@ -107,6 +113,8 @@
 7. Delivery 必须用低噪声反馈模板说明：本轮结论、证据证明了什么、还没证明什么、请用户重点看哪里；不得只堆 handles / gap / overlap 数字。
 8. 资产检索命中不等于能力通过；`retrieval_pack` 只能作为上游契约，仍必须进入 visual_parts / SYMBOL_SPEC / CAD_PLAN / audit。
 9. 图库无强命中时进入探索模式，输出候选和 `visual_review_required`；不得静默画空 bbox 冒充对象。
+10. 资产沉淀必须先过 `pipeline_asset_governor`；训练标题、临时说明、边框、尺寸线和证据文字不得进入系统资产 DWG 的 clean reusable source。
+11. 如果资产治理需要新全局 Agent，守门员只能记录 reviewed-package / OpenSpec 需求，不得静默发明未登记角色。
 
 ---
 
@@ -158,5 +166,6 @@
 - 审计架构：`docs/training/audit-architecture.md`
 - 训练主链路：`docs/training/README.md`
 - 常识底座升级：`docs/training/cad-common-sense-upgrade.md`
+- 系统任务链路：`docs/architecture/cad-agent-task-chain.md`
 - 资产智能架构：`docs/architecture/cad-asset-intelligence-architecture.md`
 - 全局 Agent 清单：`agents/pipeline/pipeline_manifest.json`

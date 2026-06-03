@@ -161,6 +161,94 @@
       color: var(--ink-soft);
     }
 
+    .sync-panel {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      margin: 10px 0 0;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 12px 28px rgba(27, 43, 51, 0.055);
+    }
+
+    .sync-main {
+      min-width: 0;
+    }
+
+    .sync-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 0 0 4px;
+      font-weight: 900;
+    }
+
+    .sync-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px var(--green-soft);
+    }
+
+    .sync-dot.warn {
+      background: var(--amber);
+      box-shadow: 0 0 0 4px var(--amber-soft);
+    }
+
+    .sync-title small,
+    .sync-main p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .sync-main p {
+      margin: 0;
+    }
+
+    .sync-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .sync-code {
+      max-width: 460px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--surface-soft);
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .sync-refresh {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .sync-refresh:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
     .tabs {
       position: sticky;
       top: 0;
@@ -243,7 +331,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 260px 180px;
+      grid-template-columns: minmax(0, 1fr) 260px 180px auto;
       gap: 10px;
       align-items: center;
       margin-bottom: 12px;
@@ -272,10 +360,17 @@
     }
 
     .filter[aria-pressed="true"],
-    .small-button.primary {
+    .small-button.primary,
+    .small-button[aria-pressed="true"] {
       border-color: var(--green);
       background: var(--green);
       color: var(--surface);
+    }
+
+    .plan-complete-toggle {
+      min-width: 132px;
+      text-align: center;
+      white-space: nowrap;
     }
 
     .search,
@@ -448,6 +543,20 @@
       color: var(--ink-soft);
     }
 
+    .learning-note {
+      display: inline-flex;
+      width: fit-content;
+      margin-top: 5px;
+      padding: 2px 6px;
+      border: 1px solid #98ccb9;
+      border-radius: 5px;
+      background: #eef8f3;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 850;
+      line-height: 1.45;
+    }
+
     .progress {
       height: 7px;
       overflow: hidden;
@@ -484,6 +593,22 @@
     .agent-chip.owner {
       background: var(--green-soft);
       color: var(--green);
+    }
+
+    .agent-chip.learned {
+      border-color: #98ccb9;
+      background: #d8ece3;
+      color: var(--green);
+    }
+
+    .agent-chip.learned::after {
+      content: "已学";
+      margin-left: 5px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: rgba(8, 118, 90, 0.12);
+      font-size: 10px;
+      font-weight: 900;
     }
 
     .agent-chip.more {
@@ -634,6 +759,12 @@
       border-color: #ddaaa5;
       background: var(--red-soft);
       color: var(--red);
+    }
+
+    .state-chip.not_applicable {
+      border-color: #cbd4d1;
+      background: #eef3f1;
+      color: #5e6d69;
     }
 
     .inspector {
@@ -1076,9 +1207,14 @@
 
     @media (max-width: 1180px) {
       .status-bar,
+      .sync-panel,
       .workbench-grid,
       .agent-workbench {
         grid-template-columns: 1fr;
+      }
+
+      .sync-actions {
+        justify-content: flex-start;
       }
 
       .status-title {
@@ -1133,6 +1269,12 @@
 
       .metric.boundary {
         grid-column: 1 / -1;
+      }
+
+      .sync-code {
+        max-width: 100%;
+        white-space: normal;
+        word-break: break-all;
       }
 
       .tabs {
@@ -1196,10 +1338,11 @@
       <section class="status-title">
         <p class="eyebrow">CAD Agent 训练期</p>
         <h1>CAD Agent 训练工作台</h1>
-        <p>围绕训练计划表单和智能体 Prompt 调整推进训练。这里显示训练阶段和契约状态，不把它们当作真实 CAD 几何通过率。</p>
+        <p>围绕 CAD Designer Agent 的成长路径、训练计划表单和智能体 Prompt 调整推进训练。这里显示课程阶段和契约状态，不把它们当作真实 CAD 几何通过率。</p>
       </section>
       <section class="status-metrics" id="statusMetrics" aria-label="训练状态指标"></section>
     </header>
+    <section class="sync-panel" id="syncPanel" aria-live="polite"></section>
 
     <nav class="tabs" aria-label="页面视图">
       <button class="tab" type="button" data-tab="plan">训练计划表单</button>
@@ -1212,7 +1355,7 @@
       <div class="section-head">
         <div>
           <h2>训练计划表单</h2>
-          <p>保留能力矩阵的密度：看每个能力项当前阶段、责任智能体、下一轮训练目标，以及标准图库、常识整理、训练沉淀、自产资产四条轨道。</p>
+          <p>把能力矩阵作为 CAD Designer Agent 的能力护照：先看基础 CAD 操作课程，再看对象、场景、标注和资产沉淀。</p>
         </div>
         <div class="tag-row" id="activePlanFilter"></div>
       </div>
@@ -1221,6 +1364,7 @@
         <div class="filters" id="planGroupFilters"></div>
         <input class="search" id="planSearch" type="search" placeholder="搜索能力项、智能体或失败类型">
         <select class="select" id="planAgentFilter" aria-label="按责任智能体筛选"></select>
+        <button class="small-button plan-complete-toggle" id="showCompletePlanToggle" type="button" aria-pressed="false">显示已结束训练</button>
       </div>
 
       <div class="workbench-grid">
@@ -1332,16 +1476,19 @@
       { id: "system", label: "自产资产", shortLabel: "自产" }
     ];
     const tableCBoundary = systemData.tableCBoundary || systemData.coverageSnapshot || {};
+    const workbenchSync = systemData.workbenchSync || {};
 
-    const groupOrder = ["全部", "基础家具", "储位家具", "厨卫对象", "基础绘图", "标注表达"];
+    const groupOrder = ["全部", "CAD 基础操作", "基础家具", "储位家具", "厨卫对象", "基础绘图", "标注表达"];
     const groupLabels = {
+      designer: "总设计师智能体",
       scene: "场景智能体",
       pipeline: "训练流水线智能体",
       demand: "需求侧角色"
     };
-    const agentGroupOrder = ["全部", "scene", "pipeline", "demand"];
+    const agentGroupOrder = ["全部", "designer", "scene", "pipeline", "demand"];
     const stateLabels = {
       none: "未纳入",
+      not_applicable: "不适用",
       not_started: "未开训",
       planned: "计划中",
       prompt_defined: "目标已声明",
@@ -1374,6 +1521,7 @@
       activeTab: "plan",
       activeGroup: "全部",
       planQuery: "",
+      showFullyCompletePlans: false,
       agentFilter: "全部",
       selectedProgramId: programs[0] ? programs[0].id : null,
       selectedAgentId: defaultAgentId(),
@@ -1449,6 +1597,13 @@
       return Math.max(0, Math.min(100, Math.round(num)));
     }
 
+    function formatTime(value) {
+      if (!value) return "未记录";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString("zh-CN", { hour12: false });
+    }
+
     function stageRank(program) {
       const rank = Number(program.stageState && program.stageState.rank);
       if (Number.isFinite(rank)) return rank;
@@ -1467,6 +1622,7 @@
     }
 
     function stateTone(stateId) {
+      if (stateId === "not_applicable") return "not_applicable";
       if (["promoted", "systemized", "evidence", "user_feedback_pass"].includes(stateId)) return "evidence";
       if (["training", "in_progress", "active", "case_training"].includes(stateId)) return "training";
       if (["planned", "prompt_defined"].includes(stateId)) return "planned";
@@ -1475,12 +1631,17 @@
     }
 
     function renderStatusMetrics() {
-      const primary = agents.find((agent) => agent.status === "primary_training");
-      const primaryName = primary ? primary.name : "家装";
+      const designer = systemData.designerAgent || {};
+      const primary = agents.find((agent) => agent.id === designer.id) || agents.find((agent) => agent.status === "primary_training");
+      const primaryName = designer.name || (primary ? primary.name : "CAD Designer Agent");
       const headline = tableCBoundary.headlinePercent ?? tableCBoundary.cadStrengthIndexPercent ?? "未生成";
       const capabilityCount = (systemData.capabilityCatalog || programs).length;
+      const foundationCount = (systemData.foundationCourses || []).length;
+      const activeStage = (systemData.growthStages || [])[0] || {};
       const cards = [
-        ["当前主训", primaryName, "默认围绕主训场景调整训练计划"],
+        ["当前主训", primaryName, "总设计师 Agent 统筹课程、场景和流水线"],
+        ["当前阶段", activeStage.label || "L0 CAD 基础操作", "第一阶段毕业目标：电子设计师雏形"],
+        ["基础课程", foundationCount, "第一批从基础 CAD 操作开始铺"],
         ["能力项", capabilityCount, "能力矩阵中的训练对象"],
         ["智能体", agents.length, "参与 Prompt 契约展示"],
         ["训练计划", programs.length, "下一轮训练入口数量"],
@@ -1493,6 +1654,51 @@
           <small>${escapeHtml(note)}</small>
         </article>
       `).join("");
+    }
+
+    function renderSyncPanel(message = "") {
+      const ok = workbenchSync.generatedAfterCoverage !== false && workbenchSync.coverageSourceExists !== false;
+      const title = ok ? "工作台快照已同步" : "工作台快照需要同步";
+      const note = message || (ok
+        ? "页面数据由同步脚本生成；训练、registry 或 coverage 改动后请重新运行同步。"
+        : "当前快照可能早于 coverage 或缺少来源文件，请先运行同步脚本。");
+      const command = workbenchSync.recommendedCommand || "$py scripts\\sync_training_workbench.py";
+      const coverageTime = workbenchSync.coverageGeneratedAt || tableCBoundary.generatedAt || "";
+      byId("syncPanel").innerHTML = `
+        <div class="sync-main">
+          <div class="sync-title">
+            <span class="sync-dot ${ok ? "" : "warn"}"></span>
+            <span>${escapeHtml(title)}</span>
+            <small>HTML：${escapeHtml(formatTime(systemData.generatedAt))} / 表 C：${escapeHtml(formatTime(coverageTime))}</small>
+          </div>
+          <p>${escapeHtml(note)} 真实 CAD 能力仍以 coverage JSON、registry 和 created-handle 回读为准。</p>
+        </div>
+        <div class="sync-actions">
+          <code class="sync-code" title="${escapeHtml(command)}">${escapeHtml(command)}</code>
+          <button class="sync-refresh" type="button" data-refresh-page>刷新页面</button>
+        </div>
+      `;
+    }
+
+    function latestGeneratedAtFromScript(text) {
+      const match = text.match(/"generatedAt"\s*:\s*"([^"]+)"/);
+      return match ? match[1] : "";
+    }
+
+    function initSnapshotPolling() {
+      if (!/^https?:$/.test(window.location.protocol)) return;
+      window.setInterval(async () => {
+        try {
+          const response = await fetch(`capability-map-data.js?check=${Date.now()}`, { cache: "no-store" });
+          if (!response.ok) return;
+          const latest = latestGeneratedAtFromScript(await response.text());
+          if (latest && latest !== systemData.generatedAt) {
+            renderSyncPanel("检测到新的训练工作台快照，刷新页面即可查看最新训练状态。");
+          }
+        } catch (error) {
+          // 本地文件或临时服务不可读时保持当前快照，不打断训练浏览。
+        }
+      }, 15000);
     }
 
     function renderTabs() {
@@ -1523,9 +1729,17 @@
         <option value="${escapeHtml(id)}"${id === state.agentFilter ? " selected" : ""}>${escapeHtml(id === "全部" ? "全部责任智能体" : agentName(id))}</option>
       `).join("");
 
+      const stats = filteredProgramStats();
+      const toggle = byId("showCompletePlanToggle");
+      toggle.setAttribute("aria-pressed", String(state.showFullyCompletePlans));
+      toggle.textContent = state.showFullyCompletePlans ? "隐藏已结束训练" : "显示已结束训练";
+      toggle.title = "只有验收通过、已沉淀到责任智能体且进入已沉淀阶段的计划，才会被默认折叠。";
+
       byId("activePlanFilter").innerHTML = state.failureFilter
         ? `${tag("正在定位问题：" + failureLabel(state.failureFilter), "amber")}`
-        : `${tag("默认显示全部训练计划", "green")}`;
+        : state.showFullyCompletePlans
+        ? `${tag("已展开结束项：" + stats.totalFullyComplete, "blue")}`
+        : `${tag("已折叠结束项：" + stats.hiddenFullyComplete.length, "green")}`;
     }
 
     function renderPlanHead() {
@@ -1543,36 +1757,96 @@
       return (program.weaknesses || []).some((item) => item.id === failureId || item === failureId);
     }
 
-    function filteredPrograms() {
+    function isFullyCompleteProgram(program) {
+      if (typeof program.isFullyComplete === "boolean") return program.isFullyComplete;
+      return (
+        program.trainingAcceptance?.status === "pass"
+        && program.learningPromotion?.status === "promoted"
+        && program.stageState?.id === "systemized"
+      );
+    }
+
+    function matchesPlanFilters(program, query) {
+      const groupMatch = state.activeGroup === "全部" || (program.matrixGroup || program.group) === state.activeGroup;
+      const agentIds = program.responsibleAgentIds || (program.responsibleAgents || []).map((agent) => agent.id);
+      const agentMatch = state.agentFilter === "全部" || agentIds.includes(state.agentFilter);
+      const failureMatch = !state.failureFilter || programHasFailure(program, state.failureFilter);
+      const searchable = [
+        program.name,
+        program.title,
+        program.priority,
+        program.kindLabel,
+        program.matrixGroup,
+        program.group,
+        program.focus,
+        program.nextTrainingTarget,
+        ...(program.responsibleAgents || []).map((agent) => agent.name),
+        ...(program.weaknesses || []).flatMap((risk) => [risk.id, risk.label, risk.note])
+      ].join(" ").toLowerCase();
+      return groupMatch && agentMatch && failureMatch && (!query || searchable.includes(query));
+    }
+
+    function filteredProgramStats() {
       const query = state.planQuery.trim().toLowerCase();
-      return programs.filter((program) => {
-        const groupMatch = state.activeGroup === "全部" || (program.matrixGroup || program.group) === state.activeGroup;
-        const agentIds = program.responsibleAgentIds || (program.responsibleAgents || []).map((agent) => agent.id);
-        const agentMatch = state.agentFilter === "全部" || agentIds.includes(state.agentFilter);
-        const failureMatch = !state.failureFilter || programHasFailure(program, state.failureFilter);
-        const searchable = [
-          program.name,
-          program.title,
-          program.priority,
-          program.kindLabel,
-          program.matrixGroup,
-          program.group,
-          program.focus,
-          program.nextTrainingTarget,
-          ...(program.responsibleAgents || []).map((agent) => agent.name),
-          ...(program.weaknesses || []).flatMap((risk) => [risk.id, risk.label, risk.note])
-        ].join(" ").toLowerCase();
-        return groupMatch && agentMatch && failureMatch && (!query || searchable.includes(query));
-      });
+      const matching = programs.filter((program) => matchesPlanFilters(program, query));
+      const hiddenFullyComplete = matching.filter((program) => isFullyCompleteProgram(program));
+      const revealFullyComplete = state.showFullyCompletePlans || Boolean(state.failureFilter);
+      const visible = revealFullyComplete
+        ? matching
+        : matching.filter((program) => !isFullyCompleteProgram(program));
+      return {
+        matching,
+        visible,
+        hiddenFullyComplete,
+        totalFullyComplete: programs.filter((program) => isFullyCompleteProgram(program)).length
+      };
+    }
+
+    function filteredPrograms() {
+      return filteredProgramStats().visible;
+    }
+
+    function emptyPlanMessage(stats) {
+      if (!state.showFullyCompletePlans && stats.hiddenFullyComplete.length) {
+        return `已折叠 ${stats.hiddenFullyComplete.length} 个已结束训练计划。打开“显示已结束训练”可查看。`;
+      }
+      return "没有匹配的训练计划。";
+    }
+
+    function learningPromotion(program) {
+      return program.learningPromotion || {};
+    }
+
+    function learningAgentIds(program) {
+      return new Set((learningPromotion(program).agentUpdates || []).map((update) => update.agentId));
+    }
+
+    function renderLearningNote(program) {
+      const learning = learningPromotion(program);
+      if (learning.status !== "promoted") return "";
+      const summary = learning.plainLanguageSummary || `已把本项训练经验沉淀到 ${Number(learning.promotedAgentCount || 0)} 个责任智能体。`;
+      return `<span class="learning-note" title="${escapeHtml(summary)}">已学习：${Number(learning.promotedAgentCount || 0)} 个智能体吸收经验</span>`;
+    }
+
+    function learningLines(program) {
+      const learning = learningPromotion(program);
+      if (learning.status !== "promoted") return [];
+      const summary = learning.plainLanguageSummary || `已把本项训练经验沉淀到 ${Number(learning.promotedAgentCount || 0)} 个责任智能体。`;
+      const updates = (learning.visibleLessons || learning.promptUpdateSummary || []).slice(0, 4);
+      return [
+        summary,
+        ...updates
+      ];
     }
 
     function renderAgentChips(program, limit = Infinity) {
       const owner = program.ownerAgentId;
       const list = program.responsibleAgents || [];
+      const learned = learningAgentIds(program);
       const visible = list.slice(0, limit);
       const hidden = Math.max(0, list.length - visible.length);
       const chips = visible.map((agent) => `
-        <button class="agent-chip ${agent.id === owner ? "owner" : ""}" type="button" data-agent-jump="${escapeHtml(agent.id)}" title="查看${escapeHtml(agent.name)} Prompt">
+        <button class="agent-chip ${agent.id === owner ? "owner" : ""} ${learned.has(agent.id) ? "learned" : ""}" type="button" data-agent-jump="${escapeHtml(agent.id)}" title="${learned.has(agent.id) ? "已更新学习记忆和 Prompt：" : "查看"}${escapeHtml(agent.name)}">
           ${escapeHtml(agent.name)}
         </button>
       `).join("");
@@ -1609,11 +1883,12 @@
       }).join("");
     }
 
-    function renderPlanCards(rows) {
+    function renderPlanCards(rows, stats) {
       byId("planCards").innerHTML = rows.map((program) => {
         const isSelected = program.id === state.selectedProgramId;
         const highlighted = state.failureFilter && programHasFailure(program, state.failureFilter);
         const riskTags = (program.weaknesses || []).slice(0, 2).map((risk) => tag(risk.label || risk.id, "amber")).join("");
+        const learningTag = learningPromotion(program).status === "promoted" ? tag("已沉淀 Prompt", "green") : "";
         return `
           <article class="plan-card ${isSelected ? "selected" : ""} ${highlighted ? "highlighted" : ""}" data-program-card="${escapeHtml(program.id)}">
             <div class="plan-card-head">
@@ -1623,7 +1898,7 @@
               </div>
               <span class="priority">${escapeHtml(program.priority || "P?")}</span>
             </div>
-            <div class="tag-row">${tag(program.stageState?.label || "未开训", "green")}${tag(stageOrdinal(program), "blue")}${riskTags}</div>
+            <div class="tag-row">${tag(program.stageState?.label || "未开训", "green")}${tag(stageOrdinal(program), "blue")}${learningTag}${riskTags}</div>
             <div class="plan-card-grid">
               <div class="plan-card-field">
                 <span>下一轮训练</span>
@@ -1638,7 +1913,7 @@
             <div class="asset-track">${renderAssetTrack(program)}</div>
           </article>
         `;
-      }).join("") || `<div class="empty">没有匹配的训练计划。</div>`;
+      }).join("") || `<div class="empty">${escapeHtml(emptyPlanMessage(stats))}</div>`;
 
       byId("planCards").querySelectorAll("[data-program-card]").forEach((card) => {
         card.addEventListener("click", () => {
@@ -1657,9 +1932,16 @@
     }
 
     function renderPlanRows() {
-      const rows = filteredPrograms();
-      byId("planCount").textContent = `显示 ${rows.length} / ${programs.length} 个训练计划。点击行看右侧训练详情。`;
-      renderPlanCards(rows);
+      const stats = filteredProgramStats();
+      const rows = stats.visible;
+      if (rows.length && !rows.some((program) => program.id === state.selectedProgramId)) {
+        state.selectedProgramId = rows[0].id;
+      }
+      const foldedText = state.showFullyCompletePlans
+        ? `已展开 ${stats.totalFullyComplete} 个已结束训练计划。`
+        : `已折叠 ${stats.hiddenFullyComplete.length} 个已结束训练计划。`;
+      byId("planCount").textContent = `显示 ${rows.length} / ${programs.length} 个训练计划；${foldedText} 点击行看右侧训练详情。`;
+      renderPlanCards(rows, stats);
       byId("planRows").innerHTML = rows.map((program) => {
         const isSelected = program.id === state.selectedProgramId;
         const highlighted = state.failureFilter && programHasFailure(program, state.failureFilter);
@@ -1681,6 +1963,7 @@
                 <div class="stage-label"><span>${escapeHtml(program.stageState?.label || "未开训")}</span><span>${escapeHtml(stageOrdinal(program))}</span></div>
                 <div class="progress"><span style="width:${stagePercent(program)}%"></span></div>
                 <span class="subline">${escapeHtml(program.stageState?.note || "阶段状态来自训练计划数据。")}</span>
+                ${renderLearningNote(program)}
               </div>
             </td>
             <td><div class="agent-list">${renderAgentChips(program, 4)}</div></td>
@@ -1693,7 +1976,7 @@
             ${stageColumns.map((stage) => renderStageCell(program, stage)).join("")}
           </tr>
         `;
-      }).join("") || `<tr><td colspan="${4 + stageColumns.length}" class="empty">没有匹配的训练计划。</td></tr>`;
+      }).join("") || `<tr><td colspan="${4 + stageColumns.length}" class="empty">${escapeHtml(emptyPlanMessage(stats))}</td></tr>`;
 
       byId("planRows").querySelectorAll("[data-program]").forEach((row) => {
         row.addEventListener("click", () => {
@@ -1756,6 +2039,10 @@
           <section class="detail-block">
             <h4>可调 Prompt 点</h4>
             ${listMarkup(promptHints, "暂未生成可调 Prompt 点。")}
+          </section>
+          <section class="detail-block">
+            <h4>训练沉淀</h4>
+            ${listMarkup(learningLines(program), "本项还没有通过验收沉淀到智能体 Prompt。")}
           </section>
           <section class="detail-block">
             <h4>成功门槛</h4>
@@ -2050,6 +2337,12 @@
       `).join("");
       byId("boundaryCards").innerHTML = `
         <article class="boundary-card">
+          <h3>CAD Designer Agent</h3>
+          <p><strong>${escapeHtml((systemData.designerAgent || {}).graduationTarget || "第一阶段毕业目标：电子设计师雏形。")}</strong></p>
+          <p>${escapeHtml((systemData.designerAgent || {}).evidenceBoundary || "成长路径进度只代表训练安排，不提升表 C，也不替代真实 CAD 几何证明。")}</p>
+          <p><code>docs/training/cad-designer-growth-path.md</code></p>
+        </article>
+        <article class="boundary-card">
           <h3>表 C 机器快照</h3>
           <p><strong>${escapeHtml(tableCBoundary.label || "表 C 真实 CAD 机器快照")}</strong>：${escapeHtml(tableCBoundary.headlinePercent ?? "未生成")}${typeof tableCBoundary.headlinePercent === "number" ? "%" : ""}</p>
           <p>${escapeHtml(tableCBoundary.note || "只作为 coverage JSON 和 registry 的机器指标，不参与训练计划和智能体成熟度计算。")}</p>
@@ -2084,6 +2377,7 @@
 
     function renderAll() {
       renderStatusMetrics();
+      renderSyncPanel();
       renderTabs();
       renderPlanControls();
       renderPlanHead();
@@ -2107,6 +2401,7 @@
 
       byId("planSearch").addEventListener("input", (event) => {
         state.planQuery = event.target.value;
+        renderPlanControls();
         renderPlanRows();
       });
 
@@ -2120,11 +2415,19 @@
 
       byId("planAgentFilter").addEventListener("change", (event) => {
         state.agentFilter = event.target.value;
+        renderPlanControls();
         renderPlanRows();
       });
 
       byId("clearFailureFilter").addEventListener("click", () => {
         state.failureFilter = null;
+        renderPlanControls();
+        renderPlanRows();
+        renderTrainingInspector();
+      });
+
+      byId("showCompletePlanToggle").addEventListener("click", () => {
+        state.showFullyCompletePlans = !state.showFullyCompletePlans;
         renderPlanControls();
         renderPlanRows();
         renderTrainingInspector();
@@ -2141,11 +2444,18 @@
         renderAgentList();
         renderAgentPromptInspector();
       });
+
+      byId("syncPanel").addEventListener("click", (event) => {
+        if (event.target.closest("[data-refresh-page]")) {
+          window.location.reload();
+        }
+      });
     }
 
     function init() {
       renderAll();
       bindEvents();
+      initSnapshotPolling();
     }
 
     init();

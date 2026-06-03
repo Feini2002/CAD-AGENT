@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from core.drawing_standard.drawing_standard_profile import style_evidence_from_resolution
+
 
 ALLOWED_GLYPH_PRIMITIVES = {"rectangle", "line", "polyline", "circle", "arc"}
 FORBIDDEN_GLYPH_PRIMITIVES = {"text", "dimension"}
@@ -129,6 +131,9 @@ def create_draw_symbol_glyph_dry_run_report(plan: dict[str, Any]) -> dict[str, A
             "part_id": item.get("part_id"),
             "kind": item.get("kind"),
         }
+        style_resolution = item.get("style_resolution") or drawing.get("style_resolution")
+        if isinstance(style_resolution, dict):
+            entity["style_resolution"] = style_resolution
         entities.append(entity)
 
     boxes = [_bbox_from_primitive(item) for item in glyphs if isinstance(item, dict)]
@@ -158,7 +163,18 @@ def create_draw_symbol_glyph_dry_run_report(plan: dict[str, Any]) -> dict[str, A
             f"- layer: {drawing.get('layer')}",
         ]
     )
-    return {
+    style_resolution = drawing.get("style_resolution")
+    by_primitive = [
+        {
+            "part_id": entity.get("part_id"),
+            "kind": entity.get("kind"),
+            "style_token": entity.get("style_resolution", {}).get("style_token"),
+            "style_resolution": entity.get("style_resolution"),
+        }
+        for entity in entities
+        if isinstance(entity.get("style_resolution"), dict)
+    ]
+    report = {
         "version": "0.1",
         "status": "valid",
         "validation_errors": [],
@@ -169,3 +185,10 @@ def create_draw_symbol_glyph_dry_run_report(plan: dict[str, Any]) -> dict[str, A
         "human_summary": human_summary,
         "evidence_state": "deferred_cad_readback_required",
     }
+    style_evidence = style_evidence_from_resolution(
+        style_resolution,
+        by_primitive=by_primitive if by_primitive else None,
+    )
+    if style_evidence is not None:
+        report["style_evidence"] = style_evidence
+    return report

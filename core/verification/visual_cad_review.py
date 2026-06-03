@@ -14,7 +14,7 @@ from core.verification.evidence_contract import (
     validate_created_handles_match,
     validate_readback_report_evidence,
 )
-from core.verification.render_preview import capture_autocad_window
+from core.verification.render_preview import build_screenshot_decision, prepare_autocad_for_capture, visual_preview_payload
 
 
 def _utc_now_iso() -> str:
@@ -48,8 +48,8 @@ def _created_handles_from_readback(readback: dict[str, Any]) -> object:
     return readback.get("created_handles")
 
 
-def _default_capture(output: Path) -> dict[str, Any]:
-    return capture_autocad_window(output)
+def _default_capture(output: Path, *, execution_summary: Path | None = None) -> dict[str, Any]:
+    return prepare_autocad_for_capture(output, execution_summary=execution_summary)
 
 
 def run_visual_cad_review(
@@ -83,10 +83,22 @@ def run_visual_cad_review(
     )
 
     checks: list[dict[str, Any]] = []
+    screenshot_decision = build_screenshot_decision(
+        task_kind="visual_review",
+        evidence_stage="visual_review",
+        execution_summary=execution_file,
+        capture_requested=capture or screenshot_path is not None,
+        formal_acceptance=True,
+        agent_role="pipeline_audit",
+    )
     capture_result: dict[str, Any] = {"status": "not_run"}
     if capture:
         try:
-            capture_result = (capture_func or _default_capture)(screenshot)
+            capture_result = (
+                capture_func(screenshot)
+                if capture_func is not None
+                else _default_capture(screenshot, execution_summary=execution_file)
+            )
         except Exception as exc:
             capture_result = {
                 "status": "failed",
@@ -94,6 +106,8 @@ def run_visual_cad_review(
                 "message": str(exc),
                 "output": str(screenshot),
             }
+    if not isinstance(capture_result.get("screenshotDecision"), dict):
+        capture_result["screenshotDecision"] = screenshot_decision
     if capture_result.get("status") == "failed":
         checks.append(_check("capture_autocad_window", False, str(capture_result.get("message", "capture failed"))))
 
@@ -168,6 +182,8 @@ def run_visual_cad_review(
         "readback_report_path": _rel(readback_file, root) if readback_file else "",
         "screenshot_role": SCREENSHOT_VISUAL_AID_ONLY if screenshot_ok else "not_applicable",
         "capture_result": capture_result,
+        "screenshotDecision": capture_result.get("screenshotDecision", screenshot_decision),
+        "visualPreview": visual_preview_payload(capture_result),
         "checks": checks,
         "writeback_allowed": not failed,
         "notes": [

@@ -7,6 +7,7 @@ import unittest
 
 from tests.bootstrap import PROJECT_ROOT
 
+from core.drawing_standard.drawing_standard_profile import apply_drawing_standard_to_plan
 from core.execution.execute_plan import execute_plan_file
 from core.cad_io.autocad_com import CONTROLLED_BLOCK_NAME, PREVIEW_LAYER, AutoCADComDriver
 from tests.helpers import artifact_path
@@ -179,6 +180,70 @@ class ExecutePlanTests(unittest.TestCase):
         result = execute_plan_file(plan_path, driver=HandleRecordingDriver())
 
         self.assertEqual(result["created_handles"], ["H1", "H2", "H3", "H4"])
+
+    def test_preview_execution_summary_carries_expected_style_metadata(self) -> None:
+        plan = {
+            "version": "0.1",
+            "domain": "residential",
+            "intent": "draw_object",
+            "object": {"type": "sofa", "name": "Styled Sofa", "width": 2200, "depth": 900},
+            "placement": {"mode": "absolute", "base_point": [0, 0, 0]},
+            "drawing": {
+                "style_token": "furniture.visible.medium",
+                "include_label": False,
+                "include_dimensions": False,
+            },
+            "confidence": 1.0,
+            "needs_confirmation": False,
+        }
+        apply_drawing_standard_to_plan(plan)
+        plan_path = artifact_path("execute_plan", "styled_sofa.json")
+        plan_path.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+
+        driver = HandleRecordingDriver()
+        result = execute_plan_file(plan_path, driver=driver)
+
+        self.assertEqual(result["layer"], "CODEX_PREVIEW")
+        self.assertEqual(result["semantic_layer"], "A-FURN")
+        self.assertEqual(result["style_evidence"]["expected"]["style_token"], "furniture.visible.medium")
+        self.assertFalse(result["style_evidence"]["plot_verified"])
+        self.assertEqual(result["style_evidence"]["expected_handles"], ["H1"])
+        self.assertEqual(
+            driver.calls[0][1],
+            {
+                "corner1": [0, 0, 0],
+                "corner2": [2200, 900, 0],
+                "layer": "CODEX_PREVIEW",
+                "lineweight": 0.35,
+                "linetype": "CONTINUOUS",
+                "linetype_scale": 1.0,
+            },
+        )
+
+    def test_styled_by_layer_plan_does_not_override_entity_color(self) -> None:
+        plan = {
+            "version": "0.1",
+            "domain": "residential",
+            "intent": "draw_object",
+            "object": {"type": "sofa", "name": "ByLayer Sofa", "width": 2200, "depth": 900},
+            "placement": {"mode": "absolute", "base_point": [0, 0, 0]},
+            "drawing": {
+                "style_token": "furniture.visible.medium",
+                "include_label": False,
+                "include_dimensions": False,
+            },
+            "confidence": 1.0,
+            "needs_confirmation": False,
+        }
+        apply_drawing_standard_to_plan(plan)
+        plan_path = artifact_path("execute_plan", "by_layer_sofa.json")
+        plan_path.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+
+        driver = HandleRecordingDriver()
+        execute_plan_file(plan_path, driver=driver)
+
+        rectangle_kwargs = driver.calls[0][1]
+        self.assertNotIn("color", rectangle_kwargs)
 
     def test_insert_block_alpha_records_fake_driver_call_without_touching_cad(self) -> None:
         plan_path = PROJECT_ROOT / "examples/plans/insert_block_alpha_test.json"

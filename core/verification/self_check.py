@@ -8,14 +8,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-try:
-    from core.execution.execute_plan import execute_plan_file
-    from core.plan_engine.validate_plan import load_json, validate_plan
-    from core.verification.render_preview import get_preview_capabilities
-except ImportError:  # pragma: no cover - compatibility with legacy layout.
-    from scripts.execute_plan import execute_plan_file
-    from scripts.render_preview import get_preview_capabilities
-    from scripts.validate_plan import load_json, validate_plan
+from core.execution.execute_plan import execute_plan_file
+from core.plan_engine.validate_plan import load_json, validate_plan
+from core.verification.render_preview import get_preview_capabilities, switch_to_input_desktop
 
 
 REQUIRED_FILES = [
@@ -113,7 +108,9 @@ def check_preview_execution_without_cad(root: Path) -> dict[str, object]:
 
 def check_screenshot_tooling(root: Path) -> dict[str, object]:
     output = root / "output" / "previews" / "preview.png"
+    desktop_switch = switch_to_input_desktop()
     capabilities = get_preview_capabilities(output)
+    capabilities["desktopSwitch"] = desktop_switch
     if "screen" not in capabilities.get("capture_modes", []):
         return check_result(
             "screenshot_tooling",

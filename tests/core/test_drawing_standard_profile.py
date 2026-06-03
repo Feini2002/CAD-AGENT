@@ -11,6 +11,7 @@ from core.drawing_standard.drawing_standard_profile import (
     resolve_layer_role,
     resolve_object_role,
     resolve_primitive_style,
+    resolve_style_token,
     semantic_layer_name,
 )
 from core.plan_engine.dry_run_report import create_dry_run_report
@@ -88,6 +89,64 @@ class DrawingStandardProfileTests(unittest.TestCase):
         styles = resolve_primitive_style(profile, primitive="dimension", layer_role="dimension")
         self.assertEqual(styles["style_id"], "CAD_DIM_MM")
         self.assertEqual(styles["resolved_layer"], "CODEX_PREVIEW")
+
+    def test_default_profile_resolves_user_seed_style_tokens(self) -> None:
+        profile = load_drawing_standard_profile()
+
+        wall = resolve_style_token(profile, "wall.cut.heavy_continuous")
+        furniture = resolve_style_token(profile, "furniture.visible.medium")
+        annotation = resolve_style_token(profile, "annotation.guide.thin_dashed")
+
+        self.assertEqual(wall["style_token"], "wall.cut.heavy_continuous")
+        self.assertEqual(wall["style_role"], "primary_contour")
+        self.assertEqual(wall["layer_role"], "wall")
+        self.assertEqual(wall["semantic_layer"], "A-WALL")
+        self.assertEqual(wall["resolved_layer"], "CODEX_PREVIEW")
+        self.assertEqual(wall["lineweight_mm"], 0.7)
+        self.assertEqual(wall["resolved_cad_lineweight"], 70)
+        self.assertEqual(wall["linetype"], "CONTINUOUS")
+        self.assertEqual(wall["color_policy"], "by_layer")
+        self.assertEqual(wall["inheritance_mode"], "by_layer")
+        self.assertIn("ctb_stb_plot_mapping", wall["evidence_boundary"]["not_checked"])
+
+        self.assertEqual(furniture["lineweight_mm"], 0.35)
+        self.assertEqual(annotation["lineweight_mm"], 0.2)
+        self.assertEqual(annotation["linetype"], "DASHED")
+
+    def test_style_token_layer_role_conflict_is_rejected(self) -> None:
+        profile = load_drawing_standard_profile()
+
+        with self.assertRaisesRegex(ValueError, "conflicts with layer_role"):
+            resolve_style_token(profile, "wall.cut.heavy_continuous", layer_role="furniture")
+
+    def test_apply_drawing_standard_resolves_style_token_into_plan_and_dry_run(self) -> None:
+        plan = {
+            "version": "0.1",
+            "domain": "residential",
+            "intent": "draw_object",
+            "object": {"type": "sofa", "name": "样式沙发", "width": 2200, "depth": 900},
+            "placement": {"mode": "absolute", "base_point": [0, 0, 0]},
+            "drawing": {
+                "style_token": "furniture.visible.medium",
+                "include_label": False,
+                "include_dimensions": False,
+            },
+            "confidence": 0.9,
+            "needs_confirmation": False,
+        }
+
+        apply_drawing_standard_to_plan(plan)
+
+        self.assertEqual(plan["drawing"]["layer"], "CODEX_PREVIEW")
+        self.assertEqual(plan["drawing"]["semantic_layer"], "A-FURN")
+        self.assertEqual(plan["drawing"]["style_resolution"]["style_token"], "furniture.visible.medium")
+        self.assertEqual(plan["drawing"]["style_resolution"]["lineweight_mm"], 0.35)
+        self.assertEqual(validate_plan(plan), [])
+
+        dry_run = create_dry_run_report(plan)
+        self.assertEqual(dry_run["style_evidence"]["expected"]["style_token"], "furniture.visible.medium")
+        self.assertFalse(dry_run["style_evidence"]["plot_verified"])
+        self.assertIn("ctb_stb_plot_mapping", dry_run["style_evidence"]["not_checked"])
 
 
 if __name__ == "__main__":

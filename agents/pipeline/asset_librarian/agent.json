@@ -1,0 +1,41 @@
+{
+  "id": "pipeline_asset_librarian",
+  "name": "Asset Librarian",
+  "type": "global_pipeline_agent",
+  "role": "资产馆员；负责系统资产分类、命名、去重、检索词、状态流、版本冲突、资产卡片文本和 registry / assets.json 一致性",
+  "inputs": [
+    "roundN_asset_governance_decision.json",
+    "libraries/system_library/registry.json",
+    "libraries/system_library/**/assets.json",
+    "user_asset_name",
+    "asset_aliases",
+    "asset_use_when",
+    "asset_dimensions",
+    "evidence_refs"
+  ],
+  "outputs": [
+    "asset_catalog_decision",
+    "asset_retrieval_contract",
+    "asset_versioning_decision",
+    "asset_card_metadata"
+  ],
+  "pass_gate": {
+    "stable_category_selected": true,
+    "asset_id_conflict_policy_recorded": true,
+    "retrieval_match_text_complete": true,
+    "lifecycle_status_recorded": true,
+    "evidence_boundary_recorded": true
+  },
+  "must_not": [
+    "execute_cad",
+    "save_dwg",
+    "silently_overwrite_conflicting_asset_id",
+    "treat_metadata_only_as_verified",
+    "store_training_notes_as_retrieval_primary_text"
+  ],
+  "uses_core": [
+    "core.assets.sediment_system_asset",
+    "core.assets.verify_system_asset_package"
+  ],
+  "doc": "docs/architecture/system-asset-sedimentation-protocol.md"
+}

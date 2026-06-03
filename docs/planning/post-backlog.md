@@ -32,7 +32,7 @@ Core 与三轨已收口后，后续工作按本台账路由。优先级以 `CORE
 
 | 项 | 结果 |
 | --- | --- |
-| 表 C 主指标 | **99.68%**（316/317 showcase；1 smoke） |
+| 表 C 主指标 | **历史快照（2026-05-28）：99.68%**（316/317 showcase；1 smoke）；当前值只认 coverage JSON |
 | 证据路径 / hard audit | **0 missing / 0 fail** |
 | VCAD-EXPAND-01 | 房间平面 136 handles + 餐桌组合 20 handles |
 | TABLE-C-FINAL-GAP | 末 4×none→showcase |

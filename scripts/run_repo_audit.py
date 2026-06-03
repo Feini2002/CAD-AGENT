@@ -18,11 +18,18 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=PROJECT_ROOT)
     parser.add_argument("--max-python-lines", type=int, default=500)
     parser.add_argument("--fail-on-findings", action="store_true")
+    parser.add_argument("--fail-on-severity", choices=["low", "medium", "high"])
     args = parser.parse_args()
 
-    report = run_repo_audit(args.root, max_python_lines=args.max_python_lines)
+    report = run_repo_audit(
+        args.root,
+        max_python_lines=args.max_python_lines,
+        fail_on_severity=args.fail_on_severity or "medium",
+    )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if args.fail_on_findings and report["status"] == "findings":
+        return 1
+    if args.fail_on_severity and report["summary"]["blocking_finding_count"] > 0:
         return 1
     return 0
 

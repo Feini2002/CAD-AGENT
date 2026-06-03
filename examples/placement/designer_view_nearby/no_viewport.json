@@ -1,0 +1,14 @@
+{
+  "unit": "mm",
+  "preview_layer": "CODEX_PREVIEW",
+  "selected_handles": ["A1"],
+  "recent_created_handles": [],
+  "visible_entities_summary": [
+    {
+      "handle": "A1",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [500, 500], "max": [1600, 1200]}
+    }
+  ]
+}

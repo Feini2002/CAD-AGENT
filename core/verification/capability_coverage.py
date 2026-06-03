@@ -126,6 +126,22 @@ def _evidence_path_status(rows: list[dict[str, Any]], *, project_root: Path) -> 
     return dict(counts)
 
 
+def _existing_evidence_path_count(rows: list[dict[str, Any]], *, claim_level: str, project_root: Path) -> int:
+    count = 0
+    for row in rows:
+        if row.get("claim_level") != claim_level:
+            continue
+        evidence = row.get("evidence")
+        if not isinstance(evidence, dict):
+            continue
+        report_path = evidence.get("report_path")
+        if not isinstance(report_path, str) or not report_path.strip():
+            continue
+        if (project_root / report_path).resolve().is_file():
+            count += 1
+    return count
+
+
 def build_capability_coverage_report(
     registry: dict[str, Any],
     *,
@@ -197,6 +213,29 @@ def build_capability_coverage_report(
         "by_ladder_level": _count_table([row for row in capabilities if isinstance(row, dict)], "ladder_level"),
         "by_domain": _count_table([row for row in capabilities if isinstance(row, dict)], "domain"),
         "by_category": by_category,
+        "claim_level_boundary": {
+            "cad_proof_levels": list(CAD_PROOF_LEVELS),
+            "verified": {
+                "count": verified_count,
+                "evidence_requirement": "strict registry claim_level=verified with geometry evidence gate",
+                "means_strict_geometry_verified": True,
+            },
+            "showcase": {
+                "count": showcase_count,
+                "evidence_requirement": "existing evidence.report_path",
+                "means_strict_geometry_verified": False,
+            },
+            "strict_geometry_verified_count": verified_count,
+            "evidence_path_showcase_count": _existing_evidence_path_count(
+                capability_rows,
+                claim_level="showcase",
+                project_root=project_root,
+            ),
+            "interpretation": (
+                "showcase rows count toward CAD proof coverage when their report path exists, "
+                "but they are not the same as strict claim_level=verified geometry rows."
+            ),
+        },
         "category_cad_proof": category_cad_proof,
         "evidence_path_audit": _evidence_path_status(
             [row for row in capabilities if isinstance(row, dict)],

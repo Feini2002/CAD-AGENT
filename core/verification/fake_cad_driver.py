@@ -22,6 +22,18 @@ class FakeCadEntity:
         for name, value in attrs.items():
             setattr(self, name, value)
 
+    def GetBoundingBox(self) -> tuple[list[float], list[float]]:
+        bbox = getattr(self, "bbox", None)
+        if isinstance(bbox, dict) and isinstance(bbox.get("min"), list) and isinstance(bbox.get("max"), list):
+            minimum = list(bbox["min"])
+            maximum = list(bbox["max"])
+            if len(minimum) == 2:
+                minimum.append(0.0)
+            if len(maximum) == 2:
+                maximum.append(0.0)
+            return minimum, maximum
+        raise AttributeError("FakeCadEntity has no bbox")
+
 
 class _FakeDocuments:
     def __init__(self, count: int) -> None:
@@ -59,6 +71,25 @@ class FakeCadDriver(PreviewWriteGuardMixin):
     def ensure_layer(self, layer: str, *, layer_role: str = "preview") -> None:
         self._assert_layer(layer, layer_role=layer_role)
         self.layers.append(layer)
+
+    @staticmethod
+    def _line_style_attrs(
+        lineweight: float | int | str | None = None,
+        linetype: str | None = None,
+        linetype_scale: float | int | None = None,
+        color: str | int | None = None,
+    ) -> dict[str, object]:
+        attrs: dict[str, object] = {}
+        if lineweight is not None:
+            raw = float(str(lineweight).strip().lower().replace("mm", "")) if isinstance(lineweight, str) else float(lineweight)
+            attrs["Lineweight"] = int(round(raw * 100)) if abs(raw) <= 2.11 else int(round(raw))
+        if linetype:
+            attrs["Linetype"] = str(linetype)
+        if linetype_scale is not None:
+            attrs["LinetypeScale"] = float(linetype_scale)
+        if color is not None:
+            attrs["Color"] = color
+        return attrs
 
     def ensure_controlled_block_definition(
         self,
@@ -157,6 +188,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         corner1: list[float | int],
         corner2: list[float | int],
         layer: str,
+        lineweight: float | int | str | None = None,
+        linetype: str | None = None,
+        linetype_scale: float | int | None = None,
+        color: str | int | None = None,
         layer_role: str = "preview",
         **_: object,
     ) -> dict[str, list[str]]:
@@ -178,6 +213,12 @@ class FakeCadDriver(PreviewWriteGuardMixin):
                 layer=layer,
                 StartPoint=start,
                 EndPoint=end,
+                **self._line_style_attrs(
+                    lineweight=lineweight,
+                    linetype=linetype,
+                    linetype_scale=linetype_scale,
+                    color=color,
+                ),
             )
             handles.append(handle)
         return {"handles": handles}
@@ -188,6 +229,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         start_point: list[float | int],
         end_point: list[float | int],
         layer: str,
+        lineweight: float | int | str | None = None,
+        linetype: str | None = None,
+        linetype_scale: float | int | None = None,
+        color: str | int | None = None,
         layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
@@ -199,6 +244,12 @@ class FakeCadDriver(PreviewWriteGuardMixin):
             layer=layer,
             StartPoint=start_point,
             EndPoint=end_point,
+            **self._line_style_attrs(
+                lineweight=lineweight,
+                linetype=linetype,
+                linetype_scale=linetype_scale,
+                color=color,
+            ),
         )
         return {"handle": handle}
 
@@ -208,6 +259,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         center: list[float | int],
         radius: float | int,
         layer: str,
+        lineweight: float | int | str | None = None,
+        linetype: str | None = None,
+        linetype_scale: float | int | None = None,
+        color: str | int | None = None,
         layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
@@ -219,6 +274,12 @@ class FakeCadDriver(PreviewWriteGuardMixin):
             layer=layer,
             Center=center,
             Radius=radius,
+            **self._line_style_attrs(
+                lineweight=lineweight,
+                linetype=linetype,
+                linetype_scale=linetype_scale,
+                color=color,
+            ),
         )
         return {"handle": handle}
 
@@ -230,6 +291,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         start_angle: float | int,
         end_angle: float | int,
         layer: str,
+        lineweight: float | int | str | None = None,
+        linetype: str | None = None,
+        linetype_scale: float | int | None = None,
+        color: str | int | None = None,
         layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
@@ -243,6 +308,12 @@ class FakeCadDriver(PreviewWriteGuardMixin):
             Radius=radius,
             StartAngle=start_angle,
             EndAngle=end_angle,
+            **self._line_style_attrs(
+                lineweight=lineweight,
+                linetype=linetype,
+                linetype_scale=linetype_scale,
+                color=color,
+            ),
         )
         return {"handle": handle}
 
@@ -252,6 +323,10 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         points: list[list[float | int]],
         closed: bool,
         layer: str,
+        lineweight: float | int | str | None = None,
+        linetype: str | None = None,
+        linetype_scale: float | int | None = None,
+        color: str | int | None = None,
         layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
@@ -264,6 +339,12 @@ class FakeCadDriver(PreviewWriteGuardMixin):
             layer=layer,
             Coordinates=coordinates,
             Closed=closed,
+            **self._line_style_attrs(
+                lineweight=lineweight,
+                linetype=linetype,
+                linetype_scale=linetype_scale,
+                color=color,
+            ),
         )
         return {"handle": handle}
 
@@ -272,6 +353,7 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         *,
         boundary_points: list[list[float | int]],
         pattern: str = "ANSI31",
+        scale: float | int = 1.0,
         layer: str | None = None,
         layer_role: str = "preview",
         **_: object,
@@ -284,6 +366,7 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         write = {
             "boundary_points": [[float(point[0]), float(point[1])] for point in boundary_points],
             "pattern": pattern,
+            "scale": float(scale),
             "layer": resolved_layer,
             "layer_role": layer_role,
         }
@@ -298,6 +381,7 @@ class FakeCadDriver(PreviewWriteGuardMixin):
         text: str,
         position: list[float | int],
         layer: str,
+        color: str | int | None = None,
         layer_role: str = "preview",
         **_: object,
     ) -> dict[str, str]:
@@ -309,16 +393,46 @@ class FakeCadDriver(PreviewWriteGuardMixin):
             layer=layer,
             TextString=text,
             InsertionPoint=position,
+            **self._line_style_attrs(color=color),
         )
         return {"handle": handle}
 
-    def add_dimension(self, *, layer: str, layer_role: str = "preview", **_: object) -> dict[str, str]:
+    def add_dimension(
+        self,
+        *,
+        layer: str,
+        start_point: list[float | int] | None = None,
+        end_point: list[float | int] | None = None,
+        text_position: list[float | int] | None = None,
+        layer_role: str = "preview",
+        textheight: float | int | None = None,
+        text_override: str | None = None,
+        dimension_style: str | None = None,
+        color: str | int | None = None,
+        **_: object,
+    ) -> dict[str, str]:
         self._assert_layer(layer, layer_role=layer_role)
         handle = self._handle()
+        start = [float(value) for value in (start_point or [0.0, 0.0, 0.0])]
+        end = [float(value) for value in (end_point or [0.0, 0.0, 0.0])]
+        text_pos = [float(value) for value in (text_position or [0.0, 0.0, 0.0])]
+        measurement = ((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2) ** 0.5
         self.entities[handle] = FakeCadEntity(
             handle=handle,
             object_name="AcDbAlignedDimension",
             layer=layer,
+            TextOverride=text_override or "",
+            TextHeight=float(textheight) if textheight is not None else 0.0,
+            StyleName=dimension_style or "",
+            Measurement=measurement,
+            TextPosition=text_pos,
+            XLine1Point=start,
+            XLine2Point=end,
+            bbox={
+                "min": [min(start[0], end[0], text_pos[0]), min(start[1], end[1], text_pos[1])],
+                "max": [max(start[0], end[0], text_pos[0]), max(start[1], end[1], text_pos[1])],
+            },
+            **self._line_style_attrs(color=color),
         )
         return {"handle": handle}
 
@@ -362,3 +476,23 @@ class FakeCadDriver(PreviewWriteGuardMixin):
             if layer is None or normalized["layer"] == layer:
                 entities.append(normalized)
         return entities
+
+    def refresh_view(self) -> dict[str, str]:
+        return {"status": "pass", "method": "fake_refresh"}
+
+    def zoom_to_handles(
+        self,
+        *,
+        handles: list[str],
+        layer: str | None = None,
+        padding_ratio: float = 0.15,
+    ) -> dict[str, Any]:
+        entities = self.snapshot_handles(handles=handles, layer=layer)
+        return {
+            "status": "zoomed_to_handles",
+            "handle_count": len(handles),
+            "resolved_count": len(entities),
+            "layer": layer,
+            "padding_ratio": padding_ratio,
+            "method": "fake_zoom",
+        }

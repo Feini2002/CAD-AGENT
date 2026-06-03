@@ -1,0 +1,62 @@
+{
+  "id": "cad_designer",
+  "name": "CAD Designer Agent",
+  "type": "designer_agent",
+  "status": "primary_training",
+  "trainingModel": "growth_path",
+  "graduationTarget": "first_stage_electronic_designer_prototype",
+  "firstStageFocus": [
+    "foundation_cad_operations",
+    "residential_object_training",
+    "audit_self_check"
+  ],
+  "firstCourseBatch": [
+    "cad-primitives",
+    "cad-selection-edit",
+    "cad-transform",
+    "cad-offset-trim",
+    "cad-layer-discipline",
+    "cad-closure-constraints",
+    "cad-readback-audit"
+  ],
+  "coreReuseRequired": true,
+  "scenePlugins": [
+    "residential"
+  ],
+  "callableAgents": [
+    "pipeline_context_curator",
+    "pipeline_asset_retriever",
+    "pipeline_orchestrator",
+    "pipeline_visual_intent",
+    "pipeline_intent",
+    "pipeline_execute",
+    "pipeline_audit",
+    "pipeline_repair",
+    "pipeline_delivery",
+    "pipeline_learning_promoter"
+  ],
+  "usesCore": [
+    "plan_engine",
+    "execution",
+    "verification",
+    "assets",
+    "safety"
+  ],
+  "evidenceBoundary": [
+    "curriculum_progress_is_not_table_c",
+    "course_pass_is_not_construction_document_proof",
+    "real_cad_claims_still_require_validate_dry_run_codex_preview_handles_audit"
+  ],
+  "learningPromotionRequired": true,
+  "learningMemoryRefs": [
+    "agents/cad_designer/training_memory.json",
+    "agents/cad_designer/prompt_addendum.md",
+    "output/training_learning/agent_learning_ledger.json"
+  ],
+  "docs": [
+    "docs/training/cad-designer-growth-path.md",
+    "agents/cad_designer/rules.md",
+    "agents/cad_designer/training_memory.json",
+    "agents/cad_designer/prompt_addendum.md"
+  ]
+}

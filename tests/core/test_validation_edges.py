@@ -9,6 +9,7 @@ from tests.helpers import artifact_path
 
 from core.verification.cad_validation_runner import CommandResult, run_validation
 from core.verification.verification_report import build_verification_report
+from core.plan_engine.validate_plan import validate_plan
 
 
 class ValidationEdgeTests(unittest.TestCase):
@@ -76,6 +77,28 @@ class ValidationEdgeTests(unittest.TestCase):
 
         self.assertEqual(report["status"], "unverified")
         self.assertIn("Geometry has not been fully verified from CAD readback.", report["limitations"])
+
+    def test_style_token_requires_resolved_style_before_validation(self) -> None:
+        plan = {
+            "version": "0.1",
+            "domain": "residential",
+            "intent": "draw_object",
+            "object": {"type": "sofa", "name": "Unresolved Style Sofa", "width": 2200, "depth": 900},
+            "placement": {"mode": "absolute", "base_point": [0, 0, 0]},
+            "drawing": {
+                "layer": "CODEX_PREVIEW",
+                "style_token": "furniture.visible.medium",
+                "include_label": False,
+                "include_dimensions": False,
+            },
+            "confidence": 1.0,
+            "needs_confirmation": False,
+        }
+
+        self.assertIn(
+            "drawing.style_token requires drawing.style_resolution; apply drawing standard profile before validation.",
+            validate_plan(plan),
+        )
 
 
 if __name__ == "__main__":

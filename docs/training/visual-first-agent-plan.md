@@ -1,7 +1,7 @@
 # Visual-First Agent 架构计划
 
 最后更新：2026-05-28
-状态：**待执行**（用户确认后按 Phase 开工）
+状态：**HISTORY-ONLY / 历史方案**（核心教训已并入 CAD Designer Agent 成长路径、训练 README 和工作台；不要把本文当作当前待执行 Phase）
 关联案例：`projects/residential_sofa_2seat_20260528`
 关联训练文档：[`vision-first-style.md`](vision-first-style.md)
 

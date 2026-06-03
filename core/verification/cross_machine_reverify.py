@@ -151,6 +151,7 @@ def _run_real_cad_user_gate(
         timeout=180,
     )
     handle_count = 0
+    execution_payload: dict[str, Any] = {}
     if execute_run.get("status") == "pass":
         try:
             stdout = str(execute_run.get("stdout", "") or execute_run.get("stdout_tail", ""))
@@ -158,6 +159,8 @@ def _run_real_cad_user_gate(
             end = stdout.rfind("}")
             if start >= 0 and end > start:
                 payload = json.loads(stdout[start : end + 1])
+                if isinstance(payload, dict):
+                    execution_payload = payload
                 handle_count = len(payload.get("created_handles", []) or [])
         except json.JSONDecodeError:
             handle_count = 0
@@ -181,11 +184,29 @@ def _run_real_cad_user_gate(
     )
 
     preview_path = output_dir / "migration-reverify-window.png"
+    execution_summary_path = output_dir / "migration-reverify-execution-summary.json"
+    execution_summary_path.write_text(
+        json.dumps(
+            execution_payload
+            or {
+                "status": execute_run.get("status"),
+                "created_handles": [],
+                "created_handle_count": 0,
+                "source": "execute_plan_smoke_stdout_unavailable",
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     capture = _run_subprocess(
         [
             str(python_exe),
             "scripts/render_preview.py",
             "--capture-autocad-window",
+            "--execution-summary",
+            str(execution_summary_path),
             "--output",
             str(preview_path),
         ],

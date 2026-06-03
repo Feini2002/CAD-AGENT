@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from tests.bootstrap import PROJECT_ROOT
 from tests.core.cad_validation_payloads import (
@@ -116,6 +117,44 @@ class TableCEvidenceGateTests(unittest.TestCase):
         self.assertTrue(review["writeback_allowed"])
         self.assertEqual(review["screenshot_role"], "visual_aid_only")
         self.assertTrue((output_dir / "visual_review_report.json").exists())
+
+    @patch("core.verification.visual_cad_review.prepare_autocad_for_capture", create=True)
+    def test_visual_review_capture_uses_execution_summary_for_task_scoped_preview(self, mock_capture) -> None:
+        output_dir = artifact_path("table_c_evidence_gate", "visual_capture_summary", "placeholder").parent
+        execution_path = _write_json(output_dir / "execution_summary.json", execution_summary_payload(handles=["V3"]))
+        readback_path = _write_json(
+            output_dir / "readback_report.json",
+            readback_geometry_verified_payload(handle="V3", screenshot=output_dir / "cad-visual-review.png"),
+        )
+
+        def capture(output: Path, **kwargs: object) -> dict[str, object]:
+            output.write_bytes(b"fake-png")
+            return {
+                "status": "captured",
+                "output": str(output),
+                "mode": "autocad_window_printwindow",
+                "occlusion_safe": True,
+                "focus": {"status": "zoomed_to_bbox", "source": "execution_summary.created_handles", "handle_count": 1},
+            }
+
+        mock_capture.side_effect = capture
+
+        review = run_visual_cad_review(
+            PROJECT_ROOT,
+            output_dir=output_dir,
+            execution_summary_path=execution_path,
+            readback_report_path=readback_path,
+            capture=True,
+        )
+
+        self.assertEqual(review["status"], "pass", review)
+        mock_capture.assert_called_once()
+        self.assertEqual(mock_capture.call_args.kwargs["execution_summary"], execution_path.resolve())
+        self.assertEqual(review["capture_result"]["focus"]["source"], "execution_summary.created_handles")
+        self.assertEqual(review["visualPreview"]["role"], "visual_aid_only")
+        self.assertEqual(review["screenshotDecision"]["focusSource"], "execution_summary.created_handles")
+        self.assertTrue(review["screenshotDecision"]["visualAidOnly"])
+        self.assertEqual(review["visualPreview"]["screenshotDecision"]["focusSource"], "execution_summary.created_handles")
 
     def test_visual_review_failure_blocks_writeback_when_screenshot_missing(self) -> None:
         output_dir = artifact_path("table_c_evidence_gate", "visual_fail", "placeholder").parent

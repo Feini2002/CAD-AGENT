@@ -14,6 +14,47 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DRAWING_STANDARDS_DIR = PROJECT_ROOT / "libraries" / "drawing_standards"
 LAYER_PRESETS_DIR = PROJECT_ROOT / "libraries" / "layer_presets"
 DEFAULT_DRAWING_STANDARD_PROFILE_ID = "codex_preview_beta"
+AUTOCAD_LINEWEIGHTS = (
+    0,
+    5,
+    9,
+    13,
+    15,
+    18,
+    20,
+    25,
+    30,
+    35,
+    40,
+    50,
+    53,
+    60,
+    70,
+    80,
+    90,
+    100,
+    106,
+    120,
+    140,
+    158,
+    200,
+    211,
+)
+
+DEFAULT_STYLE_EVIDENCE_BOUNDARY = {
+    "checked": [
+        "style_token_resolved",
+        "semantic_layer_preserved",
+        "preview_layer_resolution",
+        "cad_property_write_intent",
+    ],
+    "not_checked": [
+        "ctb_stb_plot_mapping",
+        "plot_output",
+        "viewport_linetype_scaling",
+        "visual_readability",
+    ],
+}
 
 
 class UnknownDrawingStandardError(ValueError):
@@ -102,7 +143,7 @@ def resolve_object_role(profile: dict[str, Any], object_role: str) -> dict[str, 
             f"object_role {object_role!r} not defined in profile {profile.get('profile_id')!r}"
         )
     layer_role = str(binding.get("layer_role", "preview"))
-    return {
+    result: dict[str, Any] = {
         "object_role": object_role,
         "layer_role": layer_role,
         "semantic_layer": semantic_layer_name(profile, layer_role),
@@ -111,6 +152,122 @@ def resolve_object_role(profile: dict[str, Any], object_role: str) -> dict[str, 
         "dim_style_id": binding.get("dim_style_id"),
         "hatch_style_id": binding.get("hatch_style_id"),
     }
+    style_token = binding.get("style_token_id")
+    if isinstance(style_token, str) and style_token:
+        result["style_token_id"] = style_token
+        result["style_resolution"] = resolve_style_token(profile, style_token, layer_role=layer_role)
+    return result
+
+
+def _resolved_cad_lineweight(lineweight_mm: float) -> int:
+    requested = int(round(lineweight_mm * 100))
+    return min(AUTOCAD_LINEWEIGHTS, key=lambda value: abs(value - requested))
+
+
+def _style_evidence_boundary(style: dict[str, Any]) -> dict[str, list[str]]:
+    boundary = style.get("evidence_boundary")
+    if not isinstance(boundary, dict):
+        return {
+            "checked": list(DEFAULT_STYLE_EVIDENCE_BOUNDARY["checked"]),
+            "not_checked": list(DEFAULT_STYLE_EVIDENCE_BOUNDARY["not_checked"]),
+        }
+    return {
+        "checked": list(boundary.get("checked", DEFAULT_STYLE_EVIDENCE_BOUNDARY["checked"])),
+        "not_checked": list(boundary.get("not_checked", DEFAULT_STYLE_EVIDENCE_BOUNDARY["not_checked"])),
+    }
+
+
+def resolve_style_token(
+    profile: dict[str, Any],
+    style_token: str,
+    *,
+    layer_role: str | None = None,
+) -> dict[str, Any]:
+    """Resolve a semantic CAD style token to preview-safe CAD style metadata."""
+
+    tokens = profile.get("style_tokens", {})
+    if not isinstance(tokens, dict):
+        raise ValueError("style_tokens must be an object")
+    style = tokens.get(style_token)
+    if not isinstance(style, dict):
+        raise UnknownDrawingStandardError(
+            f"style_token {style_token!r} not defined in profile {profile.get('profile_id')!r}"
+        )
+    style_layer_role = str(style.get("layer_role") or "preview")
+    if layer_role is not None and str(layer_role) != style_layer_role:
+        raise ValueError(
+            f"style_token {style_token!r} layer_role {style_layer_role!r} conflicts with layer_role {layer_role!r}"
+        )
+    resolved_layer_role = str(layer_role or style_layer_role)
+    lineweight_mm = float(style.get("lineweight_mm", 0.25))
+    linetype = str(style.get("linetype", "CONTINUOUS")).upper()
+    linetype_scale = float(style.get("linetype_scale", 1.0))
+    color_policy = str(style.get("color_policy", "by_layer"))
+    resolution: dict[str, Any] = {
+        "source_profile_id": str(profile.get("profile_id", DEFAULT_DRAWING_STANDARD_PROFILE_ID)),
+        "style_token": style_token,
+        "style_role": str(style.get("style_role", "visible")),
+        "layer_role": resolved_layer_role,
+        "semantic_layer": semantic_layer_name(profile, resolved_layer_role),
+        "resolved_layer": resolve_layer_role(profile, resolved_layer_role, for_cad_execution=True),
+        "lineweight_mm": lineweight_mm,
+        "resolved_cad_lineweight": _resolved_cad_lineweight(lineweight_mm),
+        "linetype": linetype,
+        "linetype_scale": linetype_scale,
+        "color_policy": color_policy,
+        "inheritance_mode": str(style.get("inheritance_mode", "by_layer")),
+        "evidence_boundary": _style_evidence_boundary(style),
+    }
+    if "color" in style:
+        resolution["color"] = style["color"]
+    return resolution
+
+
+def style_kwargs_from_resolution(style_resolution: object) -> dict[str, Any]:
+    if not isinstance(style_resolution, dict):
+        return {}
+    kwargs: dict[str, Any] = {}
+    lineweight = style_resolution.get("lineweight_mm")
+    if isinstance(lineweight, (int, float)):
+        kwargs["lineweight"] = float(lineweight)
+    linetype = style_resolution.get("linetype")
+    if isinstance(linetype, str) and linetype:
+        kwargs["linetype"] = linetype
+    linetype_scale = style_resolution.get("linetype_scale")
+    if isinstance(linetype_scale, (int, float)):
+        kwargs["linetype_scale"] = float(linetype_scale)
+    color_policy = str(style_resolution.get("color_policy", "by_layer")).lower()
+    if color_policy not in {"by_layer", "bylayer"} and style_resolution.get("color") is not None:
+        kwargs["color"] = style_resolution["color"]
+    return kwargs
+
+
+def style_evidence_from_resolution(
+    style_resolution: object,
+    *,
+    handles: list[str] | None = None,
+    by_primitive: list[dict[str, Any]] | None = None,
+) -> dict[str, Any] | None:
+    if not isinstance(style_resolution, dict):
+        return None
+    boundary = style_resolution.get("evidence_boundary")
+    not_checked: list[str] = []
+    checked: list[str] = []
+    if isinstance(boundary, dict):
+        checked = list(boundary.get("checked", []))
+        not_checked = list(boundary.get("not_checked", []))
+    evidence: dict[str, Any] = {
+        "expected": style_resolution,
+        "expected_handles": handles or [],
+        "style_verified": False,
+        "property_verified": False,
+        "plot_verified": False,
+        "checked": checked,
+        "not_checked": not_checked,
+    }
+    if by_primitive is not None:
+        evidence["by_primitive"] = by_primitive
+    return evidence
 
 
 def _style_id_for_primitive(
@@ -188,16 +345,16 @@ def apply_drawing_standard_to_plan(
     if not isinstance(drawing, dict):
         raise ValueError("plan.drawing must be an object")
 
-    layer_role = str(
-        drawing.get("layer_role")
-        or plan.get("layer_role")
-        or profile.get("block_layer_policy", {}).get("insert_layer_role_default", "preview")
-    )
+    explicit_layer_role = drawing.get("layer_role") or plan.get("layer_role")
+    layer_role = str(explicit_layer_role or profile.get("block_layer_policy", {}).get("insert_layer_role_default", "preview"))
+    style_token = drawing.get("style_token")
     if object_role:
         role_info = resolve_object_role(profile, object_role)
         layer_role = str(role_info["layer_role"])
         plan["object_role"] = object_role
         plan["drawing_standard_resolution"] = role_info
+        if not isinstance(style_token, str) and isinstance(role_info.get("style_token_id"), str):
+            style_token = role_info["style_token_id"]
     else:
         plan["drawing_standard_resolution"] = {
             "layer_role": layer_role,
@@ -205,9 +362,33 @@ def apply_drawing_standard_to_plan(
             "resolved_layer": resolve_layer_role(profile, layer_role, for_cad_execution=True),
         }
 
+    if isinstance(style_token, str) and style_token:
+        style_resolution = resolve_style_token(
+            profile,
+            style_token,
+            layer_role=str(explicit_layer_role) if explicit_layer_role else None,
+        )
+        layer_role = str(style_resolution["layer_role"])
+        drawing["style_token"] = style_token
+        drawing["style_role"] = style_resolution["style_role"]
+        drawing["style_resolution"] = style_resolution
+        plan["drawing_standard_resolution"]["style_resolution"] = style_resolution
+
     drawing["layer_role"] = layer_role
     drawing["layer"] = resolve_layer_role(profile, layer_role, for_cad_execution=True)
     drawing["semantic_layer"] = semantic_layer_name(profile, layer_role)
+    default_style_resolution = drawing.get("style_resolution")
+    glyphs = plan.get("object", {}).get("glyph_primitives")
+    if isinstance(glyphs, list):
+        for item in glyphs:
+            if not isinstance(item, dict):
+                continue
+            primitive_token = item.get("style_token") or style_token
+            if isinstance(primitive_token, str) and primitive_token:
+                item["style_token"] = primitive_token
+                item["style_resolution"] = resolve_style_token(profile, primitive_token)
+            elif isinstance(default_style_resolution, dict):
+                item["style_resolution"] = dict(default_style_resolution)
     plan["drawing_standard_profile_id"] = str(profile.get("profile_id", DEFAULT_DRAWING_STANDARD_PROFILE_ID))
     return plan
 

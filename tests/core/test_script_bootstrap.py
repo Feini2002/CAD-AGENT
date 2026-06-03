@@ -35,6 +35,13 @@ class ScriptBootstrapTests(unittest.TestCase):
                 offenders.append(path.relative_to(PROJECT_ROOT).as_posix())
         self.assertEqual(offenders, [])
 
+    def test_core_modules_do_not_insert_sys_path_directly(self) -> None:
+        offenders: list[str] = []
+        for path in (PROJECT_ROOT / "core").rglob("*.py"):
+            if _has_sys_path_insert_call(path):
+                offenders.append(path.relative_to(PROJECT_ROOT).as_posix())
+        self.assertEqual(offenders, [])
+
     def test_direct_script_entrypoints_still_run(self) -> None:
         command = [
             sys.executable,
@@ -69,6 +76,27 @@ class ScriptBootstrapTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertNotIn("UnicodeEncodeError", completed.stderr)
         json.loads(completed.stdout)
+
+    def test_bootstrap_forces_utf8_environment_for_child_scripts(self) -> None:
+        env = os.environ.copy()
+        env["PYTHONUTF8"] = "0"
+        env["PYTHONIOENCODING"] = "cp936"
+        completed = subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                "import os, scripts._bootstrap; print(os.environ['PYTHONUTF8'] + '|' + os.environ['PYTHONIOENCODING'])",
+            ],
+            cwd=PROJECT_ROOT,
+            env=env,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(completed.stdout.strip(), "1|utf-8")
 
     def test_package_import_of_script_wrapper_still_works(self) -> None:
         command = [

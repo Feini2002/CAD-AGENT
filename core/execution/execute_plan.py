@@ -8,14 +8,13 @@ import json
 from pathlib import Path
 from typing import Any, Protocol
 
-try:
-    from core.plan_engine.validate_plan import load_json, validate_plan
-    from core.safety.policy import assert_plan_is_safe
-    from core.verification.preview_only_audit import attach_preview_only_audit
-except ImportError:  # pragma: no cover - compatibility for direct execution.
-    from scripts.validate_plan import load_json, validate_plan
-    from core.safety.policy import assert_plan_is_safe
-    from core.verification.preview_only_audit import attach_preview_only_audit
+from core.drawing_standard.drawing_standard_profile import (
+    style_evidence_from_resolution,
+    style_kwargs_from_resolution,
+)
+from core.plan_engine.validate_plan import load_json, validate_plan
+from core.safety.policy import assert_plan_is_safe
+from core.verification.preview_only_audit import attach_preview_only_audit
 
 
 PREVIEW_LAYER = "CODEX_PREVIEW"
@@ -66,6 +65,12 @@ def _collect_handles(result: object) -> list[str]:
     if isinstance(result, list):
         return [str(item) for item in result]
     return []
+
+
+def _with_optional_color(kwargs: dict[str, Any], color: object | None) -> dict[str, Any]:
+    if color is not None:
+        kwargs["color"] = color
+    return kwargs
 
 
 def execute_plan_file(
@@ -154,6 +159,11 @@ def execute_plan_file(
         raise ValueError("execute_plan.py currently supports absolute placement only.")
 
     layer = drawing["layer"]
+    style_resolution = drawing.get("style_resolution")
+    style_kwargs = style_kwargs_from_resolution(style_resolution)
+    color = style_kwargs.pop("color", None)
+    if color is None and not isinstance(style_resolution, dict):
+        color = "yellow"
     if preview_only and layer != PREVIEW_LAYER:
         raise ValueError(f"Preview execution only allows layer={PREVIEW_LAYER}.")
 
@@ -165,16 +175,20 @@ def execute_plan_file(
     base = point3(placement["base_point"])
     x0, y0, z0 = base
     corner2 = [x0 + width, y0 + depth, z0]
-    color = "yellow"
     created_handles: list[str] = []
 
     created_handles.extend(
         _collect_handles(
             driver.draw_rectangle(
-                corner1=base,
-                corner2=corner2,
-                layer=layer,
-                color=color,
+                **_with_optional_color(
+                    {
+                        "corner1": base,
+                        "corner2": corner2,
+                        "layer": layer,
+                        **style_kwargs,
+                    },
+                    color,
+                )
             )
         )
     )
@@ -184,11 +198,15 @@ def execute_plan_file(
         created_handles.extend(
             _collect_handles(
                 driver.draw_text(
-                    text=obj["name"],
-                    position=[x0 + width / 2, y0 + depth / 2, z0],
-                    height=label_height,
-                    layer=layer,
-                    color=color,
+                    **_with_optional_color(
+                        {
+                            "text": obj["name"],
+                            "position": [x0 + width / 2, y0 + depth / 2, z0],
+                            "height": label_height,
+                            "layer": layer,
+                        },
+                        color,
+                    )
                 )
             )
         )
@@ -198,28 +216,35 @@ def execute_plan_file(
         created_handles.extend(
             _collect_handles(
                 driver.add_dimension(
-                    start_point=base,
-                    end_point=[x0 + width, y0, z0],
-                    text_position=[x0 + width / 2, y0 - dimension_offset, z0],
-                    layer=layer,
-                    color=color,
+                    **_with_optional_color(
+                        {
+                            "start_point": base,
+                            "end_point": [x0 + width, y0, z0],
+                            "text_position": [x0 + width / 2, y0 - dimension_offset, z0],
+                            "layer": layer,
+                        },
+                        color,
+                    )
                 )
             )
         )
         created_handles.extend(
             _collect_handles(
                 driver.add_dimension(
-                    start_point=base,
-                    end_point=[x0, y0 + depth, z0],
-                    text_position=[x0 - dimension_offset, y0 + depth / 2, z0],
-                    layer=layer,
-                    color=color,
+                    **_with_optional_color(
+                        {
+                            "start_point": base,
+                            "end_point": [x0, y0 + depth, z0],
+                            "text_position": [x0 - dimension_offset, y0 + depth / 2, z0],
+                            "layer": layer,
+                        },
+                        color,
+                    )
                 )
             )
         )
 
-    return attach_preview_only_audit(
-        {
+    summary: dict[str, object] = {
             "status": "executed",
             "plan": str(plan_path),
             "intent": plan["intent"],
@@ -228,6 +253,7 @@ def execute_plan_file(
             "object_size": [width, depth],
             "base_point": base,
             "layer": layer,
+            "semantic_layer": drawing.get("semantic_layer"),
             "preview_only": preview_only,
             "entities": {
                 "rectangle": 1,
@@ -235,9 +261,11 @@ def execute_plan_file(
                 "dimensions": 2 if drawing.get("include_dimensions", False) else 0,
             },
             "created_handles": created_handles,
-        },
-        layer=layer,
-    )
+    }
+    style_evidence = style_evidence_from_resolution(style_resolution, handles=created_handles)
+    if style_evidence is not None:
+        summary["style_evidence"] = style_evidence
+    return attach_preview_only_audit(summary, layer=layer)
 
 
 def _execute_draw_symbol_glyph(
@@ -265,16 +293,30 @@ def _execute_draw_symbol_glyph(
 
     created_handles: list[str] = []
     entity_counts: dict[str, int] = {}
+    by_primitive: list[dict[str, Any]] = []
     for item in glyphs:
         if not isinstance(item, dict):
             raise ValueError("glyph_primitives entries must be objects.")
         primitive = str(item.get("primitive", ""))
+        before = len(created_handles)
         created_handles.extend(execute_glyph_primitive(driver, item, layer=layer))
+        item_handles = created_handles[before:]
         entity_counts[primitive] = entity_counts.get(primitive, 0) + 1
+        style_resolution = item.get("style_resolution") or drawing.get("style_resolution")
+        if isinstance(style_resolution, dict):
+            by_primitive.append(
+                {
+                    "part_id": item.get("part_id"),
+                    "kind": item.get("kind"),
+                    "primitive": primitive,
+                    "style_token": style_resolution.get("style_token"),
+                    "style_resolution": style_resolution,
+                    "handles": item_handles,
+                }
+            )
 
     base = point3(placement["base_point"])
-    return attach_preview_only_audit(
-        {
+    summary = {
             "status": "executed",
             "plan": str(plan_path),
             "intent": plan["intent"],
@@ -284,6 +326,7 @@ def _execute_draw_symbol_glyph(
             "archetype": obj.get("archetype"),
             "base_point": base,
             "layer": layer,
+            "semantic_layer": drawing.get("semantic_layer"),
             "preview_only": preview_only,
             "geometry_accuracy": "not_verified_without_cad_readback",
             "glyph_primitive_count": len(glyphs),
@@ -291,9 +334,15 @@ def _execute_draw_symbol_glyph(
             "expected_readback_type_counts": expected_readback_type_counts(glyphs),
             "entities": entity_counts,
             "created_handles": created_handles,
-        },
-        layer=layer,
+    }
+    style_evidence = style_evidence_from_resolution(
+        drawing.get("style_resolution"),
+        handles=created_handles,
+        by_primitive=by_primitive if by_primitive else None,
     )
+    if style_evidence is not None:
+        summary["style_evidence"] = style_evidence
+    return attach_preview_only_audit(summary, layer=layer)
 
 
 def _execute_insert_block_alpha(

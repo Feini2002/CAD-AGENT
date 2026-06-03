@@ -11,6 +11,7 @@ SCHEMA_ROOT = PROJECT_ROOT / "core" / "schemas"
 
 MODEL_SCHEMAS = {
     "cad_context": "cad_context.schema.json",
+    "cad_view_context": "cad_view_context.schema.json",
     "cad_object": "cad_object.schema.json",
     "design_brief": "design_brief.schema.json",
     "drawing_model": "drawing_model.schema.json",
@@ -28,6 +29,7 @@ MODEL_SCHEMAS = {
     "proposal_user_confirmation": "proposal_user_confirmation.schema.json",
     "confirmed_cad_plan_bundle": "confirmed_cad_plan_bundle.schema.json",
     "cad_plan": "cad_plan.schema.json",
+    "placement_resolution": "placement_resolution.schema.json",
     "verification_report": "verification_report.schema.json",
     "shell_model": "shell_model.schema.json",
     "circulation_model": "circulation_model.schema.json",
@@ -78,6 +80,8 @@ def get_schema_path(model_type: str) -> Path:
 def infer_model_type(data: dict[str, Any]) -> str:
     if "unit" in data and "domain" in data and "layers" in data:
         return "cad_context"
+    if "unit" in data and "preview_layer" in data and "viewport_bbox" in data and "visible_entities_summary" in data:
+        return "cad_view_context"
     if "type" in data and "name" in data and "draw_method" in data:
         return "cad_object"
     if "brief_id" in data and "user_request" in data:
@@ -112,6 +116,8 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "design_proposal"
     if "intent" in data and "placement" in data and "drawing" in data:
         return "cad_plan"
+    if "phrase" in data and "checked" in data and "not_checked" in data and "assumptions" in data:
+        return "placement_resolution"
     if "report_id" in data and "checks" in data:
         return "verification_report"
     if "shell_id" in data and "boundary" in data:

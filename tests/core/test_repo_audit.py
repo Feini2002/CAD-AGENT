@@ -28,6 +28,9 @@ class RepoAuditTests(unittest.TestCase):
         self.assertIn("large_python_file", codes)
         self.assertIn("raw_sys_path_insert", codes)
         self.assertEqual(report["summary"]["finding_count"], 2)
+        self.assertEqual(report["summary"]["severity_counts"]["low"], 1)
+        self.assertEqual(report["summary"]["severity_counts"]["medium"], 1)
+        self.assertEqual(report["summary"]["blocking_finding_count"], 1)
 
     def test_ignores_pycache_when_it_is_not_tracked(self) -> None:
         root = artifact_path("repo_audit", "pycache_case")
@@ -128,6 +131,61 @@ class RepoAuditTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 1)
         report = json.loads(completed.stdout)
         self.assertEqual(report["status"], "findings")
+
+    def test_cli_fail_on_severity_allows_low_findings(self) -> None:
+        root = artifact_path("repo_audit", "cli_low_severity_gate_case")
+        root.mkdir(parents=True, exist_ok=True)
+        target = root / "large.py"
+        target.write_text("\n".join(f"x{i} = {i}" for i in range(3)), encoding="utf-8")
+
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "scripts" / "run_repo_audit.py"),
+                "--root",
+                str(root),
+                "--max-python-lines",
+                "1",
+                "--fail-on-severity",
+                "medium",
+            ],
+            cwd=PROJECT_ROOT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        report = json.loads(completed.stdout)
+        self.assertEqual(report["summary"]["finding_count"], 1)
+        self.assertEqual(report["summary"]["blocking_finding_count"], 0)
+
+    def test_cli_fail_on_severity_blocks_medium_findings(self) -> None:
+        root = artifact_path("repo_audit", "cli_medium_severity_gate_case")
+        root.mkdir(parents=True, exist_ok=True)
+        target = root / "script.py"
+        target.write_text("import sys\nsys.path.insert(0, 'bad')\n", encoding="utf-8")
+
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "scripts" / "run_repo_audit.py"),
+                "--root",
+                str(root),
+                "--fail-on-severity",
+                "medium",
+            ],
+            cwd=PROJECT_ROOT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+        )
+
+        self.assertEqual(completed.returncode, 1)
+        report = json.loads(completed.stdout)
+        self.assertEqual(report["summary"]["blocking_finding_count"], 1)
 
     def test_ignores_common_local_dependency_directories(self) -> None:
         root = artifact_path("repo_audit", "ignored_dependency_dirs")

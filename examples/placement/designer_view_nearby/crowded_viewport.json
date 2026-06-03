@@ -1,0 +1,39 @@
+{
+  "unit": "mm",
+  "preview_layer": "CODEX_PREVIEW",
+  "viewport_bbox": {"min": [0, 0], "max": [3000, 1800]},
+  "selected_handles": ["A1"],
+  "recent_created_handles": [],
+  "visible_entities_summary": [
+    {
+      "handle": "A1",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [1050, 650], "max": [1950, 1150]}
+    },
+    {
+      "handle": "B1",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [0, 0], "max": [3000, 600]}
+    },
+    {
+      "handle": "B2",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [0, 1200], "max": [3000, 1800]}
+    },
+    {
+      "handle": "B3",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [0, 600], "max": [1000, 1200]}
+    },
+    {
+      "handle": "B4",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [2000, 600], "max": [3000, 1200]}
+    }
+  ]
+}

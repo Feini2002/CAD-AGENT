@@ -64,6 +64,39 @@
         "additionalProperties": true
       }
     },
+    "style_tokens": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["style_role", "layer_role", "lineweight_mm", "linetype", "color_policy", "inheritance_mode"],
+        "properties": {
+          "style_role": { "type": "string" },
+          "layer_role": { "type": "string" },
+          "lineweight_mm": { "type": "number", "minimum": 0 },
+          "linetype": { "type": "string" },
+          "linetype_scale": { "type": "number", "exclusiveMinimum": 0 },
+          "color_policy": { "type": "string", "enum": ["by_layer", "by_block", "aci", "truecolor", "plot_style"] },
+          "color": { "type": ["string", "integer", "array"] },
+          "inheritance_mode": { "type": "string", "enum": ["by_layer", "by_block", "entity_override"] },
+          "description": { "type": "string" },
+          "evidence_boundary": {
+            "type": "object",
+            "properties": {
+              "checked": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "not_checked": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "object_role_bindings": {
       "type": "object",
       "minProperties": 1,
@@ -74,7 +107,8 @@
           "layer_role": { "type": "string" },
           "text_style_id": { "type": "string" },
           "dim_style_id": { "type": "string" },
-          "hatch_style_id": { "type": "string" }
+          "hatch_style_id": { "type": "string" },
+          "style_token_id": { "type": "string" }
         },
         "additionalProperties": false
       }

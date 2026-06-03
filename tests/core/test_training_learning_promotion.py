@@ -1,301 +1,298 @@
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
-import sys
 import unittest
 
-from tests.helpers import PROJECT_ROOT, artifact_path
-
-from core.training.learning_promotion import (
-    classify_learning_failure,
-    run_training_round_gate,
-    write_learning_promotion_report,
-)
+from tests.helpers import temporary_artifact_dir
 
 
 class TrainingLearningPromotionTests(unittest.TestCase):
-    def _fresh_artifact_root(self, *parts: str):
-        root = artifact_path(*parts)
-        if root.exists():
-            shutil.rmtree(root)
-        return root
-
-    def test_classifies_failures_to_promotion_destinations(self) -> None:
-        pipeline = classify_learning_failure(
-            {
-                "summary": "Delivery skipped audit and still asked the user to review.",
-                "root_cause": "链路：误请用户验收，reference_match gate missing.",
-            },
-            case_id="residential_sofa_2seat_20260528",
-            scene="residential",
-        )
-        core_probe = classify_learning_failure(
-            {
-                "summary": "closed_outer_shell forbidden pattern was missed.",
-                "root_cause": "方法论反模式：whole object drawn as a box.",
-            },
-            case_id="residential_sofa_2seat_20260528",
-            scene="residential",
-        )
-        scene_rule = classify_learning_failure(
-            {
-                "summary": "User meant same product family, not clone fragments.",
-                "root_cause": "场景词汇：家装产品块改座数不能碎线 clone.",
-            },
-            case_id="residential_sofa_2seat_20260528",
-            scene="residential",
-        )
-
-        self.assertEqual(pipeline["category"], "pipeline")
-        self.assertEqual(pipeline["promotion_target"], "docs/training/pipeline-changelog.md")
-        self.assertEqual(core_probe["category"], "core_probe_candidate")
-        self.assertEqual(core_probe["promotion_target"], "core/verification/training_geometry_audit.py")
-        self.assertEqual(scene_rule["category"], "scene_rule")
-        self.assertEqual(scene_rule["promotion_target"], "agents/residential/rules.md")
-
-    def test_writes_learning_promotion_report_without_mutating_rules(self) -> None:
-        root = self._fresh_artifact_root("training_learning", "report_writer")
-        case_dir = root / "projects" / "case_a"
-        (case_dir / "runs").mkdir(parents=True, exist_ok=True)
-        failure = {
-            "summary": "Audit missed missing required parts.",
-            "root_cause": "链路 + 几何：missing_required_parts probe needed.",
+    def accepted_report(self) -> dict:
+        return {
+            "status": "pass",
+            "generated_at": "2026-06-01T00:00:00Z",
+            "queueId": "cad-foundation-first-10",
+            "mode": "unsupervised",
+            "created_handle_count": 24,
+            "readback_count": 24,
+            "items": [
+                {
+                    "capabilityId": "cad-primitives",
+                    "title": "01 基础图元",
+                    "status": "pass",
+                    "handle_count": 14,
+                    "readback_count": 14,
+                    "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW",
+                },
+                {
+                    "capabilityId": "cad-selection-edit",
+                    "title": "02 选择编辑",
+                    "status": "pass",
+                    "handle_count": 10,
+                    "readback_count": 10,
+                    "feedback": "选择边界、删除边界和正式图层保护已通过",
+                },
+            ],
+            "checks": [
+                {"name": "all_10_items_generated", "status": "pass"},
+                {"name": "persistent_handle_readback", "status": "pass"},
+                {"name": "preview_layer_only", "status": "pass"},
+                {"name": "dwg_not_saved", "status": "pass"},
+                {"name": "chinese_labels", "status": "pass"},
+            ],
+            "visual_self_check": {"status": "pass"},
         }
 
-        report_path = write_learning_promotion_report(case_dir, "round12", failure, scene="residential")
+    def programs(self) -> list[dict]:
+        return [
+            {
+                "capabilityId": "cad-primitives",
+                "name": "基础图元绘制",
+                "responsibleAgentIds": ["cad_designer", "pipeline_intent", "pipeline_execute", "pipeline_audit"],
+            },
+            {
+                "capabilityId": "cad-selection-edit",
+                "name": "选择与基础编辑",
+                "responsibleAgentIds": ["cad_designer", "pipeline_execute", "pipeline_audit"],
+            },
+        ]
 
-        report = json.loads(report_path.read_text(encoding="utf-8"))
-        self.assertEqual(report["case_id"], "case_a")
-        self.assertEqual(report["round"], "round12")
-        self.assertEqual(report["decision"]["category"], "pipeline")
-        self.assertFalse(report["mutated_targets"])
+    def test_promote_acceptance_writes_agent_memory_and_prompt_addenda(self) -> None:
+        from core.training.learning_promotion import promote_training_acceptance
 
-    def test_visual_contract_gate_requires_parseable_visual_parts(self) -> None:
-        root = self._fresh_artifact_root("training_learning", "visual_gate")
-        case_dir = root / "projects" / "case_a"
-        runs = case_dir / "runs"
-        runs.mkdir(parents=True, exist_ok=True)
-        (case_dir / "feedback.md").write_text("# feedback\n", encoding="utf-8")
-        (runs / "round12_style_compare.md").write_text("# compare\n", encoding="utf-8")
-        (runs / "round12_agent_review.json").write_text(
-            json.dumps({"delivery_allowed": False, "blocked_reason": "round12_not_executed_yet"}),
-            encoding="utf-8",
+        with temporary_artifact_dir("training_learning") as root:
+            report_path = root / "accepted_report.json"
+            report_path.write_text(json.dumps(self.accepted_report(), ensure_ascii=False), encoding="utf-8")
+
+            result = promote_training_acceptance(root=root, report_paths=[report_path], programs=self.programs())
+
+            self.assertEqual(result["status"], "promoted")
+            self.assertEqual(result["acceptedItemCount"], 2)
+            self.assertEqual(result["promotedAgentCount"], 4)
+
+            designer_memory = root / "agents" / "cad_designer" / "training_memory.json"
+            designer_prompt = root / "agents" / "cad_designer" / "prompt_addendum.md"
+            execute_memory = root / "agents" / "pipeline" / "execute" / "training_memory.json"
+            execute_prompt = root / "agents" / "pipeline" / "execute" / "prompt_addendum.md"
+            common_prompt = root / "agents" / "COMMON_PROMPT_CONTRACT.md"
+            self.assertTrue(designer_memory.is_file())
+            self.assertTrue(designer_prompt.is_file())
+            self.assertTrue(execute_memory.is_file())
+            self.assertTrue(execute_prompt.is_file())
+            self.assertTrue(common_prompt.is_file())
+
+            memory = json.loads(designer_memory.read_text(encoding="utf-8"))
+            self.assertEqual(memory["agentId"], "cad_designer")
+            self.assertEqual(memory["learningState"], "prompt_updated")
+            self.assertEqual(len(memory["acceptedCapabilities"]), 2)
+            self.assertIn("中文标注", " ".join(memory["promptUpdateSummary"]))
+            self.assertIn("截图编排", " ".join(memory["promptUpdateSummary"]))
+            self.assertIn("COMMON_PROMPT_CONTRACT.md", designer_prompt.read_text(encoding="utf-8"))
+            self.assertIn("COMMON_PROMPT_CONTRACT.md", execute_prompt.read_text(encoding="utf-8"))
+            self.assertNotIn("CAD 测试必须使用中文标注", designer_prompt.read_text(encoding="utf-8"))
+            self.assertNotIn("任务级截图编排", designer_prompt.read_text(encoding="utf-8"))
+            self.assertIn("真实 CAD 测试默认只写 CODEX_PREVIEW", common_prompt.read_text(encoding="utf-8"))
+            self.assertIn("## 截图编排规则", common_prompt.read_text(encoding="utf-8"))
+            self.assertIn("target_handles", common_prompt.read_text(encoding="utf-8"))
+
+    def test_promote_acceptance_accepts_generic_all_items_generated_check(self) -> None:
+        from core.training.learning_promotion import promote_training_acceptance
+
+        with temporary_artifact_dir("training_learning_generic_items") as root:
+            report = self.accepted_report()
+            report["checks"] = [
+                {"name": "all_items_generated", "status": "pass", "message": "2/2"},
+                {"name": "persistent_handle_readback", "status": "pass"},
+                {"name": "preview_layer_only", "status": "pass"},
+                {"name": "dwg_not_saved", "status": "pass"},
+                {"name": "chinese_labels", "status": "pass"},
+            ]
+            report_path = root / "accepted_report.json"
+            report_path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+            result = promote_training_acceptance(root=root, report_paths=[report_path], programs=self.programs())
+
+            self.assertEqual(result["status"], "promoted")
+            self.assertEqual(result["acceptedItemCount"], 2)
+
+    def test_promote_acceptance_accepts_utf8_bom_json_reports(self) -> None:
+        from core.training.learning_promotion import promote_training_acceptance
+
+        with temporary_artifact_dir("training_learning_bom") as root:
+            report_path = root / "accepted_report.json"
+            payload = json.dumps(self.accepted_report(), ensure_ascii=False)
+            report_path.write_text("\ufeff" + payload, encoding="utf-8")
+
+            result = promote_training_acceptance(root=root, report_paths=[report_path], programs=self.programs())
+
+            self.assertEqual(result["status"], "promoted")
+            self.assertEqual(result["acceptedItemCount"], 2)
+
+    def test_promote_acceptance_preserves_custom_prompt_guidance(self) -> None:
+        from core.training.learning_promotion import promote_training_acceptance
+
+        with temporary_artifact_dir("training_learning_custom_guidance") as root:
+            report = self.accepted_report()
+            report["items"][0]["promptGuidance"] = [
+                "用户用箭头或圈选指定 CAD 位置时，先从当前 CAD 实体回读参照 bbox，再按图像语义定位。",
+            ]
+            report_path = root / "accepted_report.json"
+            report_path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+            promote_training_acceptance(root=root, report_paths=[report_path], programs=self.programs())
+
+            designer_memory = json.loads(
+                (root / "agents" / "cad_designer" / "training_memory.json").read_text(encoding="utf-8")
+            )
+            designer_prompt = (root / "agents" / "cad_designer" / "prompt_addendum.md").read_text(encoding="utf-8")
+            self.assertIn("箭头或圈选", designer_memory["lessons"][0]["promptGuidance"][-1])
+            self.assertIn("箭头或圈选", designer_prompt)
+
+    def test_quick_trial_gate_remains_observation_without_system_writes(self) -> None:
+        from core.training.promotion_gate import build_training_promotion_gate
+
+        report = self.accepted_report()
+        report["mode"] = "quick_trial"
+
+        gate = build_training_promotion_gate(
+            reports=[report],
+            accepted_items=[],
+            agent_updates=[],
+            source_reports=["output/training/quick_trial.json"],
         )
 
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
+        self.assertEqual(gate["promotionLevel"], "observation")
+        self.assertEqual(gate["decisions"]["updateTrainingSource"]["required"], False)
+        self.assertEqual(gate["decisions"]["updateWorkbench"]["required"], False)
+        self.assertEqual(gate["decisions"]["updateAgentCalibration"]["required"], False)
+        self.assertIn("快试", gate["decisions"]["updateTrainingSource"]["reason"])
 
-        self.assertEqual(report["status"], "fail")
-        self.assertIn("round12_visual_parts.json", report["missing_artifacts"])
+    def test_promote_acceptance_writes_promotion_gate_for_sync_and_agent_calibration(self) -> None:
+        from core.training.learning_promotion import promote_training_acceptance
 
-        (runs / "round12_visual_parts.json").write_text(
-            json.dumps({"object": "sofa_plan", "parts": [{"id": "seat_left"}], "layout": {}, "forbidden": []}),
-            encoding="utf-8",
-        )
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
+        with temporary_artifact_dir("training_learning_gate") as root:
+            report_path = root / "accepted_report.json"
+            report_path.write_text(json.dumps(self.accepted_report(), ensure_ascii=False), encoding="utf-8")
 
-        self.assertEqual(report["status"], "fail", report)
-        self.assertIn("style_target_missing", report["blocking_reasons"])
+            result = promote_training_acceptance(root=root, report_paths=[report_path], programs=self.programs())
 
-        (runs / "round12_visual_parts.json").write_text(
-            json.dumps(
+            gate = result["promotionGate"]
+            self.assertEqual(gate["schemaVersion"], 1)
+            self.assertEqual(gate["promotionLevel"], "systemized")
+            self.assertEqual(gate["decisions"]["updateTrainingSource"]["required"], True)
+            self.assertEqual(gate["decisions"]["updateWorkbench"]["required"], True)
+            self.assertEqual(gate["decisions"]["updateAgentCalibration"]["required"], True)
+            self.assertEqual(gate["decisions"]["updateAgentCalibration"]["status"], "ready")
+            self.assertEqual(gate["decisions"]["retestOriginalTask"]["required"], False)
+            self.assertTrue({"cad_designer", "pipeline_execute"}.issubset(set(gate["agentCalibration"]["affectedAgentIds"])))
+            self.assertIn("截图", " ".join(gate["agentCalibration"]["negativeExamples"]))
+
+            ledger = json.loads((root / "output" / "training_learning" / "agent_learning_ledger.json").read_text(encoding="utf-8"))
+            self.assertEqual(ledger["promotionGate"]["promotionLevel"], "systemized")
+
+    def test_rule_deltas_are_candidates_and_require_reviewed_rule_updates(self) -> None:
+        from core.training.learning_promotion import promote_training_acceptance
+
+        with temporary_artifact_dir("training_learning_rule_deltas") as root:
+            report = self.accepted_report()
+            report["systemLearning"] = {
+                "baseRuleDeltas": ["训练收尾必须生成 promotion gate。"],
+                "taskRuleDeltas": ["线型表任务必须记录样例 containment 审计。"],
+                "checkerDeltas": ["新增 promotion_gate_required_for_systemized 检查。"],
+                "originalTaskRef": "projects/sample_case/runs/round2_report.json",
+            }
+            report_path = root / "accepted_report.json"
+            report_path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+
+            result = promote_training_acceptance(root=root, report_paths=[report_path], programs=self.programs())
+            decisions = result["promotionGate"]["decisions"]
+
+            self.assertEqual(decisions["updateBaseRules"]["required"], True)
+            self.assertEqual(decisions["updateBaseRules"]["status"], "needs_reviewed_package")
+            self.assertEqual(decisions["updateTaskRules"]["required"], True)
+            self.assertEqual(decisions["updateChecker"]["required"], True)
+            self.assertEqual(decisions["retestOriginalTask"]["required"], True)
+            self.assertIn("round2_report", decisions["retestOriginalTask"]["target"])
+
+    def test_unknown_capability_does_not_fallback_to_designer_calibration(self) -> None:
+        from core.training.learning_promotion import promote_training_acceptance
+
+        with temporary_artifact_dir("training_learning_unknown_capability") as root:
+            report = self.accepted_report()
+            report["items"] = [
                 {
-                    "object": "sofa_plan",
-                    "style_target": "expected/style_target_2seat.png",
-                    "parts": [{"id": "seat_left"}],
-                    "layout": {},
-                    "forbidden": [],
+                    "capabilityId": "unknown-capability",
+                    "title": "未知能力",
+                    "status": "pass",
+                    "handle_count": 1,
+                    "readback_count": 1,
+                    "feedback": "不应自动写入 cad_designer",
                 }
-            ),
-            encoding="utf-8",
-        )
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
+            ]
+            report_path = root / "accepted_report.json"
+            report_path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
 
-        self.assertEqual(report["status"], "fail", report)
-        self.assertIn("style_target_file_missing:expected/style_target_2seat.png", report["blocking_reasons"])
+            result = promote_training_acceptance(root=root, report_paths=[report_path], programs=self.programs())
 
-        (case_dir / "expected").mkdir(parents=True, exist_ok=True)
-        (case_dir / "expected" / "style_target_2seat.png").write_bytes(b"fake-png")
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
+            self.assertEqual(result["status"], "no_promotable_acceptance")
+            self.assertEqual(result["acceptedItemCount"], 0)
+            self.assertFalse((root / "agents" / "cad_designer" / "training_memory.json").exists())
+            self.assertEqual(result["promotionGate"]["promotionLevel"], "observation")
 
-        self.assertEqual(report["status"], "fail", report)
-        self.assertIn("style_target_source_not_reference_derived", report["blocking_reasons"])
-        self.assertIn("style_target_evidence_missing", report["blocking_reasons"])
+    def test_failure_promotion_report_records_candidate_gate_without_mutating_targets(self) -> None:
+        from core.training.learning_promotion import write_learning_promotion_report
 
-        (runs / "round12_visual_parts.json").write_text(
-            json.dumps(
+        with temporary_artifact_dir("training_failure_gate") as root:
+            case_dir = root / "projects" / "case_a"
+            failure = {
+                "summary": "pipeline 跳过 audit 后直接 delivery，属于根源链路问题。",
+                "root_cause": "delivery bypassed audit",
+                "originalTaskRef": "projects/case_a/runs/round2_report.json",
+            }
+
+            path = write_learning_promotion_report(case_dir, "2", failure, scene="residential")
+
+            report = json.loads(path.read_text(encoding="utf-8"))
+            gate = report["promotionGate"]
+            self.assertEqual(gate["promotionLevel"], "learning_candidate")
+            self.assertEqual(report["mutated_targets"], [])
+            self.assertEqual(gate["decisions"]["updateTaskRules"]["required"], True)
+            self.assertEqual(gate["decisions"]["updateTaskRules"]["status"], "needs_reviewed_package")
+            self.assertEqual(gate["decisions"]["updateAgentCalibration"]["required"], True)
+            self.assertEqual(gate["decisions"]["retestOriginalTask"]["required"], True)
+            self.assertIn("round2_report", gate["decisions"]["retestOriginalTask"]["target"])
+
+    def test_build_learning_index_maps_capability_to_agent_updates(self) -> None:
+        from core.training.learning_promotion import build_learning_index
+
+        ledger = {
+            "status": "promoted",
+            "agentUpdates": [
                 {
-                    "object": "sofa_plan",
-                    "style_target": "expected/style_target_2seat.png",
-                    "style_target_source": "reference_crop",
-                    "style_target_evidence": {
-                        "source_image": "runs/reference_crop.png",
-                        "reference_handle": "4A2",
-                        "reference_block": "5S03232",
-                        "derived_from_real_cad_screenshot": True,
-                        "generated": False,
-                    },
-                    "parts": [{"id": "seat_left"}],
-                    "layout": {},
-                    "forbidden": [],
-                }
-            ),
-            encoding="utf-8",
-        )
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
-
-        self.assertEqual(report["status"], "fail", report)
-        self.assertIn("style_target_source_image_file_missing:runs/reference_crop.png", report["blocking_reasons"])
-
-        (runs / "reference_crop.png").write_bytes(b"fake-png")
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
-
-        self.assertEqual(report["status"], "pass", report)
-
-    def test_visual_contract_gate_rejects_generated_style_target(self) -> None:
-        root = self._fresh_artifact_root("training_learning", "generated_style_target")
-        case_dir = root / "projects" / "case_a"
-        runs = case_dir / "runs"
-        expected = case_dir / "expected"
-        runs.mkdir(parents=True, exist_ok=True)
-        expected.mkdir(parents=True, exist_ok=True)
-        (case_dir / "feedback.md").write_text("# feedback\n", encoding="utf-8")
-        (runs / "round12_style_compare.md").write_text("# compare\n", encoding="utf-8")
-        (runs / "round12_agent_review.json").write_text("{}", encoding="utf-8")
-        (runs / "reference_crop.png").write_bytes(b"fake-png")
-        (expected / "style_target.png").write_bytes(b"fake-png")
-        (runs / "round12_visual_parts.json").write_text(
-            json.dumps(
+                    "agentId": "cad_designer",
+                    "acceptedCapabilities": ["cad-primitives", "cad-selection-edit"],
+                    "sourceRefs": ["agents/cad_designer/training_memory.json"],
+                },
                 {
-                    "object": "sofa_plan",
-                    "style_target": "expected/style_target.png",
-                    "style_target_source": "generated",
-                    "style_target_evidence": {
-                        "source_image": "runs/reference_crop.png",
-                        "reference_handle": "4A2",
-                        "reference_block": "5S03232",
-                        "derived_from_real_cad_screenshot": False,
-                        "generated": True,
-                    },
-                    "parts": [{"id": "seat_left"}],
-                    "layout": {},
-                    "forbidden": [],
-                }
-            ),
-            encoding="utf-8",
-        )
-
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
-
-        self.assertEqual(report["status"], "fail", report)
-        self.assertIn("style_target_source_not_reference_derived", report["blocking_reasons"])
-        self.assertIn("generated_style_target_forbidden", report["blocking_reasons"])
-        self.assertIn("style_target_not_real_cad_screenshot", report["blocking_reasons"])
-
-    def test_delivery_gate_blocks_until_audit_and_review_allow_delivery(self) -> None:
-        root = self._fresh_artifact_root("training_learning", "delivery_gate")
-        case_dir = root / "projects" / "case_a"
-        runs = case_dir / "runs"
-        runs.mkdir(parents=True, exist_ok=True)
-        (case_dir / "feedback.md").write_text("# feedback\n", encoding="utf-8")
-        (runs / "round12_execution_summary.json").write_text("{}", encoding="utf-8")
-        (runs / "round12_geometry_audit.json").write_text(
-            json.dumps({"audit_pass": False, "audit_failures": ["missing_required_parts"]}),
-            encoding="utf-8",
-        )
-        (runs / "round12_style_compare.md").write_text("- [x] visual compare complete\n", encoding="utf-8")
-        (runs / "round12_agent_review.json").write_text(
-            json.dumps({"delivery_allowed": False, "blocked_reason": "audit_failed"}),
-            encoding="utf-8",
-        )
-        (runs / "round12_preview.png").write_bytes(b"fake-png")
-
-        report = run_training_round_gate(case_dir, "round12", stage="delivery")
-
-        self.assertEqual(report["status"], "fail")
-        self.assertIn("audit_not_passed", report["blocking_reasons"])
-        self.assertIn("delivery_not_allowed", report["blocking_reasons"])
-
-    def test_delivery_gate_reports_missing_required_artifacts(self) -> None:
-        root = self._fresh_artifact_root("training_learning", "delivery_missing")
-        case_dir = root / "projects" / "case_a"
-        (case_dir / "runs").mkdir(parents=True, exist_ok=True)
-        (case_dir / "feedback.md").write_text("# feedback\n", encoding="utf-8")
-
-        report = run_training_round_gate(case_dir, "round12", stage="delivery")
-
-        self.assertEqual(report["status"], "fail")
-        self.assertIn("round12_execution_summary.json", report["missing_artifacts"])
-        self.assertIn("round12_geometry_audit.json", report["missing_artifacts"])
-        self.assertIn("round12_style_compare.md", report["missing_artifacts"])
-        self.assertIn("round12_preview.png", report["missing_artifacts"])
-
-    def test_delivery_gate_blocks_pending_style_compare(self) -> None:
-        root = self._fresh_artifact_root("training_learning", "delivery_pending_style_compare")
-        case_dir = root / "projects" / "case_a"
-        runs = case_dir / "runs"
-        runs.mkdir(parents=True, exist_ok=True)
-        (case_dir / "feedback.md").write_text("# feedback\n", encoding="utf-8")
-        (runs / "round12_execution_summary.json").write_text("{}", encoding="utf-8")
-        (runs / "round12_geometry_audit.json").write_text(
-            json.dumps({"audit_pass": True, "audit_failures": []}),
-            encoding="utf-8",
-        )
-        (runs / "round12_style_compare.md").write_text(
-            "| part_id | round12 gate |\n| --- | --- |\n| seat_left | pending execution |\n- [ ] style target compared\n",
-            encoding="utf-8",
-        )
-        (runs / "round12_agent_review.json").write_text(
-            json.dumps({"delivery_allowed": True, "blocked_reason": ""}),
-            encoding="utf-8",
-        )
-        (runs / "round12_preview.png").write_bytes(b"fake-png")
-
-        report = run_training_round_gate(case_dir, "round12", stage="delivery")
-
-        self.assertEqual(report["status"], "fail")
-        self.assertIn("style_compare_pending", report["blocking_reasons"])
-
-    def test_wrong_shape_json_is_reported_as_parse_error(self) -> None:
-        root = self._fresh_artifact_root("training_learning", "wrong_shape_json")
-        case_dir = root / "projects" / "case_a"
-        runs = case_dir / "runs"
-        runs.mkdir(parents=True, exist_ok=True)
-        (case_dir / "feedback.md").write_text("# feedback\n", encoding="utf-8")
-        (runs / "round12_visual_parts.json").write_text("[]", encoding="utf-8")
-        (runs / "round12_style_compare.md").write_text("# compare\n", encoding="utf-8")
-        (runs / "round12_agent_review.json").write_text("{}", encoding="utf-8")
-
-        report = run_training_round_gate(case_dir, "round12", stage="visual_contract")
-
-        self.assertEqual(report["status"], "fail")
-        self.assertTrue(report["parse_errors"], report)
-
-    def test_cli_emits_round_gate_report(self) -> None:
-        case_dir = PROJECT_ROOT / "projects" / "residential_sofa_2seat_20260528"
-        completed = subprocess.run(
-            [
-                sys.executable,
-                str(PROJECT_ROOT / "scripts" / "run_training_round_gate.py"),
-                "--case-dir",
-                str(case_dir),
-                "--round",
-                "round12",
-                "--stage",
-                "visual_contract",
+                    "agentId": "pipeline_execute",
+                    "acceptedCapabilities": ["cad-selection-edit"],
+                    "sourceRefs": ["agents/pipeline/execute/training_memory.json"],
+                },
             ],
-            cwd=PROJECT_ROOT,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            capture_output=True,
-        )
+            "promotionGate": {
+                "schemaVersion": 1,
+                "promotionLevel": "systemized",
+                "decisions": {"updateWorkbench": {"required": True, "status": "required"}},
+            },
+        }
 
-        self.assertEqual(completed.returncode, 0, completed.stderr)
-        report = json.loads(completed.stdout)
-        self.assertEqual(report["stage"], "visual_contract")
-        self.assertEqual(report["status"], "pass", report)
+        index = build_learning_index(ledger)
+
+        self.assertEqual(index["status"], "promoted")
+        self.assertEqual(index["byCapability"]["cad-selection-edit"]["promotedAgentCount"], 2)
+        self.assertEqual(index["byAgent"]["pipeline_execute"]["acceptedCapabilityCount"], 1)
+        self.assertEqual(index["promotionGate"]["promotionLevel"], "systemized")
+        self.assertEqual(index["byCapability"]["cad-selection-edit"]["promotionGate"]["decisions"]["updateWorkbench"]["required"], True)
 
 
 if __name__ == "__main__":

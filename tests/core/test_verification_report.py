@@ -12,6 +12,7 @@ from core.verification.inspect_dwg import (
     snapshot_entities,
     snapshot_entities_by_handles,
 )
+from core.verification.fake_cad_driver import FakeCadDriver
 from core.verification.verification_report import (
     build_verification_report,
     snapshot_diff,
@@ -27,6 +28,7 @@ class FakeLine:
     Handle = "L1"
     StartPoint = [0, 0, 0]
     EndPoint = [1800, 0, 0]
+    Color = 2
 
 
 class FakeText:
@@ -76,6 +78,33 @@ class FakeBlockReference:
 
     def GetBoundingBox(self) -> tuple[list[float], list[float]]:
         return [1200.0, 800.0, 0.0], [2100.0, 1250.0, 0.0]
+
+
+class FakeDimension:
+    ObjectName = "AcDbAlignedDimension"
+    Layer = "CODEX_PREVIEW"
+    Handle = "D1"
+    TextOverride = ""
+    StyleName = "训练-室内-平面总尺寸"
+    Measurement = 1500.0
+    TextHeight = 140.0
+    TextPosition = [750.0, -200.0, 0.0]
+    XLine1Point = [0.0, 0.0, 0.0]
+    XLine2Point = [1500.0, 0.0, 0.0]
+
+    def GetBoundingBox(self) -> tuple[list[float], list[float]]:
+        return [0.0, -220.0, 0.0], [1500.0, 20.0, 0.0]
+
+
+class FakeTwoLineAngularDimension:
+    ObjectName = "AcDb2LineAngularDimension"
+    Layer = "CODEX_PREVIEW"
+    Handle = "AD1"
+    TextOverride = ""
+    StyleName = "训练-构件-角度斜向尺寸"
+    Measurement = 0.6383198080090466
+    TextHeight = 44.0
+    TextPosition = [900.0, -520.0, 0.0]
 
 
 class VerificationReportTests(unittest.TestCase):
@@ -286,6 +315,7 @@ class VerificationReportTests(unittest.TestCase):
 
         self.assertEqual(line["type"], "line")
         self.assertEqual(line["end_point"], [1800.0, 0.0, 0.0])
+        self.assertEqual(line["color"], 2)
         self.assertEqual(text["type"], "text")
         self.assertEqual(text["text"], "测试柜")
         self.assertEqual(circle["type"], "circle")
@@ -298,6 +328,17 @@ class VerificationReportTests(unittest.TestCase):
         self.assertEqual(polyline["type"], "polyline")
         self.assertEqual(polyline["points"], [[0.0, 0.0, 0.0], [400.0, 0.0, 0.0], [400.0, 200.0, 0.0]])
         self.assertTrue(polyline["closed"])
+        dimension = normalize_com_entity(FakeDimension())
+        self.assertEqual(dimension["type"], "dimension")
+        self.assertEqual(dimension["style_name"], "训练-室内-平面总尺寸")
+        self.assertEqual(dimension["measurement"], 1500.0)
+        self.assertEqual(dimension["text_height"], 140.0)
+        self.assertEqual(dimension["text_position"], [750.0, -200.0, 0.0])
+        self.assertEqual(dimension["bbox"], {"min": [0.0, -220.0], "max": [1500.0, 20.0]})
+        angular_dimension = normalize_com_entity(FakeTwoLineAngularDimension())
+        self.assertEqual(angular_dimension["type"], "dimension")
+        self.assertEqual(angular_dimension["style_name"], "训练-构件-角度斜向尺寸")
+        self.assertAlmostEqual(angular_dimension["measurement"], 0.6383198080090466)
 
         block = normalize_com_entity(FakeBlockReference())
         self.assertEqual(block["type"], "block_reference")
@@ -306,6 +347,19 @@ class VerificationReportTests(unittest.TestCase):
         self.assertAlmostEqual(block["rotation"], 90.0)
         self.assertEqual(block["scale"], [1.0, 1.0, 1.0])
         self.assertEqual(block["bbox"], {"min": [1200.0, 800.0], "max": [2100.0, 1250.0]})
+
+    def test_fake_driver_readback_preserves_entity_color_when_explicitly_written(self) -> None:
+        driver = FakeCadDriver()
+        result = driver.draw_line(
+            start_point=[0, 0, 0],
+            end_point=[100, 0, 0],
+            layer="CODEX_PREVIEW",
+            color="red",
+        )
+
+        entities = driver.snapshot_handles(handles=[result["handle"]], layer="CODEX_PREVIEW")
+
+        self.assertEqual(entities[0]["color"], "red")
 
     def test_snapshot_uses_driver_readback_when_available(self) -> None:
         class Driver:

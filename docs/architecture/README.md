@@ -9,6 +9,7 @@
 
 - `cad_workflow.md`：从结构化意图到预览、验证、确认的通用流程。
 - `cad_plan_boundary.md`：`CAD_PLAN` 与高层设计模型的职责边界。
+- `cad-agent-task-chain.md`：白话语义拆分、复杂任务拆分、分发执行、训练回流、规则同步和 A-to-A 校准的系统任务链路。
 - `cad-asset-intelligence-architecture.md`：参考图库、自产图库、对象语法、检索、审计和晋升的资产化能力架构。
 - `../planning/cad-commonsense-asset-dev-plan-01.md`：标准图库 raw 输入、reference 标注、knowledge 编译和自产图库晋升的执行计划。
 - `shell-layout-foundation-design.md`：空壳空间理解与布局底座的设计背景、已落地映射和待硬化边界。

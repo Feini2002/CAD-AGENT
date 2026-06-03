@@ -3,13 +3,13 @@
 状态：完工后治理版（毛坯转精装）；活跃队列从“施工明细”收束为“后置包路由器”。
 最后更新：2026-05-29
 
-> 本文仍是唯一 `PlanMD`。用户提到 `plan.md`、`PlanMD`、主计划或主 plan 时，默认指本文。执行前先读 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`，再按本文路由打开任务清单、runbook、verification 或 history。
+> 本文仍是唯一 `PlanMD`。用户提到 `plan.md`、`PlanMD`、主计划或主 plan 时，默认指本文。若工具已加载 `AGENTS.md`，执行前从 `CORE_CONTEXT_BRIEF.md` 恢复短上下文，再按本文路由打开任务清单、runbook、verification 或 history；人工接手则先读 `AGENTS.md` 再读 `CORE_CONTEXT_BRIEF.md`。
 
 瘦身前全文快照已归档：`docs/history/snapshots/finished-architecture-2026-05-28/CORE_RESTRUCTURE_PLAN.md`。已完成包明细不再写回本文，统一看 `docs/planning/archive/` 与 `docs/handoffs/package-index.md`。
 
 ## 0. 当前一句话
 
-仓库已从施工期进入 **Agent 训练期（方案 A）**：**Core 100% 收口**；默认主训 **家装**（`docs/training/residential-primary.md`），用 `projects/<case>/` + `feedback.md` 闭环。Lab 表 C / 后置 Backlog 仅在回归或扩 registry 时用，**不再**开旧 Phase 施工包。
+仓库已从施工期进入 **Agent 训练期（方案 B/C）**：**Core 100% 收口**；默认主训目标升级为 **CAD Designer Agent 成长路径**（`docs/training/cad-designer-growth-path.md`），第一阶段毕业目标是“电子设计师雏形”，第一批课程从 CAD 基础操作开始；**家装**（`docs/training/residential-primary.md`）是当前主场景插件，用 `projects/<case>/` + `feedback.md` 闭环。Lab 表 C / 后置 Backlog 仅在回归或扩 registry 时用，**不再**开旧 Phase 施工包。
 
 当前最重要的边界：
 
@@ -34,7 +34,8 @@
 | --- | --- | --- |
 | L0 规则 | `AGENTS.md` | 不变规则、交付口径、安全边界 |
 | L1 短入口 | `CORE_CONTEXT_BRIEF.md` | 一句话、表 C、训练口令、按需展开表 |
-| L1b 训练 | `docs/training/README.md` | 案例闭环、家装主训、不可声称 |
+| L1b 训练 | `docs/training/README.md` | 训练闭环、当前主场景插件、不可声称 |
+| L1b+ 成长路径 | `docs/training/cad-designer-growth-path.md` | CAD Designer Agent、成长阶段、基础课程和能力护照 |
 | L1c 常识 | `docs/training/cad-common-sense-upgrade.md` | 外部方法论吸收、常识进入系统、低噪声训练反馈 |
 | L1d 资产智能 | `docs/architecture/cad-asset-intelligence-architecture.md` | 参考图库 / 自产图库边界、检索调用链、Agent 职责、训练晋升生命周期 |
 | L1e 资产开发计划 | `docs/planning/cad-commonsense-asset-dev-plan-01.md` | 标准图库 raw 输入、reference 标注、knowledge 编译、自产图库晋升步骤 |
@@ -46,7 +47,7 @@
 
 冲突处理顺序：用户最新明确指令 > `AGENTS.md` 安全规则 > 本文 > 任务清单 > 状态页 / handoff / 历史。其它 MD 不得保留第二套 next、优先级或退出标准。
 
-OpenSpec 只在复杂契约变更时承接 proposal / design / tasks / specs；单文件小修、训练 round、刷新表 C 和状态记录不强制开 change。根级 `openspec/tasks.md` 禁止出现，所有任务必须归属具体 change。
+OpenSpec 只在复杂契约变更时承接 proposal / design / tasks / specs；单文件小修、训练 round、刷新表 C 和状态记录不强制开 change。根级 `openspec/tasks.md` 禁止出现，所有任务必须归属具体 change。OpenSpec readiness 用 `openspec list --json`、`openspec status --change <change> --json` 和 `openspec validate --all --strict --json --no-interactive`；completed changes 可以先保留在 `openspec/changes/`，归档时再同步稳定 specs 与仓库引用。
 
 ## 3. 当前可选主线
 
@@ -54,7 +55,7 @@ OpenSpec 只在复杂契约变更时承接 proposal / design / tasks / specs；�
 
 | 主线 | 触发条件 | 默认入口 | 退出门槛 |
 | --- | --- | --- | --- |
-| **Agent 训练（家装）** | 用户白话训 Agent、开案例 | `docs/training/README.md`、`agents/residential/`、`projects/<case>/` | `feedback.md` 三步 pass；rules 反哺 |
+| **Agent 训练（CAD Designer + 家装插件）** | 用户白话训 Agent、开基础课或开案例 | `docs/training/cad-designer-growth-path.md`、`docs/training/README.md`、`agents/cad_designer/`、`agents/residential/`、`projects/<case>/` | 基础课程有证据边界；案例 `feedback.md` 三步 pass；rules 反哺 |
 | 表 C 硬证据债 | 新表 C writeback 被 hard audit / visual gate 阻断 | `docs/verification/table_c_evidence_gate.md` | 缺失报告、created handles、checks 或截图复盘债被机器审计通过 |
 | CAD 画面能力 | 用户说“图块太简单”“推进 CAD 画面能力” | `VCAD-*` 小包 | AutoCAD 截图 + created handles 回读 + visual-only 边界清楚 |
 | 真实 CAD 能力扩展 | 需要扩充 block、hatch、symbol、drawing standard 真实回读样本 | `docs/planning/任务清单.md` §4 / §5 索引 | validate、dry-run、真实 CAD、定向 readback 均通过 |

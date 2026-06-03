@@ -24,9 +24,45 @@ def normalize_com_entity(entity: Any) -> dict[str, Any]:
         "layer": layer,
         "type": "unknown",
     }
+    lineweight = _int(getattr(entity, "Lineweight", getattr(entity, "lineweight", None)))
+    if lineweight is not None:
+        result["lineweight"] = lineweight
+    linetype = str(getattr(entity, "Linetype", getattr(entity, "linetype", ""))).strip()
+    if linetype:
+        result["linetype"] = linetype
+    linetype_scale = _float(getattr(entity, "LinetypeScale", getattr(entity, "linetype_scale", None)))
+    if linetype_scale is not None:
+        result["linetype_scale"] = linetype_scale
+    color = _color(getattr(entity, "Color", getattr(entity, "color", None)))
+    if color is not None:
+        result["color"] = color
 
     lowered = object_name.lower()
-    if "polyline" in lowered:
+    if "dim" in lowered:
+        result["type"] = "dimension"
+        result["text"] = str(getattr(entity, "TextOverride", getattr(entity, "text", "")))
+        style_name = str(getattr(entity, "StyleName", getattr(entity, "style_name", ""))).strip()
+        if style_name:
+            result["style_name"] = style_name
+        measurement = _float(getattr(entity, "Measurement", getattr(entity, "measurement", None)))
+        if measurement is not None:
+            result["measurement"] = measurement
+        text_height = _float(getattr(entity, "TextHeight", getattr(entity, "text_height", None)))
+        if text_height is not None:
+            result["text_height"] = text_height
+        text_position = _point(getattr(entity, "TextPosition", getattr(entity, "text_position", [])))
+        if text_position:
+            result["text_position"] = text_position
+        xline1 = _point(getattr(entity, "XLine1Point", getattr(entity, "xline1_point", [])))
+        if xline1:
+            result["xline1_point"] = xline1
+        xline2 = _point(getattr(entity, "XLine2Point", getattr(entity, "xline2_point", [])))
+        if xline2:
+            result["xline2_point"] = xline2
+        bbox = _bounding_box_from_com_entity(entity)
+        if bbox is not None:
+            result["bbox"] = bbox
+    elif "polyline" in lowered:
         points = _polyline_points(getattr(entity, "Coordinates", getattr(entity, "coordinates", [])))
         result["type"] = "polyline"
         result["points"] = points
@@ -66,12 +102,12 @@ def normalize_com_entity(entity: Any) -> dict[str, Any]:
         result["type"] = "text"
         result["text"] = str(getattr(entity, "TextString", getattr(entity, "text", "")))
         result["position"] = _point(getattr(entity, "InsertionPoint", getattr(entity, "position", [])))
-    elif "dim" in lowered:
-        result["type"] = "dimension"
-        result["text"] = str(getattr(entity, "TextOverride", getattr(entity, "text", "")))
     elif "hatch" in lowered:
         result["type"] = "hatch"
         result["pattern"] = str(getattr(entity, "PatternName", getattr(entity, "pattern", "")))
+        pattern_scale = _float(getattr(entity, "PatternScale", getattr(entity, "scale", None)))
+        if pattern_scale is not None:
+            result["scale"] = pattern_scale
         bbox = _bounding_box_from_com_entity(entity)
         if bbox is not None:
             result["bbox"] = bbox
@@ -110,6 +146,25 @@ def _float(value: Any) -> float | None:
         return float(value)
     except Exception:
         return None
+
+
+def _int(value: Any) -> int | None:
+    try:
+        return int(round(float(value)))
+    except Exception:
+        return None
+
+
+def _color(value: Any) -> int | str | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        stripped = value.strip()
+        return stripped or None
+    try:
+        return int(round(float(value)))
+    except Exception:
+        return str(value)
 
 
 def _polyline_points(value: Any) -> list[list[float]]:

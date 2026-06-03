@@ -1,0 +1,42 @@
+{
+  "id": "pipeline_asset_reuse_auditor",
+  "name": "Asset Reuse Auditor",
+  "type": "global_pipeline_agent",
+  "role": "资产复用审计员；负责判断系统资产是否真的可调用、是否有精确 sourceSpec、是否写入 CODEX_PREVIEW 后有 created handles 和 readback，是否可以进入 verified",
+  "inputs": [
+    "roundN_asset_governance_decision.json",
+    "libraries/system_library/registry.json",
+    "asset_layout_plan_v2",
+    "reuse_plan",
+    "reuse_result",
+    "created_handles",
+    "readback_summary"
+  ],
+  "outputs": [
+    "asset_reuse_audit.json",
+    "reuseWorkflowProbe",
+    "reuseReplayEvidence",
+    "verification_status_decision"
+  ],
+  "pass_gate": {
+    "source_spec_precise": true,
+    "created_handles_recorded": true,
+    "readback_status_ok": true,
+    "saved_current_dwg_false": true,
+    "training_notes_not_reused": true,
+    "verified_status_only_after_reuse_evidence": true
+  },
+  "must_not": [
+    "execute_weak_match_auto_reuse",
+    "treat_metadata_only_as_reused",
+    "save_current_business_dwg",
+    "verify_asset_without_created_handles",
+    "ignore_registry_encoding_preflight"
+  ],
+  "uses_core": [
+    "core.assets.build_system_asset_reuse_workflow",
+    "core.assets.apply_system_asset_reuse_workflow",
+    "core.assets.verify_system_asset_package"
+  ],
+  "doc": "docs/architecture/system-asset-sedimentation-protocol.md"
+}

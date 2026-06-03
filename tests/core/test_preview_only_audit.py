@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import json
 import unittest
-from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from core.safety.policy import PREVIEW_LAYER
 from core.verification.preview_only_audit import (
@@ -14,6 +12,7 @@ from core.verification.preview_only_audit import (
     validate_preview_only_audit,
     with_legacy_safety_aliases,
 )
+from tests.helpers import temporary_artifact_dir
 
 
 class PreviewOnlyAuditTests(unittest.TestCase):
@@ -49,8 +48,8 @@ class PreviewOnlyAuditTests(unittest.TestCase):
         self.assertEqual(preview_only_audit_check(summary["safety"])["status"], "pass")
 
     def test_execution_summary_gate_failure(self) -> None:
-        with TemporaryDirectory() as temp_dir:
-            path = Path(temp_dir) / "execution_summary.json"
+        with temporary_artifact_dir("preview_only_audit") as temp_dir:
+            path = temp_dir / "execution_summary.json"
             path.write_text(
                 json.dumps(
                     {
@@ -65,7 +64,7 @@ class PreviewOnlyAuditTests(unittest.TestCase):
             )
             self.assertEqual(execution_summary_gate_failure(path=path), "")
 
-            bad_path = Path(temp_dir) / "bad.json"
+            bad_path = temp_dir / "bad.json"
             bad_path.write_text(json.dumps({"status": "executed"}), encoding="utf-8")
             failure = execution_summary_gate_failure(path=bad_path)
             self.assertIn("$.safety", failure)

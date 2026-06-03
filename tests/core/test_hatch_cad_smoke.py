@@ -8,7 +8,7 @@ from tests.helpers import artifact_path
 
 
 class VerifiedHatchFakeDriver(FakeCadDriver):
-    def draw_hatch(self, *, boundary_points, pattern="ANSI31", layer=None, layer_role="preview", **_):
+    def draw_hatch(self, *, boundary_points, pattern="ANSI31", scale=1.0, layer=None, layer_role="preview", **_):
         resolved_layer = layer or PREVIEW_LAYER
         self._assert_layer(resolved_layer, layer_role=layer_role)
         boundary_handle = self._handle()
@@ -26,6 +26,7 @@ class VerifiedHatchFakeDriver(FakeCadDriver):
             object_name="AcDbHatch",
             layer=resolved_layer,
             PatternName=pattern,
+            PatternScale=float(scale),
             bbox={"min": [0.0, 0.0], "max": [100.0, 80.0]},
         )
         return {
@@ -54,6 +55,8 @@ class HatchCadSmokeTests(unittest.TestCase):
         self.assertEqual(report["created_handle_count"], 2)
         self.assertEqual(report["actual"]["type_counts"], {"hatch": 1, "polyline": 1})
         self.assertEqual(report["actual"]["hatch_pattern"], "ANSI31")
+        hatch = next(entity for entity in report["actual"]["entities"] if entity["type"] == "hatch")
+        self.assertEqual(hatch["scale"], 1.0)
         self.assertTrue((output_dir / "hatch_cad_smoke_report.json").is_file())
 
 

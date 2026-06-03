@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from core.drawing_standard.drawing_standard_profile import style_kwargs_from_resolution
+
 
 DEFAULT_GLYPH_COLOR = "cyan"
 
@@ -56,6 +58,22 @@ def _collect_handles(result: object) -> list[str]:
     return []
 
 
+def _primitive_kwargs(
+    *,
+    item: dict[str, Any],
+    layer: str,
+    fallback_color: str,
+) -> dict[str, Any]:
+    style_resolution = item.get("style_resolution")
+    kwargs = {"layer": layer, **style_kwargs_from_resolution(style_resolution)}
+    color = kwargs.pop("color", None)
+    if color is None and not isinstance(style_resolution, dict):
+        color = fallback_color
+    if color is not None:
+        kwargs["color"] = color
+    return kwargs
+
+
 def execute_glyph_primitive(
     driver: Any,
     item: dict[str, Any],
@@ -66,13 +84,13 @@ def execute_glyph_primitive(
     """Draw one glyph primitive and return created handles."""
 
     primitive = str(item.get("primitive", ""))
+    common_kwargs = _primitive_kwargs(item=item, layer=layer, fallback_color=color)
     if primitive == "rectangle":
         return _collect_handles(
             driver.draw_rectangle(
                 corner1=item["corner1"],
                 corner2=item["corner2"],
-                layer=layer,
-                color=color,
+                **common_kwargs,
             )
         )
     if primitive == "line":
@@ -80,8 +98,7 @@ def execute_glyph_primitive(
             driver.draw_line(
                 start_point=item["start_point"],
                 end_point=item["end_point"],
-                layer=layer,
-                color=color,
+                **common_kwargs,
             )
         )
     if primitive == "polyline":
@@ -89,8 +106,7 @@ def execute_glyph_primitive(
             driver.draw_polyline(
                 points=item["points"],
                 closed=bool(item.get("closed", False)),
-                layer=layer,
-                color=color,
+                **common_kwargs,
             )
         )
     if primitive == "circle":
@@ -98,8 +114,7 @@ def execute_glyph_primitive(
             driver.draw_circle(
                 center=item["center"],
                 radius=item["radius"],
-                layer=layer,
-                color=color,
+                **common_kwargs,
             )
         )
     if primitive == "arc":
@@ -109,8 +124,7 @@ def execute_glyph_primitive(
                 radius=item["radius"],
                 start_angle=item["start_angle"],
                 end_angle=item["end_angle"],
-                layer=layer,
-                color=color,
+                **common_kwargs,
             )
         )
     raise ValueError(f"Unsupported glyph primitive: {primitive}")

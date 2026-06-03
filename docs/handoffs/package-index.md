@@ -2,16 +2,29 @@
 
 | 序号 | 开发包 | 位置 |
 | --- | --- | --- |
-| 0 | ARCH-BOUNDARY-HARDENING-01：架构瘦身与边界加固 01 | `current.md` |
-| 0 | CAD-ASSET-RAW-INTAKE-AUTO-01：标准图库自动 raw intake | `current.md` |
-| 0 | OPENSPEC-CONTRACT-LITE-01：OpenSpec 变更契约轻量护栏 | `current.md` |
-| 0 | ROOT-MD-CHINESE-NAMES-01：根目录历史入口中文化 | `current.md` |
-| 0 | DOC-ROOT-HYGIENE-01：根目录训练长文瘦身与路径债清理 | `current.md` |
-| 0 | CAPABILITY-MAP-HTML-01：根目录能力覆盖清单 V1 | `current.md` |
-| 0 | CAD-COMMONSENSE-ASSET-DEV-PLAN-01：标准图库 raw 输入与自产图库计划书 | `current.md` |
-| 0 | CAD-ASSET-INTELLIGENCE-FOUNDATION-01：资产智能前五项基础落地 | `current.md` |
-| 0 | CAD-ASSET-INTELLIGENCE-ARCH-01：CAD 资产智能架构包 | `current.md` |
-| 0 | CAD-COMMON-SENSE-ARCH-01：CAD 常识底座方法论升级 | `current.md` |
+| 0 | SYSTEM-ASSET-LIBRARY-GOVERNANCE-01：系统资产库守门员、layoutPlan v2、视觉仓库 clearance/readability 验收 | `current.md` |
+| 0 | SCREENSHOT-ORCHESTRATION-HARDENING-01：截图底座任务级编排与 Agent 共识 | `current.md` |
+| 0 | CAD-TRAINING-PROMOTION-GATE-01：训练沉淀 Promotion Gate 与 A-to-A 校准门禁 | `current.md` |
+| 0 | CAD-AGENT-TASK-CHAIN-01：系统任务链路整合 | `current.md` |
+| 0 | CAD-NATIVE-ASSET-REUSE-HARDENING-01：真实 CAD 跨 DWG 复用加固验证 | `current.md` |
+| 0 | CAD-SEMANTIC-ASSET-REUSE-UPGRADE-01：语义规则库、跨 DWG 复用与线型表审计底座 | `current.md` |
+| 0 | SYSTEM-ASSET-SEDIMENTATION-PROTOCOL-01：系统资产沉淀协议 V3 源边界加固 | `current.md` |
+| 0 | TRAINING-FOUNDATION-REMAINING-21-01：CAD 基础操作剩余 21 项自动化训练闭环 | `current.md` |
+| 0 | REPO-CONTEXT-HYGIENE-02：默认上下文瘦身与训练事实源 manifest | `current.md` |
+| 0 | DESIGNER-TRAINING-BATCH-CHECKERS-01：V2.1 训练批次依赖图与验收器骨架 | `archive/2026-06.md` |
+| 0 | OPENSPEC-SYSTEM-CONTRACT-01：OpenSpec 初始化可用性与系统契约润色 | `current.md` |
+| 0 | DESIGNER-AGENT-GROWTH-PATH-01：总设计师 Agent 成长路径 | `current.md` |
+| 0 | CAPABILITY-MAP-SYNC-01：训练工作台同步与 Agent 校验 | `current.md` |
+| 0 | ARCH-BOUNDARY-HARDENING-01：架构瘦身与边界加固 01 | `archive/2026-06.md` |
+| 0 | CAD-ASSET-RAW-INTAKE-AUTO-01：标准图库自动 raw intake | `archive/2026-06.md` |
+| 0 | OPENSPEC-CONTRACT-LITE-01：OpenSpec 变更契约轻量护栏 | `archive/2026-06.md` |
+| 0 | ROOT-MD-CHINESE-NAMES-01：根目录历史入口中文化 | `archive/2026-06.md` |
+| 0 | DOC-ROOT-HYGIENE-01：根目录训练长文瘦身与路径债清理 | `archive/2026-05.md` |
+| 0 | CAPABILITY-MAP-HTML-01：根目录能力覆盖清单 V1 | `archive/2026-05.md` |
+| 0 | CAD-COMMONSENSE-ASSET-DEV-PLAN-01：标准图库 raw 输入与自产图库计划书 | `archive/2026-05.md` |
+| 0 | CAD-ASSET-INTELLIGENCE-FOUNDATION-01：资产智能前五项基础落地 | `archive/2026-05.md` |
+| 0 | CAD-ASSET-INTELLIGENCE-ARCH-01：CAD 资产智能架构包 | `archive/2026-06.md` |
+| 0 | CAD-COMMON-SENSE-ARCH-01：CAD 常识底座方法论升级 | `archive/2026-05.md` |
 | 0 | TRAIN-SOFA-ROUND12-CALIBRATION：沙发 round12 审计虚绿校准 | `archive/2026-05.md` |
 | 0 | CORE-PLATFORM-CLOSEOUT：Core 平台开发收尾（100% 工程底座） | `archive/2026-05.md` |
 | 1 | DOC-FINISH-ARCH-01：完工后文档架构瘦身 | `archive/2026-05.md` |

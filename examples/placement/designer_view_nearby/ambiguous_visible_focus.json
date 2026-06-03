@@ -1,0 +1,21 @@
+{
+  "unit": "mm",
+  "preview_layer": "CODEX_PREVIEW",
+  "viewport_bbox": {"min": [0, 0], "max": [6000, 3600]},
+  "selected_handles": [],
+  "recent_created_handles": [],
+  "visible_entities_summary": [
+    {
+      "handle": "LEFT_CLUSTER",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [600, 900], "max": [1600, 1500]}
+    },
+    {
+      "handle": "RIGHT_CLUSTER",
+      "type": "block_reference",
+      "layer": "SOURCE",
+      "bbox": {"min": [4300, 900], "max": [5300, 1500]}
+    }
+  ]
+}

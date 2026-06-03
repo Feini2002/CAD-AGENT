@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import json
 import unittest
-from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from core.verification.cad_session_guard import (
     PREVIEW_LAYER,
@@ -14,6 +12,7 @@ from core.verification.cad_session_guard import (
     write_session_guard_report,
 )
 from core.verification.fake_cad_driver import FakeCadEntity, FakeCadDriver
+from tests.helpers import temporary_artifact_dir
 
 
 class CadSessionGuardTests(unittest.TestCase):
@@ -90,8 +89,7 @@ class CadSessionGuardTests(unittest.TestCase):
             before_connect=blocked_snapshot(phase="before_connect", reason="cad_not_connected"),
             after_connect=blocked_snapshot(phase="after_connect", reason="cad_connection_failed"),
         )
-        with TemporaryDirectory() as temp_dir:
-            output_dir = Path(temp_dir)
+        with temporary_artifact_dir("cad_session_guard") as output_dir:
             write_session_guard_report(output_dir, report)
             saved = json.loads((output_dir / "active_document_snapshot.json").read_text(encoding="utf-8"))
         self.assertEqual(saved["status"], "blocked")

@@ -54,6 +54,47 @@ class CapabilityCoverageTests(unittest.TestCase):
         self.assertIn("trend", report)
         self.assertEqual(report["trend"]["series_id"], "cad_capability_coverage")
 
+    def test_report_explains_verified_and_showcase_claim_boundary(self) -> None:
+        registry = {
+            "registry_id": "claim-boundary-test",
+            "updated_at": "2026-06-03",
+            "capabilities": [
+                {
+                    "capability_id": "demo.showcase",
+                    "display_name": "Demo Showcase",
+                    "category": "primitive",
+                    "domain": "generic",
+                    "claim_level": "showcase",
+                    "ladder_level": "L3",
+                    "evidence": {"report_path": "README.md"},
+                },
+                {
+                    "capability_id": "demo.deferred",
+                    "display_name": "Demo Deferred",
+                    "category": "primitive",
+                    "domain": "generic",
+                    "claim_level": "deferred",
+                    "ladder_level": "L1",
+                },
+            ],
+        }
+
+        report = build_capability_coverage_report(
+            registry,
+            registry_path=PROJECT_ROOT / "examples" / "capability_proof" / "cad_capability_registry.json",
+            project_root=PROJECT_ROOT,
+            generated_at="2026-06-03T00:00:00Z",
+        )
+
+        boundary = report["claim_level_boundary"]
+        self.assertEqual(boundary["cad_proof_levels"], ["verified", "showcase"])
+        self.assertEqual(boundary["verified"]["count"], 0)
+        self.assertEqual(boundary["showcase"]["count"], 1)
+        self.assertEqual(boundary["showcase"]["evidence_requirement"], "existing evidence.report_path")
+        self.assertFalse(boundary["showcase"]["means_strict_geometry_verified"])
+        self.assertEqual(boundary["strict_geometry_verified_count"], 0)
+        self.assertEqual(boundary["evidence_path_showcase_count"], 1)
+
     def test_run_capability_coverage_writes_output(self) -> None:
         output_path = PROJECT_ROOT / "output" / "test_artifacts" / "capability_coverage" / "cad_capability_coverage.json"
         if output_path.exists():

@@ -45,6 +45,16 @@ ALLOWED_INTENTS = {
 }
 PREVIEW_LAYER = "CODEX_PREVIEW"
 ALLOWED_PLACEMENT_MODES = {"absolute", "space_reference", "relative_to_object"}
+NEARBY_PHRASE_TOKENS = {
+    "旁边",
+    "附近",
+    "边上",
+    "旁",
+    "nearby",
+    "beside",
+    "right beside",
+    "next to",
+}
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -58,6 +68,57 @@ def load_json(path: Path) -> dict[str, Any]:
 def require(condition: bool, message: str, errors: list[str]) -> None:
     if not condition:
         errors.append(message)
+
+
+def _contains_nearby_phrase(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    lowered = value.lower()
+    return any(token in lowered for token in NEARBY_PHRASE_TOKENS)
+
+
+def _nearby_phrase_requires_deterministic_placement(placement: dict[str, Any], errors: list[str]) -> None:
+    phrase_values = [
+        placement.get("phrase"),
+        placement.get("natural_language"),
+        placement.get("placement_phrase"),
+    ]
+    if not any(_contains_nearby_phrase(value) for value in phrase_values):
+        return
+    has_absolute_base = placement.get("mode") == "absolute" and isinstance(placement.get("base_point"), list)
+    has_resolution = isinstance(placement.get("placement_resolution"), dict) or bool(placement.get("placement_resolution_ref"))
+    require(
+        has_absolute_base or has_resolution,
+        "nearby placement phrases require deterministic placement_resolution or absolute base_point.",
+        errors,
+    )
+
+
+def _require_style_resolution(container: dict[str, Any], label: str, errors: list[str]) -> None:
+    style_token = container.get("style_token")
+    if not isinstance(style_token, str) or not style_token:
+        return
+    require(
+        isinstance(container.get("style_resolution"), dict),
+        f"{label}.style_token requires {label}.style_resolution; apply drawing standard profile before validation.",
+        errors,
+    )
+
+
+def _require_resolved_style_tokens(plan: dict[str, Any], errors: list[str]) -> None:
+    drawing = plan.get("drawing")
+    if isinstance(drawing, dict):
+        _require_style_resolution(drawing, "drawing", errors)
+
+    obj = plan.get("object")
+    if not isinstance(obj, dict):
+        return
+    glyphs = obj.get("glyph_primitives")
+    if not isinstance(glyphs, list):
+        return
+    for index, item in enumerate(glyphs):
+        if isinstance(item, dict):
+            _require_style_resolution(item, f"object.glyph_primitives[{index}]", errors)
 
 
 def validate_plan(plan: dict[str, Any]) -> list[str]:
@@ -78,6 +139,7 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
     require(isinstance(plan["confidence"], (int, float)), "confidence must be a number.", errors)
     if isinstance(plan["confidence"], (int, float)):
         require(0 <= plan["confidence"] <= 1, "confidence must be between 0 and 1.", errors)
+    _require_resolved_style_tokens(plan, errors)
 
     if plan["intent"] == "insert_block_alpha":
         from core.plan_engine.block_alpha_plan import validate_insert_block_alpha
@@ -92,6 +154,8 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
         placement = plan.get("placement", {})
         drawing = plan.get("drawing", {})
         require(placement.get("mode") in ALLOWED_PLACEMENT_MODES, "placement.mode is not supported.", errors)
+        if isinstance(placement, dict):
+            _nearby_phrase_requires_deterministic_placement(placement, errors)
         if placement.get("mode") == "absolute":
             base_point = placement.get("base_point")
             require(isinstance(base_point, list), "placement.base_point is required for absolute placement.", errors)
@@ -119,6 +183,7 @@ def validate_plan(plan: dict[str, Any]) -> list[str]:
                 require(obj[size_key] > 0, f"object.{size_key} must be greater than 0.", errors)
 
     require(placement.get("mode") in ALLOWED_PLACEMENT_MODES, "placement.mode is not supported.", errors)
+    _nearby_phrase_requires_deterministic_placement(placement, errors)
     if placement.get("mode") == "absolute":
         base_point = placement.get("base_point")
         require(isinstance(base_point, list), "placement.base_point is required for absolute placement.", errors)

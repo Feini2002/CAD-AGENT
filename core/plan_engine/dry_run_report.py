@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from core.drawing_standard.drawing_standard_profile import style_evidence_from_resolution
 from core.plan_engine.validate_plan import load_json, validate_plan
 from core.verification.geometry_checks import expected_bbox_from_plan
 
@@ -38,6 +39,7 @@ def create_dry_run_report(plan: dict[str, Any] | Path) -> dict[str, Any]:
 
     obj = plan["object"]
     drawing = plan["drawing"]
+    style_resolution = drawing.get("style_resolution")
     base = _point3(plan["placement"]["base_point"])
     bbox = expected_bbox_from_plan(plan)
     entities: list[dict[str, Any]] = [
@@ -47,6 +49,8 @@ def create_dry_run_report(plan: dict[str, Any] | Path) -> dict[str, Any]:
             "bbox": bbox,
         }
     ]
+    if isinstance(style_resolution, dict):
+        entities[0]["style_resolution"] = style_resolution
     if drawing.get("include_label"):
         entities.append(
             {
@@ -74,7 +78,7 @@ def create_dry_run_report(plan: dict[str, Any] | Path) -> dict[str, Any]:
             f"- layer: {drawing.get('layer')}",
         ]
     )
-    return {
+    report = {
         "version": "0.1",
         "status": "valid",
         "validation_errors": [],
@@ -84,3 +88,7 @@ def create_dry_run_report(plan: dict[str, Any] | Path) -> dict[str, Any]:
         "entities": entities,
         "human_summary": human_summary,
     }
+    style_evidence = style_evidence_from_resolution(style_resolution)
+    if style_evidence is not None:
+        report["style_evidence"] = style_evidence
+    return report

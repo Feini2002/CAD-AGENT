@@ -1,0 +1,2261 @@
+{
+  "schemaVersion": 1,
+  "packageId": "drawing_standards-basic",
+  "category": "drawing_standards.basic",
+  "packagePath": "libraries/system_library/drawing_standards/basic",
+  "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+  "nativeDwgExists": true,
+  "updatedAt": "2026-06-03T08:28:22+00:00",
+  "lifecycle": {
+    "allowedStatuses": [
+      "candidate",
+      "systemized",
+      "verified",
+      "deprecated"
+    ],
+    "defaultStatus": "candidate",
+    "promotionOrder": [
+      "candidate",
+      "systemized",
+      "verified"
+    ],
+    "retirementStatus": "deprecated"
+  },
+  "nativeLayout": {
+    "schemaVersion": 2,
+    "policy": "governed_category_library_zones",
+    "gridColumns": 4,
+    "zones": [
+      "00_INDEX",
+      "01_CLEAN_ASSETS",
+      "02_PREVIEW_CARDS",
+      "03_REVIEW_QUARANTINE",
+      "99_EVIDENCE_LINKS"
+    ],
+    "nativeWrite": "asset_library_shelf_scaffold_written_to_standard_assets_dwg",
+    "visualRackPlan": {
+      "schemaVersion": 2,
+      "layoutMode": "classified_expandable_visual_warehouse_v2",
+      "entryPolicy": "先看 00_INDEX，按 rackId / slotId 入库；来源不清先进 03_REVIEW_QUARANTINE。",
+      "warehouseArchitecture": {
+        "kind": "category_visual_warehouse",
+        "primaryWarehouseZones": [
+          "01_CLEAN_ASSETS",
+          "B_OBJECT_ASSET_INDEX"
+        ],
+        "reviewOnlyZones": [
+          "02_PREVIEW_CARDS",
+          "03_REVIEW_QUARANTINE",
+          "99_EVIDENCE_LINKS"
+        ],
+        "expansionPolicy": "先扩展分类内大货架和空货位；对象 block 本体进入各自分类 DWG，standard_assets.dwg 只保留跨库索引。"
+      },
+      "acceptanceCriteria": {
+        "slotContainment": "每个资产槽必须有 owning rack、slotId、状态和可回读 bbox 所属区。",
+        "assetOwnership": "已占用槽记录 assetIds；对象索引槽记录 category/nativeDwg。",
+        "expansionCapacity": "每个大类货架必须声明空位或未来扩展位，不能画成说明卡片。",
+        "copyPolicy": "只有 clean source 槽能作为复制源；索引、复审、隔离、证据和标签默认 never_copy。",
+        "screenshotBoundary": "截图只辅助人工看图；created handles、zone bbox、slot ownership 和 readback 才是机器证据。"
+      },
+      "displayPolicy": {
+        "cleanSourceLayer": "ASSET_CLEAN_SOURCE",
+        "sourceBoundaryLayer": "ASSET_SOURCE_BOUNDARY",
+        "previewCardLayer": "ASSET_PREVIEW_CARD",
+        "labelLayer": "ASSET_LABEL",
+        "evidenceLayer": "ASSET_EVIDENCE",
+        "quarantineLayer": "ASSET_QUARANTINE",
+        "copySafety": "可视标签、货架边框、证据和预留卡槽默认 copyPolicy=never_copy；style asset 优先复用命名样式定义。"
+      },
+      "rackFamilies": [
+        {
+          "rackId": "A_BASE_SCAFFOLD",
+          "zoneId": "01_CLEAN_ASSETS",
+          "title": "A 通用底座脚手架",
+          "familyRole": "reusable_style_source",
+          "copyPolicy": "clean_source_slots_only",
+          "minExpansionSlots": 4,
+          "description": "放线型、尺寸、文字、填充、图层等可复用底座标准；训练标题和临时说明不得进入。",
+          "slotPolicy": "A1/A2 两列承载 drawing_standards 的 clean source 与最小可见样例；展示卡、标签和证据不作为复制源。",
+          "slots": [
+            {
+              "slotId": "A01_LAYER_STANDARD",
+              "title": "图层标准",
+              "status": "reserved",
+              "assetIds": [],
+              "notes": [
+                "基础图层、颜色索引、图层角色"
+              ],
+              "copySourceAllowed": false,
+              "sourceKind": "style_definition"
+            },
+            {
+              "slotId": "A02_LINETYPE_STANDARD",
+              "title": "线型标准",
+              "status": "occupied",
+              "assetIds": [
+                "linetype_style_summary_table"
+              ],
+              "notes": [
+                "已沉淀线型样式总表；可见表格只作 proof panel"
+              ],
+              "copySourceAllowed": true,
+              "sourceKind": "style_definition"
+            },
+            {
+              "slotId": "A03_PLOT_COLOR_LINEWEIGHT",
+              "title": "线宽 / 颜色 / 打印",
+              "status": "reserved",
+              "assetIds": [],
+              "notes": [
+                "线宽、颜色索引、CTB/STB 边界"
+              ],
+              "copySourceAllowed": false,
+              "sourceKind": "style_definition"
+            },
+            {
+              "slotId": "A04_TEXT_STYLE",
+              "title": "文字样式",
+              "status": "reserved",
+              "assetIds": [
+                "basic_cad_drawing_standard"
+              ],
+              "notes": [
+                "中文文字样式与字体策略"
+              ],
+              "copySourceAllowed": false,
+              "sourceKind": "style_definition"
+            },
+            {
+              "slotId": "A05_DIMENSION_STYLE",
+              "title": "标注样式",
+              "status": "occupied",
+              "assetIds": [
+                "interior_dimension_style_visual_standard"
+              ],
+              "notes": [
+                "已沉淀室内尺寸样式面板；优先复用命名 DimStyle"
+              ],
+              "copySourceAllowed": true,
+              "sourceKind": "style_definition"
+            },
+            {
+              "slotId": "A06_LEADER_SYMBOL_STYLE",
+              "title": "引线 / 符号样式",
+              "status": "empty_reserved",
+              "assetIds": [],
+              "notes": [
+                "引线、编号、符号样式"
+              ],
+              "copySourceAllowed": false,
+              "sourceKind": "style_definition"
+            },
+            {
+              "slotId": "A07_TABLE_TITLEBLOCK",
+              "title": "表格 / 图框 / 标题栏",
+              "status": "empty_reserved",
+              "assetIds": [],
+              "notes": [
+                "表格样式、图框、标题栏"
+              ],
+              "copySourceAllowed": false,
+              "sourceKind": "template_scaffold"
+            },
+            {
+              "slotId": "A08_SCALE_UNIT_BASELINE",
+              "title": "比例 / 单位 / 通用基准",
+              "status": "empty_reserved",
+              "assetIds": [],
+              "notes": [
+                "比例、单位、通用基点"
+              ],
+              "copySourceAllowed": false,
+              "sourceKind": "template_scaffold"
+            }
+          ]
+        },
+        {
+          "rackId": "B_OBJECT_ASSET_INDEX",
+          "zoneId": "B_OBJECT_ASSET_INDEX",
+          "title": "B 对象资产索引 / 跨库入口",
+          "familyRole": "cross_category_object_index",
+          "copyPolicy": "index_only_never_copy",
+          "minExpansionSlots": 1,
+          "description": "这里只放对象资产分类入口；真正 block 本体进入各自分类 DWG。",
+          "slotPolicy": "B 区默认 index_only / never_copy；填入对象资产前必须有精确 source boundary 或 named block。",
+          "slots": [
+            {
+              "slotId": "B01_BEDS",
+              "title": "床铺",
+              "status": "index_only",
+              "assetIds": [],
+              "notes": [
+                "单人床、双人床、床头柜组合"
+              ],
+              "copySourceAllowed": false,
+              "category": "furniture.sleeping.beds",
+              "nativeDwg": "libraries/system_library/furniture/sleeping/beds/bed_assets.dwg",
+              "copyPolicy": "never_copy"
+            },
+            {
+              "slotId": "B02_TABLES",
+              "title": "桌子 / 书桌",
+              "status": "index_only",
+              "assetIds": [],
+              "notes": [
+                "餐桌、茶几、书桌"
+              ],
+              "copySourceAllowed": false,
+              "category": "furniture.tables",
+              "nativeDwg": "libraries/system_library/furniture/tables/table_assets.dwg",
+              "copyPolicy": "never_copy"
+            },
+            {
+              "slotId": "B03_SEATING",
+              "title": "沙发 / 椅子",
+              "status": "index_only",
+              "assetIds": [],
+              "notes": [
+                "沙发、椅子、卡座"
+              ],
+              "copySourceAllowed": false,
+              "category": "furniture.seating",
+              "nativeDwg": "libraries/system_library/furniture/seating/sofas/sofa_assets.dwg",
+              "copyPolicy": "never_copy"
+            },
+            {
+              "slotId": "B04_STORAGE",
+              "title": "柜体 / 收纳",
+              "status": "index_only",
+              "assetIds": [],
+              "notes": [
+                "衣柜、橱柜、储物柜"
+              ],
+              "copySourceAllowed": false,
+              "category": "furniture.storage",
+              "nativeDwg": "libraries/system_library/furniture/storage/storage_assets.dwg",
+              "copyPolicy": "never_copy"
+            },
+            {
+              "slotId": "B05_DOORS_WINDOWS",
+              "title": "门窗符号",
+              "status": "index_only",
+              "assetIds": [],
+              "notes": [
+                "门洞、窗、开启方向"
+              ],
+              "copySourceAllowed": false,
+              "category": "openings.doors_windows",
+              "nativeDwg": "libraries/system_library/openings/doors_windows/opening_assets.dwg",
+              "copyPolicy": "never_copy"
+            },
+            {
+              "slotId": "B06_KITCHEN_BATH",
+              "title": "厨卫对象",
+              "status": "index_only",
+              "assetIds": [],
+              "notes": [
+                "洁具、橱柜、电器"
+              ],
+              "copySourceAllowed": false,
+              "category": "fixtures.kitchen_bath",
+              "nativeDwg": "libraries/system_library/fixtures/kitchen_bath/fixture_assets.dwg",
+              "copyPolicy": "never_copy"
+            },
+            {
+              "slotId": "B07_LIGHTING_EQUIPMENT",
+              "title": "灯具 / 设备",
+              "status": "index_only",
+              "assetIds": [],
+              "notes": [
+                "灯具、开关、设备符号"
+              ],
+              "copySourceAllowed": false,
+              "category": "mep.lighting_equipment",
+              "nativeDwg": "libraries/system_library/mep/lighting_equipment/equipment_assets.dwg",
+              "copyPolicy": "never_copy"
+            },
+            {
+              "slotId": "B08_CUSTOM_EXPANSION",
+              "title": "自定义扩展",
+              "status": "future_expansion",
+              "assetIds": [],
+              "notes": [
+                "新增对象类从这里派生"
+              ],
+              "copySourceAllowed": false,
+              "category": "custom",
+              "nativeDwg": "libraries/system_library/custom/custom_assets.dwg",
+              "copyPolicy": "never_copy"
+            }
+          ]
+        }
+      ],
+      "reviewZones": [
+        {
+          "zoneId": "02_PREVIEW_CARDS",
+          "purpose": "人工复审卡片和旧训练预览暂存；可看，不作为复制源。"
+        },
+        {
+          "zoneId": "03_REVIEW_QUARANTINE",
+          "purpose": "来源边界不清、训练面板整块搬运、待清洗候选先隔离。"
+        },
+        {
+          "zoneId": "99_EVIDENCE_LINKS",
+          "purpose": "报告、截图、训练引用索引；只证明来源，不承载可复制几何。"
+        }
+      ],
+      "zoneBboxes": {
+        "00_INDEX": {
+          "min": [
+            6750.0,
+            10776.8156424581
+          ],
+          "max": [
+            45254.86606703911,
+            12876.8156424581
+          ]
+        },
+        "01_CLEAN_ASSETS": {
+          "min": [
+            6750.0,
+            -3753.7318435754187
+          ],
+          "max": [
+            34054.86606703911,
+            9776.8156424581
+          ]
+        },
+        "A1_LINE_STANDARDS": {
+          "min": [
+            6750.0,
+            -3753.7318435754187
+          ],
+          "max": [
+            21240.893854748603,
+            9776.8156424581
+          ]
+        },
+        "A2_ANNOTATION_STYLES": {
+          "min": [
+            22840.894,
+            -3753.7318435754187
+          ],
+          "max": [
+            34054.86606703911,
+            9776.8156424581
+          ]
+        },
+        "B_OBJECT_ASSET_INDEX": {
+          "min": [
+            35454.86606703911,
+            -3753.7318435754187
+          ],
+          "max": [
+            45254.86606703911,
+            9776.8156424581
+          ]
+        },
+        "02_PREVIEW_CARDS": {
+          "min": [
+            6750.0,
+            -6653.731843575419
+          ],
+          "max": [
+            19224.955355679704,
+            -4753.731843575419
+          ]
+        },
+        "03_REVIEW_QUARANTINE": {
+          "min": [
+            19584.955355679704,
+            -6653.731843575419
+          ],
+          "max": [
+            32059.910711359407,
+            -4753.731843575419
+          ]
+        },
+        "99_EVIDENCE_LINKS": {
+          "min": [
+            32419.910711359407,
+            -6653.731843575419
+          ],
+          "max": [
+            45254.86606703911,
+            -4753.731843575419
+          ]
+        },
+        "EXPANSION_BAY_A": {
+          "min": [
+            35454.86606703911,
+            -3753.7318435754187
+          ],
+          "max": [
+            45254.86606703911,
+            9776.8156424581
+          ]
+        }
+      },
+      "contentSlots": {
+        "A1_LINE_STANDARDS": {
+          "bbox": {
+            "min": [
+              8350.0,
+              1446.6480446927374
+            ],
+            "max": [
+              19640.893854748603,
+              6874.491620111732
+            ]
+          },
+          "clusterStatus": "clustered_from_existing_content"
+        },
+        "A2_ANNOTATION_STYLES": {
+          "bbox": {
+            "min": [
+              24440.894,
+              -2003.731843575419
+            ],
+            "max": [
+              32454.866067039107,
+              7876.8156424581
+            ]
+          },
+          "clusterStatus": "clustered_from_existing_content"
+        }
+      },
+      "clearancePolicy": {
+        "layoutStrategy": "content_cluster_bbox_clearance_v1",
+        "protectedContentSource": "non_shelf_layer_entity_bboxes_before_layout_write",
+        "minimumShelfContentClearance": 60.0,
+        "failureMode": "fail if any shelf frame, label, route or slot grid bbox intersects protected asset content"
+      },
+      "readabilityPolicy": {
+        "minimumVisualAisle": 1600.0,
+        "minimumObjectIndexAisle": 1400.0,
+        "maximumContentWidthRatio": 0.8,
+        "proofContentLayer": "ASSET_PROOF_CONTENT",
+        "sourceProofRoleSeparation": "source definitions use small source tokens; visible panels are proof-only and never-copy"
+      }
+    }
+  },
+  "tools": {
+    "apply": "scripts/sediment_system_asset.py",
+    "verify": "scripts/sediment_system_asset.py --verify",
+    "verifyContract": "core.assets.system_asset_sedimentation.verify_system_asset_package",
+    "nativeExport": "deferred_until_explicit_cad_write_approval",
+    "recordFeedback": "scripts/sediment_system_asset.py --feedback-ref"
+  },
+  "assets": [
+    {
+      "assetId": "basic_cad_drawing_standard",
+      "name": "基础 CAD 绘图标准包",
+      "category": "drawing_standards.basic",
+      "aliases": [
+        "线宽线型标准",
+        "尺寸样式基线",
+        "文字引线样式"
+      ],
+      "useWhen": [
+        "新 DWG 需要统一图层、线宽、线型、尺寸、文字或引线样式"
+      ],
+      "tags": [
+        "drawing-standard",
+        "lineweight",
+        "linetype",
+        "dimstyle",
+        "mleader"
+      ],
+      "dimensions": {},
+      "retrieval": {
+        "aliases": [
+          "线宽线型标准",
+          "尺寸样式基线",
+          "文字引线样式"
+        ],
+        "useWhen": [
+          "新 DWG 需要统一图层、线宽、线型、尺寸、文字或引线样式"
+        ],
+        "tags": [
+          "drawing-standard",
+          "lineweight",
+          "linetype",
+          "dimstyle",
+          "mleader"
+        ],
+        "scenarioTags": [
+          "drafting_standard",
+          "cad_foundation"
+        ],
+        "constraints": [
+          "nativeDwgExists=false 时只能作为合同和索引，不代表 DWG 已导出"
+        ],
+        "dimensions": {},
+        "matchText": [
+          "基础 CAD 绘图标准包",
+          "线宽线型标准",
+          "尺寸样式基线",
+          "文字引线样式",
+          "新 DWG 需要统一图层、线宽、线型、尺寸、文字或引线样式",
+          "drawing-standard",
+          "lineweight",
+          "linetype",
+          "dimstyle",
+          "mleader",
+          "drafting_standard",
+          "cad_foundation",
+          "nativeDwgExists=false 时只能作为合同和索引，不代表 DWG 已导出"
+        ],
+        "priority": "system_library_before_reference_library"
+      },
+      "native": {
+        "dwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+        "blockName": "",
+        "nativeDwgExists": false,
+        "layoutPolicy": "append_to_category_library_grid",
+        "layoutPlan": {
+          "schemaVersion": 2,
+          "policy": "governed_category_library_zones",
+          "slotKey": "basic_cad_drawing_standard",
+          "label": "basic_cad_drawing_standard",
+          "assetName": "基础 CAD 绘图标准包",
+          "category": "drawing_standards.basic",
+          "assetKind": "style_standard",
+          "nativeWrite": "deferred_until_explicit_cad_export_approval",
+          "zones": [
+            {
+              "zoneId": "00_INDEX",
+              "title": "资产目录区",
+              "purpose": "Only catalog rows, asset ids, status, and slot references.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "01_CLEAN_ASSETS",
+              "title": "干净资产区",
+              "purpose": "Only reusable block geometry, style definitions, symbols, or clean source samples.",
+              "copySourceAllowed": true
+            },
+            {
+              "zoneId": "02_PREVIEW_CARDS",
+              "title": "资产卡片区",
+              "purpose": "Human-readable preview cards with labels, dimensions, usage, and state.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "03_REVIEW_QUARANTINE",
+              "title": "待复审区",
+              "purpose": "Candidates with unclear source boundaries or unclean training output.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "99_EVIDENCE_LINKS",
+              "title": "证据索引区",
+              "purpose": "Evidence refs, reports, screenshots, and training provenance references.",
+              "copySourceAllowed": false
+            }
+          ],
+          "slot": {
+            "slotKey": "basic_cad_drawing_standard",
+            "index": 0,
+            "row": 0,
+            "column": 0,
+            "columns": 4
+          },
+          "grid": {
+            "column": 0,
+            "row": 0,
+            "columns": 4
+          },
+          "plannedBbox": {
+            "cleanSource": {
+              "minX": 0,
+              "minY": -2600,
+              "maxX": 4200,
+              "maxY": 0
+            },
+            "previewCard": {
+              "minX": 0,
+              "minY": -14600,
+              "maxX": 4200,
+              "maxY": -12000
+            },
+            "quarantine": {
+              "minX": 0,
+              "minY": -26600,
+              "maxX": 4200,
+              "maxY": -24000
+            },
+            "evidenceLinks": {
+              "minX": 0,
+              "minY": -38600,
+              "maxX": 4200,
+              "maxY": -36000
+            }
+          },
+          "cleanSource": {
+            "zoneId": "01_CLEAN_ASSETS",
+            "status": "ready_for_clean_reusable_source",
+            "reason": "precise source boundary and export mode are present",
+            "copySourceAllowed": true,
+            "exportMode": "style_export",
+            "sourceBoundaryMode": "style_definition",
+            "includedHandles": [],
+            "excludedHandles": []
+          },
+          "previewCard": {
+            "zoneId": "02_PREVIEW_CARDS",
+            "title": "基础 CAD 绘图标准包",
+            "fields": [
+              "assetId",
+              "name",
+              "category",
+              "status",
+              "dimensions",
+              "useWhen"
+            ],
+            "copySourceAllowed": false
+          },
+          "evidenceLinks": {
+            "zoneId": "99_EVIDENCE_LINKS",
+            "refs": [
+              "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json",
+              "output/previews/task22-lineweight-linetype-focused.png"
+            ],
+            "copySourceAllowed": false
+          },
+          "cleanupPolicy": {
+            "defaultAction": "exclude_training_or_review_content_from_clean_source",
+            "excludedContentTypes": [
+              "training_title",
+              "training_notes",
+              "temporary_labels",
+              "table_borders",
+              "dimensions",
+              "audit_notes",
+              "evidence_text",
+              "course_description",
+              "screenshot_caption"
+            ],
+            "includedOnlyWhen": "explicitly listed in includedHandles or represented by style_definition / named_block source",
+            "excludedHandles": []
+          },
+          "reviewQuarantine": {
+            "zoneId": "03_REVIEW_QUARANTINE",
+            "required": false,
+            "reason": ""
+          }
+        }
+      },
+      "source": {
+        "type": "manual_metadata"
+      },
+      "assetKind": "style_standard",
+      "exportManifest": {
+        "assetKind": "style_standard",
+        "exportMode": "style_export",
+        "sourceBoundary": {
+          "mode": "style_definition",
+          "sourceType": "manual_metadata",
+          "includedHandles": [],
+          "excludedHandles": [],
+          "precision": "unclear"
+        },
+        "includedHandles": [],
+        "excludedHandles": [],
+        "targetBlockName": "",
+        "nativeWrite": "deferred_until_explicit_cad_export_approval"
+      },
+      "antiContamination": {
+        "decision": "style_export_only",
+        "forbiddenSourceModes": [
+          "whole_codex_preview",
+          "whole_modelspace",
+          "current_screen",
+          "all_visible",
+          "training_panel",
+          "global_preview_bbox"
+        ],
+        "preciseBlockSourceModes": [
+          "selected_handles",
+          "created_handles",
+          "active_dwg_handles",
+          "explicit_bbox",
+          "named_block"
+        ],
+        "checks": [
+          "do not export whole modelspace",
+          "do not export whole CODEX_PREVIEW by default",
+          "do not include labels, borders, dimensions, or training notes unless explicitly included",
+          "record includedHandles and excludedHandles before native export"
+        ]
+      },
+      "evidenceRefs": [
+        "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json",
+        "output/previews/task22-lineweight-linetype-focused.png"
+      ],
+      "status": "systemized",
+      "lifecycle": {
+        "status": "systemized",
+        "allowedStatuses": [
+          "candidate",
+          "systemized",
+          "verified",
+          "deprecated"
+        ],
+        "promotionGate": [
+          "metadata contract",
+          "native DWG export or explicit native-deferred boundary",
+          "reuse verification report",
+          "user or machine acceptance evidence"
+        ],
+        "updatedAt": "2026-06-02T02:52:53+00:00"
+      },
+      "versioning": {
+        "revision": 2,
+        "conflictPolicy": "update_existing",
+        "derivedFromAssetId": "",
+        "history": [
+          {
+            "assetId": "basic_cad_drawing_standard",
+            "name": "基础 CAD 绘图标准包",
+            "status": "contract_registered",
+            "updatedAt": "2026-06-02T02:18:26+00:00"
+          },
+          {
+            "assetId": "basic_cad_drawing_standard",
+            "name": "基础 CAD 绘图标准包",
+            "status": "systemized",
+            "updatedAt": "2026-06-02T02:33:13+00:00"
+          }
+        ]
+      },
+      "verification": {
+        "status": "metadata_only",
+        "checked": [
+          "system_library package path reserved",
+          "machine contract written",
+          "global registry updated",
+          "lifecycle status recorded",
+          "retrieval fields recorded",
+          "native DWG layout plan recorded",
+          "source boundary recorded",
+          "anti-contamination gate recorded"
+        ],
+        "notChecked": [
+          "native style definition write",
+          "native DWG file",
+          "native DWG geometry reuse",
+          "CAD insertion replay",
+          "user visual approval"
+        ]
+      },
+      "feedbackLoop": {
+        "feedbackRefs": [],
+        "promotionRefs": [
+          "agents/cad_designer/prompt_addendum.md"
+        ],
+        "failureReason": "线宽线型训练曾只画普通线，未回读 Lineweight/Linetype",
+        "nextReviewAction": "reuse_failure_or_user_correction_should_update_this_asset_or_spawn_retraining"
+      },
+      "updatedAt": "2026-06-02T02:52:53+00:00",
+      "evidenceBoundary": {
+        "checked": [
+          "system_library package path reserved",
+          "machine contract written",
+          "global registry updated",
+          "asset lifecycle recorded",
+          "retrieval contract recorded",
+          "native DWG layout plan recorded",
+          "source boundary recorded",
+          "anti-contamination gate recorded"
+        ],
+        "not_checked": [
+          "native DWG export",
+          "active DWG save",
+          "CAD geometry replay",
+          "user visual approval"
+        ]
+      },
+      "libraryGovernance": {
+        "governorAgentId": "pipeline_asset_governor",
+        "managedChildAgents": [
+          "pipeline_asset_librarian",
+          "pipeline_asset_dwg_curator",
+          "pipeline_asset_reuse_auditor"
+        ],
+        "decision": "ready_for_clean_source_layout",
+        "assetId": "basic_cad_drawing_standard",
+        "category": "drawing_standards.basic",
+        "assetKind": "style_standard",
+        "sourceBoundaryDecision": {
+          "mode": "style_definition",
+          "precision": "unclear",
+          "includedHandleCount": 0,
+          "cleanSourceAllowed": true
+        },
+        "layoutDecision": {
+          "schemaVersion": 2,
+          "policy": "governed_category_library_zones",
+          "cleanSourceZone": "01_CLEAN_ASSETS",
+          "slotKey": "basic_cad_drawing_standard"
+        },
+        "requiredGuards": [
+          "encoding_preflight",
+          "source_boundary",
+          "asset_librarian_catalog",
+          "asset_dwg_curator_layout",
+          "asset_reuse_auditor_before_verified"
+        ],
+        "forbiddenBehaviors": [
+          "do not export whole modelspace",
+          "do not export whole CODEX_PREVIEW by default",
+          "do not include labels, borders, dimensions, or training notes unless explicitly included",
+          "record includedHandles and excludedHandles before native export",
+          "do not copy training panels into clean source",
+          "do not invent untracked global agents"
+        ],
+        "polishHardeningDecision": {
+          "status": "needs_native_cad_relayout",
+          "categories": [
+            "needs_native_cad_relayout"
+          ],
+          "nativeCadRelayout": "not_run",
+          "reuseReplay": "not_required_for_current_scope",
+          "scope": "asset_library_governance",
+          "evidenceBoundary": {
+            "checked": [
+              "layoutPlan v2 metadata",
+              "governance decision"
+            ],
+            "notChecked": [
+              "native CAD relayout",
+              "native DWG save/readback"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "assetId": "interior_dimension_style_visual_standard",
+      "name": "室内尺寸样式视觉标准",
+      "category": "drawing_standards.basic",
+      "aliases": [
+        "尺寸样式视觉标准",
+        "室内立面高度尺寸",
+        "室内洞口宽高尺寸",
+        "05 06 尺寸样式修复"
+      ],
+      "useWhen": [
+        "室内立面高度、完成面、门洞、窗洞、设备洞口需要统一尺寸样式和可读比例样例时",
+        "尺寸训练或预览面板需要避免文字贴线、比例样例过小、标题区顶撞时"
+      ],
+      "tags": [
+        "drawing-standard",
+        "dimstyle",
+        "interior-elevation",
+        "opening-dimension",
+        "visual-clearance"
+      ],
+      "dimensions": {},
+      "retrieval": {
+        "aliases": [
+          "尺寸样式视觉标准",
+          "室内立面高度尺寸",
+          "室内洞口宽高尺寸",
+          "05 06 尺寸样式修复"
+        ],
+        "useWhen": [
+          "室内立面高度、完成面、门洞、窗洞、设备洞口需要统一尺寸样式和可读比例样例时",
+          "尺寸训练或预览面板需要避免文字贴线、比例样例过小、标题区顶撞时"
+        ],
+        "tags": [
+          "drawing-standard",
+          "dimstyle",
+          "interior-elevation",
+          "opening-dimension",
+          "visual-clearance"
+        ],
+        "scenarioTags": [
+          "residential",
+          "cad_foundation"
+        ],
+        "constraints": [
+          "该资产为 style_standard，只沉淀尺寸样式规则和视觉间距，不作为对象 block 导出",
+          "禁止从 whole_modelspace、current_screen、training_panel 或全 CODEX_PREVIEW 生成 block",
+          "当前沉淀不保存用户业务 DWG；native DWG 尺寸样式原生导出和跨 DWG 复用仍需后续 CAD gate",
+          "系统资产 DWG 已包含原生 DimStyle 定义和可见尺寸样式面板；跨 DWG style import / readback gate 仍需后续验证，且不得保存用户业务 DWG"
+        ],
+        "dimensions": {},
+        "matchText": [
+          "室内尺寸样式视觉标准",
+          "尺寸样式视觉标准",
+          "室内立面高度尺寸",
+          "室内洞口宽高尺寸",
+          "05 06 尺寸样式修复",
+          "室内立面高度、完成面、门洞、窗洞、设备洞口需要统一尺寸样式和可读比例样例时",
+          "尺寸训练或预览面板需要避免文字贴线、比例样例过小、标题区顶撞时",
+          "drawing-standard",
+          "dimstyle",
+          "interior-elevation",
+          "opening-dimension",
+          "visual-clearance",
+          "residential",
+          "cad_foundation",
+          "该资产为 style_standard，只沉淀尺寸样式规则和视觉间距，不作为对象 block 导出",
+          "禁止从 whole_modelspace、current_screen、training_panel 或全 CODEX_PREVIEW 生成 block",
+          "当前沉淀不保存用户业务 DWG；native DWG 尺寸样式原生导出和跨 DWG 复用仍需后续 CAD gate",
+          "系统资产 DWG 已包含原生 DimStyle 定义和可见尺寸样式面板；跨 DWG style import / readback gate 仍需后续验证，且不得保存用户业务 DWG"
+        ],
+        "priority": "system_library_before_reference_library"
+      },
+      "native": {
+        "dwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+        "blockName": "",
+        "nativeDwgExists": true,
+        "layoutPolicy": "append_to_category_library_grid",
+        "layoutPlan": {
+          "schemaVersion": 2,
+          "policy": "governed_category_library_zones",
+          "slotKey": "interior_dimension_style_visual_standard",
+          "label": "interior_dimension_style_visual_standard",
+          "assetName": "室内尺寸样式视觉标准",
+          "category": "drawing_standards.basic",
+          "assetKind": "style_standard",
+          "nativeWrite": "written_to_standard_assets_dwg",
+          "zones": [
+            {
+              "zoneId": "00_INDEX",
+              "title": "资产目录区",
+              "purpose": "Only catalog rows, asset ids, status, and slot references.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "01_CLEAN_ASSETS",
+              "title": "干净资产区",
+              "purpose": "Only reusable block geometry, style definitions, symbols, or clean source samples.",
+              "copySourceAllowed": true
+            },
+            {
+              "zoneId": "02_PREVIEW_CARDS",
+              "title": "资产卡片区",
+              "purpose": "Human-readable preview cards with labels, dimensions, usage, and state.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "03_REVIEW_QUARANTINE",
+              "title": "待复审区",
+              "purpose": "Candidates with unclear source boundaries or unclean training output.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "99_EVIDENCE_LINKS",
+              "title": "证据索引区",
+              "purpose": "Evidence refs, reports, screenshots, and training provenance references.",
+              "copySourceAllowed": false
+            }
+          ],
+          "slot": {
+            "slotKey": "interior_dimension_style_visual_standard",
+            "index": 1,
+            "row": 0,
+            "column": 1,
+            "columns": 4
+          },
+          "grid": {
+            "column": 1,
+            "row": 0,
+            "columns": 4
+          },
+          "plannedBbox": {
+            "cleanSource": {
+              "minX": 4800,
+              "minY": -2600,
+              "maxX": 9000,
+              "maxY": 0
+            },
+            "previewCard": {
+              "minX": 4800,
+              "minY": -14600,
+              "maxX": 9000,
+              "maxY": -12000
+            },
+            "quarantine": {
+              "minX": 4800,
+              "minY": -26600,
+              "maxX": 9000,
+              "maxY": -24000
+            },
+            "evidenceLinks": {
+              "minX": 4800,
+              "minY": -38600,
+              "maxX": 9000,
+              "maxY": -36000
+            }
+          },
+          "cleanSource": {
+            "zoneId": "01_CLEAN_ASSETS",
+            "status": "ready_for_clean_reusable_source",
+            "reason": "precise source boundary and export mode are present",
+            "copySourceAllowed": true,
+            "exportMode": "style_export",
+            "sourceBoundaryMode": "style_definition",
+            "includedHandles": [],
+            "excludedHandles": []
+          },
+          "previewCard": {
+            "zoneId": "02_PREVIEW_CARDS",
+            "title": "室内尺寸样式视觉标准",
+            "fields": [
+              "assetId",
+              "name",
+              "category",
+              "status",
+              "dimensions",
+              "useWhen"
+            ],
+            "copySourceAllowed": false
+          },
+          "evidenceLinks": {
+            "zoneId": "99_EVIDENCE_LINKS",
+            "refs": [
+              "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-05-r8/dimension_style_training_report.json",
+              "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-06-r9/dimension_style_training_report.json",
+              "output/training_queues/dimension-style-focused-10/fake-visual-fix-final-r10/dimension_style_training_report.json",
+              "output/previews/dimension-style-05-06-visual-fix-final-r5.png",
+              "output/previews/dimension-style-05-06-visual-fix-final-r5-crop.png",
+              "core/training/dimension_style_training.py",
+              "tests/core/test_dimension_style_training.py",
+              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
+              "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
+              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
+              "output/previews/system-asset-dimension-style-visible-panel-r1.png",
+              "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png"
+            ],
+            "copySourceAllowed": false
+          },
+          "cleanupPolicy": {
+            "defaultAction": "exclude_training_or_review_content_from_clean_source",
+            "excludedContentTypes": [
+              "training_title",
+              "training_notes",
+              "temporary_labels",
+              "table_borders",
+              "dimensions",
+              "audit_notes",
+              "evidence_text",
+              "course_description",
+              "screenshot_caption"
+            ],
+            "includedOnlyWhen": "explicitly listed in includedHandles or represented by style_definition / named_block source",
+            "excludedHandles": []
+          },
+          "reviewQuarantine": {
+            "zoneId": "03_REVIEW_QUARANTINE",
+            "required": false,
+            "reason": ""
+          }
+        },
+        "nativeWriteEvidence": {
+          "status": "pass",
+          "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
+          "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "styleCount": 10,
+          "textStyle": "CODEX_CN_TEXT",
+          "method": "write_dimstyle_definitions_to_standard_assets_dwg",
+          "savedAssetDwg": true,
+          "savedCurrentDwg": false,
+          "activeDocumentAfterWrite": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "visiblePanel": {
+            "status": "pass",
+            "summary": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
+            "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
+            "screenshot": "output/previews/system-asset-dimension-style-visible-panel-r1.png",
+            "focusedScreenshot": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
+            "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+            "method": "write_visible_dimension_style_panels_to_standard_assets_dwg_modelspace",
+            "createdHandleCount": 325,
+            "dimensionReadbackCount": 44,
+            "failedStyleCount": 0,
+            "styleCount": 10,
+            "savedAssetDwg": true,
+            "savedCurrentDwg": false,
+            "activeDocumentAfterWrite": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+            "panelBoundsByStyle": {
+              "训练-建筑-外轮廓总尺寸": {
+                "min": [
+                  21960.0,
+                  5620.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  7280.0,
+                  0.0
+                ]
+              },
+              "训练-建筑-分段连续尺寸": {
+                "min": [
+                  26120.0,
+                  5620.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  7280.0,
+                  0.0
+                ]
+              },
+              "训练-建筑-轴网定位尺寸": {
+                "min": [
+                  21960.0,
+                  3700.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  5360.0,
+                  0.0
+                ]
+              },
+              "训练-室内-局部短尺寸": {
+                "min": [
+                  26120.0,
+                  3700.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  5360.0,
+                  0.0
+                ]
+              },
+              "训练-室内-立面高度尺寸": {
+                "min": [
+                  21960.0,
+                  1780.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  3440.0,
+                  0.0
+                ]
+              },
+              "训练-室内-洞口宽高尺寸": {
+                "min": [
+                  26120.0,
+                  1780.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  3440.0,
+                  0.0
+                ]
+              },
+              "训练-定制-柜体深化尺寸": {
+                "min": [
+                  21960.0,
+                  -140.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  1520.0,
+                  0.0
+                ]
+              },
+              "训练-定制-五金孔位尺寸": {
+                "min": [
+                  26120.0,
+                  -140.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  1520.0,
+                  0.0
+                ]
+              },
+              "训练-构件-半径直径尺寸": {
+                "min": [
+                  21960.0,
+                  -2060.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  -400.0,
+                  0.0
+                ]
+              },
+              "训练-构件-角度弧长尺寸": {
+                "min": [
+                  26120.0,
+                  -2060.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  -400.0,
+                  0.0
+                ]
+              }
+            },
+            "evidenceBoundary": {
+              "checked": [
+                "standard_assets.dwg opened or activated",
+                "visible dimension style standard panels written to system asset DWG modelspace",
+                "created handles captured",
+                "dimension entities read back",
+                "10 style audit passed",
+                "system asset DWG saved"
+              ],
+              "notChecked": [
+                "cross-DWG style import replay",
+                "plot / CTB / STB output",
+                "user visual approval after inspecting asset DWG"
+              ]
+            }
+          }
+        },
+        "nativeVisiblePanelEvidence": {
+          "status": "pass",
+          "summary": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
+          "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
+          "screenshot": "output/previews/system-asset-dimension-style-visible-panel-r1.png",
+          "focusedScreenshot": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
+          "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "method": "write_visible_dimension_style_panels_to_standard_assets_dwg_modelspace",
+          "createdHandleCount": 325,
+          "dimensionReadbackCount": 44,
+          "failedStyleCount": 0,
+          "styleCount": 10,
+          "savedAssetDwg": true,
+          "savedCurrentDwg": false,
+          "activeDocumentAfterWrite": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "panelBoundsByStyle": {
+            "训练-建筑-外轮廓总尺寸": {
+              "min": [
+                21960.0,
+                5620.0,
+                0.0
+              ],
+              "max": [
+                25860.0,
+                7280.0,
+                0.0
+              ]
+            },
+            "训练-建筑-分段连续尺寸": {
+              "min": [
+                26120.0,
+                5620.0,
+                0.0
+              ],
+              "max": [
+                30020.0,
+                7280.0,
+                0.0
+              ]
+            },
+            "训练-建筑-轴网定位尺寸": {
+              "min": [
+                21960.0,
+                3700.0,
+                0.0
+              ],
+              "max": [
+                25860.0,
+                5360.0,
+                0.0
+              ]
+            },
+            "训练-室内-局部短尺寸": {
+              "min": [
+                26120.0,
+                3700.0,
+                0.0
+              ],
+              "max": [
+                30020.0,
+                5360.0,
+                0.0
+              ]
+            },
+            "训练-室内-立面高度尺寸": {
+              "min": [
+                21960.0,
+                1780.0,
+                0.0
+              ],
+              "max": [
+                25860.0,
+                3440.0,
+                0.0
+              ]
+            },
+            "训练-室内-洞口宽高尺寸": {
+              "min": [
+                26120.0,
+                1780.0,
+                0.0
+              ],
+              "max": [
+                30020.0,
+                3440.0,
+                0.0
+              ]
+            },
+            "训练-定制-柜体深化尺寸": {
+              "min": [
+                21960.0,
+                -140.0,
+                0.0
+              ],
+              "max": [
+                25860.0,
+                1520.0,
+                0.0
+              ]
+            },
+            "训练-定制-五金孔位尺寸": {
+              "min": [
+                26120.0,
+                -140.0,
+                0.0
+              ],
+              "max": [
+                30020.0,
+                1520.0,
+                0.0
+              ]
+            },
+            "训练-构件-半径直径尺寸": {
+              "min": [
+                21960.0,
+                -2060.0,
+                0.0
+              ],
+              "max": [
+                25860.0,
+                -400.0,
+                0.0
+              ]
+            },
+            "训练-构件-角度弧长尺寸": {
+              "min": [
+                26120.0,
+                -2060.0,
+                0.0
+              ],
+              "max": [
+                30020.0,
+                -400.0,
+                0.0
+              ]
+            }
+          },
+          "evidenceBoundary": {
+            "checked": [
+              "standard_assets.dwg opened or activated",
+              "visible dimension style standard panels written to system asset DWG modelspace",
+              "created handles captured",
+              "dimension entities read back",
+              "10 style audit passed",
+              "system asset DWG saved"
+            ],
+            "notChecked": [
+              "cross-DWG style import replay",
+              "plot / CTB / STB output",
+              "user visual approval after inspecting asset DWG"
+            ]
+          }
+        }
+      },
+      "source": {
+        "type": "generated_style_definition"
+      },
+      "assetKind": "style_standard",
+      "exportManifest": {
+        "assetKind": "style_standard",
+        "exportMode": "style_export",
+        "sourceBoundary": {
+          "mode": "style_definition",
+          "sourceType": "generated_style_definition",
+          "includedHandles": [],
+          "excludedHandles": [],
+          "precision": "precise_style_definition_native_write"
+        },
+        "includedHandles": [],
+        "excludedHandles": [],
+        "targetBlockName": "",
+        "nativeWrite": "written_to_standard_assets_dwg"
+      },
+      "antiContamination": {
+        "decision": "style_export_only",
+        "forbiddenSourceModes": [
+          "whole_codex_preview",
+          "whole_modelspace",
+          "current_screen",
+          "all_visible",
+          "training_panel",
+          "global_preview_bbox"
+        ],
+        "preciseBlockSourceModes": [
+          "selected_handles",
+          "created_handles",
+          "active_dwg_handles",
+          "explicit_bbox",
+          "named_block"
+        ],
+        "checks": [
+          "do not export whole modelspace",
+          "do not export whole CODEX_PREVIEW by default",
+          "do not include labels, borders, dimensions, or training notes unless explicitly included",
+          "record includedHandles and excludedHandles before native export"
+        ]
+      },
+      "evidenceRefs": [
+        "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-05-r8/dimension_style_training_report.json",
+        "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-06-r9/dimension_style_training_report.json",
+        "output/training_queues/dimension-style-focused-10/fake-visual-fix-final-r10/dimension_style_training_report.json",
+        "output/previews/dimension-style-05-06-visual-fix-final-r5.png",
+        "output/previews/dimension-style-05-06-visual-fix-final-r5-crop.png",
+        "core/training/dimension_style_training.py",
+        "tests/core/test_dimension_style_training.py",
+        "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
+        "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+        "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
+        "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
+        "output/previews/system-asset-dimension-style-visible-panel-r1.png",
+        "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png"
+      ],
+      "status": "verified",
+      "lifecycle": {
+        "status": "verified",
+        "allowedStatuses": [
+          "candidate",
+          "systemized",
+          "verified",
+          "deprecated"
+        ],
+        "promotionGate": [
+          "metadata contract",
+          "native DWG export or explicit native-deferred boundary",
+          "reuse verification report",
+          "user or machine acceptance evidence"
+        ],
+        "updatedAt": "2026-06-03T04:53:11+00:00"
+      },
+      "versioning": {
+        "revision": 2,
+        "conflictPolicy": "update_existing",
+        "derivedFromAssetId": "",
+        "history": [
+          {
+            "revision": 2,
+            "updatedAt": "2026-06-03T04:53:11+00:00",
+            "reason": "补写 standard_assets.dwg 模型空间可见尺寸样式面板，避免只有不可见 DimStyle 定义。",
+            "evidenceRefs": [
+              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
+              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
+              "output/previews/system-asset-dimension-style-visible-panel-r1.png",
+              "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png"
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "status": "native_style_definition_written",
+        "checked": [
+          "system_library package path reserved",
+          "machine contract written",
+          "global registry updated",
+          "lifecycle status recorded",
+          "retrieval fields recorded",
+          "native DWG layout plan recorded",
+          "source boundary recorded",
+          "anti-contamination gate recorded",
+          "native DWG file saved",
+          "CODEX_CN_TEXT ensured in native asset DWG",
+          "10 Chinese dimension styles written to native asset DWG",
+          "dimension style variables read back from native asset DWG",
+          "visible dimension style panels written to native asset DWG modelspace",
+          "visible panel created handles captured",
+          "visible panel dimension entities read back",
+          "visible panel screenshot captured from standard_assets.dwg",
+          "system asset DWG saved after visible panel write"
+        ],
+        "notChecked": [
+          "native DWG geometry reuse",
+          "CAD insertion replay",
+          "user visual approval",
+          "cross-DWG style import replay",
+          "plot / CTB / STB output",
+          "user visual approval after opening native asset DWG"
+        ],
+        "evidence": {
+          "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "nativeWriteReport": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
+          "styleCount": 10,
+          "textStyle": "CODEX_CN_TEXT",
+          "savedAssetDwg": true,
+          "savedCurrentDwg": false,
+          "nativeVisiblePanel": {
+            "status": "pass",
+            "summary": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
+            "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
+            "screenshot": "output/previews/system-asset-dimension-style-visible-panel-r1.png",
+            "focusedScreenshot": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
+            "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+            "method": "write_visible_dimension_style_panels_to_standard_assets_dwg_modelspace",
+            "createdHandleCount": 325,
+            "dimensionReadbackCount": 44,
+            "failedStyleCount": 0,
+            "styleCount": 10,
+            "savedAssetDwg": true,
+            "savedCurrentDwg": false,
+            "activeDocumentAfterWrite": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+            "panelBoundsByStyle": {
+              "训练-建筑-外轮廓总尺寸": {
+                "min": [
+                  21960.0,
+                  5620.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  7280.0,
+                  0.0
+                ]
+              },
+              "训练-建筑-分段连续尺寸": {
+                "min": [
+                  26120.0,
+                  5620.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  7280.0,
+                  0.0
+                ]
+              },
+              "训练-建筑-轴网定位尺寸": {
+                "min": [
+                  21960.0,
+                  3700.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  5360.0,
+                  0.0
+                ]
+              },
+              "训练-室内-局部短尺寸": {
+                "min": [
+                  26120.0,
+                  3700.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  5360.0,
+                  0.0
+                ]
+              },
+              "训练-室内-立面高度尺寸": {
+                "min": [
+                  21960.0,
+                  1780.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  3440.0,
+                  0.0
+                ]
+              },
+              "训练-室内-洞口宽高尺寸": {
+                "min": [
+                  26120.0,
+                  1780.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  3440.0,
+                  0.0
+                ]
+              },
+              "训练-定制-柜体深化尺寸": {
+                "min": [
+                  21960.0,
+                  -140.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  1520.0,
+                  0.0
+                ]
+              },
+              "训练-定制-五金孔位尺寸": {
+                "min": [
+                  26120.0,
+                  -140.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  1520.0,
+                  0.0
+                ]
+              },
+              "训练-构件-半径直径尺寸": {
+                "min": [
+                  21960.0,
+                  -2060.0,
+                  0.0
+                ],
+                "max": [
+                  25860.0,
+                  -400.0,
+                  0.0
+                ]
+              },
+              "训练-构件-角度弧长尺寸": {
+                "min": [
+                  26120.0,
+                  -2060.0,
+                  0.0
+                ],
+                "max": [
+                  30020.0,
+                  -400.0,
+                  0.0
+                ]
+              }
+            },
+            "evidenceBoundary": {
+              "checked": [
+                "standard_assets.dwg opened or activated",
+                "visible dimension style standard panels written to system asset DWG modelspace",
+                "created handles captured",
+                "dimension entities read back",
+                "10 style audit passed",
+                "system asset DWG saved"
+              ],
+              "notChecked": [
+                "cross-DWG style import replay",
+                "plot / CTB / STB output",
+                "user visual approval after inspecting asset DWG"
+              ]
+            }
+          },
+          "reuseWorkflowProbe": {
+            "status": "ready",
+            "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_rules_hardening.json",
+            "readyTaskCount": 1,
+            "blockedTaskCount": 0,
+            "sourceSpecMode": "style_definition",
+            "nativeWrite": "written_to_standard_assets_dwg",
+            "verificationStatus": "native_style_definition_written",
+            "targetLayer": "CODEX_PREVIEW",
+            "savedCurrentDwg": false,
+            "encodingPreflightStatus": "pass"
+          }
+        },
+        "nativeVisiblePanelStatus": "native_visible_panel_readback"
+      },
+      "feedbackLoop": {
+        "feedbackRefs": [
+          "docs/status/issues.md"
+        ],
+        "promotionRefs": [
+          "docs/status/changelog.md"
+        ],
+        "failureReason": "05/06 曾出现机器审计 pass 但 06 横向 900 贴完成面、右侧比例样例过小；首次资产原生写入只沉淀不可见 DimStyle 定义，用户在 standard_assets.dwg 模型空间看不到尺寸样式内容；已补写可见 10 样式面板并截图 / readback 固化。",
+        "nextReviewAction": "reuse_failure_or_user_correction_should_update_this_asset_or_spawn_retraining"
+      },
+      "updatedAt": "2026-06-03T05:12:34+00:00",
+      "evidenceBoundary": {
+        "checked": [
+          "system_library package path reserved",
+          "machine contract written",
+          "global registry updated",
+          "asset lifecycle recorded",
+          "retrieval contract recorded",
+          "native DWG layout plan recorded",
+          "source boundary recorded",
+          "anti-contamination gate recorded",
+          "native style definition write",
+          "native asset DWG saved",
+          "native dimstyle variable readback",
+          "native asset DWG visible dimension style panel written",
+          "native visible panel handles and dimension readback captured",
+          "native visible panel screenshot self-check captured"
+        ],
+        "not_checked": [
+          "active DWG save",
+          "CAD geometry replay",
+          "user visual approval",
+          "cross-DWG style import replay",
+          "plot / CTB / STB output",
+          "user visual approval after opening native asset DWG"
+        ]
+      },
+      "reuseWorkflowProbe": {
+        "status": "ready",
+        "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_rules_hardening.json",
+        "readyTaskCount": 1,
+        "blockedTaskCount": 0,
+        "sourceSpecMode": "style_definition",
+        "nativeWrite": "written_to_standard_assets_dwg",
+        "verificationStatus": "native_style_definition_written",
+        "targetLayer": "CODEX_PREVIEW",
+        "savedCurrentDwg": false,
+        "encodingPreflightStatus": "pass"
+      },
+      "libraryGovernance": {
+        "governorAgentId": "pipeline_asset_governor",
+        "managedChildAgents": [
+          "pipeline_asset_librarian",
+          "pipeline_asset_dwg_curator",
+          "pipeline_asset_reuse_auditor"
+        ],
+        "decision": "ready_for_clean_source_layout",
+        "assetId": "interior_dimension_style_visual_standard",
+        "category": "drawing_standards.basic",
+        "assetKind": "style_standard",
+        "sourceBoundaryDecision": {
+          "mode": "style_definition",
+          "precision": "precise_style_definition_native_write",
+          "includedHandleCount": 0,
+          "cleanSourceAllowed": true
+        },
+        "layoutDecision": {
+          "schemaVersion": 2,
+          "policy": "governed_category_library_zones",
+          "cleanSourceZone": "01_CLEAN_ASSETS",
+          "slotKey": "interior_dimension_style_visual_standard"
+        },
+        "requiredGuards": [
+          "encoding_preflight",
+          "source_boundary",
+          "asset_librarian_catalog",
+          "asset_dwg_curator_layout",
+          "asset_reuse_auditor_before_verified"
+        ],
+        "forbiddenBehaviors": [
+          "do not export whole modelspace",
+          "do not export whole CODEX_PREVIEW by default",
+          "do not include labels, borders, dimensions, or training notes unless explicitly included",
+          "record includedHandles and excludedHandles before native export",
+          "do not copy training panels into clean source",
+          "do not invent untracked global agents"
+        ],
+        "polishHardeningDecision": {
+          "status": "complete_for_current_scope",
+          "categories": [
+            "complete_for_current_scope"
+          ],
+          "nativeCadRelayout": "checked",
+          "reuseReplay": "not_required_for_current_scope",
+          "scope": "asset_library_governance",
+          "evidenceBoundary": {
+            "checked": [
+              "layoutPlan v2 metadata",
+              "governance decision"
+            ],
+            "notChecked": []
+          }
+        }
+      }
+    },
+    {
+      "assetId": "linetype_style_summary_table",
+      "name": "线型样式与颜色归纳表",
+      "category": "drawing_standards.basic",
+      "aliases": [
+        "线型表",
+        "线宽线型颜色归纳",
+        "开启范围线样例"
+      ],
+      "useWhen": [
+        "需要统一查看或复用 CAD 线型、颜色、线宽、线型比例和复合样线表达时",
+        "生成家装或工程图预览前需要选择可见线、隐藏线、中心线、管线、边界线等样式时"
+      ],
+      "tags": [
+        "drawing-standard",
+        "linetype",
+        "lineweight",
+        "color",
+        "style-table",
+        "cad-preview"
+      ],
+      "dimensions": {},
+      "retrieval": {
+        "aliases": [
+          "线型表",
+          "线宽线型颜色归纳",
+          "开启范围线样例"
+        ],
+        "useWhen": [
+          "需要统一查看或复用 CAD 线型、颜色、线宽、线型比例和复合样线表达时",
+          "生成家装或工程图预览前需要选择可见线、隐藏线、中心线、管线、边界线等样式时"
+        ],
+        "tags": [
+          "drawing-standard",
+          "linetype",
+          "lineweight",
+          "color",
+          "style-table",
+          "cad-preview"
+        ],
+        "scenarioTags": [
+          "drafting_standard",
+          "cad_foundation",
+          "residential"
+        ],
+        "constraints": [
+          "原生 DWG 已写入 style table 和样线图元；复用具体打印线宽仍需 CTB/STB 或 plot 输出另验",
+          "该资产为 style_standard，不作为对象 block 导出；禁止从 whole_modelspace 或 current_screen 污染 block"
+        ],
+        "dimensions": {},
+        "matchText": [
+          "线型样式与颜色归纳表",
+          "线型表",
+          "线宽线型颜色归纳",
+          "开启范围线样例",
+          "需要统一查看或复用 CAD 线型、颜色、线宽、线型比例和复合样线表达时",
+          "生成家装或工程图预览前需要选择可见线、隐藏线、中心线、管线、边界线等样式时",
+          "drawing-standard",
+          "linetype",
+          "lineweight",
+          "color",
+          "style-table",
+          "cad-preview",
+          "drafting_standard",
+          "cad_foundation",
+          "residential",
+          "原生 DWG 已写入 style table 和样线图元；复用具体打印线宽仍需 CTB/STB 或 plot 输出另验",
+          "该资产为 style_standard，不作为对象 block 导出；禁止从 whole_modelspace 或 current_screen 污染 block"
+        ],
+        "priority": "system_library_before_reference_library"
+      },
+      "native": {
+        "dwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+        "blockName": "",
+        "nativeDwgExists": true,
+        "layoutPolicy": "append_to_category_library_grid",
+        "layoutPlan": {
+          "schemaVersion": 2,
+          "policy": "governed_category_library_zones",
+          "slotKey": "linetype_style_summary_table",
+          "label": "linetype_style_summary_table",
+          "assetName": "线型样式与颜色归纳表",
+          "category": "drawing_standards.basic",
+          "assetKind": "style_standard",
+          "nativeWrite": "written_to_standard_assets_dwg",
+          "zones": [
+            {
+              "zoneId": "00_INDEX",
+              "title": "资产目录区",
+              "purpose": "Only catalog rows, asset ids, status, and slot references.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "01_CLEAN_ASSETS",
+              "title": "干净资产区",
+              "purpose": "Only reusable block geometry, style definitions, symbols, or clean source samples.",
+              "copySourceAllowed": true
+            },
+            {
+              "zoneId": "02_PREVIEW_CARDS",
+              "title": "资产卡片区",
+              "purpose": "Human-readable preview cards with labels, dimensions, usage, and state.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "03_REVIEW_QUARANTINE",
+              "title": "待复审区",
+              "purpose": "Candidates with unclear source boundaries or unclean training output.",
+              "copySourceAllowed": false
+            },
+            {
+              "zoneId": "99_EVIDENCE_LINKS",
+              "title": "证据索引区",
+              "purpose": "Evidence refs, reports, screenshots, and training provenance references.",
+              "copySourceAllowed": false
+            }
+          ],
+          "slot": {
+            "slotKey": "linetype_style_summary_table",
+            "index": 2,
+            "row": 0,
+            "column": 2,
+            "columns": 4
+          },
+          "grid": {
+            "column": 2,
+            "row": 0,
+            "columns": 4
+          },
+          "plannedBbox": {
+            "cleanSource": {
+              "minX": 9600,
+              "minY": -2600,
+              "maxX": 13800,
+              "maxY": 0
+            },
+            "previewCard": {
+              "minX": 9600,
+              "minY": -14600,
+              "maxX": 13800,
+              "maxY": -12000
+            },
+            "quarantine": {
+              "minX": 9600,
+              "minY": -26600,
+              "maxX": 13800,
+              "maxY": -24000
+            },
+            "evidenceLinks": {
+              "minX": 9600,
+              "minY": -38600,
+              "maxX": 13800,
+              "maxY": -36000
+            }
+          },
+          "cleanSource": {
+            "zoneId": "01_CLEAN_ASSETS",
+            "status": "ready_for_clean_reusable_source",
+            "reason": "precise source boundary and export mode are present",
+            "copySourceAllowed": true,
+            "exportMode": "style_export",
+            "sourceBoundaryMode": "style_definition",
+            "includedHandles": [],
+            "excludedHandles": []
+          },
+          "previewCard": {
+            "zoneId": "02_PREVIEW_CARDS",
+            "title": "线型样式与颜色归纳表",
+            "fields": [
+              "assetId",
+              "name",
+              "category",
+              "status",
+              "dimensions",
+              "useWhen"
+            ],
+            "copySourceAllowed": false
+          },
+          "evidenceLinks": {
+            "zoneId": "99_EVIDENCE_LINKS",
+            "refs": [
+              "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
+              "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
+              "output/previews/linetype-table-integrated-20260602.png",
+              "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+              "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
+              "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
+              "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
+              "output/previews/system-asset-reuse-linetype-table-20260602.png"
+            ],
+            "copySourceAllowed": false
+          },
+          "cleanupPolicy": {
+            "defaultAction": "exclude_training_or_review_content_from_clean_source",
+            "excludedContentTypes": [
+              "training_title",
+              "training_notes",
+              "temporary_labels",
+              "table_borders",
+              "dimensions",
+              "audit_notes",
+              "evidence_text",
+              "course_description",
+              "screenshot_caption"
+            ],
+            "includedOnlyWhen": "explicitly listed in includedHandles or represented by style_definition / named_block source",
+            "excludedHandles": []
+          },
+          "reviewQuarantine": {
+            "zoneId": "03_REVIEW_QUARANTINE",
+            "required": false,
+            "reason": ""
+          }
+        },
+        "nativeWriteEvidence": {
+          "status": "pass",
+          "summary": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
+          "report": "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
+          "textStyleFixReport": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
+          "visualScreenshot": "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
+          "method": "copy_verified_handles_from_source_dwg_then_assign_chinese_text_style",
+          "entityCount": 450,
+          "typeCounts": {
+            "arc": 1,
+            "circle": 5,
+            "line": 279,
+            "polyline": 4,
+            "text": 161
+          },
+          "textCount": 161,
+          "questionTextCount": 0,
+          "chineseTextCount": 119,
+          "currentTextStyleCounts": {
+            "CODEX_CN_TEXT": 161
+          },
+          "sampleOutOfCellCount": 0,
+          "styleStatus": "pass",
+          "visualStatus": "pass",
+          "savedUserDrawing": false,
+          "savedAssetDwg": true,
+          "reuseReplay": {
+            "status": "asset_reused",
+            "report": "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
+            "screenshot": "output/previews/system-asset-reuse-linetype-table-20260602.png",
+            "copyMethod": "copyobjects_handle_diff",
+            "sourceSelectedCount": 450,
+            "createdHandleCount": 450,
+            "readbackEntityCount": 450,
+            "targetLayer": "CODEX_PREVIEW",
+            "savedCurrentDwg": false,
+            "targetWasFreshUnsavedDwg": true
+          }
+        }
+      },
+      "source": {
+        "type": "generated_style_definition"
+      },
+      "assetKind": "style_standard",
+      "exportManifest": {
+        "assetKind": "style_standard",
+        "exportMode": "style_export",
+        "sourceBoundary": {
+          "mode": "style_definition",
+          "sourceType": "generated_style_definition",
+          "includedHandles": [],
+          "excludedHandles": [],
+          "precision": "precise_style_definition_and_verified_handles"
+        },
+        "includedHandles": [],
+        "excludedHandles": [],
+        "targetBlockName": "",
+        "nativeWrite": "written_to_standard_assets_dwg"
+      },
+      "antiContamination": {
+        "decision": "style_export_only",
+        "forbiddenSourceModes": [
+          "whole_codex_preview",
+          "whole_modelspace",
+          "current_screen",
+          "all_visible",
+          "training_panel",
+          "global_preview_bbox"
+        ],
+        "preciseBlockSourceModes": [
+          "selected_handles",
+          "created_handles",
+          "active_dwg_handles",
+          "explicit_bbox",
+          "named_block"
+        ],
+        "checks": [
+          "do not export whole modelspace",
+          "do not export whole CODEX_PREVIEW by default",
+          "do not include labels, borders, dimensions, or training notes unless explicitly included",
+          "record includedHandles and excludedHandles before native export"
+        ]
+      },
+      "evidenceRefs": [
+        "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
+        "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
+        "output/previews/linetype-table-integrated-20260602.png",
+        "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+        "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
+        "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
+        "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
+        "output/previews/system-asset-reuse-linetype-table-20260602.png"
+      ],
+      "status": "verified",
+      "lifecycle": {
+        "status": "verified",
+        "allowedStatuses": [
+          "candidate",
+          "systemized",
+          "verified",
+          "deprecated"
+        ],
+        "promotionGate": [
+          "metadata contract",
+          "native DWG export or explicit native-deferred boundary",
+          "reuse verification report",
+          "user or machine acceptance evidence"
+        ],
+        "updatedAt": "2026-06-02T06:55:06+00:00"
+      },
+      "versioning": {
+        "revision": 1,
+        "conflictPolicy": "update_existing",
+        "derivedFromAssetId": "",
+        "history": []
+      },
+      "verification": {
+        "status": "native_dwg_reuse_verified",
+        "checked": [
+          "system_library package path reserved",
+          "machine contract written",
+          "global registry updated",
+          "retrieval fields recorded",
+          "source boundary recorded",
+          "anti-contamination gate recorded",
+          "native DWG file saved",
+          "native style table geometry copied from verified source handles",
+          "native style table entities read back",
+          "Chinese visible text readback passed",
+          "question-mark text guard passed",
+          "all text entities assigned to CODEX_CN_TEXT",
+          "AutoCAD screenshot captured after text style fix",
+          "linetype style verification passed",
+          "sample cell layout audit passed",
+          "CAD insertion replay from a different drawing",
+          "system asset semantic reuse matched registry asset",
+          "system asset reuse wrote current DWG preview layer",
+          "system asset reuse created handles read back"
+        ],
+        "notChecked": [
+          "CTB/STB or plot output lineweight rendering",
+          "user visual approval after opening native asset DWG"
+        ],
+        "evidence": {
+          "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "nativeWriteSummary": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
+          "linetypeReport": "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
+          "textStyleFixReport": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
+          "visualScreenshot": "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
+          "entityCount": 450,
+          "textCount": 161,
+          "questionTextCount": 0,
+          "chineseTextCount": 119,
+          "textStyleCounts": {
+            "CODEX_CN_TEXT": 161
+          },
+          "sampleOutOfCellCount": 0,
+          "styleVerificationStatus": "pass",
+          "reuseReplay": {
+            "status": "asset_reused",
+            "report": "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
+            "screenshot": "output/previews/system-asset-reuse-linetype-table-20260602.png",
+            "copyMethod": "copyobjects_handle_diff",
+            "sourceSelectedCount": 450,
+            "createdHandleCount": 450,
+            "readbackEntityCount": 450,
+            "targetLayer": "CODEX_PREVIEW",
+            "savedCurrentDwg": false,
+            "targetWasFreshUnsavedDwg": true
+          }
+        }
+      },
+      "feedbackLoop": {
+        "feedbackRefs": [
+          "docs/status/issues.md"
+        ],
+        "promotionRefs": [
+          "agents/cad_designer/rules.md"
+        ],
+        "failureReason": "原生 DWG 中文文字样式曾回读为 Standard/txt，中文显示可能受字体绑定影响；已统一到 CODEX_CN_TEXT。",
+        "nextReviewAction": "future reuse failure should check text style binding before geometry rewrite"
+      },
+      "updatedAt": "2026-06-02T06:55:06+00:00",
+      "evidenceBoundary": {
+        "checked": [
+          "metadata contract",
+          "global registry",
+          "native DWG file saved",
+          "verified source handles copied",
+          "native style table entity readback",
+          "Chinese text readback",
+          "style verification",
+          "sample cell layout audit"
+        ],
+        "not_checked": [
+          "cross-DWG insertion replay",
+          "plot / CTB / STB output",
+          "user visual approval after opening native asset DWG"
+        ]
+      },
+      "libraryGovernance": {
+        "governorAgentId": "pipeline_asset_governor",
+        "managedChildAgents": [
+          "pipeline_asset_librarian",
+          "pipeline_asset_dwg_curator",
+          "pipeline_asset_reuse_auditor"
+        ],
+        "decision": "ready_for_clean_source_layout",
+        "assetId": "linetype_style_summary_table",
+        "category": "drawing_standards.basic",
+        "assetKind": "style_standard",
+        "sourceBoundaryDecision": {
+          "mode": "style_definition",
+          "precision": "precise_style_definition_and_verified_handles",
+          "includedHandleCount": 0,
+          "cleanSourceAllowed": true
+        },
+        "layoutDecision": {
+          "schemaVersion": 2,
+          "policy": "governed_category_library_zones",
+          "cleanSourceZone": "01_CLEAN_ASSETS",
+          "slotKey": "linetype_style_summary_table"
+        },
+        "requiredGuards": [
+          "encoding_preflight",
+          "source_boundary",
+          "asset_librarian_catalog",
+          "asset_dwg_curator_layout",
+          "asset_reuse_auditor_before_verified"
+        ],
+        "forbiddenBehaviors": [
+          "do not export whole modelspace",
+          "do not export whole CODEX_PREVIEW by default",
+          "do not include labels, borders, dimensions, or training notes unless explicitly included",
+          "record includedHandles and excludedHandles before native export",
+          "do not copy training panels into clean source",
+          "do not invent untracked global agents"
+        ],
+        "polishHardeningDecision": {
+          "status": "complete_for_current_scope",
+          "categories": [
+            "complete_for_current_scope"
+          ],
+          "nativeCadRelayout": "checked",
+          "reuseReplay": "not_required_for_current_scope",
+          "scope": "asset_library_governance",
+          "evidenceBoundary": {
+            "checked": [
+              "layoutPlan v2 metadata",
+              "governance decision"
+            ],
+            "notChecked": []
+          }
+        }
+      }
+    }
+  ],
+  "evidenceBoundary": {
+    "checked": [
+      "contract",
+      "registry",
+      "layout plan v2",
+      "asset governance decision"
+    ],
+    "not_checked": [
+      "native geometry reuse is checked by a later CAD step"
+    ]
+  }
+}

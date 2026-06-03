@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "agentId": "pipeline_learning_promoter",
+  "learningState": "prompt_updated",
+  "updatedAt": "2026-06-02T02:03:17+00:00",
+  "sourceReports": [
+    "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json",
+    "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json",
+    "output/training_queues/cad-foundation-remaining-21/focused/image-arrow-solid-fill-square/semantic_acceptance_report.json",
+    "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json"
+  ],
+  "acceptedCapabilities": [
+    "cad-readback-audit"
+  ],
+  "acceptedCapabilityCount": 1,
+  "lessonCount": 1,
+  "lessons": [
+    {
+      "capabilityId": "cad-readback-audit",
+      "title": "07 回读审计",
+      "summary": "07 回读审计 已通过中文训练验收，handles 13/13 已回读。",
+      "promptGuidance": [
+        "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
+        "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
+        "通过前必须回读 created handles，并说明 checked / not_checked。",
+        "真实 CAD 测试默认只写 CODEX_PREVIEW，不保存 DWG，不污染正式图层。",
+        "CAD 截图必须走任务级截图编排：局部修复优先传 target_handles、repair_plan.target_handles 或 repair_plan.target_bbox；没有局部目标时才退到 execution_summary.created_handles。",
+        "AutoCAD 会话截图默认保留 CAD / IDE 布局，用 AutoCAD 客户区 PrintWindow；只有 PrintWindow 失败或 CAD 完全不可见时才短暂置顶。",
+        "单项复验、focused retraining、视觉复核和正式验收需要截图时，Agent 必须报告 screenshotDecision 和 visualPreview，并说明截图只是 visual_aid_only。",
+        "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
+      ],
+      "evidence": {
+        "queueId": "cad-foundation-first-10",
+        "mode": "unsupervised_batch_chinese_labels",
+        "handleCount": 13,
+        "readbackCount": 13,
+        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+      },
+      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "responsibleAgentIds": [
+        "cad_designer",
+        "pipeline_audit",
+        "pipeline_delivery",
+        "pipeline_learning_promoter"
+      ],
+      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+    }
+  ],
+  "promptUpdateSummary": [
+    "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
+    "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
+    "通过前必须回读 created handles，并说明 checked / not_checked。",
+    "真实 CAD 测试默认只写 CODEX_PREVIEW，不保存 DWG，不污染正式图层。",
+    "CAD 截图必须走任务级截图编排：局部修复优先传 target_handles、repair_plan.target_handles 或 repair_plan.target_bbox；没有局部目标时才退到 execution_summary.created_handles。",
+    "AutoCAD 会话截图默认保留 CAD / IDE 布局，用 AutoCAD 客户区 PrintWindow；只有 PrintWindow 失败或 CAD 完全不可见时才短暂置顶。",
+    "单项复验、focused retraining、视觉复核和正式验收需要截图时，Agent 必须报告 screenshotDecision 和 visualPreview，并说明截图只是 visual_aid_only。",
+    "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
+  ],
+  "evidenceBoundary": "训练沉淀只更新 Agent 经验、Prompt 和检查口径；不提升表 C，不代表完整施工图能力。"
+}

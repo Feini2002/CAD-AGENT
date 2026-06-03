@@ -4,8 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 import importlib.util
 import json
+import math
+import sys
 from pathlib import Path
 from time import sleep
 from typing import Any, Callable, Protocol
@@ -28,6 +31,26 @@ AUTOCAD_WINDOW_TITLE_MARKERS = ("Autodesk AutoCAD", "AutoCAD", ".dwg", ".dwt")
 # PrintWindow flags (winuser.h)
 PW_CLIENTONLY = 0x00000001
 PW_RENDERFULLCONTENT = 0x00000002
+VISUAL_AID_ONLY = "visual_aid_only"
+
+
+def switch_to_input_desktop() -> dict[str, object]:
+    """Let sandboxed helper processes see the user's interactive Windows desktop."""
+
+    if sys.platform != "win32":
+        return {"status": "not_required", "reason": "non-Windows platform"}
+    user32 = ctypes.windll.user32
+    kernel32 = ctypes.windll.kernel32
+    access = 0x0001 | 0x0002 | 0x0040 | 0x0080 | 0x0100
+    input_desktop = user32.OpenInputDesktop(0, False, access)
+    if not input_desktop:
+        return {"status": "fail", "api": "OpenInputDesktop", "lastError": int(kernel32.GetLastError())}
+    ok = bool(user32.SetThreadDesktop(input_desktop))
+    return {
+        "status": "pass" if ok else "fail",
+        "api": "SetThreadDesktop",
+        "lastError": int(kernel32.GetLastError()),
+    }
 
 
 def _window_matches_autocad(title: str) -> bool:
@@ -378,14 +401,247 @@ def capture_autocad_window(
     }
 
 
+def _load_json_object(path: Path) -> dict[str, object]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return data if isinstance(data, dict) else {}
+
+
+def _normalize_handles(value: object) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(handle).strip() for handle in value if str(handle).strip()]
+
+
+def _normalize_bbox(value: object) -> dict[str, list[float]] | None:
+    if isinstance(value, (list, tuple)) and len(value) == 4:
+        try:
+            min_x, min_y, max_x, max_y = [float(item) for item in value]
+        except (TypeError, ValueError):
+            return None
+    elif isinstance(value, dict):
+        minimum = value.get("min")
+        maximum = value.get("max")
+        if not isinstance(minimum, list) or not isinstance(maximum, list) or len(minimum) < 2 or len(maximum) < 2:
+            return None
+        try:
+            min_x, min_y = float(minimum[0]), float(minimum[1])
+            max_x, max_y = float(maximum[0]), float(maximum[1])
+        except (TypeError, ValueError):
+            return None
+    else:
+        return None
+    if not all(math.isfinite(value) for value in (min_x, min_y, max_x, max_y)):
+        return None
+    if max_x <= min_x or max_y <= min_y:
+        return None
+    return {"min": [min_x, min_y], "max": [max_x, max_y]}
+
+
 def _load_created_handles(execution_summary: Path) -> list[str]:
-    data = json.loads(execution_summary.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        return []
-    handles = data.get("created_handles")
-    if not isinstance(handles, list):
-        return []
-    return [str(handle) for handle in handles]
+    return _normalize_handles(_load_json_object(execution_summary).get("created_handles"))
+
+
+def _repair_plan_payload(repair_plan: dict[str, object] | Path | None) -> dict[str, object]:
+    if isinstance(repair_plan, Path):
+        return _load_json_object(repair_plan)
+    return repair_plan if isinstance(repair_plan, dict) else {}
+
+
+def _execution_summary_payload(execution_summary: Path | dict[str, object] | None) -> dict[str, object]:
+    if isinstance(execution_summary, Path):
+        return _load_json_object(execution_summary)
+    return execution_summary if isinstance(execution_summary, dict) else {}
+
+
+def _focus_target(
+    *,
+    execution_summary: Path | dict[str, object] | None = None,
+    target_handles: list[str] | None = None,
+    target_bbox: dict[str, list[float]] | list[float] | None = None,
+    repair_plan: dict[str, object] | Path | None = None,
+) -> dict[str, object]:
+    local_handles = _normalize_handles(target_handles or [])
+    if local_handles:
+        return {"kind": "handles", "source": "target_handles", "handles": local_handles}
+
+    repair = _repair_plan_payload(repair_plan)
+    repair_handles = _normalize_handles(repair.get("target_handles"))
+    if repair_handles:
+        return {"kind": "handles", "source": "repair_plan.target_handles", "handles": repair_handles}
+    repair_bbox = _normalize_bbox(repair.get("target_bbox"))
+    if repair_bbox:
+        return {"kind": "bbox", "source": "repair_plan.target_bbox", "bbox": repair_bbox}
+
+    explicit_bbox = _normalize_bbox(target_bbox)
+    if explicit_bbox:
+        return {"kind": "bbox", "source": "explicit_bbox", "bbox": explicit_bbox}
+
+    summary = _execution_summary_payload(execution_summary)
+    summary_handles = _normalize_handles(summary.get("created_handles"))
+    if summary_handles:
+        return {
+            "kind": "handles",
+            "source": "execution_summary.created_handles",
+            "handles": summary_handles,
+        }
+    for key in ("target_bbox", "created_bbox", "batch_bbox"):
+        summary_bbox = _normalize_bbox(summary.get(key))
+        if summary_bbox:
+            return {"kind": "bbox", "source": f"execution_summary.{key}", "bbox": summary_bbox}
+    return {"kind": "none", "source": "none"}
+
+
+def build_screenshot_decision(
+    *,
+    task_kind: str = "",
+    evidence_stage: str = "",
+    execution_summary: Path | dict[str, object] | None = None,
+    target_handles: list[str] | None = None,
+    target_bbox: dict[str, list[float]] | list[float] | None = None,
+    repair_plan: dict[str, object] | Path | None = None,
+    capture_requested: bool | None = None,
+    key_readback_passed: bool = False,
+    visual_issue: bool = False,
+    formal_acceptance: bool = False,
+    agent_role: str = "",
+) -> dict[str, object]:
+    """Decide whether a CAD task needs a task-scoped screenshot and how to focus it."""
+
+    target = _focus_target(
+        execution_summary=execution_summary,
+        target_handles=target_handles,
+        target_bbox=target_bbox,
+        repair_plan=repair_plan,
+    )
+    focus_source = str(target.get("source", "none"))
+    focus_kind = str(target.get("kind", "none"))
+    local_sources = {"target_handles", "repair_plan.target_handles", "repair_plan.target_bbox", "explicit_bbox"}
+    local_target = focus_source in local_sources
+    stage = str(evidence_stage or task_kind or "")
+    formal_stage = formal_acceptance or stage in {
+        "formal_acceptance",
+        "focused_retraining",
+        "visual_review",
+        "local_repair",
+        "training_batch",
+    }
+
+    if (
+        task_kind == "quick_trial"
+        and key_readback_passed
+        and not visual_issue
+        and not formal_acceptance
+        and capture_requested is not True
+    ):
+        should_capture = False
+        required = False
+        reason = "quick_trial_key_readback_enough"
+    else:
+        required = bool(local_target or visual_issue or formal_stage)
+        should_capture = bool(capture_requested) if capture_requested is not None else bool(required or focus_kind != "none")
+        reason = (
+            "local_repair_focus_required"
+            if local_target
+            else "formal_or_visual_review_required"
+            if required
+            else "task_scoped_focus_available"
+            if should_capture
+            else "not_required"
+        )
+
+    recommended_call: dict[str, object] = {
+        "capture": "prepare_autocad_for_capture" if should_capture else "not_required",
+        "preserve_layout": True,
+        "capture_mode": "autocad_window_printwindow",
+        "focusSource": focus_source,
+    }
+    if focus_kind == "handles":
+        recommended_call["target_handles"] = _normalize_handles(target.get("handles"))
+    if focus_kind == "bbox":
+        bbox = _normalize_bbox(target.get("bbox"))
+        if bbox:
+            recommended_call["target_bbox"] = bbox
+    if isinstance(execution_summary, Path):
+        recommended_call["execution_summary"] = str(execution_summary)
+    if repair_plan is not None:
+        recommended_call["repair_plan"] = str(repair_plan) if isinstance(repair_plan, Path) else "inline"
+
+    return {
+        "schemaVersion": 1,
+        "taskKind": task_kind,
+        "evidenceStage": evidence_stage,
+        "agentRole": agent_role,
+        "shouldCapture": should_capture,
+        "required": required,
+        "reason": reason,
+        "focusSource": focus_source,
+        "focusKind": focus_kind,
+        "visualAidOnly": True,
+        "allowedFallbacks": ["execution_summary.created_handles", "execution_summary.target_bbox", "explicit_bbox"],
+        "recommendedCall": recommended_call,
+    }
+
+
+def _normalize_focus_result(result: dict[str, object], *, target: dict[str, object]) -> dict[str, object]:
+    normalized = dict(result)
+    source = str(target.get("source", "unknown"))
+    normalized["source"] = source
+    if target.get("kind") == "handles":
+        handles = _normalize_handles(target.get("handles"))
+        normalized["handles"] = handles
+        normalized["handle_count"] = len(handles)
+    elif target.get("kind") == "bbox":
+        bbox = _normalize_bbox(target.get("bbox"))
+        if bbox:
+            normalized["target_bbox"] = bbox
+    if normalized.get("status") == "zoom_extents":
+        normalized["status"] = "focus_target_unavailable"
+        normalized["full_extents_fallback_blocked"] = True
+    return normalized
+
+
+def focus_autocad_view(
+    *,
+    execution_summary: Path | None = None,
+    target_handles: list[str] | None = None,
+    target_bbox: dict[str, list[float]] | list[float] | None = None,
+    repair_plan: dict[str, object] | Path | None = None,
+    layer: str | None = None,
+    padding_ratio: float = 0.12,
+    driver_factory: Callable[[], Any] | None = None,
+) -> dict[str, object]:
+    """Zoom AutoCAD to the most precise task-scoped focus target available."""
+
+    target = _focus_target(
+        execution_summary=execution_summary,
+        target_handles=target_handles,
+        target_bbox=target_bbox,
+        repair_plan=repair_plan,
+    )
+    if target.get("kind") == "none":
+        return {"status": "not_run", "reason": "no task-scoped focus target", "source": "none"}
+
+    if driver_factory is None:
+        from core.cad_io.autocad_com import AutoCADComDriver
+
+        driver_factory = lambda: AutoCADComDriver(connect_existing_only=True)
+    driver = driver_factory()
+    if target.get("kind") == "bbox":
+        if not hasattr(driver, "zoom_to_bbox"):
+            return {"status": "focus_target_unavailable", "reason": "driver does not support zoom_to_bbox", "source": target["source"]}
+        result = driver.zoom_to_bbox(target["bbox"], padding_ratio=padding_ratio)
+        return _normalize_focus_result(result, target=target)
+
+    handles = _normalize_handles(target.get("handles"))
+    if not handles:
+        return {"status": "focus_target_unavailable", "reason": "empty handle target", "source": target["source"]}
+    if hasattr(driver, "zoom_to_handles_extents"):
+        result = driver.zoom_to_handles_extents(handles=handles, padding_ratio=padding_ratio)
+    elif hasattr(driver, "zoom_to_handles"):
+        result = driver.zoom_to_handles(handles=handles, layer=layer, padding_ratio=padding_ratio)
+    else:
+        return {"status": "focus_target_unavailable", "reason": "driver does not support handle focus", "source": target["source"]}
+    return _normalize_focus_result(result, target=target)
 
 
 def focus_autocad_view_from_execution_summary(
@@ -397,26 +653,49 @@ def focus_autocad_view_from_execution_summary(
 ) -> dict[str, object]:
     """Zoom AutoCAD to handles listed in an execution summary (reference + preview allowed)."""
 
-    handles = _load_created_handles(execution_summary)
-    if not handles:
-        return {"status": "not_run", "reason": "execution summary has no created_handles"}
+    return focus_autocad_view(
+        execution_summary=execution_summary,
+        layer=layer,
+        padding_ratio=padding_ratio,
+        driver_factory=driver_factory,
+    )
 
-    if driver_factory is None:
-        from core.cad_io.autocad_com import AutoCADComDriver
 
-        driver_factory = lambda: AutoCADComDriver(connect_existing_only=True)
-    driver = driver_factory()
-    if hasattr(driver, "zoom_to_handles_extents"):
-        return driver.zoom_to_handles_extents(handles=handles, padding_ratio=padding_ratio)
-    if not hasattr(driver, "zoom_to_handles"):
-        return {"status": "not_run", "reason": "driver does not support zoom_to_handles"}
-    return driver.zoom_to_handles(handles=handles, layer=layer, padding_ratio=padding_ratio)
+def visual_preview_payload(capture_result: dict[str, object]) -> dict[str, object]:
+    decision = capture_result.get("screenshotDecision")
+    if not isinstance(decision, dict):
+        focus = capture_result.get("focus")
+        focus_source = str(focus.get("source", "none")) if isinstance(focus, dict) else "none"
+        decision = {
+            "schemaVersion": 1,
+            "shouldCapture": str(capture_result.get("status", "not_run")) == "captured",
+            "required": False,
+            "focusSource": focus_source,
+            "focusKind": "unknown" if focus_source != "none" else "none",
+            "visualAidOnly": True,
+            "reason": "derived_from_capture_result",
+        }
+    return {
+        "status": str(capture_result.get("status", "not_run")),
+        "role": VISUAL_AID_ONLY,
+        "output": str(capture_result.get("output", "")),
+        "mode": str(capture_result.get("mode", "")),
+        "occlusion_safe": bool(capture_result.get("occlusion_safe", False)),
+        "foreground_first": bool(capture_result.get("foreground_first", False)),
+        "foreground_fallback": bool(capture_result.get("foreground_fallback", False)),
+        "focus": capture_result.get("focus", {"status": "not_run"}),
+        "screenshotDecision": decision,
+    }
 
 
 def prepare_autocad_for_capture(
     output: Path,
     *,
     execution_summary: Path | None = None,
+    target_handles: list[str] | None = None,
+    target_bbox: dict[str, list[float]] | list[float] | None = None,
+    repair_plan: dict[str, object] | Path | None = None,
+    layer: str | None = None,
     padding_ratio: float = 0.12,
     autocad_window_finder: Callable[[], dict[str, object] | None] | None = None,
     driver_factory: Callable[[], Any] | None = None,
@@ -433,11 +712,22 @@ def prepare_autocad_for_capture(
         window = ensure_autocad_visible(autocad_window_finder=autocad_window_finder)
     else:
         window = bring_autocad_to_foreground(autocad_window_finder=autocad_window_finder)
-    focus: dict[str, object] = {"status": "not_run", "reason": "no execution summary"}
-    if execution_summary is not None:
-        focus = focus_autocad_view_from_execution_summary(
-            execution_summary,
-            layer=None,
+    screenshot_decision = build_screenshot_decision(
+        task_kind="capture",
+        execution_summary=execution_summary,
+        target_handles=target_handles,
+        target_bbox=target_bbox,
+        repair_plan=repair_plan,
+        capture_requested=True,
+    )
+    focus: dict[str, object] = {"status": "not_run", "reason": "no task-scoped focus target"}
+    if execution_summary is not None or target_handles or target_bbox is not None or repair_plan is not None:
+        focus = focus_autocad_view(
+            execution_summary=execution_summary,
+            target_handles=target_handles,
+            target_bbox=target_bbox,
+            repair_plan=repair_plan,
+            layer=layer,
             padding_ratio=padding_ratio,
             driver_factory=driver_factory,
         )
@@ -463,8 +753,11 @@ def prepare_autocad_for_capture(
         capture["foreground_fallback_reason"] = str(exc)
     capture["window"] = {"hwnd": window.get("hwnd"), "title": window.get("title", "")}
     capture["focus"] = focus
+    screenshot_decision["focusStatus"] = str(focus.get("status", "not_run"))
+    capture["screenshotDecision"] = screenshot_decision
     capture["prepared"] = True
     capture["preserve_layout"] = preserve_layout
+    capture["visualPreview"] = visual_preview_payload(capture)
     return capture
 
 
@@ -475,6 +768,10 @@ def main() -> int:
     parser.add_argument("--capture-screen", action="store_true", help="Capture the visible screen to --output.")
     parser.add_argument("--capture-autocad-window", action="store_true", help="Capture the visible AutoCAD client area to --output.")
     parser.add_argument("--execution-summary", type=Path, help="Optional execute_plan summary used to focus CAD view before capture.")
+    parser.add_argument("--target-handle", action="append", dest="target_handle", help="Task-local handle to focus. Repeat for multiple handles.")
+    parser.add_argument("--target-handles", dest="target_handles_csv", help="Comma-separated task-local handles to focus.")
+    parser.add_argument("--bbox", nargs=4, type=float, dest="target_bbox", metavar=("MIN_X", "MIN_Y", "MAX_X", "MAX_Y"))
+    parser.add_argument("--repair-plan", type=Path, help="Optional repair plan JSON with target_handles or target_bbox.")
     parser.add_argument("--layer", default=None, help="Optional layer filter when focusing (default: all handles in summary).")
     parser.add_argument(
         "--padding-ratio",
@@ -494,9 +791,12 @@ def main() -> int:
     )
     parser.add_argument("--fallback-screen", action="store_true", help="Use full-screen capture if AutoCAD window capture fails.")
     args = parser.parse_args()
+    desktop_switch = switch_to_input_desktop()
 
     if args.check:
-        print(json.dumps(get_preview_capabilities(args.output), ensure_ascii=False, indent=2))
+        capabilities = get_preview_capabilities(args.output)
+        capabilities["desktopSwitch"] = desktop_switch
+        print(json.dumps(capabilities, ensure_ascii=False, indent=2))
         return 0
 
     if args.capture_screen:
@@ -507,10 +807,17 @@ def main() -> int:
         preserve_layout = not args.force_foreground
         focus_result: dict[str, object] | None = None
         try:
-            if args.execution_summary:
+            target_handles = list(args.target_handle or [])
+            if args.target_handles_csv:
+                target_handles.extend(handle.strip() for handle in args.target_handles_csv.split(",") if handle.strip())
+            if args.execution_summary or target_handles or args.target_bbox or args.repair_plan:
                 result = prepare_autocad_for_capture(
                     args.output,
                     execution_summary=args.execution_summary,
+                    target_handles=target_handles or None,
+                    target_bbox=args.target_bbox,
+                    repair_plan=args.repair_plan,
+                    layer=args.layer,
                     padding_ratio=args.padding_ratio,
                     preserve_layout=preserve_layout,
                 )
@@ -523,6 +830,7 @@ def main() -> int:
                 result = capture_autocad_window(args.output, foreground_first=False)
             if focus_result is not None and "focus" not in result:
                 result["focus"] = focus_result
+            result["desktopSwitch"] = desktop_switch
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0
         except Exception as exc:

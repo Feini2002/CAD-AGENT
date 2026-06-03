@@ -2,7 +2,530 @@
 
 这个文件记录 CAD Agent 测试工作区的结构、规则、Schema、脚本和重要决策变化。
 
+## 2026-06-03
+
+### REPO-AUDIT-TABLEC-BOUNDARY-01：审计阻断口径与表 C claim 边界
+
+- **触发**：用户指出当前仓库有大量变更、未跟踪文件、`sys.path` 入口问题，以及 `verified_count=0` / `showcase_count=303` 容易被误读。
+- **修复**：删除 `core/execution/execute_plan.py`、`core/verification/self_check.py` 的本地 `sys.path.insert`；新增 core 模块路径污染回归测试。`run_repo_audit` 新增 `severity_counts`、`blocking_finding_count` 和 CLI `--fail-on-severity`，用于阻断 medium/high，同时保留 low 大文件治理项。
+- **表 C**：`capability_coverage` 新增 `claim_level_boundary`，明确 `showcase` 有证据路径但不等同严格几何 verified；当前机器报告为 `strict_geometry_verified_count=0`、`evidence_path_showcase_count=303`。
+- **验证**：`tests.core.test_script_bootstrap` 6 OK；`tests.core.test_repo_audit tests.core.test_script_bootstrap` 15 OK；`tests.core.test_capability_coverage` 6 OK；`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-severity medium` 返回 0，报告 20 low、0 medium、0 high。
+
+### DEV-VOLUME-AUDIT-SCOPING-01：工作树体量审计分组与中风险阻断
+
+- **触发**：用户指出当前仓库 changed / untracked 数量过大，旧 `run_dev_volume_audit.py` 只给原始数量和 findings，无法判断哪些目录需要分包收口、哪些只是派生大文件。
+- **修复**：`core.maintenance.dev_volume_audit` 新增 `severity_counts`、`blocking_severity`、`blocking_finding_count`，并输出 `untracked_by_area` 与 `untracked_groups`；`scripts/run_dev_volume_audit.py` 新增 `--fail-on-severity low|medium|high`，保留 `--fail-on-findings` 严格模式。路径分类新增 `agents` 和 `openspec`，避免把 pipeline / change contract 混成 `other` 或普通 `status_docs`。
+- **二次补强**：报告新增 `tracked_by_area`、`changed_groups`、`tracked_groups` 和 `by_group_line_delta`，让已跟踪变更、未跟踪变更和派生大文件都能按功能簇分开看，支持后续按包拆分，而不是只按总数判断。
+- **输出润色**：报告新增 `top_changed_groups`、`top_tracked_groups`、`top_untracked_groups`；CLI 新增 `--summary-only --top-groups N`，日常验证可一屏看到阻断原因、top 收口簇和最大 tracked delta，不必展开完整 group map。
+- **当前事实**：真实仓库运行 `scripts/run_dev_volume_audit.py --fail-on-severity medium` 仍返回 1：`changed_file_count=185`、`untracked_file_count=105`、`severity_counts={low:2, medium:2, high:0}`、`blocking_finding_count=2`。主要未跟踪簇为 `agents/pipeline=17`、`tests/core=17`、`openspec/changes=13`、`core/training=10`，不是可直接删除的缓存。
+- **验证**：先写红测确认缺字段和 CLI 参数会失败，再实现转绿；`tests.core.test_dev_volume_audit` 10 OK；相关回归 `tests.core.test_dev_volume_audit tests.core.test_repo_audit tests.core.test_script_bootstrap tests.core.test_capability_coverage tests.core.test_training_workbench_sync` 46 OK。
+- **边界**：本轮只让 dev volume 审计可定位、可作为中风险 gate；未删除、未 stage、未提交任何用户已有未跟踪文件。工作树体量收口仍需要后续按功能包拆分、提交或明确清理策略。
+
+### A-TO-A-TASK-CONTRACT-GATE-01：主 Agent 任务合同与视觉布局复审门禁
+
+- **触发**：用户指出系统已有视觉验收能力，但通用资产 DWG 仓库式排版仍多轮偏离，本质是 A-to-A 层面没有由主 Agent 把规则拆分、派发给责任 Agent，并在缺少责任结论时阻断。
+- **根因**：`orchestrate_request()` 只有 request gate、scene activation、semantic asset route 和 workflow dispatch；缺少 `TaskContract` 来声明本次必须有哪些 Agent 输出、哪些 hard gate 必须通过。资产库排版语义也没有专门的视觉布局复审 Agent，因此截图非空、对象数量或普通 readback 容易被误当成视觉验收。
+- **实现**：新增 `core/orchestrator/a_to_a_task_contract.py`，识别 `system_asset_sedimentation`、`asset_dwg_layout` 和 `visual_layout_review`；接入 `workflow_dispatch`，合同 blocked 时输出 `a-to-a hard gate` 阻断原因；新增 `pipeline_visual_layout_reviewer` Agent，登记 `asset_dwg_layout` flow、`visual_layout_review`、`asset_dwg_curation`、`asset_reuse_audit` 等 hard gate。
+- **治理检查**：新增 `scripts/run_a_to_a_orchestration_gate_check.py`，检查 manifest、Agent 登记、合同识别、缺 Agent 输出阻断和 pass 输出放行。
+- **二次加固**：`pipeline_visual_layout_reviewer` 不能只给 `status=pass`；`layoutMatchesMetaphor`、`primaryShelvesClear`、`futureExpansionClear`、`retrievalPathReadable`、`visualNoiseAcceptable` 任一缺失或非 pass，都会让 `visual_layout_review` 失败并阻断交付。
+- **验证**：`tests.core.test_a_to_a_task_contract` 5 OK；相关回归 `tests.core.test_a_to_a_task_contract tests.core.test_workflow_dispatch tests.core.test_system_asset_sedimentation tests.core.test_semantic_asset_rules` 42 OK；`scripts/run_a_to_a_orchestration_gate_check.py` status=`pass`。本包未写 CAD、未保存 DWG、不提升表 C。
+
+### SYSTEM-ASSET-DWG-VISUAL-WAREHOUSE-AUDIT-R5：视觉仓库验收与实体回读门禁
+
+- **触发**：用户复核指出上一版验收口径仍偏了：脚本能写 metadata、DWG 能保存、截图能看到框线，并不等于“仓库货架架构”真的成立；验收必须能说明主货架 / 子货架、资产归属、空货位、index-only、zone bbox 和回读证据。
+- **根因**：`scripts/run_asset_library_governance_check.py` 只检查 Agent 注册、协议文字和分区名称；`nativeLayout.visualRackPlan` 还是弱 metadata，缺少仓库架构、acceptance criteria 和 bbox 比例门禁。R4 的真实 DWG 视觉已经改对方向，但机器验收还没有阻止“标签式仓库”继续 pass。
+- **Core 加固**：新增 `audit_visual_rack_plan()`，审计 `schemaVersion >= 2`、`layoutMode=classified_expandable_visual_warehouse_v2`、`warehouseArchitecture`、`acceptanceCriteria`、rack family 归属、slot ownership、copy policy、扩展空位和主仓区面积比例；`refresh_system_asset_layout_metadata()` 传入弱 `visualRackPlan` 时现在直接 fail，不写 `assets.json` / registry。
+- **脚本加固**：`scripts/layout_system_asset_shelves.py` 写入前先跑 plan audit；真实写入后回读本轮 created handles，报告 `createdEntityReadback.status=ok`、`resolvedHandleCount=209`、`unresolvedHandleCount=0`、`unmanagedLayerCount=0`、`byLayer` 和 `unionBbox`。最终 pass 需要 `rackPlanAudit=pass`、实体回读 ok、metadata refresh pass 和系统资产 DWG 保存成功。
+- **治理检查**：`scripts/run_asset_library_governance_check.py` 现在读取 `libraries/system_library/drawing_standards/basic/assets.json` 的 `nativeLayout.visualRackPlan` 并复用同一审计器；旧 R4 快照会 fail，刷新后 `visualRackPlan v2 warehouse audit` 进入 checked。
+- **真实 CAD 证据**：`standard_assets.dwg` 已保存，上一版 209 个货架 handles 按报告清理，本轮新建 209 个 handles；`primaryWarehouseAreaRatio=0.8694`，`ownedSlotCount=11`，`expansionSlotCount=9`，`savedCurrentBusinessDwg=false`。报告为 `output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json`，治理报告为 `output/validation_runs/system-assets/library-governance/final_hardening_decision.json`，截图为 `output/previews/system-asset-library-shelves-r2.png`。
+- **验证**：`tests.core.test_system_asset_sedimentation` 22 OK；`scripts/layout_system_asset_shelves.py` status=`pass`；`scripts/run_asset_library_governance_check.py --output output/validation_runs/system-assets/library-governance/final_hardening_decision.json` status=`pass`；`scripts/sediment_system_asset.py --verify --category drawing_standards.basic` status=`pass`；`scripts/render_preview.py --capture-autocad-window ...` status=`captured`。
+- **边界**：这证明系统资产 DWG 货架脚手架、仓库语义和本轮 created entities 回读过关；截图仍是 `visual_aid_only`，对象 block 本体仍进入各自分类 DWG，本轮不保存当前业务 DWG、不提升表 C。
+
+### SYSTEM-ASSET-DWG-THREE-COLUMN-WAREHOUSE-R4：通用底座三列仓库与对象索引货架
+
+- **触发**：用户继续指出 R3 虽已把现有内容放进大货架，但仓库还应明确区分“通用底座脚手架”和“对象类资产入口”，并让后续床铺、桌子、沙发等对象资产有可扩展置物架，而不是继续混在 drawing standards 的画布里。
+- **Agent 复核**：资产 DWG 编排、资产馆员、复用审计和视觉排版视角共同收敛为三列方案：A 区承载绘图标准 clean source，B 区只承载跨库索引，不承载对象 block 本体；标签、证据、预留卡和隔离区默认 `never_copy`。
+- **真实 CAD 改造**：`scripts/layout_system_asset_shelves.py` 将布局升级为 `r4_three_column_warehouse_with_object_index`：左列 `A1 线型 / 图层 / 填充标准`，中列 `A2 尺寸 / 文字 / 引线标准`，右列 `B 对象资产索引 / 跨库入口`，底部为 `02_PREVIEW_CARDS`、`03_REVIEW_QUARANTINE`、`99_EVIDENCE_LINKS`。顶部只保留安静索引，不再让导向箭头穿过内容。
+- **分类槽位**：A 区稳定槽位为 `A01_LAYER_STANDARD`、`A02_LINETYPE_STANDARD`、`A03_PLOT_COLOR_LINEWEIGHT`、`A04_TEXT_STYLE`、`A05_DIMENSION_STYLE`、`A06_LEADER_SYMBOL_STYLE`、`A07_TABLE_TITLEBLOCK`、`A08_SCALE_UNIT_BASELINE`；B 区为 `B01_BEDS`、`B02_TABLES`、`B03_SEATING`、`B04_STORAGE`、`B05_DOORS_WINDOWS`、`B06_KITCHEN_BATH`、`B07_LIGHTING_EQUIPMENT`、`B08_CUSTOM_EXPANSION`，均为 `index_only / never_copy`。
+- **检索同步**：`nativeLayout.visualRackPlan` 写入 `assets.json` / registry，包含 `displayPolicy`、`copySafety`、rack family、slot status、对象分类 `nativeDwg` 入口和 review zones，使未来检索能按 rack / slot / index-only 语义复用。
+- **验证**：`scripts/layout_system_asset_shelves.py` status=`pass`，删除上一版 209 个货架句柄并新建 209 个 handles，`savedAssetDwg=true`、`savedCurrentBusinessDwg=false`，`polishHardeningDecision.status=complete_for_current_scope`；`tests.core.test_system_asset_sedimentation` + `tests.core.test_semantic_asset_rules` 22 OK；`scripts/sediment_system_asset.py --verify --category drawing_standards.basic` status=`pass`；`scripts/render_preview.py --check` status=`ready`；截图 `output/previews/system-asset-library-r4-three-column.png`。
+- **边界**：本轮只重排系统资产 DWG 的可视仓库脚手架、槽位语义和检索元数据；对象资产真实 block 仍应进入各自分类 DWG，不保存当前业务 DWG，不提升表 C。
+
+### SYSTEM-ASSET-DWG-CLASSIFIED-RACKS-R3：现有资产归入分类大货架
+
+- **触发**：用户指出上一版仍像“左侧小预留格 + 中间堆旧内容”：线型表和尺寸样式面板没有真正进入对应货架，预留框尺寸也明显装不下现有资产。
+- **真实 CAD 改造**：`scripts/layout_system_asset_shelves.py` 的布局逻辑改为让现有资产内容本身成为 `01_CLEAN_ASSETS` 主货架。`A 通用底座脚手架` 现在直接包住线型表和尺寸样式面板，`02_PREVIEW_CARDS` 下移为复审暂存带，不再承载已沉淀资产主体。
+- **分类槽位**：`A02_LINETYPE` 对应 `linetype_style_summary_table`，`A03_DIMENSION_STYLE` 对应 `interior_dimension_style_visual_standard`；底部预留 `A01_LAYER_LINEWEIGHT`、`A04_TEXT_STYLE`、`A05_LEADER_ANNOTATION`、`A06_HATCH_PATTERN`、`A07_TABLE_TITLEBLOCK`、`A08_SYMBOL_NAMING`。右侧 `B_OBJECT_BLOCKS` 预留床铺、桌子、沙发椅子、柜体、门窗、厨卫、灯具设备和自定义扩展。
+- **检索同步**：`refresh_system_asset_layout_metadata()` 新增 `visual_rack_plan` 参数，写入 `nativeLayout.visualRackPlan`；报告同步输出 `rackPlan`，使 DWG 视觉槽位和 JSON 检索语义一致。
+- **验证**：`scripts/layout_system_asset_shelves.py` status=`pass`，删除上一版 229 个货架句柄并新建 219 个 handles，`savedAssetDwg=true`、`savedCurrentBusinessDwg=false`；`tests.core.test_system_asset_sedimentation` 18/18 OK；`scripts/sediment_system_asset.py --verify --category drawing_standards.basic` status=`pass`；`scripts/render_preview.py --check` status=`ready`；截图 `output/previews/system-asset-library-classified-racks-r3.png`。
+- **边界**：本轮只重排系统资产 DWG 的仓库脚手架和槽位语义，不迁移 / 复制当前业务 DWG，不保存当前业务 DWG，不提升表 C。
+
+### SYSTEM-ASSET-DWG-SHELVES-R1：系统资产 DWG 可视货架与动线落地
+
+- **触发**：用户确认守门员和 Agent 规则还不够直观，希望先把通用资产 DWG 改成“仓库置物架”：先搭好索引台、货架、通道、隔离区和可扩展货位，后续资产再一个个归位。
+- **真实 CAD 落地**：新增 `scripts/layout_system_asset_shelves.py`，连接 AutoCAD 后打开 / 激活 `libraries/system_library/drawing_standards/basic/standard_assets.dwg`，默认只按上一份货架报告中的 handles 清理旧脚手架，只有显式 `--clear-all-shelf-layers` 才做全层清理，不保存当前业务 DWG。
+- **排版结构**：DWG 中新增 `00_INDEX`、`01_CLEAN_ASSETS`、`02_PREVIEW_CARDS`、`03_REVIEW_QUARANTINE`、`99_EVIDENCE_LINKS` 和 `EXPANSION_BAY_A`；左侧是干净源货架，中间是复审卡片，右侧是扩展货架，下方是隔离区和证据索引，紫色箭头表达沉淀动线。
+- **检索同步**：新增 `refresh_system_asset_layout_metadata()`，把已有资产条目的旧网格布局刷新为 v2 `layoutPlan` / `libraryGovernance`，并同步 `libraries/system_library/registry.json`；这避免 DWG 可视排版与 registry 检索货位脱节。
+- **R2 硬化**：收尾审查 Agent 建议区分“货架脚手架已写入”和“资产源几何已迁入”，并降低误删风险；现已在报告中写入 `nativeLayoutWrite=asset_library_shelf_scaffold_written_to_standard_assets_dwg` 和 `nativeWriteBoundary`，cleanup 也改为 `previous_report_handles`。
+- **验证**：`scripts/layout_system_asset_shelves.py` status=`pass`，清理旧货架层 91 个对象并新建 91 个 handles，`savedAssetDwg=true`、`savedCurrentBusinessDwg=false`；`scripts/sediment_system_asset.py --verify --category drawing_standards.basic` status=`pass`；`tests.core.test_system_asset_sedimentation` 18/18 OK；截图 `output/previews/system-asset-library-shelves-r1.png`。
+- **边界**：本轮是系统资产 DWG 的可视货架和元数据货位刷新，不把训练面板内容转成可复制源，不提升表 C，不保存当前业务 DWG。
+
+### SYSTEM-ASSET-LIBRARY-GOVERNANCE-01：系统资产库守门员与 layoutPlan v2
+
+- **触发**：用户指出系统资产 DWG 不应原封不动搬运训练内容；训练标题、说明文字、边框或证据路径若混入资产库，会让未来检索命中但复制源不干净。
+- **OpenSpec**：新增 `openspec/changes/harden-system-asset-library-governance/`，定义 `system-asset-library-governance` 能力：沉淀先过守门员、资产 DWG 分区排版、训练污染清洗、复用审计和收尾润色加固判断。
+- **Agent**：新增 `pipeline_asset_governor`，并注册 `pipeline_asset_librarian`、`pipeline_asset_dwg_curator`、`pipeline_asset_reuse_auditor`；全局 manifest 新增 `system_asset_sedimentation` flow、`asset_governance` hard gate 和禁止“训练画布当资产库”规则。
+- **Core / CLI**：新增 `core.assets.system_asset_library_governance`；`system_asset_sedimentation` 生成 `native.layoutPlan` v2 与 `libraryGovernance`，registry / CLI 输出 `assetGovernanceDecision` 和 `polishHardeningDecision`。layoutPlan v2 包含五区、slot、plannedBbox、cleanSource、previewCard、evidenceLinks、cleanupPolicy 和兼容旧读取的 grid。
+- **文档**：系统资产沉淀协议、system library README、CAD Designer rules、全局 Agent 流水线和训练 README 已同步：来源不清进入 metadata-only / `03_REVIEW_QUARANTINE`，训练标题 / 临时说明 / 边框 / 尺寸线 / 证据文字默认不得进入 `01_CLEAN_ASSETS`。
+- **验证**：新增 / 扩展 `tests.core.test_system_asset_sedimentation`，覆盖 layoutPlan v2、quarantine / metadata-only、Agent manifest 注册和 CLI governance 输出；聚焦测试已通过。
+- **边界**：本包不执行真实 CAD-native DWG 重排，不保存当前业务 DWG，不提升表 C；layoutPlan v2 和守门员决策不等于原生 DWG 已重新排版。
+
+### TRAINING-ARTIFACT-RETENTION-01：训练截图保留策略执行器
+
+- **触发**：用户询问训练过程中大量截图是否有删除规则，确认文档已有“只长期保留最终报告、队列状态、learning ledger / Agent memory / Prompt addendum 和最近一份人工复核预览图”的规则，但执行层还没有统一清理器。
+- **实现**：新增 `core.training.artifact_retention`，按 scan roots 收集 `.png/.jpg/.jpeg` 候选，按 reference roots 扫描 JSON / Markdown / JS / Python / HTML 文本引用；被最终报告、工作台同步、learning ledger、Agent / docs 引用的截图保留，每个目录最近一份预览图保留，其余未引用旧图进入归档计划。
+- **CLI**：新增 `scripts/run_training_artifact_retention.py`。默认扫描 `output/previews` 和 `output/training_queues`，写入 `output/validation_runs/training-artifact-retention/retention_report.json`；默认 dry-run，显式 `--write` 才移动到 `archive/training_artifacts/`，不做不可逆删除。
+- **训练入口接入**：`scripts/run_training_queue.py` 和 `scripts/run_cad_foundation_remaining_training.py` 在 pass + post-sync 后写入 `postTrainingArtifactRetention`；默认 dry-run，可用 `--no-artifact-retention` 跳过，可用 `--artifact-retention-write` 归档未引用旧图。
+- **验证**：新增 `tests.core.test_training_artifact_retention`；训练队列和剩余 21 项入口均覆盖 retention hook。相关 focused tests 已通过。
+- **边界**：本包不删除文件，只在显式 write 时归档图片；不清理被报告引用的证据，不移动最终报告 / queue state / ledger / memory / Prompt addendum；截图仍是 `visual_aid_only`，不替代 CAD handles / readback / audit。
+
+### REPAIR-RUN-BEFORE-DELIVERY-01：修复交付默认运行门禁
+
+- **触发**：用户指出上轮截图协议修复只跑了 unit / OpenSpec，没有默认补跑真实 CAD / 截图实际链路；以后所有修复都要默认运行后再交付。
+- **规则**：`AGENTS.md` 新增“修复交付必须运行”；`docs/governance/cad-agent-rules.md` 新增 §2.3。普通代码 / 文档 / 规则修复至少跑对应测试、校验、审计或格式检查；CAD 落图、截图、训练、runner、验证、资产复用 / 沉淀或局部修复链路改动，除单测外必须补一条代表性实际链路。
+- **CAD 不可用处理**：真实 CAD / GUI / COM 因沙箱、权限、窗口、授权或活动 DWG 不可用时，先按 blocker 流程自救并必要时申请外部执行；仍不可用时只能报 `blocked` / `not_run` / `not_verified`，不得用“完成”口吻。
+- **截图链路补跑**：`scripts/render_preview.py --check` 返回 `status=ready`，识别到 `Autodesk AutoCAD 2026 - [Drawing2.dwg]`；旧 summary 的 `target_handle=2A28` 捕获成功但返回 `focus_target_unavailable / resolved_count=0`，验证目标不可用时不会静默退回全图；提权只读 COM 回读当前 `CODEX_PREVIEW` 得到 385 个实体后，用真实句柄 `1F7C` 运行 `scripts/render_preview.py --capture-autocad-window --target-handle 1F7C --layer CODEX_PREVIEW`，返回 `focus.status=zoomed_to_bbox`、`resolved_count=1`、`source=target_handles`、`foreground_first=false`、`occlusion_safe=true`。
+- **截图证据**：聚焦截图为 `output/previews/repair-run-before-delivery-focused-handle.png`，像素检查为 `size=(1701, 1388)`、`gray_extrema=(0,255)`、`gray_stddev=30.422`，非空白；截图仍是 `visual_aid_only`，不替代 created handles / readback / audit。
+- **边界**：本轮只补规则和截图实际链路复验；未保存当前业务 DWG、未修改正式图层、未删除实体、不提升表 C。
+
+### TASK-SCOPED-CAD-PREVIEW-CAPTURE-01：任务级精准截图协议
+
+- **触发**：用户指出 AutoCAD 在后台或当前桌面不是顶层时，测试截图容易看不到；同时大 DWG 中有海量图块，截图必须聚焦本次任务 / 本次局部修复对象，而不是当前 CAD 整体视图。
+- **OpenSpec**：新增 `openspec/changes/task-scoped-cad-preview-capture/`，能力契约为 `task-scoped-cad-preview`；明确截图口径为“低打扰、强聚焦、弱证据”。
+- **底层实现**：`core/verification/render_preview.py` 新增任务级 focus target 选择：`target_handles`、`repair_plan.target_handles`、`repair_plan.target_bbox`、显式 `target_bbox` 优先于整批 `execution_summary.created_handles`；CLI 新增 `--target-handle`、`--target-handles`、`--bbox`、`--repair-plan`，并让 `--layer` 进入聚焦链路。
+- **防退全图**：`AutoCADComDriver.zoom_to_handles_extents()` 在句柄 extents 不可用时返回 `focus_target_unavailable`，不再静默 `ZoomExtents`；`render_preview` 也会把 `zoom_extents` 归类为 focus target unavailable，避免海量图块重新进入视野。
+- **Runner 接入**：`visual_cad_review` 默认用 `prepare_autocad_for_capture(..., execution_summary=...)`；`cross_machine_reverify` 会把 execute stdout 写为 `migration-reverify-execution-summary.json` 并传给截图；`foundation_batch_training` 在 `capture_preview=true` 时写入 `remaining_21_preview.png` 和结构化 `visualPreview`。
+- **证据边界**：所有 preview payload 均保留 `role=visual_aid_only`；截图只用于目视复核和局部修复确认，不替代 created handles / readback / audit 的几何证明。
+- **验证**：CAD-MCP venv focused tests `tests.core.test_render_preview`、`tests.core.test_table_c_evidence_gate`、`tests.core.test_beta_cross_machine_02_gate`、`tests.core.test_cad_foundation_remaining_training` 共 40 tests OK；`openspec.cmd validate --all --strict --json --no-interactive` 11/11 changes pass。
+- **边界**：本包不运行真实 CAD、不保存当前 DWG、不修改正式图层、不提升表 C；线型表、尺寸样式和复杂 visual smoke 的批量接入作为后续扩展。
+
+## 2026-06-02
+
+### CAD-TRAINING-PROMOTION-GATE-01：训练沉淀 Promotion Gate 与 A-to-A 校准门禁
+
+- **触发**：用户要求把“白话 -> 执行 -> 校验 -> 失败修复 -> 规则沉淀 -> A-to-A 校准 -> 原任务回测 -> 事实源同步”作为训练链路可自动同步的环节，避免每次训练结束后还要人工追问“规则漏没漏写、工作台有没有同步、Agent 有没有校准”。
+- **实现**：新增 `core.training.promotion_gate`，正式训练 promotion 会输出 `promotionGate`，包含 `updateTrainingSource`、`updateWorkbench`、`updateBaseRules`、`updateTaskRules`、`updateAgentCalibration`、`updateChecker`、`retestOriginalTask` 七项决策和 `agentCalibration` 正反例 / 证据边界。
+- **防误沉淀**：`quick_trial` 被排除在 promotable acceptance 之外，只能是 `promotionLevel=observation`；未知 `capabilityId` 不再 fallback 到 `cad_designer`；底座规则、单项规则和检查器 delta 只标为 `needs_reviewed_package`，不由训练脚本静默写长期规则。
+- **纠错链路**：`write_learning_promotion_report` 会为失败 / 纠错报告写入候选 `promotionGate`，说明是否需要 reviewed package、Agent 校准和原任务回测；`mutated_targets` 仍为空，实际规则修改必须另包执行。
+- **工作台门禁**：`scripts/run_training_workbench_agent_check.py` 新增 `systemized_training_has_promotion_gate` 和 `promotion_gate_decisions_complete`；`scripts/sync_training_workbench.py` 的 sync report 暴露 `learning_promotion.promotionGate`。
+- **同步结果**：已运行 `scripts/sync_training_workbench.py --skip-coverage`，刷新 `capability-map-data.js`、`output/training_learning/agent_learning_ledger.json` 和 Agent memory / prompt 派生文件；Agent check 39/39 pass。
+- **验证**：`tests.core.test_training_learning_promotion` 10/10 OK；`tests.core.test_training_workbench_sync` 15/15 OK。
+- **边界**：本包不运行真实 CAD、不提升表 C、不自动修改全局规则 / 检查器 / 资产 registry；这些仍需 reviewed package 和原任务回测证据。
+
+### CAD-AGENT-TASK-CHAIN-01：系统任务链路整合
+
+- **触发**：用户指出上一版训练闭环仍有价值，但还缺少“白话 -> Agent 语义拆分 -> 根据规则拆复杂任务 -> 分发执行”的执行层闭环；两条链路都应沉淀到系统文档。
+- **实现**：新增 `docs/architecture/cad-agent-task-chain.md`，把执行编排链路和训练学习链路合并为系统默认流程，覆盖输入分流、语义拆分、单一子任务模型、Agent 分发、执行前门禁、验证、训练回流、A-to-A 校准和事实源同步。
+- **入口同步**：`CORE_CONTEXT_BRIEF.md`、`docs/architecture/README.md`、`docs/training/global-agent-pipeline.md`、`docs/training/README.md` 和 `docs/governance/cad-agent-rules.md` 已接入该总链路，避免后续只按训练 README 或单个 Agent pipeline 片面恢复。
+- **风险记录**：`docs/status/issues.md` 新增“执行闭环和训练闭环割裂”问题，明确后续根源修复必须判断是否同步底座规则、单一任务规则、检查器、Prompt / memory 和 A-to-A 校准。
+- **边界**：本包只做架构 / 规则文档沉淀，不运行真实 CAD、不新增训练证据、不提升表 C。
+
+### CAD-NATIVE-ASSET-REUSE-HARDENING-01：真实 CAD 跨 DWG 复用加固验证
+
+- **触发**：用户打开 AutoCAD 后，要求自动加固校验上一轮“语义资产复用升级”中尚未新增真实 CAD-native 证据的边界。
+- **执行**：先跑 `scripts/render_preview.py --check` 和 `scripts/self_check.py`；普通沙箱下 `scripts/reuse_system_asset.py --workflow "放一个线型表到当前图"` 因 COM 隔离无法取得活动 `AutoCAD.Application`，按 GUI/COM 权限规则提权后重试成功。
+- **真实 CAD 复用**：从 `libraries/system_library/drawing_standards/basic/standard_assets.dwg` 复用 `linetype_style_summary_table` 到当前 `Drawing2.dwg` 的 `CODEX_PREVIEW`；`copyMethod=copyobjects_handle_diff`，source selected 450、created handles 450、readback 450、`savedCurrentDwg=false`。
+- **截图证据**：`scripts/render_preview.py --capture-autocad-window --execution-summary ...` 成功用 AutoCAD 客户区 `PrintWindow` 截图，按 450 个 handles 的几何 extents 自动取景，截图路径为 `output/previews/system-asset-reuse-hardening-20260602.png`。
+- **机器证据**：复用报告为 `output/validation_runs/system-assets/cad-native-hardening/reuse_workflow_real.json`；补充硬断言检查了 status、workflowStatus、task count、created/readback count、target layer、copy method 和 `savedCurrentDwg=false`。
+- **边界**：本轮只证明已沉淀线型表资产可真实跨 DWG 写入当前业务 DWG 的预览层且不保存当前业务 DWG；系统资产 DWG 新增原生内容后的 `Saved=true` / 打开复审链路，仍需在真正“沉淀资产 CAD-native 写入”时单独验证。
+
+### UTF8-FIRST-CAD-ASSET-GUARD-01：中文编码前置门禁
+
+- **触发**：用户指出通用资产 DWG 沉淀第一步曾出现中文乱码，虽然后续截图自验修复，但底座不应先做错再修。
+- **实现**：新增 `core.runtime.encoding_guard`，检测 `??`、`�`、`绾垮瀷` / `鏍峰` 等典型中文编码损坏；`scripts/_bootstrap.py` 强制设置 `PYTHONUTF8=1`、`PYTHONIOENCODING=utf-8` 并重配 stdout/stderr。
+- **沉淀入口**：`core.assets.system_asset_sedimentation.sediment_system_asset` 在写 `assets.json` / `registry.json` 前执行 `encodingPreflight`；项目路径、资产名、别名、用途、来源文档、反馈路径等已损坏时直接 fail，不写合同、不打开 / 保存 CAD。
+- **绘图入口**：`core.training.linetype_table_demo.validate_visible_text` 在绘制前检查 visible text，问号化和伪中文 mojibake 都会前置失败。
+- **CLI**：`scripts/sediment_system_asset.py` 与 `scripts/draw_linetype_table.py` 输出严格 JSON。
+- **验证**：`tests.core.test_script_bootstrap` + `tests.core.test_system_asset_sedimentation` + `tests.core.test_linetype_table_demo` + `tests.core.test_system_asset_reuse` 35/35 OK，覆盖 UTF-8 环境强制、沉淀前拒绝乱码且不写 registry、CLI 结构化 JSON fail、线型表绘制前拒绝 mojibake。
+- **边界**：该门禁防止已损坏的文本进入 CAD / 资产合同；若外部终端已经把用户输入破坏，它会阻断并要求改用 UTF-8 文件 / 模块 payload，而不是尝试猜回原文。
+
+### SYSTEM-ASSET-REUSE-WORKFLOW-01：跨 DWG 复用工作流与主系统理解力
+
+- **触发**：用户指出未来系统资产库会有很多内容，真实需求不只是跨 DWG 复制，而是语义拆分、任务分配、资产寻找和精准复用。
+- **实现**：`core.assets.system_asset_reuse` 从单资产 query 扩展为 workflow 层，新增显式 / 隐式资产触发判断、候选排序、多资产任务拆分、`partial` 阻断、目标槽位分配和 workflow apply 汇总回读；润色加固后，copy 返回 handles 但当前 DWG 读不回时不再判为 `asset_reused`，而是停在 readback blocked 状态。
+- **CLI**：`scripts/reuse_system_asset.py` 新增 `--workflow`，可 plan-only 生成 `system_asset_reuse_workflow`，也可连接当前 AutoCAD 执行 ready 子任务；输出使用严格 JSON，禁止 `NaN` / `Infinity` 等非标准 JSON 值。
+- **规则**：`AGENTS.md`、`docs/governance/cad-agent-rules.md`、`docs/architecture/system-asset-sedimentation-protocol.md` 和 `docs/architecture/system-asset-reuse-workflow.md` 已写入跨 DWG 复用工作流：无显式“资产”但强匹配时先查系统库；无资产信号返回 `not_asset_reuse_request` 后交回普通 `CAD_PLAN`；来源不清必须保留 `needs_precise_native_source`。
+- **验证**：`tests.core.test_system_asset_reuse` 13/13 OK；关联 `tests.core.test_system_asset_reuse` + `tests.core.test_system_asset_sedimentation` + `tests.core.test_linetype_table_demo` 27/27 OK，覆盖隐式强匹配、多资产拆分、单句多资产识别、partial 阻断、workflow fake-driver 写入回读、无 ready plan 阻断、读不回不算通过、负向探针和 CLI plan-only。
+- **边界**：本包增强主系统理解与 workflow 合同；真实 CAD 复制能力沿用 `SYSTEM-ASSET-REUSE-INSERT-01` 证据。复杂 block 属性保持、CTB/STB / plot、跨图样式依赖和自动布局避让仍需后续专项验证。
+
+### SYSTEM-ASSET-REUSE-INSERT-01：系统资产语义检索与跨 DWG 复用
+
+- **触发**：用户要求跨另一个 DWG 的插入复用落地；未来可能说“从 XX 资产调用 XX 放到当前 DWG”，甚至不特别描述资产来源时，Agent 也要智能判断是否应从已沉淀资产库检索并写入当前文件。
+- **实现**：新增 `core/assets/system_asset_reuse.py` 与 CLI `scripts/reuse_system_asset.py`。入口会读取 `libraries/system_library/registry.json`，按 asset id、名称、别名、用途、标签、场景标签和 `retrieval.matchText` 做语义匹配，并生成 source spec / target layer / base point / save boundary 复用计划。
+- **CAD 写入**：`AutoCADComDriver.copy_entities_from_dwg()` 支持从系统资产 native DWG 复制到当前活动 DWG；优先尝试 AutoCAD `CopyObjects`，若 COM 返回不稳定则用源 DWG readback 重放 line / text / circle / arc / polyline，保留常见颜色、线宽、线型和线型比例。写入默认只作用于 `CODEX_PREVIEW`，并保持 `savedCurrentDwg=false`。
+- **阻断边界**：匹配到资产但没有 `includedHandles`、`blockName`、verified `style_standard` 或其它精确来源时返回 `needs_precise_native_source`；不得从 whole modelspace、current screen、all visible 或训练面板硬拷贝。
+- **真实 CAD 验证**：用新的未保存临时 DWG 作为当前目标，从 `libraries/system_library/drawing_standards/basic/standard_assets.dwg` 复用 `linetype_style_summary_table`；source selected 450，created handles 450，readback 450，目标 `Drawing7.dwg` 未保存。报告 `output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json`，截图 `output/previews/system-asset-reuse-linetype-table-20260602.png`。
+- **资产合同**：`linetype_style_summary_table` 已追加 `reuseReplay` 证据，`verification.status=native_dwg_reuse_verified`，并把 `CAD insertion replay from a different drawing` 从 `notChecked` 移入 checked。
+- **验证**：`tests.core.test_system_asset_reuse` + `tests.core.test_system_asset_sedimentation` 15/15 OK；`git diff --check` 对本轮代码文件无空白错误。
+- **边界**：当前证明系统资产展示几何 / 样式表可跨 DWG 写入当前预览层；复杂对象 block 属性、跨图 block definition 属性保持、CTB/STB / plot 输出和保存业务 DWG 仍需后续专项验证。
+
+### SYSTEM-ASSET-NATIVE-SAVE-REVIEW-01：系统资产 DWG 保存与复审授权
+
+- **触发**：用户要求后续说“沉淀 XXX 资产”时，对应系统资产 DWG 添加内容后都必须保存，并在沉淀后默认打开对应 DWG 供人工复审。
+- **规则**：`AGENTS.md`、`docs/governance/cad-agent-rules.md` 和系统资产协议已明确：沉淀口令默认授权 Codex 对对应分类的系统资产 DWG 执行必要的创建、打开 / 激活、写入和保存。
+- **保存门槛**：只要本轮向 `libraries/system_library/**/**/*_assets.dwg` 或资产合同解析出的 `nativeDwg` 添加、替换或修复了原生 CAD 内容，必须保存该 DWG，并回读活动文档路径、`Saved=true` 和关键实体 / 样式证据。
+- **人工复审**：沉淀收尾默认打开 / 激活对应系统资产 DWG，让用户直接在 AutoCAD 里复审；若来源不足或没有生成 DWG，则只登记合同并说明未打开原因。
+- **边界**：该授权只覆盖系统资产库 DWG，不覆盖用户当前业务 DWG、原始图纸、正式图层、全模型空间清理或非系统资产文件的保存 / 覆盖；这些仍需另行明确授权。
+- **验证**：文档口径更新后运行 `git diff --check` 通过；本包只改规则和状态记录，不连接真实 CAD、不提升表 C。
+
+### LINETYPE-TABLE-INTEGRATED-LAYOUT-02：线型表整合双栏与样例自适应
+
+- **触发**：用户指出 42 行线型表不应因 24 行被硬分页到旁边，`开启范围线` 圆弧样例越过本行框线，且表格行距不应被固定尺寸策略卡死。
+- **判断**：24 行不是 CAD 或表格上限，而是 Agent / 生成器采用了过保守的 `paged_table` 布局建议；`开启范围线` 属于样例几何按固定半径和偏移绘制，未受样例单元格 bbox 约束。
+- **实现**：`core.training.linetype_table_demo` 改为 `integrated_dual_panel` 单外框双栏；行高策略为 `adaptive_min_height`，样例绘制策略为 `fit_to_sample_cell_bbox`，`swing_arc` 和 `batting` 等复合样例按单元格高度自适应半径、振幅和边距。
+- **覆盖扩展**：线型表扩为 42 行，覆盖基础图案线型、工程与家装语义、专业管线语义、边界与控制线、复合模拟线型；继续保留颜色、线宽、线型比例、`by_layer` 和多对象组合回读。
+- **真实 CAD**：已清理目标区域旧 `CODEX_PREVIEW` 表格并重画最终版；451/451 handles 回读，`sampleOutOfCellCount=0`、`solidFillEntityCount=0`、`styleVerification.status=pass`；最终报告 `output/validation_runs/linetype-table/integrated-real/linetype_table_report.json`，截图 `output/previews/linetype-table-integrated-20260602.png`。
+- **验证**：`tests.core.test_linetype_table_demo` 3/3 OK；后续联合测试和 `git diff --check` 见本轮交付。
+- **边界**：真实 CAD 操作只作用于 `CODEX_PREVIEW`；未保存 DWG，未修改正式图层，不提升表 C。
+
+### LINETYPE-TABLE-LAYOUT-01：线型表布局生成器根修
+
+- **触发**：用户指出线型归纳表出现不需要的实心填充，标题区排版不舒服，左侧序号可用阿拉伯数字，且“基础图案线型 / 工程与家装语义 / 复合模拟线型”等分组标题被竖线切割。
+- **判断**：主要根因是表格布局生成器缺少合并行和布局审计，不是单纯语义理解或 Prompt 问题；Prompt 只能提醒，真正防复发需要代码和测试约束。
+- **实现**：`core.training.linetype_table_demo` 将序号改为 `1..26`，标题区按整行合并处理，分组标题行不画内部竖线，普通数据行才画分段竖线；生成器明确不使用填充 / 遮罩。
+- **报告加固**：报告新增 `layoutPolicy`、`layoutChecks` 和 `created_handles`；机器检查包含 `solidFillEntityCount=0`、`groupRowVerticalSegmentCount=0`、`rowNumberStyle=arabic`，后续重取景和局部修复可按句柄执行。
+- **真实 CAD**：已清理旧表区域并在 `CODEX_PREVIEW` 重画最终版；260/260 handles 回读，问号文本 0、英文混入 0，流式绘制记录 26 个 item complete；最终报告 `output/validation_runs/linetype-table/layout-fix-real/linetype_table_report.json`，截图 `output/previews/linetype-table-layout-fixed-focused-20260602.png`。
+- **验证**：`tests.core.test_linetype_table_demo` 3/3 OK；`tests.core.test_linetype_table_demo tests.core.test_cad_foundation_remaining_training` 19/19 OK；`git diff --check` 对本轮文件无空白错误。
+- **边界**：本轮只修改预览表生成器、脚本报告和状态记录；真实 CAD 操作只作用于 `CODEX_PREVIEW`，未保存 DWG，未修改正式图层，不提升表 C。
+
+### LOCAL-REPAIR-FIRST-01：原位局部修复优先
+
+- **触发**：用户指出回测校验发现局部错误后，不应每次在旁边重新画完整测试内容；例如文字问号乱码应删改对应文字并在原位置补回，而不是另起一整张表。
+- **规则**：新增“原位局部修复优先”：已有上一轮 `execution_summary`、created handles 或 CAD readback 时，先生成 `repair_plan`，按 `target_handles`、`target_bbox`、实体类型和失败原因定位错误对象。
+- **允许操作**：用户开放删除编辑命令后，默认只允许对 `CODEX_PREVIEW` 中被证据锁定的错误对象执行 `update`、`delete_replace` 或 `add_missing`；不得扩大为清空整图、全模型空间、全部可见对象、正式图层、保存或覆盖 DWG。
+- **训练链路**：feedback fail 后优先原位修复；局部乱码、单条线型错误、某个 hatch 比例不对、局部缺线或标注错位，不得在旁边整套重画。
+- **退回重画条件**：只有 handles 失效、对象被炸开 / 删除、局部修复会破坏整体拓扑，或根因来自全局坐标系 / 比例 / 布局时，才允许整块重画，并须先说明原因。
+- **边界**：本包只改规则、排障手册和训练链路口径；不连接真实 CAD、不删除现有实体、不保存 DWG、不提升表 C。
+
+### VISUAL-FOCUS-SCOPE-01：截图 / 这里 / 旁边统一为视觉限定锚点
+
+- **触发**：用户澄清“旁边”只是一个例子；截图指示、图片里的标记、或者不截图但说“旁边”，本质都是希望 Agent 按用户当前眼睛看到的 CAD 画面定位。
+- **实现**：`core.quick_tasks.nearby_draw` 新增 `visual_context` 与 `input_scope`，识别“截图 / 图片 / 这里 / 看到 / 旁边 / 附近 / 方向词”等视觉限定请求，并把视觉来源、锚点策略、checked / not_checked 写入报告和 `placement_resolution`。
+- **CLI**：`scripts/run_quick_nearby_draw.py` 新增 `--visual-source` 与 `--visual-target-hint`，可显式记录 `user_screenshot`、`current_cad_view`、`marked_region` 等来源。
+- **阻断**：截图或视觉词不会自动变成 CAD 坐标；没有当前视口、焦点不唯一、或截图像素无法映射到 CAD 视口时仍返回 `blocked` / `needs_confirmation`，不硬猜落图。
+- **验证**：`tests.core.test_quick_nearby_draw` 从 2 个扩展到 4 个用例，覆盖“按截图这里画”走 selected/current-view 锚点，以及多焦点当前视口需要确认。
+- **边界**：本包提升的是视觉限定请求的路由和证据字段，不运行真实 CAD，不保存 DWG，不证明截图像素到 CAD 坐标映射，不提升表 C。
+
+### QUICK-NEARBY-DRAW-01：旁边快画轻量入口
+
+- **触发**：真实 quick trial 曾因读上下文、查 helper、手写全局 bbox 脚本、误画重画和清理误对象耗时 4 分钟以上；核心慢点不是 CAD 写入，而是没有固定快入口。
+- **实现**：新增 `core/quick_tasks/nearby_draw.py` 和 `scripts/run_quick_nearby_draw.py`。入口直接执行 `CAD_VIEW_CONTEXT -> placement_resolution -> CODEX_PREVIEW -> created handles/bbox readback`，默认不写中间 CAD_PLAN / dry-run / 多份 JSON；只有传 `--output-dir` 才保存报告。
+- **对象**：当前支持 `sofa / couch / 沙发` 轻量平面符号和通用矩形，沙发默认 `1800 x 750`，控制在 12 个 preview handles，避免超过 quick trial 的 20 对象升级边界。
+- **阻断**：读不到当前视口、焦点不唯一或无可用槽位时返回 `blocked` / `needs_confirmation`，不退回全局 `CODEX_PREVIEW` bbox 或远处空白。
+- **验证**：`tests.core.test_quick_nearby_draw` 2/2 OK；`tests.core.test_quick_nearby_draw` + `tests.core.test_designer_view_nearby_placement` + `tests.core.test_quick_composite_task` 16/16 OK；`scripts/run_quick_nearby_draw.py --no-cad --phrase "在旁边画个沙发" --object-type sofa` pass，fake end-to-end 约 0.0005s。
+- **边界**：提速的是 quick trial 执行路径；真实 CAD 仍受 COM snapshot / draw / readback 影响，不保存 DWG、不删除实体、不提升表 C，不代表用户视觉验收或施工图准确。
+
+### CAD-STYLE-SEMANTICS-CONTRACT-01：CAD 线宽线型颜色语义样式契约
+
+- **触发**：用户指出第 22 项当前只有粗 / 中 / 细三条测试线，远不足以支撑家装家具图块和完整家装方案中的线宽、线型、颜色语义判断。
+- **OpenSpec**：新增 `openspec/changes/introduce-cad-style-semantics-contract/`，包含 proposal / design / specs / tasks；新 capability 为 `cad-style-semantics`。
+- **契约**：`drawing_standard_profile` 新增 `style_tokens`，`CAD_PLAN.drawing` 新增 `style_token`、`style_role`、`style_resolution`、`entity_style_overrides` 和 `style_assumptions` 等加法字段。
+- **默认种子**：`codex_preview_beta` 增加墙体粗连续线、家具中线、家具中心线、家具内部细线、隐藏虚线、标注虚线等 style token；preview-only 仍只写 `CODEX_PREVIEW`，同时保留 `semantic_layer`。
+- **证据流**：`apply_drawing_standard_to_plan` 负责解析 token；dry-run 和 preview execution summary 输出 `style_evidence`；`draw_symbol_glyph` primitive 可覆盖局部 style token，用于家具图块内部线条层级。
+- **Review 后加固**：独立 Review Agent 指出颜色继承、未解析 token 和颜色回读闭环不足；已补 `by_layer` 不覆盖实体颜色、`style_token` / `layer_role` 冲突拒绝、未解析 `style_token` 校验失败、fake / COM-like readback 保留 `Color`。
+- **验证**：`tests.core.test_drawing_standard_profile`、`tests.core.test_execute_plan`、`tests.core.test_symbol_glyph_cad_smoke`、`tests.core.test_validation_edges`、`tests.core.test_verification_report` 48 tests OK；后续 full unittest / OpenSpec / doc audit 见本轮交付。
+- **边界**：本包不运行真实 CAD、不保存 DWG、不导出原生绘图标准库、不验证 CTB/STB 或 plot 输出、不提升表 C；截图仍不能替代 CAD 属性回读或打印验证。
+
+### PROMPT-CONTRACT-SHARED-01：共享 Prompt 合同与 addendum 去重护栏
+
+- **触发**：系统主 Agent 与多个 pipeline Agent 的 `prompt_addendum.md` 重复沉淀了同一批 CAD 安全、证据和视觉反馈规则；规则本身正确，但多处分叉会增加后续同步成本。
+- **收束**：新增 `agents/COMMON_PROMPT_CONTRACT.md`，统一维护中文标注、画布避让、created handles 回读、`CODEX_PREVIEW`、视觉 / 位置反馈和证据边界等共用规则。
+- **生成器**：`core/training/learning_promotion.py` 继续在 `training_memory.json` 保留完整经验，但生成 `prompt_addendum.md` 时过滤共用规则，只写角色专属新增；每个 agent update 的 source refs 同步包含共享合同。
+- **工作台契约**：`scripts/build_capability_map_data.py` 让每个 Prompt contract 都引用共享合同；`scripts/sync_training_workbench.py --skip-coverage` 已重建 `capability-map-data.js` 并刷新 learning promotion。
+- **护栏**：`scripts/run_training_workbench_agent_check.py` 新增 `common_prompt_contract_referenced` 和 `prompt_addenda_do_not_duplicate_common_rules` 两项检查，防止 addendum 后续重新复制通用规则。
+- **验证**：`tests.core.test_training_workbench_sync` + `tests.core.test_training_learning_promotion` 19 tests OK；Agent check 37/37 pass。
+- **边界**：本包只治理 Prompt 合同、工作台 source refs 和训练沉淀生成逻辑；不运行真实 CAD、不修改 DWG、不提升表 C。
+
+### DESIGNER-VIEW-NEARBY-PLACEMENT-01：设计师视角“旁边 / 附近”放置语义
+
+- **触发**：用户指出“在旁边画个沙发看看”的“旁边”更接近自己当前眼睛看到的 CAD 视角，而不是全局坐标或全图最右侧空白。
+- **OpenSpec**：新增 `openspec/changes/define-designer-view-nearby-placement/`，包含 proposal / design / specs / tasks；新 capability 为 `designer-view-nearby-placement`。
+- **实现**：新增 `core/placement/designer_view_nearby.py`，引入 `CAD_VIEW_CONTEXT -> focus_anchor -> placement_resolution -> CAD_PLAN absolute base_point` 链路；新增 `core/schemas/cad_view_context.schema.json` 和 `core/schemas/placement_resolution.schema.json`。
+- **规则**：`agents/cad_designer/rules.md` 写入“旁边 / 附近”必须按当前视口、选中对象、最近 handles 或可见内容簇解析；不得先画远再 zoom/pan 伪装同屏可见。
+- **验收入口**：新增 no-CAD fixture 和 `tests/core/test_designer_view_nearby_placement.py`；新增 `scripts/run_designer_view_nearby_smoke.py`，真实 CAD 时只写 `CODEX_PREVIEW`，用 created handles / bbox 对原始视口做邻近审计。
+- **复盘加固**：本轮真实 quick trial 曾绕过上述入口，手写全局 `CODEX_PREVIEW` bbox 右侧放置脚本，导致沙发落到当前左上视觉焦点很远处；共享 Prompt 合同已补充“邻近词必须走当前视口链路，读不到焦点则 blocked / needs_confirmation，不得临时脚本绕过”。
+- **边界**：本包证明的是当前视域邻近放置语义，不训练具体沙发 / 家具对象族，不提升表 C，不替代施工图准确性或用户目视验收。
+
+### SYSTEM-ASSET-SEDIMENTATION-PROTOCOL-01：系统资产沉淀协议
+
+- **触发**：用户明确提出未来会指认当前 CAD 文件中的对象或标准为“通用资产”，希望 Agent 自动知道要放到仓库中的稳定分类资产库，而不是只停留在当前 DWG 或训练报告里。
+- **协议**：系统资产沉淀升级为四件套：机器契约、CAD 原生资产位置、应用 / 验收工具、全局索引。说明文档为 `docs/architecture/system-asset-sedimentation-protocol.md`。
+- **实现**：新增 `core/assets/system_asset_sedimentation.py` 与 CLI `scripts/sediment_system_asset.py`；支持把点分分类如 `furniture.seating.sofas` 映射到 `libraries/system_library/furniture/seating/sofas/`，连续沉淀同类资产时更新同一个 `assets.json` 和同一个 `*_assets.dwg` 位置。
+- **V2/V3 加固**：资产条目新增 `candidate/systemized/verified/deprecated` 状态流、`retrieval` 检索契约、`native.layoutPlan` 分类 DWG 排版槽位、`versioning` 冲突 / 变体记录、`verification` 元数据验收和 `feedbackLoop` 失败回流；V3 追加 `assetKind`、`sourceBoundary`、`exportManifest` 与 `antiContamination`，对象 block export 只允许精确 handles / bbox / named block 来源，样式标准强制走 `style_export`；同 ID 尺寸或 blockName 冲突时可 `update_existing`、`reject` 或 `new_variant`。
+- **初始资产包**：新增 `libraries/system_library/registry.json`；登记 `drawing_standards.basic` 包并预留 `standard_assets.dwg`；登记 `furniture.seating.sofas` 包并预留 `sofa_assets.dwg`。
+- **边界**：当前实现只登记合同、索引、排版计划和元数据验收，不连接 AutoCAD、不保存 DWG、不导出 block、不删除实体、不修改正式图层；`nativeDwgExists=false` 或 `native DWG geometry` 在 `notChecked` 时不得声称原生 DWG 已沉淀完成。
+- **验证**：`tests.core.test_system_asset_sedimentation` 11/11 OK；CLI smoke 在临时 project root 写入 sofa 资产合同并覆盖 block export manifest；`scripts/sediment_system_asset.py --verify --category furniture.seating.sofas` / `drawing_standards.basic` 只验证元数据合同；后续真实 CAD 原生导出需另包接入。
+
+### TRAINING-LINEWEIGHT-LINETYPE-STANDARD-01：第 22 项线宽线型标准复训
+
+- **触发**：用户截图指出第 22 项“线宽线型标准”虽然 CAD 开启了显示线宽，但测试线条实际没有变化，线宽、虚线 / 线型差异都没有被证明。
+- **根因**：`cad-layer-lineweight-standard` 面板原先只画三条普通 `draw_line`；`AutoCADComDriver.draw_line` 和 `FakeCadDriver.draw_line` 对传入样式参数没有写入实体属性；训练报告只检查句柄、图层和中文标注，没有回读 `Lineweight` / `Linetype`。
+- **修复**：第 22 项样例改为三档真实 CAD 属性：粗线墙体 `Lineweight=70` + 连续线，中线家具 `Lineweight=35` + `CENTER`，细线标注 `Lineweight=13` + `DASHED`，虚线 / 中心线额外设置 `LinetypeScale=25`；真实 AutoCAD driver 支持加载并设置线型，Fake driver 和 `inspect_dwg` 支持回读样式属性。
+- **验收加固**：`foundation_batch_training` 新增 `lineweight_linetype_standard` 检查和 item 级 `styleEvidence`，必须回读到 `lineweights=[13,35,70]`、`linetypes=[CENTER,CONTINUOUS,DASHED]`、`linetypeScales=[1.0,25.0]` 才算通过。
+- **真实 CAD focused 复训**：只跑 `--only cad-layer-lineweight-standard`，`scope.mode=focused`，1/1 pass、12/12 handles 回读、全部 `CODEX_PREVIEW`、未保存 DWG；报告为 `output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json`，截图为 `output/previews/task22-lineweight-linetype-focused.png`。
+- **边界**：这是基础第 22 项 focused 纠偏和验收闸门加固；不覆盖剩余 21 项整批验收，不提升表 C，不代表完整施工图能力。
+
 ## 2026-06-01
+
+### TRAINING-STREAM-DEMO-01：基础训练可选流式演示模式
+
+- **触发**：剩余 21 项基础训练已能高速批量跑完，但旁观时希望看到面板逐步完成和关键图元短暂停顿，而不是只看最终结果。
+- **实现**：`scripts/run_cad_foundation_remaining_training.py` 支持显式 `--stream-demo` hybrid streaming；默认高速批量执行不变且不插入 refresh / zoom / delay。流式模式支持面板完成后暂停、演示用 refresh / 可选 zoom，以及每面板有限数量关键图元短暂停顿；典型参数为 `--stream-demo --stream-item-delay 0.35 --stream-operation-delay 0.12 --stream-operation-budget 5`，需要禁用自动缩放时可加 `--stream-no-zoom`。
+- **验证**：unit tests / fake CLI smoke 已覆盖流式参数、报告字段和演示检查；真实 CAD smoke 已通过，证据在 `output/validation_runs/stream-demo-real/remaining_21_report.json` 和 `output/previews/stream-demo-real.png`。
+- **边界**：流式演示只影响显示节奏，不改变真实验收。通过仍看 `CODEX_PREVIEW` handles/readback、图层守卫、dry-run、watchdog 和报告；不保存 DWG、不覆盖原图、不写正式图层；截图只作 visual aid，不提升表 C。
+
+### TRAINING-LATENCY-ROUTING-01：训练轻重链路量化路由
+
+- **触发**：用户指出“画个正方体 + 填充”这类小动作本应几秒级完成，但实际被套入大量训练验收、截图、同步和沉淀工序，导致链路过重。
+- **规则新增**：`AGENTS.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md` 和 `agents/cad_designer/rules.md` 写入三档量化路由：`quick_trial`、`focused_retraining`、`formal_acceptance`。
+- **量化口径**：`quick_trial` 默认 ≤ 2 分钟，只写 `CODEX_PREVIEW`，最多 1 次 CAD 写入 + 1 次关键回读，跳过完整 validate / dry-run、截图、工作台同步和 learning promotion；`focused_retraining` 默认 ≤ 8 分钟，只覆盖点名能力或显式列表；`formal_acceptance` 才执行完整训练闭环，且每个子动作仍受 30 秒 watchdog。
+- **升级条件**：快试若需要修改已有实体、超过 20 个新对象、涉及正式图层 / 保存 / 删除、关键回读失败、用户要求正式准确性或超过 2 分钟仍无关键证据，必须说明原因并升级到 focused / formal，不得静默套重链路。
+- **同步 / 验证**：`docs/training/pipeline-changelog.md`、`docs/status/current.md`、`docs/status/issues.md` 和 `CORE_CONTEXT_BRIEF.md` 已登记本规则；`scripts/sync_training_workbench.py` pass，Agent check 35/35 pass。
+- **边界**：本包只改规则和链路文档，不运行真实 CAD、不删除旧预览实体、不提升表 C。
+
+### COMPOSITE-TASK-ROUTING-01：未列入计划的复合任务动态编排规则
+
+- **触发**：用户说明未来会临场组合已有能力，例如“截图里的沙发 + 标注尺寸”，但不会把每个组合都写入 V2 训练计划，否则计划会无限膨胀。
+- **规则新增**：`AGENTS.md`、`docs/training/README.md`、`agents/cad_designer/rules.md`、`docs/training/cad-designer-growth-path.md` 和 `docs/governance/cad-agent-rules.md` 写入复合任务协议：训练地图只列原子能力和代表性课程，临场组合默认动态编排。
+- **链路口径**：复合任务先拆为输入来源、对象 / 场景识别、尺度来源、绘图 / 修改 / 标注意图、`CAD_PLAN` 或结构化意图、validate / dry-run、`CODEX_PREVIEW`、readback / audit。
+- **证据边界**：必须声明 `evidence_source`；截图只能证明视觉定位和推断，截图 + 参照尺寸只能做比例估算，只有 DWG / created handles / 原 `CAD_PLAN` / 用户给定尺寸才能进入对应几何或标注审计。
+- **沉淀规则**：单次组合不污染 V2 训练地图；只有重复失败、可机器检查、可泛化为课程族或需要稳定验收器时，才晋升训练项、benchmark、检查器或规则包。
+- **同步**：`docs/training/pipeline-changelog.md`、`docs/status/current.md`、`docs/status/issues.md` 和 `CORE_CONTEXT_BRIEF.md` 已登记本规则。
+- **边界**：本包只改规则和链路文档，不运行真实 CAD、不新增训练项、不提升表 C。
+
+### TRAINING-HATCH-SOLID-SEMANTIC-01：第 12 项箭头语义位置实心填充校正
+
+- **触发**：用户指出“箭头处加强测试”不是在右侧另起模块，而是要读图中箭头 / 蓝圈语义，在原第 12 项面板上方空白处画同尺寸实心填充方块。
+- **根因**：第一次落图沿用 focused retraining 停放区逻辑，第二次又用旧 execution summary 坐标，导致 `SOLID` 方块落到右侧模块附近，而不是图三原面板箭头位置。
+- **修复**：改为从当前 AutoCAD `CODEX_PREVIEW` 里读取原第 12 项 8 个非 `SOLID` hatch 样本 bbox，反推当前原面板位置和样本边长，再在面板上方箭头语义位置画 1 个同尺寸 `SOLID` 实心正方形。
+- **机器证据**：实心方块边长 `245.0`，created handles=`2BF8, 2BF9`，回读 `polyline + hatch` 2/2，`pattern=SOLID`，全部在 `CODEX_PREVIEW`，未保存 DWG、未删除实体。
+- **视觉证据**：截图 `output/previews/cad-foundation-12-arrow-solid-fill-corrected.png`；结构化报告 `output/training_queues/cad-foundation-remaining-21/focused/image-arrow-solid-fill-square/report.json`。
+- **边界**：保留此前误画在右侧的预览实体，避免未经明确批准删除 CAD 对象；本轮是读图语义定位修正，不提升表 C，不代表完整施工图能力。
+
+### TRAINING-HATCH-FULL-FILL-01：第 12 项全填充 focused 测试
+
+- **触发**：用户要求第 12 项“填充与边界”加强测试全填充情况。
+- **脚本修复**：`core/training/foundation_panel_drawings.py` 新增 `SOLID_HATCH_SAMPLES` 与 `hatch_full_fill` 选项，生成 8 个 `SOLID` 实心填充样本；`scripts/run_cad_foundation_remaining_training.py` 新增 `--hatch-full-fill` focused CLI 开关。
+- **布局修复**：全填充样本尺寸和标签间距收紧，避免第二排标签与底部“已检查”行叠字；说明文字移到样本网格右侧空白区。
+- **验证**：`tests.core.test_cad_foundation_remaining_training` 8 tests OK；真实 CAD focused 复训 1/1 pass、31/31 handles 回读、8 个 hatch、全部 `CODEX_PREVIEW`、未保存 DWG。
+- **边界**：这是基础第 12 项 focused 复训入口和视觉样本增强；focused 报告不覆盖整批验收状态，不提升表 C。
+
+### TRAINING-SCOPE-GUARD-01：单项加深训练不得扩大为整批训练
+
+- **触发**：用户指出“任务 12 加深训练”被执行成剩余 21 项整批复跑，超出点名范围；类似地，若用户只给某个填充图案截图要求比例测试，也不应执行范围外动作。
+- **硬规则**：`AGENTS.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md` 和 `agents/cad_designer/rules.md` 写入训练范围边界：单项 / 子主题默认 focused retraining；只有明确说“全部 / 整批 / 重新跑所有 / 刷新整个队列”才允许 full batch。
+- **脚本修复**：`core/training/foundation_batch_training.py` 新增 `selected_capability_ids`、`scopeReason`、`trainingOptions` 和 `anchor_output_dir`；报告、plan、execution summary、queue state 写入 `scope.mode=focused`、`requestedCapabilityIds` 和子参数，且 focused 状态不覆盖整批验收。
+- **CLI 入口**：`scripts/run_cad_foundation_remaining_training.py` 新增 `--only`、`--scope-reason`、`--hatch-pattern`、`--hatch-scales`；默认 focused 输出到 `output/training_queues/cad-foundation-remaining-21/focused/<capability_id>/`，并使用整批输出目录作为停放区 anchor 来源。
+- **第 12 项子训练**：`core/training/foundation_panel_drawings.py` 支持 hatch pattern focus 和 scale list；例如 `--only cad-hatch-boundary --hatch-pattern ANSI31 --hatch-scales 0.25,0.5,1,2` 只生成该图案的 4 个比例样本。
+- **验证**：新增 focused 范围和 hatch 子范围回归测试；fake-cad focused CLI 证明只生成 `cad-hatch-boundary` 1/1，`postTrainingSync=not_required`，不会触发整批重新验收或完整工作台同步。
+- **边界**：这是范围控制和轻量复训入口修复；不运行真实 CAD 整批复训，不提升表 C，不删除旧预览实体。
+
+### TRAINING-HATCH-PATTERN-SAMPLES-01：第 12 项填充图样与比例复训
+
+- **触发**：用户要求在当前训练面板附近重新训练第 12 项“填充与边界”，创建 6-10 个小正方形，测试 CAD 常用自带填充图样，并对同一图样做不同比例对比。
+- **脚本修复**：`core/training/foundation_panel_drawings.py` 将第 12 项从单个斜线填充升级为 8 个小方格样板，覆盖 `ANSI31`、`ANSI32`、`ANSI37`、`AR-CONC`、`BRICK`、`GRAVEL`、`EARTH`；其中 `ANSI31` 使用 0.45 与 1.1 两种比例对比。
+- **回读增强**：`core/cad_io/autocad_com.py` 写入 hatch `PatternScale`；`core/verification/inspect_dwg.py` 回读 hatch `scale`，让 execution summary 能证明图样和比例，而不是只靠截图。
+- **真实 CAD 复训**：重跑 `scripts/run_cad_foundation_remaining_training.py`，`parking_anchor.source=previous_handles`，第 12 项 31/31 handles 回读，整轮 257/257 handles 回读、8 个 hatch、全部 `CODEX_PREVIEW`、未保存 DWG、未写正式图层。
+- **机器证据**：execution summary 中 hatch patterns 为 `ANSI31, ANSI31, ANSI32, ANSI37, AR-CONC, BRICK, GRAVEL, EARTH`，scales 为 `0.45, 1.1, 0.8, 0.75, 0.7, 0.65, 0.55, 0.6`。
+- **验证**：新增/更新 hatch 图样与比例回归测试；相关 26 tests OK；截图刷新为 `output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_preview.png`。
+- **边界**：本轮是基础第 12 项填充指令复训，不提升表 C，不代表完整施工图能力；未删除旧预览实体。
+
+### TRAINING-PARKING-ANCHOR-01：训练面板停放区跟随用户移动位置
+
+- **触发**：用户说明会为了查看方便手动移动已训练出的面板，不希望后续复训目标按整个画布最右侧不断漂移。
+- **规则新增**：训练复跑应优先读取上一轮 created handles，并以这些 handles 当前回读到的 bbox 作为训练停放区参考；旧 handles 无法回读时，才退回全局 `CODEX_PREVIEW` bbox 或原点。
+- **脚本修复**：`core/training/foundation_batch_training.py` 新增 `parking_anchor` 选择逻辑，报告记录 `source=previous_handles / global_preview_bbox / origin`、参考 bbox、basePoint 和回读句柄数。
+- **回归测试**：`tests/core/test_cad_foundation_remaining_training.py` 新增模拟：用户移动上一轮训练面板，同时远处存在其它预览实体；二次复训必须跟随上一轮 handles 的新位置，不得被远处实体拖到全画布右侧。
+- **边界**：本规则不删除旧预览实体、不保存 DWG、不修改正式图层；若用户炸开、删除或复制重画导致原 handles 失效，脚本只能退回全局 bbox 选区或要求人工确认。
+
+### TRAINING-FOUNDATION-CHINESE-LABEL-RETRAIN-01：基础剩余 21 项中文标注复训
+
+- **触发**：用户截图指出 `CAD 基础操作` 剩余 21 项训练面板仍残留多个英文可见标注，如 `checked`、`handles`、`bbox`、`locked`、`Rev-A`、`AUDIT/PURGE` 和 `checked/not_checked`。
+- **根因**：批量训练的 `chinese_labels` 验收只要求每条文字含有中文，无法阻断中英混排；第 29 项标题还从工作台数据源继承了旧的 `handle 与 bbox 报告`。
+- **修复**：`core/training/foundation_panel_drawings.py` 将面板可见文案和第 29 项标题改为中文；`scripts/build_capability_map_data.py` 将对应训练项名称 / 焦点改为“句柄与边界框”；`core/training/foundation_batch_training.py` 新增 `latin_terms=0` 运行时验收，报告文案也改为中文。
+- **回归测试**：`tests/core/test_cad_foundation_remaining_training.py` 新增可见文字英文术语扫描，覆盖 fake CAD 文本实体和报告标题；相关 20 tests OK。
+- **真实 CAD 复训**：重跑 `scripts/run_cad_foundation_remaining_training.py`，21/21 pass、235/235 句柄回读、全部 `CODEX_PREVIEW`、`chinese_labels` 为 `text_labels=65 latin_terms=0`；重新截图 `output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_preview.png`。
+- **沉淀与同步**：`scripts/sync_training_workbench.py` pass，Agent check 35/35 pass，learning promotion 31 items / 7 agents；真实输出文本扫描 86 条，英文术语 0 条。
+- **边界**：本轮是基础训练中文标注复训和验收闸门加固，不提升表 C，不代表完整施工图能力；未保存 DWG、未写正式图层、未删除正式实体。
+
+### TRAINING-FOUNDATION-REFLOW-RULE-01：基础能力回流复训规则
+
+- **触发**：用户指出复杂任务训练中可能反过来暴露基础功能不扎实，已完成基础训练不应被理解成永久封存交付状态。
+- **规则新增**：`AGENTS.md`、`docs/governance/cad-agent-rules.md`、`docs/training/README.md`、`docs/training/cad-designer-growth-path.md` 和 `agents/cad_designer/rules.md` 已写入“基础训练允许回流复训”口径。
+- **复训闭环**：复杂任务触发基础缺口后，必须记录触发任务和失败症状，映射到一个或多个基础训练项，修改相关脚本 / Prompt / 检查器 / 规则，重新训练基础项，再回测原复杂任务。
+- **证据口径**：旧 `systemized/pass` 证据保留为历史版本；新复训报告追加到 `training-sources.json`、learning ledger、Agent memory / Prompt addendum 和工作台同步链路。
+- **边界**：本规则不自动把 CAD 基础操作 31/31 改成未完成，不提升表 C；它只是允许并要求后续发现基本功问题时做二次 / 三次加强训练。
+
+### TRAINING-FOUNDATION-REMAINING-21-01：CAD 基础操作剩余 21 项自动化训练闭环
+
+- **触发**：用户指出训练工作台 `CAD 基础操作` 还有 21 个未完成项，要求写自动化脚本并自行完成训练、验收、沉淀和前端同步。
+- **脚本入口**：新增 `scripts/run_cad_foundation_remaining_training.py`；默认连接当前 AutoCAD COM，只写 `CODEX_PREVIEW`，执行剩余 21 项中文训练面板，生成结构化训练计划、dry-run、execution summary、验收报告和队列状态。
+- **Core 训练模块**：新增 `core/training/foundation_batch_training.py` 与 `core/training/foundation_panel_drawings.py`，覆盖多段线清理、hatch、boundary、圆角倒角、拉伸、block、xref/layout/plot、红线、线宽线型、选择、阵列、测量、清理、标注、文字引线、handle/bbox、图层污染和安全回滚。
+- **验收与安全**：真实 CAD 跑通 `cad-foundation-remaining-21`：21/21 pass，235/235 handles 回读，全部在 `CODEX_PREVIEW`；formal layer write / save / overwrite / delete 均被写保护拦截；单步 watchdog 均低于 30 秒；截图 `output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_preview.png` 已生成。
+- **沉淀与前端**：`docs/training/training-sources.json` 登记新队列状态和验收报告；`scripts/sync_training_workbench.py` pass，Agent check 35/35 pass；learning promotion 合计 31 项、7 个责任智能体；工作台中 CAD 基础操作 31/31 已 `systemized/pass`。
+- **修复顺手项**：learning promotion 和工作台读取训练验收 JSON 时改用 `utf-8-sig`，避免 PowerShell 或外部工具写入 BOM 后漏接事实源；通用验收检查支持 `all_items_generated`，不再只认历史 `all_10_items_generated`。
+- **验证**：`tests.core.test_cad_foundation_remaining_training` 与 `tests.core.test_training_learning_promotion` 合计 6 tests OK；真实 CAD 脚本 pass；`scripts/sync_training_workbench.py` pass。
+- **边界**：本包证明 CAD Designer Agent 的基础 CAD 操作训练项已通过并沉淀；不提升表 C，不声明完整施工图能力；截图只作目视辅助，机器结论以 handles/readback/checks 为准。
+
+### REPO-CONTEXT-HYGIENE-02：默认上下文瘦身与训练事实源 manifest
+
+- **触发**：用户担心旧 Core 开发留下太多 MD、旧状态和无关材料，会成为后续 Agent 的上下文负担，要求直接执行小型治理方案。
+- **入口收敛**：`AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md` 已统一读取顺序；默认从短入口恢复，只按任务展开 1-2 个文件，不再默认扫 `README`、状态页、handoff 和长期规则全文。
+- **历史降噪**：旧表 C 当前值从长期规则移出；`post-backlog.md` 的 99.68% 改为历史快照；旧路线图 stub 改指 `路线图入口.md` / `docs/roadmap/current.md`；Visual-First 旧计划和 shell layout 长文标记为 HISTORY-ONLY。
+- **训练事实源**：新增 `docs/training/training-sources.json`，登记队列状态、最终验收报告、learning ledger、Agent memory / Prompt addendum，并明确 `capability-map-data.js`、`capability-map.html` 是派生快照。
+- **代码边界**：新增 `core/training/source_manifest.py`；`scripts/build_capability_map_data.py`、`scripts/sync_training_workbench.py` 和 `scripts/run_training_workbench_agent_check.py` 接入 manifest；`core/` 中已清掉对 `scripts/` 的反向导入。
+- **收尾验收**：本轮 1-5 子包已按“上下文瘦身、历史降噪、事实源登记、工作台强校验、Core 边界与交接复核”闭环；后续只在新增训练队列或继续拆 `build_capability_map_data.py` 时再开小包。
+- **验证**：训练工作台同步 pass，Agent check 35/35 pass；`tests.core.test_training_workbench_sync`、`tests.core.test_training_learning_promotion`、`tests.core.test_script_bootstrap`、`tests.core.test_preview_only_audit`、`tests.core.test_cad_session_guard` 合计 30 tests OK。
+- **边界**：本包不移动最终训练证据、不重构 Core 主体、不提升表 C、不新增真实 CAD 几何证明。
+
+### TRAINING-TIMEOUT-CIRCUIT-BREAKER-01：自动化训练 30 秒超时与熔断保护
+
+- **触发**：用户准备未来大面积铺开自动化训练 CAD 任务，要求先写入防长时间卡住的保护机制，默认 30 秒限定，出问题时 Agent 先自己尝试解决。
+- **规则新增**：`AGENTS.md`、`docs/governance/cad-agent-rules.md`、`docs/training/README.md` 和 `agents/cad_designer/rules.md` 已写入单步 watchdog：CAD / 脚本 / 截图 / 回读 / 同步子动作默认最多等待 30 秒。
+- **自救边界**：超时后先读取 stdout / stderr、最近报告、队列状态和 CAD 会话状态，判断 CAD 窗口、COM 可见性、文件锁、路径、依赖、截图工具或快照过期等问题；同类重试最多 1 次，或最多 2 个相邻恢复动作。
+- **熔断条件**：同一训练项连续 2 次 30 秒超时，或同一队列连续 3 个子动作超时 / 失败，必须暂停到 `blocked` / `needs_user_review` 或等价状态。
+- **记录要求**：脚本输出或训练记录应包含 `timeoutSeconds: 30`、`selfRecoveryAttempted`、`circuitBreakerTriggered`、`blockedReason`、卡点、自救动作、保留证据和下一步建议。
+- **边界**：本包是规则层保护，未把所有训练执行器改成强制 timeout wrapper；后续脚本实现必须按此口径落字段和状态。
+
+### TRAINING-ARTIFACT-RETENTION-01：训练产物最小保留规则
+
+- **触发**：用户指出不希望每次训练后堆积一批测试脚本和临时产物，要求写规则，并确认第一批 10 项测试是否记录了错误点和优化点。
+- **现状检查**：`output/training_queues/cad-foundation-first-10/` 当前没有遗留 `.py` 一次性脚本，主要是队列状态、最终 10 项验收报告 / 预览图，以及少量中间 retry / execution summary；总量约 300KB。
+- **保留规则**：`AGENTS.md`、`agents/cad_designer/rules.md`、`docs/training/README.md` 已写入训练产物保留策略：长期只保留最终验收报告、队列状态、learning ledger / Agent memory / Prompt addendum 和最近一份人工复核预览图。
+- **清理规则**：中间 retry 目录、临时 `CAD_PLAN` / dry-run / execution summary、旧截图和一次性脚本应在验收沉淀后清理；删除前必须确认最终报告、工作台数据、learning ledger、Agent memory 和 `training-errors.md` 不再引用这些路径。
+- **第一批教训记录**：第一项默认 probe 语义不明、等待久、重叠已有图块的失败已写入 `docs/training/training-errors.md`；10 项通过后的通用优化点已写入 `output/training_learning/agent_learning_ledger.json` 和责任智能体 Prompt addendum。
+- **边界**：本包只新增保留 / 清理规则，未实际删除第一批证据文件；当前最终验收报告仍被工作台和 learning ledger 引用，不能直接删。
+
+### TRAINING-QUEUE-AUTO-SYNC-01：训练脚本通过后自动收尾同步
+
+- **触发**：用户不希望每次训练验收后都口头提醒“同步前端 / 沉淀 Prompt / 更新工作台”，要求检查是否已有机制并写入总脚本或训练规则。
+- **现状判断**：`scripts/sync_training_workbench.py` 已是总收尾入口，负责 learning promotion、`capability-map-data.js` 重建、coverage 刷新和 Agent check；缺口在训练队列入口 `scripts/run_training_queue.py`，它原先只推进队列状态，不自动调用收尾同步。
+- **脚本修复**：`scripts/run_training_queue.py` 新增 `run_training_queue()` 包装函数；`--decision pass` 后自动调用 `sync_training_workbench`，中间项用轻量同步，队列 `completed` 后跑完整同步；JSON 输出新增 `postTrainingSync`。
+- **调试开关**：新增 `--no-post-sync`，仅用于调试或隔离测试；正常训练不得要求用户手动再同步。
+- **规则同步**：`AGENTS.md`、`agents/cad_designer/rules.md`、`docs/training/README.md` 已写明训练脚本记录 `pass` 或 `completed` 后必须自动收尾。
+- **验证**：`tests/core/test_training_queue_runner.py` 新增 post-sync 行为测试；训练队列、工作台同步和 learning promotion 相关测试 20/20 OK；`scripts/sync_training_workbench.py` pass，Agent check 31/31 pass。
+- **边界**：自动同步只保证训练工作台、Agent 记忆和 Prompt 沉淀闭环；不新增真实 CAD 几何证明，不提升表 C。
+
+### TRAINING-WORKBENCH-STAGE-PROMOTION-01：学习沉淀后训练阶段显示 5/5
+
+- **触发**：用户指出前端仍显示“第 4/5 阶段”，容易理解成训练还没结束。
+- **修复**：`scripts/build_capability_map_data.py` 的阶段状态现在区分“已通过验收但未沉淀”（4/5 用户反馈通过）和“已通过验收且已 promotion 到责任智能体”（5/5 已沉淀）。
+- **测试**：`tests/core/test_training_workbench_sync.py` 新增断言，已学习沉淀的训练项必须生成 `stageState.id=systemized`、`rank=4`、`label=已沉淀`。
+- **验证**：相关工作台与 learning promotion 单测 13/13 OK；`scripts/sync_training_workbench.py` pass，Agent check 31/31 pass；浏览器本地页面显示“已沉淀 / 第 5/5 阶段”。
+- **边界**：5/5 只表示本训练项已验收并沉淀到训练规则 / Prompt，不提升表 C，不等于完整施工图能力。
+
+### TRAINING-WORKBENCH-PLAIN-ACCEPTANCE-01：训练通过文案改为用户可读白话
+
+- **触发**：用户指出前端“已通过训练 / 用户反馈通过”仍展示后台验收报告路径和沉淀文件，无法直接看懂这项训练到底学会了什么。
+- **数据口径**：`scripts/build_capability_map_data.py` 为训练验收结果新增 `plainLanguageSummary`，阶段说明和训练轨道说明改为“中文标注、CODEX_PREVIEW、handles 回读、未保存 DWG、未写正式图层”等白话证据摘要。
+- **学习沉淀口径**：`core/training/learning_promotion.py` 的 `build_learning_index()` 现在给每个已沉淀能力生成 `plainLanguageSummary` 和 `visibleLessons`，前端展示规则教训，不展示后台 source refs。
+- **前端展示**：`capability-map.html` 的“已学习 / 训练沉淀”展示改为责任智能体吸收经验和可执行规则摘要，移除可见的“沉淀文件：...”路径。
+- **同步门槛**：`scripts/run_training_workbench_agent_check.py` 新增 `accepted_training_has_plain_language_summary` 与 `accepted_training_visible_text_hides_backend_paths`；已验收训练若缺白话摘要或可见文案含 `.json` / `output/`，工作台同步失败。
+- **验证**：相关 `tests/core/test_training_workbench_sync.py` 与 `tests/core/test_training_learning_promotion.py` 共 13/13 OK；`scripts/sync_training_workbench.py` pass，Agent check 31/31 pass；浏览器打开本地工作台后，基础图元行显示白话摘要且未出现后台路径。
+- **边界**：后台仍保留 source refs 供机器追溯；本包只提升前端可读性和回归校验，不提升表 C，不代表新增真实施工图能力。
+
+### TRAINING-LEARNING-PROMOTION-01：训练验收后的智能体沉淀闭环
+
+- **触发**：用户指出前 10 项基础训练测试文件已经构成验收，但工作台和智能体契约没有强制把验收结果沉淀为 Agent 经验、Prompt 优化和责任智能体状态，存在“前端显示通过但智能体没有变聪明”的风险。
+- **沉淀管道**：扩展 `core/training/learning_promotion.py`，新增 `promote_training_acceptance()` 和 `build_learning_index()`；通过的训练报告会写入 `output/training_learning/agent_learning_ledger.json`，并为涉及的责任智能体生成 `training_memory.json` 和 `prompt_addendum.md`。
+- **同步入口**：新增 `scripts/promote_training_acceptance.py`；`scripts/sync_training_workbench.py` 现在会先执行 learning promotion，再重建 `capability-map-data.js` 和 Agent check。
+- **前端状态**：`scripts/build_capability_map_data.py` 将 `trainingLearning`、`learningPromotion`、Agent learning refs 和 Prompt source refs 写入工作台数据；`capability-map.html` 在训练阶段、责任智能体 chip 和详情面板显示“已学习 / 已沉淀 Prompt”。
+- **硬门槛**：`scripts/run_training_workbench_agent_check.py` 新增 `accepted_training_has_learning_promotion`、`agent_learning_refs_exist`、`prompt_contracts_include_learning_refs`、`html_learning_promotion_present` 检查；有已验收训练但缺学习沉淀时，前端同步必须失败。
+- **Agent 契约**：`agents/cad_designer/agent.json` 和 `agents/cad_designer/rules.md` 明确每次验收后必须执行 learning promotion；不得只改前端状态。
+- **验证**：`tests/core/test_training_learning_promotion.py`、`tests/core/test_training_workbench_sync.py`、`tests/core/test_training_queue_runner.py` 合计 18/18 OK；`scripts/sync_training_workbench.py` pass，Agent check 29/29 pass；当前中文 10 项验收沉淀到 7 个责任智能体。
+- **边界**：本包证明训练验收会更新 Agent 经验 / Prompt / 前端阶段；不提升表 C，不代表完整施工图能力。
+
+### TRAINING-QUEUE-FOUNDATION-10-01：CAD 基础前 10 项监督式训练队列
+
+- **触发**：用户希望框选的 10 个 CAD 基础操作训练项不再逐条口头启动，而是通过一个监督式自动训练队列推进；Codex 和 CAD 会保持打开，卡壳时由对话框提示验收内容和下一步操作。
+- **队列入口**：新增 `core/training/queue_runner.py` 与 `scripts/run_training_queue.py`；默认预设 `cad-foundation-first-10` 覆盖 `cad-primitives`、`cad-selection-edit`、`cad-transform`、`cad-offset-trim`、`cad-layer-discipline`、`cad-closure-constraints`、`cad-readback-audit`、`cad-units-scale`、`cad-coordinate-input`、`cad-osnap-ortho-polar`。
+- **监督式状态机**：状态写入 `output/training_queues/cad-foundation-first-10/queue_state.json`；每次只暂停在 1 个训练项，输出 humanMessage、reviewChecklist 和下一步命令；用户通过 `--decision pass` 推进，通过 `--decision fail --feedback ...` 阻塞并回到反馈修复。
+- **安全边界**：队列脚本只编排训练，不无人值守保存或覆盖 DWG；真实落图仍必须只写 `CODEX_PREVIEW`，并保留 validate、dry-run、handles 回读、审计和用户验收。
+- **文档同步**：训练 README、任务清单和短上下文新增“跑前 10 项队列 / 监督式基础队列”口令。
+- **测试**：新增 `tests/core/test_training_queue_runner.py`，覆盖预设 10 项、首次暂停、pass 推进、fail 阻塞和 CLI JSON 输出；目标测试 5/5 OK。
+- **边界**：这是训练编排脚本，不新增真实 CAD 几何证明、不提升表 C、不表示 10 项已训练通过。
+
+### TRAINING-WORKBENCH-FOUNDATION-ASSET-NA-01：基础 CAD 操作与资产沉淀口径拆分
+
+- **触发**：用户指出基础图元、选择编辑等 L0 训练不应被计划表暗示为需要标准图块或自产资产沉淀。
+- **数据口径**：`scripts/build_capability_map_data.py` 对 `kind=foundation` 的训练项新增 `not_applicable / 不适用` 状态；`raw`（图库）和 `system`（自产）不再显示“未纳入”，而是明确“不需要标准图块 / 不沉淀为自产资产”。
+- **成功门槛**：基础操作训练的 `successCriteria` 改为结构化意图 / `CAD_PLAN`、created handles、entity type、bbox、关键端点、闭合 / gap / open endpoint、`CODEX_PREVIEW` 图层安全和审计证据。
+- **页面同步**：`capability-map.html` 支持 `not_applicable` 标签和样式；已运行 `scripts/sync_training_workbench.py` 重建 `capability-map-data.js`，Agent check 25/25 pass。
+- **文档同步**：训练 README、V2 训练计划、成长路径、任务清单和 `agents/cad_designer/rules.md` 明确：基础操作中的 `block` 指命令 / 引用机制，不等于标准图块资产；基础课程默认沉淀 Prompt、检查器、失败经验或规则，不进入 `system_library`。
+- **测试**：`tests/core/test_training_workbench_sync.py` 新增基础操作不要求资产库断言，并复跑该测试文件 9/9 OK。
+- **边界**：这是计划表逻辑修正，不新增真实 CAD 几何证明、不提升表 C、不表示基础课程已经训练通过。
+
+### DESIGNER-TRAINING-BATCH-CHECKERS-01：V2.1 训练批次依赖图与验收器骨架
+
+- **触发**：用户确认 V2 后继续推进，但要求不要把训练计划写成固定天数，而是按原逻辑改训练计划表。
+- **数据结构**：`scripts/build_capability_map_data.py` 新增 `trainingBatches` 和 `validationCheckers`，把 217 项组织成 8 个批次，并登记 10 个机器验收器 skeleton。
+- **批次口径**：批次按能力依赖推进：基础生产卫生 → 安全编辑与图层纪律 → 高频家具符号 → 储位厨卫对象 → 房间平面组合 → 图纸表达与局部套图 → 标注表格与低噪声交付 → 跨图纸交付闭环。
+- **验收器口径**：骨架覆盖图层安全、闭合几何、handles 回读、净距碰撞、开启域、厨房工作三角、尺寸链、跨图一致性、表格数量和 checked/not_checked。
+- **校验**：`scripts/run_training_workbench_agent_check.py` 新增批次、训练项、前置依赖和验收器引用校验；`tests/core/test_training_workbench_sync.py` 新增批次 / 验收器结构测试。
+- **边界**：V2.1 只组织训练顺序和应检项；这些 checker 仍是 skeleton，不是已实现 CAD proof，不提升表 C。
+
+### DESIGNER-TRAINING-PLAN-V2-01：正式训练前训练地图扩容
+
+- **触发**：用户确认正式训练前不希望边训练边扩计划，要求按真实设计师成长路径和市场需求，把现有工作台分类扩成大体量训练地图。
+- **调研方式**：并行拆出市场岗位需求、设计师教育路径、家装 CAD 交付物、家具对象库 / 人体工学四个视角；来源包括 BLS / O*NET、CIDA / NCIDQ、NKBA、AutoCAD 课程、室内施工图清单、GB 住宅空间功能和 CAD block 分类。
+- **数据扩容**：`scripts/build_capability_map_data.py` 新增 V2 训练 seed 生成器，保留 `CAD 基础操作 / 基础家具 / 储位家具 / 厨卫对象 / 基础绘图 / 标注表达` 六类筛选，总训练计划项从 32 扩到 217。
+- **训练体量**：V2 后分类计数为 CAD 基础操作 31、基础家具 46、储位家具 29、厨卫对象 36、基础绘图 43、标注表达 32。
+- **文档同步**：新增 `docs/training/cad-designer-training-plan-v2.md`，并更新成长路径、训练 README、任务清单、短上下文和状态页。
+- **测试**：`tests/core/test_training_workbench_sync.py` 新增 `test_training_plan_v2_has_large_scale_coverage`，先红后绿，锁住大体量覆盖、分类底线、关键训练项和 ID 去重。
+- **边界**：V2 是训练地图扩容，不新增真实 CAD 几何证明、不提升表 C、不声明已会完整施工图；HTML 快照仍必须由 `scripts/sync_training_workbench.py` 同步生成。
+
+### PRE-TRAINING-REPO-SWEEP-01：正式训练前仓库级 Bug 筛查与收尾
+
+- **触发**：正式进入训练前，要求做一次仓库级 Bug 筛查、润色修复和收尾。
+- **根因 1**：当前 Windows / 沙箱环境下，Python `tempfile.TemporaryDirectory()` / `mkdtemp()` 创建的目录会出现后续写入 `PermissionError`；这会让 raw intake、session guard、preview-only audit 等测试误红，但业务代码本身没有写错。
+- **修复 1**：新增 `tests.helpers.temporary_artifact_dir()`，改用 `output/test_artifacts/` 下普通 `Path.mkdir()` 创建的可写临时目录，并切换 `test_asset_raw_intake`、`test_cad_session_guard`、`test_preview_only_audit`。
+- **根因 2**：`test_agent_check_cli_validates_generated_snapshot` 直接校验根目录 `capability-map-data.js`；全量测试或 coverage 刷新后，静态快照可能早于 coverage JSON，导致测试顺序相关失败。
+- **修复 2**：该测试先生成自己的临时 `capability-map-data-agent-check.js`，再调用 `run_training_workbench_agent_check.py --data ...` 校验；根目录工作台新鲜度仍由 `sync_training_workbench.py` 和实际 Agent check 负责。
+- **同步**：复跑 `scripts/sync_training_workbench.py`，刷新 coverage、`capability-map-data.js` 和 `output/validation_runs/training-workbench-sync/*`，Agent check 20/20 pass。
+- **验证**：全量 `unittest discover -s tests` 1050 OK；`run_doc_governance_audit.py` pass；`run_capability_coverage.py` pass；`sync_training_workbench.py` pass；`run_training_workbench_agent_check.py` pass；`openspec.cmd validate --all --strict --json --no-interactive` 4/4 pass；`git fsck --full --strict --no-dangling` pass；冲突标记扫描无命中；`run_core_platform_gate.py --skip-unittest` pass。
+- **剩余风险**：`run_repo_audit.py --max-python-lines 500 --fail-on-findings` 仍因 7 个 low `large_python_file` findings 返回 1；`run_dev_volume_audit.py` 仍因生成快照大 delta 报 low findings；两者均已登记，未作为本轮阻塞训练的运行时 bug。
+- **边界**：未运行真实 CAD，未修改或保存用户 DWG；本轮不新增真实 CAD 几何证明、不提升表 C，只修训练前仓库健康和同步可靠性。
+
+### OPENSPEC-SYSTEM-CONTRACT-01：OpenSpec 初始化可用性与系统契约润色
+
+- **触发**：用户要求初始化 OpenSpec 确保能用，并再次润色系统契约、判断是否有必要优化。
+- **复核结论**：OpenSpec 已可用；`openspec.cmd list --json` 能列出 completed changes，逐 change `status --json` 正常，`validate --all --strict --json --no-interactive` 通过；`status --json` 不带 `--change` 报错是 CLI 用法边界。
+- **契约润色**：新增 `openspec/README.md`，更新 `openspec/config.yaml`、`AGENTS.md` 和 `CORE_RESTRUCTURE_PLAN.md`，明确 readiness 命令、completed changes 与 main specs 关系、归档引用边界。
+- **OpenSpec**：新增 `openspec/changes/polish-openspec-system-contract/`，包含 proposal / design / spec / tasks；新增 capability `openspec-readiness-contract`。
+- **边界**：本包不归档旧 change、不改 CAD 执行、不改表 C、不把 OpenSpec 变成第二套 PlanMD。
+
+### DESIGNER-AGENT-GROWTH-PATH-01：总设计师 Agent 成长路径
+
+- **触发**：用户确认仓库改动方案走 B 中改：新增总 Agent，把其它智能体作为知识储备和流程能力；第一阶段毕业目标走 C，但第一批训练课程从 A 的 CAD 基础能力开始铺。
+- **OpenSpec**：新增 `openspec/changes/introduce-designer-agent-growth-path/`，包含 proposal / design / spec / tasks；新增 capability `designer-agent-growth-path`。
+- **Agent 契约**：新增 `agents/cad_designer/agent.json` 与 `agents/cad_designer/rules.md`，定义 CAD Designer Agent 的第一阶段毕业目标、基础课程、可调用 pipeline Agent 和证据边界。
+- **成长文档**：新增 `docs/training/cad-designer-growth-path.md`，固定 L0-L6 成长阶段、第一阶段“电子设计师雏形”和 7 个 L0 基础课程。
+- **工作台数据**：`scripts/build_capability_map_data.py` 新增 `designerAgent`、`growthStages`、`foundationCourses`，并把 `cad-primitives`、`cad-selection-edit`、`cad-transform`、`cad-offset-trim`、`cad-layer-discipline`、`cad-closure-constraints`、`cad-readback-audit` 纳入能力矩阵。
+- **页面口径**：`capability-map.html` 顶部和证据边界改为 CAD Designer Agent 的能力护照视角，新增 `CAD 基础操作` 分组。
+- **测试**：新增 focused 断言 `test_designer_agent_growth_path_declared`，先红后绿，确保总设计师 Agent、成长阶段和基础课程进入工作台快照。
+- **边界**：本包不新增真实 CAD 几何证据、不提升表 C、不声明系统已经会画完整施工图；基础课程通过只表示训练路径进度。
+
+### CAPABILITY-MAP-SYNC-01：训练工作台同步与 Agent 校验
+
+- **触发**：用户确认训练工作台要成为日常训练计划入口，要求 HTML 能同步显示最新训练状态和真实能力边界，并在收尾前创建 Agent 校验防止跑偏。
+- **同步链路**：新增 `scripts/sync_training_workbench.py`，默认先运行 `run_capability_coverage` 刷新表 C coverage，再重建 `capability-map-data.js`，最后运行 Agent 校验并输出 `output/validation_runs/training-workbench-sync/training_workbench_sync_report.json` / `.md`。
+- **Agent 校验**：新增 `scripts/run_training_workbench_agent_check.py`，检查 schema v2、训练计划、责任智能体 profile / prompt contract、Prompt source refs、表 C headline 与 coverage JSON、快照生成时间、同步命令、启动入口和页面同步提示。
+- **启动入口**：新增 `start_training_workbench.bat`，双击后先同步，再用本地 `http.server` 打开 `http://127.0.0.1:8765/capability-map.html`；页面在 HTTP 模式下轮询 `capability-map-data.js`，发现新快照时提示刷新。
+- **数据修复**：`scripts/build_capability_map_data.py` 改为从 `agents/pipeline/pipeline_manifest.json` 推导 pipeline source refs，从 `agents/demand_side/role_agents.json` 绑定需求侧角色，修复旧的 `agents/pipeline_execute/agent.json` 等不存在路径。
+- **前端润色**：`capability-map.html` 顶部新增同步状态条，显示 HTML 快照时间、表 C coverage 时间、同步命令和刷新入口；继续强调训练阶段 / Prompt 契约不等于真实 CAD 几何通过。
+- **规则同步**：`AGENTS.md` 增加训练工作台同步规则；`README.md`、`CORE_CONTEXT_BRIEF.md`、状态 / issues / handoff 同步入口与边界。
+- **验证**：TDD 新增 focused 测试 `tests/core/test_training_workbench_sync.py` 先红后绿，5 tests OK；`scripts/sync_training_workbench.py` pass，Agent 校验 17/17 pass，表 C headline 90.99%。
+- **边界**：本包只保证 HTML 快照能被同步并校验不跑偏；不新增真实 CAD 几何证据，不提升表 C，不替代 `CODEX_PREVIEW`、created handles 回读、审计和用户反馈。
 
 ### ARCH-BOUNDARY-HARDENING-01：架构瘦身与边界加固 01
 
@@ -2132,3 +2655,177 @@
 - 使用 CAD-MCP 虚拟环境 Python 成功运行 `dry_run_plan.py`。
 - 发现全局 `python` 命令不可用，已记录到 `CAD_AGENT_ISSUES.md`。
 - 发现中文终端输出需要显式 UTF-8，已记录到 `CAD_AGENT_ISSUES.md`。
+## 2026-06-02
+
+### CAD-SEMANTIC-ASSET-REUSE-UPGRADE-01：语义规则库 + 资产复用 + 线型表审计底座
+
+- **触发**：用户要求把线型表、语义规则库、跨 DWG 复用和系统资产沉淀作为大型系统升级推进，并通过多个 Agent 查漏、阶段把控和最终验收。
+- **OpenSpec**：新增 `openspec/changes/cad-semantic-asset-reuse-upgrade/`，覆盖 semantic rules、system asset reuse hardening、line-type table audit 和 variable row support。
+- **实现**：新增 `core/assets/semantic_rules.py`，记录资产沉淀、线型表、资产复用、局部修复的触发、路由、门禁和证据边界；`core/assets/system_asset_reuse.py` 在匹配前运行 registry 编码预检，报告 `semanticRules`，并用 lifecycle / native / source readiness 做稳定候选排序。
+- **主调度**：新增 `core/orchestrator/semantic_asset_route.py` 并接入 `orchestrate_request`，让主系统在普通 workflow dispatch 旁边记录 `semantic_asset_route`，证明“先判断资产复用，再回落普通 CAD_PLAN / workflow”。
+- **线型表**：新增 `core/training/linetype_table_audit.py`；`draw_linetype_table(..., rows=...)` 支持可变行数，报告新增 `layoutAudit`，审计 canonical 中文、无填充、样线格 containment、自适应行高、样式差异和截图证据边界。
+- **验证**：`tests.core.test_semantic_asset_rules tests.core.test_workflow_dispatch tests.core.test_system_asset_reuse tests.core.test_system_asset_sedimentation tests.core.test_linetype_table_demo tests.core.test_script_bootstrap` 相关回归通过；CLI plan-only 报告 `output/validation_runs/system-assets/semantic-upgrade/reuse_workflow_plan.json`；fake CAD 审计报告 `output/validation_runs/linetype-table/semantic-upgrade/linetype_table_report.json`。
+- **边界**：本轮不保存当前业务 DWG，不提升表 C；线型表 fake CAD 审计证明 Core 生成和 readback 约束，真实 CAD 打印 / CTB / STB 仍需专项证据。
+
+### VISUAL-CAD-ASSET-RETRIEVAL-01：当前 DWG 视觉优先图块检索 V0
+
+- **触发**：用户指出“语义 + 截图找沙发块”不应长期依赖全量线弧构造扫描，未来大图库必须先做视觉判断和快速召回。
+- **OpenSpec**：新增 `openspec/changes/visual-first-cad-asset-retrieval/`，包含 proposal / design / specs / tasks；新 capability 为 `visual-cad-asset-retrieval`。
+- **实现**：新增 `core/visual_retrieval/` 和 `scripts/run_visual_block_retrieval.py`。V0 从查询文本/视觉提示生成 `VisualQueryProfile`，按 bbox 宽高比、家具尺度、来源图层、语义词和可选 block definition 摘要给当前 DWG 块参照排序。
+- **自测**：新增 `tests/core/test_visual_cad_asset_retrieval.py`，3 tests OK。真实 CAD 模拟命令 `根据截图找到三人沙发对应图块` 命中 `handle=4A2`、`block_name=5S03232`；报告 `output/validation_runs/visual-cad-asset-retrieval/sofa_query_report.json` 和复跑 `output/validation_runs/visual-cad-asset-retrieval/sofa_query_report_rerun.json`，端到端样本为 `4.165127s` / `3.682856s`，复跑排序阶段 `0.000167s`。
+- **边界**：只读检索；不保存 DWG、不删除实体、不写正式图层。视觉相似度只用于候选召回，不证明真实 CAD 尺寸；本轮不提升表 C，不完成跨文件图库 embedding。
+
+### SOFA-DIMENSION-ANNOTATION-01：截图找沙发并标注尺寸
+
+- **触发**：用户给出沙发截图并要求“找到这个沙发，进行尺寸标注”。
+- **实现**：新增 `core/visual_retrieval/dimension_annotation.py` 与 `scripts/run_sofa_dimension_annotation.py`；`AutoCADComDriver.add_dimension` 支持 `text_override`，fake driver 同步覆盖回读。
+- **真实 CAD**：先 dry-run 生成结构化标注意图，再在 `CODEX_PREVIEW` 写入两条 aligned dimension。目标块 `4A2 / 5S03232`，bbox 尺寸 `2800 x 960`；新建标注 handles `2D8A`、`2DE0`，回读 layer=`CODEX_PREVIEW`、text=`2800` / `960`。
+- **证据**：报告 `output/validation_runs/visual-cad-asset-retrieval/sofa_dimension_annotation_report.json`；截图 `output/previews/sofa_dimension_annotation.png`；测试 `tests.core.test_visual_dimension_annotation` + `tests.core.test_visual_cad_asset_retrieval` 共 5 OK。
+- **边界**：不修改目标沙发块、不保存 DWG、不删除实体、不改正式图层；尺寸证明来自 active DWG bbox 与新建标注 readback，截图仅用于目标识别。
+
+### QUICK-COMPOSITE-CACHE-01：通用轻型复合任务 + 当前 DWG 缓存
+
+- **触发**：用户确认采用方案 B，希望“找图块 + 标注”这类轻型复合任务随着沉淀变快，且升级必须通用、不能只服务单一沙发案例。
+- **OpenSpec**：新增 `openspec/changes/quick-composite-cad-task-cache/`，约束范围为当前 DWG 快路径、缓存候选源、通用 bbox 标注动作和 preview-only 安全。
+- **实现**：新增 `core/visual_retrieval/current_dwg_cache.py`、`core/quick_tasks/find_and_annotate.py`、`scripts/run_quick_composite_task.py`；`find_and_annotate_bbox_dimensions` 可对任意带 bbox 的 block candidate 生成宽/深标注动作。
+- **自测**：新增 `tests/core/test_current_dwg_block_cache.py` 与 `tests/core/test_quick_composite_task.py`；相关 9 tests OK。真实 CAD dry-run 第一次 `candidate_source=live_snapshot`、内部 `1.084232s`；第二次 `candidate_source=cache`、内部 `0.002923s`，目标仍为 `4A2 / 5S03232`。
+- **边界**：本轮不做跨文件图库、thumbnail、embedding；缓存只用于当前 DWG 轻量候选召回，执行证据仍看 active CAD readback；第二次真实 CAD 自测用 dry-run，未重复写入新标注。
+## 2026-06-02
+
+### DESIGNER-VIEW-NEARBY-HARDENING-02：旁边语义真实中文解析与多焦点保护
+- **触发**：继续加固“旁边 / 附近”的设计师视角理解，避免真实中文方向词、生活化语气词和多焦点视口造成误落图。
+- **实现**：`core/placement/designer_view_nearby.py` 新增 `phrase_analysis`，识别左边、右边、上方、下方、附近、旁边等真实中文 / 英文邻近词；上下方向只认明确短语，避免把“试一下 / 看一下”里的“下”误判为下方。
+- **加固**：没有 selected / recent handles 且当前视口存在多个分离、评分接近的可见焦点时，返回 `needs_confirmation` 和 `anchor_candidates`，不再把全视口所有对象合并成一个大锚点。
+- **Prompt**：`agents/cad_designer/prompt_addendum.md` 和 `agents/cad_designer/rules.md` 已写入内置 Agent 的旁边理解规则。
+- **边界**：本加固提高的是当前视口邻近放置理解力，不证明对象族掌握、施工图准确、表 C 提升或用户审美验收。
+## 2026-06-02
+
+### LINETYPE-TABLE-DEMO-UTF8-STREAM-01：线型表中文编码与流式演示根修
+
+- 新增 `core/training/linetype_table_demo.py`，把 26 行中文线型表、可见文本门禁、created handles 精确回读、流式 recorder 事件和报告生成封成可复用入口。
+- 新增 `scripts/draw_linetype_table.py`，后续线型表演示默认从 UTF-8 模块 payload 执行，不再把中文绘图脚本经 PowerShell 管道传给 Python；脚本默认启用逐行流式演示。
+- 新增 `tests/core/test_linetype_table_demo.py`，覆盖乱码问号检测、中文回读无英文字母、26 行流式 `item_complete` 事件、脚本入口 fake CAD 执行。
+- 验证：`python -m unittest tests.core.test_linetype_table_demo` 通过；`scripts/draw_linetype_table.py --fake-cad` 通过并生成 `output/validation_runs/linetype-table/cli-fake/linetype_table_report.json`。
+- 边界：本包是绘图工作流根修，不提升表 C，不保存 DWG，不修改正式图层。
+
+## 2026-06-03
+
+### DIMENSION-STYLE-FOCUSED-10-01：十个中文尺寸样式真实 CAD 训练
+
+- **触发**：用户要求尺寸样式加强训练，直接在已打开 AutoCAD 中创建 10 个符合市场规范的中文尺寸标注样式，训练后再决定是否沉淀资产。
+- **实现**：新增 `core/training/dimension_style_training.py` 和 `scripts/run_dimension_style_training.py`，包含 10 个中文尺寸样式、中文编码预检、`CODEX_CN_TEXT` 文本样式、DimStyle 变量写入 / 回读、样例面板落图、created handles 审计和 focused scope 报告。
+- **排障**：根因是 Codex 命令线程位于 `CodexSandboxDesktop...`，AutoCAD 在用户可见的 `Default` 桌面；训练入口和截图入口均新增 input desktop 切换。另修复 `AcDb2LineAngularDimension` 被误分类为普通线的问题，审计现在要求期望尺寸句柄必须回读为 `dimension`。
+- **真实 CAD 证据**：在 `Drawing2.dwg` 的 `CODEX_PREVIEW` 创建 143 个对象，19 个尺寸实体回读，10/10 样式审计通过，报告 `output/training_queues/dimension-style-focused-10/real-cad/dimension_style_training_report.json`，截图 `output/previews/dimension-style-focused-10-real.png`。
+- **验证**：`tests.core.test_dimension_style_training tests.core.test_verification_report` 共 19 OK；`tests.core.test_render_preview` 共 9 OK；真实报告 `encodingPreflight=pass`、`savedCurrentDwg=false`、`assetSedimentation=not_started`。
+- **边界**：本轮不保存当前业务 DWG，不删除实体，不覆盖已有 `Standard`，不沉淀资产；后续沉淀需要走系统资产四件套。
+
+### DIMENSION-STYLE-ARCH-SCALE-RETRAIN-01：建筑尺寸样式比例重训
+
+- **触发**：用户指出上一版虽有建筑标注形态，但样式仍可能重复，且建筑标记比例偏大；要求删除失败测试结果、重画，并由独立 Agent 校验。
+- **方案**：经规范评审 Agent 和训练架构 Agent 讨论，第一轮不扩成 20/30 个名称，而是保留 10 个 canonical 样式，并为每个样式追加 3 个比例 / 跨度样例，训练底座学习“样式家族 + 比例语感”。
+- **实现**：`dimension_style_training.py` 新增 `scaleSamples`、比例样例绘制与审计字段；建筑 tick 类 `DIMASZ` 从 2.4–2.8 收敛到 1.2–1.7；审计新增 `scaleVariantCount`，并规避 fake driver 缺少 `DIMBLK` readback 的误判。
+- **真实 CAD 证据**：用上一轮失败报告限定删除 `CODEX_PREVIEW` handles 153/153，重画 `createdHandleCount=304`；报告 `status=pass`、`canonicalStyleCount=10`、`scaleVariantCount=30`、`dimensionReadbackCount=49`、`audit.failedStyleCount=0`、`duplicateStyleFingerprints=0`、`savedCurrentDwg=false`。
+- **截图 / Agent 校验**：截图 `output/previews/dimension-style-focused-10-architectural-scale-retrain.png`；独立校验 Agent 判定 `pass`，认为 10 个面板已不是重复凑数，建筑 tick 比例更接近常见施工图，可交给用户人工验收。
+- **用户复核修复**：用户指出 06 标高符号比例样例越框；已把 level marker 右侧比例样例改为紧凑三行标高符号 + 短竖向高度验证，并新增面板级 `panelHandlesByStyle` / `panelBoundsByStyle` / `panel_containment` 审计。旧 304 handles 清理后重画 `createdHandleCount=322`，06 面板 `panelReadbackCount=63`、`failures=[]`，修复截图 `output/previews/dimension-style-focused-10-level-marker-containment-repair.png`。
+- **分类纠偏 / r3**：用户继续指出 06 视觉不常规，设计师 Agent 与训练架构 Agent 均判定标高符号应归为 `annotation_symbol_style.level_marker`，不应计入 dimension style。已用真实 AutoCAD dimension entity 的“室内-洞口宽高尺寸”替换 06，同时修复 04 局部尺寸文字粘连、05/06 右侧比例样例过度拥挤；r3 真实 CAD 清理 301 handles 后重画 `createdHandleCount=328`，`dimensionReadbackCount=44`，`audit.failedStyleCount=0`，`savedCurrentDwg=false`，报告 `output/training_queues/dimension-style-focused-10/real-cad-opening-dimension-rework-r3/dimension_style_training_report.json`，截图 `output/previews/dimension-style-focused-10-opening-dimension-rework-r3.png`。
+- **边界**：本轮仍是 focused retraining，不保存当前业务 DWG、不沉淀资产、不提升表 C；用户验收后若要沉淀，应走尺寸样式 `style_standard / style_export` 资产协议。
+
+### SCREENSHOT-ORCHESTRATION-HARDENING-01：截图底座任务级编排与 Agent 共识
+
+- **触发**：用户指出两个截图痛点：AutoCAD 在后台或未置顶时 Codex 测试看不到；DWG / 测试文件含海量图块时，默认截整个 CAD 当前视图无法证明本次精准任务，尤其是 10 个内容里只修复单项时需要只识别该修复对象。
+- **OpenSpec**：新增 `openspec/changes/harden-agent-screenshot-orchestration/`，约束截图 decision、runner payload、Agent 共用合同和工作台检查。
+- **实现**：`core/verification/render_preview.py` 新增 `build_screenshot_decision()`，并把 `screenshotDecision` 接入 `prepare_autocad_for_capture()` 与 `visual_preview_payload()`；聚焦顺序固定为本地 `target_handles` / `repair_plan` / bbox 优先，再退到 `execution_summary.created_handles`，目标不可用时报告不可用，不静默把 whole modelspace 当作精准截图。
+- **Runner**：`core/verification/visual_cad_review.py` 和 `core/training/foundation_batch_training.py` 的截图报告 now 带 `screenshotDecision`、`visualPreview` 和 `visual_aid_only` 边界。
+- **Agent 共识**：`agents/COMMON_PROMPT_CONTRACT.md` 增加“截图编排规则”；`core/training/learning_promotion.py` 把该规则写入共用合同生成源，防止工作台同步重写时丢失；`scripts/run_training_workbench_agent_check.py` 新增 `screenshot_orchestration_rules_in_common_contract`。
+- **验证**：相关单测 `tests.core.test_render_preview`、`tests.core.test_table_c_evidence_gate`、`tests.core.test_cad_foundation_remaining_training`、`tests.core.test_training_workbench_sync`、`tests.core.test_training_learning_promotion` 共 66 OK；`openspec.cmd validate --all --strict --json --no-interactive` 12/12 pass；`scripts/sync_training_workbench.py` pass，Agent check 40/40 pass。
+- **真实 CAD 截图**：`scripts/render_preview.py --check` 为 ready；`render_preview.py --capture-autocad-window --execution-summary projects/residential_sofa_2seat_20260528/runs/round14_execution_summary.json --target-handle 1F7C --output output/previews/screenshot-orchestration-target-1F7C.png --no-foreground` 成功，`mode=autocad_window_printwindow`、`foreground_first=false`、`focus.source=target_handles`、`resolved_count=1`；PNG 尺寸 `1701x1388`，像素非空。截图仍是视觉辅助，不提升表 C，不保存当前业务 DWG。
+
+### DIMENSION-STYLE-PANEL-REPAIR-HARDENING-01：尺寸样式训练单格局部修复
+
+- **触发**：用户指出“为什么要重画 10 个”，并提醒既有规则应支持单个框改动只删改那一个。
+- **根因**：`run_dimension_style_training.py` 旧 cleanup 入口只读取上一轮报告的全局 `createdHandles`，绘制器也无条件输出标题并遍历全部 10 个 canonical 样式；即便报告已有 `panelHandlesByStyle` / `panelBoundsByStyle`，执行链路也没有消费这些 panel 级证据。
+- **实现**：新增 `--only-style`，支持用 `styleId`、中文 CAD 样式名或可见标题匹配目标；局部 cleanup 只删除 `panelHandlesByStyle[目标样式]`，并把 `panelBoundsByStyle[目标样式]` 传给绘制器原位重画。缺少 panel handles 或 bbox 时直接 fail，不退回全量删除 / 全量重画。
+- **审计**：`run_dimension_style_training()` 新增 `focused_repair` 模式，局部修复只检查目标格自身 readback、尺寸实体、图层、测量值和 containment；整批训练才检查端部家族覆盖广度。
+- **真实 CAD 验证**：基于 r3 报告局部修复 06 `室内-洞口宽高尺寸`，真实 CAD 输出 `deletedCount=56`、`createdHandleCount=56`、`styleCount=1`、`dimensionReadbackCount=2`、`failedStyleCount=0`、`deletionScope=previous_panelHandlesByStyle`、`savedCurrentDwg=false`。报告：`output/training_queues/dimension-style-focused-10/real-cad-only-style-repair-hardening/dimension_style_training_report.json`；截图：`output/previews/dimension-style-focused-10-only-style-repair-hardening.png`。
+- **验证**：新增单测覆盖“只删除目标 panel handles”和“局部重绘复用上一轮 panel bbox”；相关回归 56 OK；语法 `compile()` 通过。`py_compile` 被既有 `__pycache__` 写权限拒绝，未作为失败源码证据。
+- **边界**：本轮只加固尺寸样式训练的局部修复执行半径，不保存当前业务 DWG，不沉淀资产，不提升表 C。
+
+### DIMENSION-STYLE-05-06-VISUAL-FIX-01：05/06 面板视觉回归修复
+
+- **触发**：用户截图复核指出 05/06 看起来仍有视觉 bug：06 `900` 贴近完成面，右侧比例样例过小，05/06 观感不齐。
+- **根因**：上一轮只让实体 / 数值审计通过，没有把右侧样例可读性和横向尺寸文字 bbox 与完成面的间距做成硬门槛；AutoCAD 还会把横向尺寸文字自动放到尺寸线上方，导致单纯移动 text point 不足以解决贴线。
+- **实现**：05/06 主示例使用 `sampleDisplayScales=[2.4, 2.0, 12.0]`，避免 2100 高度顶到标题区；06 横向尺寸线进一步下移；05/06 右侧比例样例改为固定大字号教学示意，不再被真实跨度压缩。
+- **回归**：`tests/core/test_dimension_style_training.py` 新增断言，要求 06 `900` 横向尺寸 bbox 顶部低于竖向尺寸底点 / 完成面至少 120 个单位，防止报告 pass 但视觉贴线复发。
+- **真实 CAD 证据**：05 最终局部修复 `real-cad-visual-fix-05-r8`，删除 / 重画 37 个 handles；06 最终局部修复 `real-cad-visual-fix-06-r9`，删除 / 重画 56 个 handles；均 `status=pass`、`savedCurrentDwg=false`。截图：`output/previews/dimension-style-05-06-visual-fix-final-r5.png`，裁剪图：`output/previews/dimension-style-05-06-visual-fix-final-r5-crop.png`。
+- **验证**：`tests.core.test_dimension_style_training` 7 OK；`validate_visible_text()` pass；`scripts/run_dimension_style_training.py --fake-cad --output-dir output/training_queues/dimension-style-focused-10/fake-visual-fix-final-r10 --summary-only` pass，`dimensionReadbackCount=44`、`failedStyleCount=0`。
+- **边界**：本轮仍是 focused 局部修复，只写 `CODEX_PREVIEW`，不保存当前业务 DWG、不沉淀资产、不提升表 C。
+
+### DIMENSION-STYLE-ASSET-SEDIMENTATION-01：室内尺寸样式视觉标准系统资产
+
+- **触发**：用户要求把 05/06 视觉修复后的尺寸样式标准“先沉淀下来”。
+- **合同**：新增系统资产 `interior_dimension_style_visual_standard`，分类 `drawing_standards.basic`，名称“室内尺寸样式视觉标准”；合同写入 `libraries/system_library/drawing_standards/basic/assets.json`，全局索引写入 `libraries/system_library/registry.json`。
+- **资产边界**：该资产为 `style_standard`，`exportMode=style_export`，`antiContamination=style_export_only`；明确禁止从 whole modelspace、current screen、training panel 或全 `CODEX_PREVIEW` 误导出对象 block。
+- **原生 DWG**：已打开 / 激活 / 保存 `libraries/system_library/drawing_standards/basic/standard_assets.dwg`，写入 10 个中文 DimStyle 和 `CODEX_CN_TEXT`，报告 `output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json`；AutoCAD 活动文档保留在 `standard_assets.dwg` 供人工复审，当前业务 DWG 未保存。
+- **状态**：资产验证状态为 `native_style_definition_written`，表示原生样式定义与变量回读已完成；仍未完成跨 DWG style import / reuse replay、plot/CTB/STB 输出和用户视觉复审，因此不标记为 reuse verified。
+- **验证**：`sediment_system_asset.py --verify --category drawing_standards.basic --asset-id interior_dimension_style_visual_standard` pass；`sync_training_workbench.py` pass，Agent check 40/40 pass；`tests.core.test_system_asset_sedimentation tests.core.test_semantic_asset_rules tests.core.test_dimension_style_training` 共 24 OK。
+
+### DIMENSION-STYLE-ASSET-ATOA-HARDENING-01：尺寸样式资产复用与 A-to-A 联通加固
+
+- **触发**：用户追问规则、A-to-A、复用和系统理解力是否打牢固，要求继续加固。
+- **根因**：资产合同和 `standard_assets.dwg` 已写入，registry 语义检索也能命中 `interior_dimension_style_visual_standard`；但复用计划仍被 `needs_precise_native_source` 阻断，因为复用器只识别 included handles / blockName / verified style native DWG，未把 `native_style_definition_written` 当作可计划的样式源；同时 registry 资产行缺少 `nativeDwgExists`，A-to-A 共用规则也没有专门锁住样式资产复用边界。
+- **实现**：`core.assets.system_asset_reuse` 对 `style_standard + style_export + native_style_definition_written` 生成 `sourceSpec.mode=style_definition`，并在 apply 阶段无 style importer 时返回 `style_reuse_deferred_cad_required`，不复制 `CODEX_PREVIEW` 图元、不保存业务 DWG。
+- **索引加固**：`core.assets.system_asset_sedimentation` 的 registry asset row 现在带 `nativeDwgExists`；当前 `libraries/system_library/registry.json` 的尺寸样式资产行已补该字段。
+- **A-to-A**：`core/training/learning_promotion.py` 新增“系统资产与样式复用规则”，同步生成到 `agents/COMMON_PROMPT_CONTRACT.md`；`scripts/run_training_workbench_agent_check.py` 新增 `system_asset_reuse_rules_in_common_contract`，防止同步后规则漂移。
+- **事实源**：`docs/training/training-sources.json` 新增系统资产合同、native 写入报告和复用探针报告；探针 `output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe.json` 证明白话 query 可生成 ready workflow，`sourceSpec.mode=style_definition`。
+- **验证**：新回归覆盖 native-written 样式资产复用计划、deferred apply 和 registry `nativeDwgExists` 字段；相关 54 tests OK；资产 verify pass；`sync_training_workbench.py` pass，Agent check 41/41 pass。
+- **边界**：这次把“可理解、可检索、可生成 style_definition 计划、A-to-A 共享规则”打通；真正跨 DWG 自动 import DimStyle 仍是后续 style importer / readback gate，不在本轮冒充已复用完成。
+
+### DIMENSION-STYLE-ASSET-VISIBLE-PANEL-01：尺寸样式系统资产 DWG 可见面板补写
+
+- **触发**：用户打开 `standard_assets.dwg` 后指出没有看到尺寸样式内容，只有线型表。
+- **根因**：上一轮 native 写入只保存了 10 个中文 DimStyle 和 `CODEX_CN_TEXT`，这属于不可见样式表定义；资产 DWG 模型空间没有同步写入可人工复审的尺寸样式面板。
+- **修复**：直接在 `libraries/system_library/drawing_standards/basic/standard_assets.dwg` 模型空间追加 10 个尺寸样式可见面板，停放在既有线型表右侧，不保存当前业务 DWG。
+- **真实 CAD 证据**：`output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json` 为 `status=pass`，`createdHandleCount=325`、`dimensionReadbackCount=44`、`failedStyleCount=0`、`savedAssetDwg=true`、`savedCurrentBusinessDwg=false`；截图为 `output/previews/system-asset-dimension-style-visible-panel-r1-focused.png`。
+- **资产合同**：`libraries/system_library/drawing_standards/basic/assets.json` 和 `libraries/system_library/registry.json` 已补 `nativeVisiblePanelEvidence`、visible panel 报告和截图证据；asset lifecycle 标为 `verified`，但 `verificationStatus` 保持 `native_style_definition_written`，以免破坏样式复用计划识别。
+- **编码纠偏**：一次内联脚本更新 JSON 时把新增中文字段写成 `????`，`system_asset_reuse_workflow` 的 registry encodingPreflight 已正确阻断；已改用补丁修复坏中文并扫空 `???`，复跑复用探针后 `encodingPreflight=pass`、workflow `status=ready`。
+- **验证**：资产 verify pass；`scripts/reuse_system_asset.py --workflow --plan-only ...` pass 并生成 `sourceSpec.mode=style_definition`；`scripts/sync_training_workbench.py` pass，Agent check 41/41；相关 54 tests OK；`node --check capability-map-data.js` 和 `git diff --check` pass。
+- **边界**：本轮证明系统资产 DWG 里已有可见尺寸样式面板和 CAD readback 证据；真正跨 DWG style import / plot / CTB / STB 和用户视觉验收仍未完成。
+
+### SYSTEM-ASSET-TRUE-SEDIMENTATION-GATES-01：真沉淀与 A-to-A 复用门禁
+
+- **触发**：用户指出两类问题不能再靠事后加固：一是资产合同 / DimStyle 写入不等于通用资产 DWG 中可见可验收；二是语义能命中不等于可执行复用和 A-to-A 联通已经提升。
+- **实现**：`core.assets.system_asset_sedimentation.verify_system_asset_package()` 新增声明级门禁。`style_standard + style_export + native_style_definition_written / written_to_standard_assets_dwg` 必须有 `nativeVisiblePanelEvidence` 或等价可见 native 证据；`lifecycle=verified` 必须有 `reuseWorkflowProbe` 或真实 `reuseReplay`。
+- **registry 透传**：`_registry_asset_entry()` 会把合同中的 `nativeVisiblePanelEvidence` 和 `reuseWorkflowProbe` 摘要写入 `libraries/system_library/registry.json`，防止合同有证据、全局检索 / A-to-A 看不到。
+- **语义 / A-to-A**：`core.assets.semantic_rules` 的沉淀规则增加 `native_visible_asset_gate` 与 `reuse_workflow_probe`；复用规则增加 `reuse_workflow_probe`。`core.training.learning_promotion` 的共用 Prompt 生成源新增 `nativeVisiblePanelEvidence` / `reuseWorkflowProbe` 规则，`run_training_workbench_agent_check.py` 同步检查这些短语。
+- **当前资产回填**：`interior_dimension_style_visual_standard` 的合同和 registry 已补 `reuseWorkflowProbe`，事实源新增 `dimension-style-visual-standard-reuse-probe-after-visible-panel`，指向 `output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_visible_panel.json`。
+- **验证**：先写红灯测试证明旧 verify 会漏放缺门禁资产，再实现转绿；`tests.core.test_system_asset_sedimentation tests.core.test_semantic_asset_rules tests.core.test_training_workbench_sync` 共 35 OK；`scripts/sediment_system_asset.py --verify --category drawing_standards.basic` pass，checked 包含 `native visible asset evidence` 和 `executable reuse workflow probe`；`scripts/sync_training_workbench.py` pass，Agent check 41/41。
+- **边界**：`reuseWorkflowProbe status=ready` 证明 registry 编码、语义匹配、workflow 和 `sourceSpec` 联通；它仍不等于已经在当前业务 DWG 完成 style import。实际 `asset_reused` 仍需 created handles / readback。
+
+### SYSTEM-ASSET-SHELF-CLEARANCE-REPAIR-01：系统资产 DWG 货架重叠纠偏
+
+- **触发**：用户复审 `standard_assets.dwg` 截图后指出仍有框线 / 标签压住资产内容，视觉排版凌乱；上一轮 `visualRackPlan` 与 created-handle readback 通过，但没有审计新画货架实体与既有资产内容 bbox 是否相交。
+- **根因**：`scripts/layout_system_asset_shelves.py` 旧布局用整张非货架内容的 union bbox 按 62% 硬切 A1/A2，再把 SOURCE 边界和槽位标签固定画入内容区；治理门禁只验 plan 架构和本轮 created handles 是否存在，未把保护内容簇与货架实体 bbox 做 clearance。
+- **实现**：新增真实内容簇读取与 `content_cluster_bbox_clearance_v1` 布局，按非货架实体 bbox 聚类 A1 线型表和 A2 尺寸面板；SOURCE 边界只围在保护内容外侧，标签移到 header/footer；`createdEntityReadback` 记录全量 `entityBboxes`；新增 `visualClearanceAudit`，任何货架框线、标签、route 或 slot grid bbox 与保护内容相交即 fail。
+- **架构加固**：`audit_visual_rack_plan()` 接入可选 `clearance_report`；`run_asset_library_governance_check.py` 现在必须读取最新 `shelf_layout_report.json`，确认 `savedAssetDwg=true`、`savedCurrentBusinessDwg=false`、created entity readback ok、protected content readback ok 且 `overlapCount=0`，否则治理验收失败。
+- **真实 CAD 证据**：重新打开 / 保存 `libraries/system_library/drawing_standards/basic/standard_assets.dwg`，清理上一轮 209 个货架 handles 后新建 209 个；保护内容 readback 349 个非货架实体，A1/A2 两簇；`visualClearanceAudit.status=pass`、`overlapCount=0`。报告 `output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json`；截图 `output/previews/system-asset-library-shelves-r3.png`。
+- **验证**：新增红灯测试覆盖 clearance 失败和 A2 内容被 union 分割线切掉；资产相关回归 `tests.core.test_system_asset_sedimentation tests.core.test_system_asset_reuse tests.core.test_semantic_asset_rules` 共 43 OK；`scripts/run_asset_library_governance_check.py` pass；`scripts/sediment_system_asset.py --verify --category drawing_standards.basic` pass；`scripts/render_preview.py --check` ready；OpenSpec 13/13 pass；`scripts/sync_training_workbench.py` pass，Agent check 41/41。
+- **边界**：本轮证明系统资产 DWG 货架脚手架与既有 A1/A2 资产内容不再 bbox 重叠；截图仍是人工复审辅助，不替代 handles / bbox / readback。对象 block 本体进入各自分类 DWG、真实跨 DWG 对象复用 replay 仍按单资产另证。
+
+### SYSTEM-ASSET-WAREHOUSE-READABILITY-HARDENING-01：系统资产 DWG 视觉仓库可读性门禁
+
+- **触发**：用户再次复审截图指出上一轮虽然 `overlapCount=0`，但 A1/A2 分区仍拥挤、源边界语义混乱，视觉验收不合格；追问应改规则、Agent Prompt、A-to-A 还是布局。
+- **根因**：旧门禁只检查 visualRackPlan 结构、created handles、shelf/content bbox 不相交，缺少“仓库是否可读”的机器指标；`pipeline_visual_layout_reviewer` 的输出字段也只要求五个泛化 pass，缺少 aisle、density、source/proof、layer semantics 和 non-screenshot evidence。
+- **实现**：`audit_visual_rack_plan()` 新增 `readability_report`；`layout_system_asset_shelves.py` 新增 `visualReadabilityAudit`，检查 A1/A2 与 A2/B 通道、A1/A2 内容宽度占比、proof content 图层、source/proof 分离；旧 proof panel 从 `CODEX_PREVIEW` 迁到 `ASSET_PROOF_CONTENT`，A2 内容簇按 handles 右移，`ASSET_SOURCE_BOUNDARY` 改成小 source token，不再大框包住 proof panel。
+- **A-to-A / Prompt**：`visual_layout_review` 现在必须有 `layoutReadabilityAcceptable`、`aisleClearanceAcceptable`、`contentDensityAcceptable`、`sourceProofRolesSeparated`、`layerSemanticsAcceptable`、`nonScreenshotEvidenceChecked`；同步更新 `pipeline_visual_layout_reviewer`、`agents/COMMON_PROMPT_CONTRACT.md`、Prompt 生成源和工作台 Agent check。
+- **真实 CAD 证据**：重新保存 `standard_assets.dwg`，`shelf_layout_report.json` 为 `status=pass`、`createdHandleCount=219`、`contentMutationCount=519`、`visualClearanceAudit.overlapCount=0`、`visualReadabilityAudit.issueCount=0`；A1/A2 通道 1600，A2/B 通道 1400，A1 内容占比 0.7792，A2 内容占比 0.7146，proof content 图层只剩 `ASSET_PROOF_CONTENT`。截图：`output/previews/system-asset-warehouse-readability.png`。
+- **验证**：新增红灯测试覆盖旧 reviewer 字段漏放、Core readability fail、零重叠但拥挤 / CODEX_PREVIEW 图层 fail；`tests.core.test_a_to_a_task_contract` 6 OK，`tests.core.test_system_asset_sedimentation` 27 OK；`scripts/run_a_to_a_orchestration_gate_check.py` pass；`scripts/run_asset_library_governance_check.py` pass；`scripts/render_preview.py --check` ready，AutoCAD 窗口截图 captured。
+- **边界**：截图仍是 visual_aid_only；本轮证明系统资产 DWG 货架可读性和保存 / readback 门禁通过，不代表对象资产跨 DWG 复用 replay 已完成。
+
+### MAIN-AGENT-DISPATCH-AWARENESS-01：主 Agent 轻量自检与动态加派门禁
+
+- **触发**：用户希望系统主 Agent “知道自己是谁、要干嘛”，并能判断是否需要加派新的 Agent，但后续确认只做轻量版，不做对话人格模拟。
+- **实现**：`core.orchestrator.a_to_a_task_contract` 新增 `mainAgentSelfCheck` 与 `dispatchDecision`。高风险任务声明主 Agent 身份、任务理解、责任边界、已知限制和决策依据；动态加派只允许 manifest 已登记 Agent，未登记新 Agent 进入 `additionalAgentRequests`，状态为 `needs_reviewed_package` / `needs_openspec_change`，不得临场生效。
+- **门禁**：新增 `main_agent_dispatch_awareness` hard gate；`workflow_dispatch` 继续只消费合同 blocked 结果，不另建第二套判断。`agents/pipeline/pipeline_manifest.json` 新增主 Agent 身份、registered-only 动态派发策略、未登记 Agent 请求策略和 forbidden patterns。
+- **A-to-A 检查**：`scripts/run_a_to_a_orchestration_gate_check.py` 现在检查 main agent identity、dynamic dispatch policy、unregistered agent policy、未登记 Agent 不激活、forced unregistered effective agent 阻断，以及 `layoutReadabilityAcceptable`。
+- **验证**：先写红灯测试确认新字段缺失会失败；实现后 `tests.core.test_a_to_a_task_contract` 11 OK，`tests.core.test_workflow_dispatch` 9 OK，`scripts/run_a_to_a_orchestration_gate_check.py` status=`pass`。
+- **边界**：本轮是 no-CAD 编排门禁加固，未写 CAD、未保存 DWG、不提升表 C；主 Agent 自检是工程责任边界，不是人格或真实 CAD 证据。

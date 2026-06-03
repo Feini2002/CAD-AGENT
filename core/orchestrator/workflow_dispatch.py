@@ -7,12 +7,14 @@ import json
 from pathlib import Path
 from typing import Any, Callable
 
+from core.orchestrator.a_to_a_task_contract import build_a_to_a_task_contract
 from core.orchestrator.activation_policy import (
     ACTIVATION_NEEDS_CLARIFICATION,
     evaluate_scene_activation,
     merge_activation_into_request_gate,
 )
 from core.orchestrator.request_context import evaluate_request_gate
+from core.orchestrator.semantic_asset_route import resolve_semantic_asset_route
 from core.orchestrator.route_audit_report import build_route_audit_report, write_route_audit_report
 from core.orchestrator.scene_registry import DEFAULT_SCENE_ID, load_scene_registry
 from core.path_safety import resolve_under_project_output, resolve_under_project_root
@@ -218,12 +220,26 @@ def orchestrate_request(
     gate = evaluate_request_gate(request_context)
     activation = evaluate_scene_activation(request_context, scene_registry)
     gate = merge_activation_into_request_gate(request_context, gate, activation)
+    semantic_asset_route = resolve_semantic_asset_route(request_context)
+    a_to_a_task_contract = build_a_to_a_task_contract(
+        request_context,
+        semantic_asset_route=semantic_asset_route,
+    )
     dispatch = resolve_workflow_route(request_context, routes_table)
 
     if gate.get("status") != "ready":
         dispatch = {**dispatch, "status": DISPATCH_BLOCKED, "reason": f"request gate status={gate.get('status')}"}
     elif activation.get("activation_status") == ACTIVATION_NEEDS_CLARIFICATION:
         dispatch = {**dispatch, "status": DISPATCH_BLOCKED, "reason": "scene activation needs clarification"}
+
+    if a_to_a_task_contract.get("status") == "blocked":
+        reasons = a_to_a_task_contract.get("blockingReasons", [])
+        reason_text = "; ".join(str(reason) for reason in reasons) if isinstance(reasons, list) else str(reasons)
+        dispatch = {
+            **dispatch,
+            "status": DISPATCH_BLOCKED,
+            "reason": f"a-to-a hard gate status=blocked: {reason_text}",
+        }
 
     if bool(dispatch.get("requires_cad")) and not bool(request_context.get("cad_policy", {}).get("allow_cad")):
         dispatch = {**dispatch, "status": DISPATCH_BLOCKED, "reason": "cad_policy.allow_cad is false"}
@@ -234,6 +250,8 @@ def orchestrate_request(
         "request_gate": gate,
         "scene_activation": activation,
         "activated_scene_id": activation.get("activated_scene_id", DEFAULT_SCENE_ID),
+        "semantic_asset_route": semantic_asset_route,
+        "a_to_a_task_contract": a_to_a_task_contract,
         "workflow_dispatch": dispatch,
         "may_execute": dispatch.get("status") == DISPATCH_READY and gate.get("may_dispatch_workflow", False),
         "execution": None,

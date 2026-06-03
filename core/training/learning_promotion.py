@@ -6,13 +6,429 @@ import json
 from pathlib import Path
 from typing import Any
 
+from core.training.promotion_gate import build_failure_promotion_gate, build_training_promotion_gate
+
 
 ROUND_GATE_STAGES = {"visual_contract", "delivery"}
+ITEM_COUNT_ACCEPTANCE_CHECKS = {
+    "all_10_items_generated",
+    "all_21_items_generated",
+    "all_items_generated",
+}
+REQUIRED_ACCEPTANCE_CHECKS = {
+    "persistent_handle_readback",
+    "preview_layer_only",
+    "dwg_not_saved",
+    "chinese_labels",
+}
+AGENT_LEARNING_FILES = ("training_memory.json", "prompt_addendum.md")
+COMMON_PROMPT_CONTRACT_REL = "agents/COMMON_PROMPT_CONTRACT.md"
+COMMON_PROMPT_GUIDANCE = (
+    "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
+    "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
+    "通过前必须回读 created handles，并说明 checked / not_checked。",
+    "真实 CAD 测试默认只写 CODEX_PREVIEW，不保存 DWG，不污染正式图层。",
+)
+POSITION_FEEDBACK_PROMPT_GUIDANCE = (
+    "用户用箭头、蓝圈或截图指定 CAD 位置时，先识别被指对象及相对位置，不得默认另起训练模块。",
+    "图像反馈类 CAD 修正应优先从当前 AutoCAD 实体回读参照 bbox，再按当前画面语义定位；不要套旧 execution summary 坐标。",
+    "若用户要求同尺寸补画样本，先从已存在样本 bbox 推导尺寸，再画新对象并回读 created handles。",
+    "误画在其它区域的预览实体默认保留，未经用户明确批准不得删除 CAD 对象或保存 DWG。",
+)
+SCREENSHOT_ORCHESTRATION_PROMPT_GUIDANCE = (
+    "CAD 截图必须走任务级截图编排：局部修复优先传 target_handles、repair_plan.target_handles 或 repair_plan.target_bbox；没有局部目标时才退到 execution_summary.created_handles。",
+    "AutoCAD 会话截图默认保留 CAD / IDE 布局，用 AutoCAD 客户区 PrintWindow；只有 PrintWindow 失败或 CAD 完全不可见时才短暂置顶。",
+    "单项复验、focused retraining、视觉复核和正式验收需要截图时，Agent 必须报告 screenshotDecision 和 visualPreview，并说明截图只是 visual_aid_only。",
+    "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。",
+)
+SYSTEM_ASSET_REUSE_PROMPT_GUIDANCE = (
+    "白话出现调用、复用、套用或强匹配系统库资产时，先检索 libraries/system_library/registry.json，并生成 system_asset_reuse_workflow；弱匹配只给候选，不直接落图。",
+    "线型、尺寸、文字、引线等 style_standard 资产只走 style_export / style_definition / 原生样式源；不得把 training_panel、current_screen、whole_modelspace 或全 CODEX_PREVIEW 复制成对象 block。",
+    "沉淀 style_standard 或其它系统资产时，元数据合同不等于真沉淀；native_style_definition_written 必须同时有 nativeVisiblePanelEvidence 或等价可见 native 证据，verified 资产还必须有 reuseWorkflowProbe 或真实 reuseReplay。",
+    "native_style_definition_written 表示系统资产 DWG 已有原生样式定义，可生成 style_definition 复用计划；跨 DWG 真正应用仍需 style import / readback gate，且不得保存当前业务 DWG。",
+    "资产复用交付必须报告 matched asset、sourceSpec、target、readbackStatus 和 savedCurrentDwg=false；样式 importer 缺失时返回 deferred，不得声称 asset_reused。",
+)
+SYSTEM_ASSET_VISUAL_WAREHOUSE_PROMPT_GUIDANCE = (
+    "系统资产 DWG 仓库验收不能只看截图非空、DWG 已保存或 overlapCount=0；还必须检查通道可读、内容密度、源/证明角色分离、图层语义和非截图证据。",
+    "pipeline_visual_layout_reviewer 必须输出 layoutReadabilityAcceptable、aisleClearanceAcceptable、contentDensityAcceptable、sourceProofRolesSeparated、layerSemanticsAcceptable 和 nonScreenshotEvidenceChecked；缺任一字段时 visual_layout_review 继续阻断。",
+    "样式标准的可视面板只表示 proof panel；真正可复用来源是命名样式定义或精确边界 clean source，标签、边框、尺寸线、截图、证据卡片和 proof panel 默认 never-copy。",
+    "系统资产 DWG 的 proof content 不得继续留在 CODEX_PREVIEW；应迁到 ASSET_PROOF_CONTENT 等角色图层，并把 ASSET_SOURCE_BOUNDARY 控制为小的 source token，而不是框住证明图形的大边框。",
+)
+SHARED_PROMPT_GUIDANCE = (
+    set(COMMON_PROMPT_GUIDANCE)
+    | set(POSITION_FEEDBACK_PROMPT_GUIDANCE)
+    | set(SCREENSHOT_ORCHESTRATION_PROMPT_GUIDANCE)
+    | set(SYSTEM_ASSET_REUSE_PROMPT_GUIDANCE)
+    | set(SYSTEM_ASSET_VISUAL_WAREHOUSE_PROMPT_GUIDANCE)
+)
 
 
 def _round_prefix(round_id: str | int) -> str:
     text = str(round_id)
     return text if text.startswith("round") else f"round{text}"
+
+
+def _relpath(root: Path, path: Path) -> str:
+    resolved_root = root.resolve()
+    resolved_path = path.resolve()
+    try:
+        return resolved_path.relative_to(resolved_root).as_posix()
+    except ValueError:
+        return resolved_path.as_posix()
+
+
+def _agent_dir(root: Path, agent_id: str) -> Path:
+    if agent_id.startswith("pipeline_"):
+        return root / "agents" / "pipeline" / agent_id.removeprefix("pipeline_")
+    return root / "agents" / agent_id
+
+
+def _program_map(programs: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    return {str(program.get("capabilityId", "")): program for program in programs}
+
+
+def _report_checks_pass(report: dict[str, Any]) -> bool:
+    checks = {str(item.get("name")): item.get("status") for item in report.get("checks", [])}
+    item_count_ok = any(checks.get(name) == "pass" for name in ITEM_COUNT_ACCEPTANCE_CHECKS)
+    return item_count_ok and all(checks.get(name) == "pass" for name in REQUIRED_ACCEPTANCE_CHECKS)
+
+
+def acceptance_report_is_promotable(report: dict[str, Any]) -> bool:
+    if str(report.get("mode", "")).lower() == "quick_trial":
+        return False
+    if report.get("status") != "pass":
+        return False
+    if report.get("visual_self_check", {}).get("status") != "pass":
+        return False
+    return _report_checks_pass(report)
+
+
+def _lesson_for_item(item: dict[str, Any], report: dict[str, Any]) -> dict[str, Any]:
+    handle_count = int(item.get("handle_count") or 0)
+    readback_count = int(item.get("readback_count") or 0)
+    feedback = str(item.get("feedback") or "")
+    title = str(item.get("title") or item.get("capabilityId") or "")
+    custom_guidance = [str(text) for text in item.get("promptGuidance", []) if isinstance(text, str) and text.strip()]
+    return {
+        "capabilityId": str(item.get("capabilityId") or ""),
+        "title": title,
+        "summary": f"{title} 已通过中文训练验收，handles {readback_count}/{handle_count} 已回读。",
+        "promptGuidance": _merge_unique(
+            [
+                *COMMON_PROMPT_GUIDANCE,
+                *SCREENSHOT_ORCHESTRATION_PROMPT_GUIDANCE,
+                *custom_guidance,
+            ]
+        ),
+        "evidence": {
+            "queueId": report.get("queueId", ""),
+            "mode": report.get("mode", ""),
+            "handleCount": handle_count,
+            "readbackCount": readback_count,
+            "feedback": feedback,
+        },
+        "sourceGeneratedAt": str(report.get("generated_at") or ""),
+    }
+
+
+def _merge_unique(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    result: list[str] = []
+    for item in items:
+        if item and item not in seen:
+            seen.add(item)
+            result.append(item)
+    return result
+
+
+def _memory_payload(
+    *,
+    agent_id: str,
+    lessons: list[dict[str, Any]],
+    source_reports: list[str],
+    updated_at: str,
+) -> dict[str, Any]:
+    accepted = _merge_unique([lesson["capabilityId"] for lesson in lessons])
+    prompt_updates = _merge_unique(
+        [
+            guidance
+            for lesson in lessons
+            for guidance in lesson.get("promptGuidance", [])
+            if isinstance(guidance, str)
+        ]
+    )
+    return {
+        "schemaVersion": 1,
+        "agentId": agent_id,
+        "learningState": "prompt_updated",
+        "updatedAt": updated_at,
+        "sourceReports": source_reports,
+        "acceptedCapabilities": accepted,
+        "acceptedCapabilityCount": len(accepted),
+        "lessonCount": len(lessons),
+        "lessons": lessons,
+        "promptUpdateSummary": prompt_updates,
+        "evidenceBoundary": "训练沉淀只更新 Agent 经验、Prompt 和检查口径；不提升表 C，不代表完整施工图能力。",
+    }
+
+
+def _prompt_addendum(agent_id: str, memory: dict[str, Any]) -> str:
+    role_specific_guidance = [
+        guidance
+        for guidance in memory.get("promptUpdateSummary", [])
+        if isinstance(guidance, str) and guidance not in SHARED_PROMPT_GUIDANCE
+    ]
+    lines = [
+        "# Training Prompt Addendum",
+        "",
+        f"Agent: `{agent_id}`",
+        f"Updated: `{memory['updatedAt']}`",
+        "",
+        "## 共用 Prompt 合同",
+        f"- 通用 CAD 安全、证据和视觉反馈规则见 `{COMMON_PROMPT_CONTRACT_REL}`。",
+        "",
+        "## 已验收能力",
+    ]
+    for capability_id in memory.get("acceptedCapabilities", []):
+        lines.append(f"- `{capability_id}`")
+    lines.extend(["", "## 角色专属 Prompt 优化"])
+    if not role_specific_guidance:
+        lines.append("- 本轮没有新增角色专属规则；共用规则只在共享合同维护。")
+    for guidance in role_specific_guidance:
+        lines.append(f"- {guidance}")
+    lines.extend(["", "## 证据边界", "见共用 Prompt 合同；本文件只记录角色专属训练沉淀。", ""])
+    return "\n".join(lines)
+
+
+def _common_prompt_contract() -> str:
+    lines = [
+        "# Common Prompt Contract",
+        "",
+        "本文件是 CAD Designer Agent 与 pipeline Agent 的共享 Prompt 合同。各 Agent 的 `prompt_addendum.md` 只保留角色专属训练经验；以下通用安全、证据和反馈规则统一从这里读取，避免多处复制后漂移。",
+        "",
+        "## 通用 CAD 训练规则",
+        "",
+    ]
+    lines.extend(f"- {guidance}" for guidance in COMMON_PROMPT_GUIDANCE)
+    lines.extend(["", "## 视觉与位置反馈规则", ""])
+    lines.extend(f"- {guidance}" for guidance in POSITION_FEEDBACK_PROMPT_GUIDANCE)
+    lines.extend(["", "## 截图编排规则", ""])
+    lines.extend(f"- {guidance}" for guidance in SCREENSHOT_ORCHESTRATION_PROMPT_GUIDANCE)
+    lines.extend(["", "## 系统资产与样式复用规则", ""])
+    lines.extend(f"- {guidance}" for guidance in SYSTEM_ASSET_REUSE_PROMPT_GUIDANCE)
+    lines.extend(["", "## 系统资产 DWG 视觉仓库验收规则", ""])
+    lines.extend(f"- {guidance}" for guidance in SYSTEM_ASSET_VISUAL_WAREHOUSE_PROMPT_GUIDANCE)
+    lines.extend(["", "## 证据边界", "", "训练沉淀只更新 Agent 经验、Prompt 和检查口径；不提升表 C，不代表完整施工图能力。", ""])
+    return "\n".join(lines)
+
+
+def _write_common_prompt_contract(root: Path) -> Path:
+    path = root / COMMON_PROMPT_CONTRACT_REL
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_common_prompt_contract(), encoding="utf-8")
+    return path
+
+
+def promote_training_acceptance(
+    *,
+    root: Path,
+    report_paths: list[Path],
+    programs: list[dict[str, Any]],
+    ledger_path: Path | None = None,
+) -> dict[str, Any]:
+    """Promote passed training acceptance reports into agent memory and prompt addenda."""
+
+    root = Path(root)
+    program_by_id = _program_map(programs)
+    source_reports: list[str] = []
+    accepted_reports: list[dict[str, Any]] = []
+    agent_lessons: dict[str, list[dict[str, Any]]] = {}
+    accepted_items: list[dict[str, Any]] = []
+
+    for report_path in report_paths:
+        path = Path(report_path)
+        if not path.exists():
+            continue
+        report, error = _read_json(path)
+        if error or not report or not acceptance_report_is_promotable(report):
+            continue
+        accepted_reports.append(report)
+        source_rel = _relpath(root, path)
+        source_reports.append(source_rel)
+        for item in report.get("items", []):
+            if item.get("status") != "pass":
+                continue
+            capability_id = str(item.get("capabilityId") or "")
+            if not capability_id:
+                continue
+            program = program_by_id.get(capability_id, {})
+            if not program:
+                continue
+            agent_ids = list(program.get("responsibleAgentIds") or ["cad_designer"])
+            lesson = _lesson_for_item(item, report)
+            lesson["responsibleAgentIds"] = agent_ids
+            lesson["sourceReport"] = source_rel
+            accepted_items.append(lesson)
+            for agent_id in agent_ids:
+                agent_lessons.setdefault(agent_id, []).append(lesson)
+
+    if not accepted_items:
+        promotion_gate = build_training_promotion_gate(
+            reports=accepted_reports,
+            accepted_items=[],
+            agent_updates=[],
+            source_reports=source_reports,
+        )
+        result = {
+            "schemaVersion": 1,
+            "status": "no_promotable_acceptance",
+            "sourceReportPaths": source_reports,
+            "acceptedItemCount": 0,
+            "promotedAgentCount": 0,
+            "agentUpdates": [],
+            "promotionGate": promotion_gate,
+        }
+        target = ledger_path or root / "output" / "training_learning" / "agent_learning_ledger.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return result
+
+    updated_at = str(accepted_items[-1].get("sourceGeneratedAt") or "")
+    if not updated_at:
+        first_report = Path(report_paths[0])
+        report, _ = _read_json(first_report) if first_report.exists() else ({}, None)
+        updated_at = str((report or {}).get("generated_at") or "")
+
+    agent_updates: list[dict[str, Any]] = []
+    common_prompt_path = _write_common_prompt_contract(root)
+    for agent_id, lessons in sorted(agent_lessons.items()):
+        agent_dir = _agent_dir(root, agent_id)
+        agent_dir.mkdir(parents=True, exist_ok=True)
+        memory_path = agent_dir / "training_memory.json"
+        prompt_path = agent_dir / "prompt_addendum.md"
+        memory = _memory_payload(
+            agent_id=agent_id,
+            lessons=lessons,
+            source_reports=source_reports,
+            updated_at=updated_at,
+        )
+        memory_path.write_text(json.dumps(memory, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        prompt_path.write_text(_prompt_addendum(agent_id, memory), encoding="utf-8")
+        agent_updates.append(
+            {
+                "agentId": agent_id,
+                "learningState": "prompt_updated",
+                "acceptedCapabilities": memory["acceptedCapabilities"],
+                "acceptedCapabilityCount": memory["acceptedCapabilityCount"],
+                "lessonCount": memory["lessonCount"],
+                "sourceRefs": [_relpath(root, memory_path), _relpath(root, prompt_path), _relpath(root, common_prompt_path)],
+                "promptUpdateSummary": memory["promptUpdateSummary"],
+            }
+        )
+
+    promotion_gate = build_training_promotion_gate(
+        reports=accepted_reports,
+        accepted_items=accepted_items,
+        agent_updates=agent_updates,
+        source_reports=source_reports,
+    )
+    result = {
+        "schemaVersion": 1,
+        "status": "promoted",
+        "sourceReportPaths": source_reports,
+        "acceptedItemCount": len(accepted_items),
+        "promotedAgentCount": len(agent_updates),
+        "agentUpdates": agent_updates,
+        "acceptedItems": accepted_items,
+        "promotionGate": promotion_gate,
+        "evidenceBoundary": "训练验收已沉淀到对应 Agent 记忆和 Prompt 附加文件；这仍不提升表 C。",
+    }
+    target = ledger_path or root / "output" / "training_learning" / "agent_learning_ledger.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return result
+
+
+def build_learning_index(ledger: dict[str, Any]) -> dict[str, Any]:
+    by_agent: dict[str, dict[str, Any]] = {}
+    by_capability: dict[str, dict[str, Any]] = {}
+    promotion_gate = ledger.get("promotionGate", {})
+    lessons_by_capability = {
+        str(item.get("capabilityId")): item
+        for item in ledger.get("acceptedItems", [])
+        if item.get("capabilityId")
+    }
+    for update in ledger.get("agentUpdates", []):
+        agent_id = str(update.get("agentId") or "")
+        if not agent_id:
+            continue
+        accepted = [str(item) for item in update.get("acceptedCapabilities", []) if item]
+        by_agent[agent_id] = {
+            "agentId": agent_id,
+            "learningState": update.get("learningState", ""),
+            "acceptedCapabilities": accepted,
+            "acceptedCapabilityCount": len(accepted),
+            "sourceRefs": update.get("sourceRefs", []),
+            "promptUpdateSummary": update.get("promptUpdateSummary", []),
+            "promotionGate": promotion_gate,
+        }
+        for capability_id in accepted:
+            entry = by_capability.setdefault(
+                capability_id,
+                {
+                    "status": "promoted",
+                    "capabilityId": capability_id,
+                    "agentUpdates": [],
+                    "promotedAgentIds": [],
+                    "sourceRefs": [],
+                    "promptUpdateSummary": [],
+                },
+            )
+            entry["agentUpdates"].append(
+                {
+                    "agentId": agent_id,
+                    "learningState": update.get("learningState", ""),
+                    "sourceRefs": update.get("sourceRefs", []),
+                }
+            )
+            entry["promotedAgentIds"].append(agent_id)
+            entry["sourceRefs"].extend(update.get("sourceRefs", []))
+            entry["promptUpdateSummary"].extend(update.get("promptUpdateSummary", []))
+
+    for entry in by_capability.values():
+        entry["promotedAgentIds"] = _merge_unique(entry["promotedAgentIds"])
+        entry["sourceRefs"] = _merge_unique(entry["sourceRefs"])
+        entry["promptUpdateSummary"] = _merge_unique(entry["promptUpdateSummary"])
+        entry["promotedAgentCount"] = len(entry["promotedAgentIds"])
+        entry["promotionGate"] = promotion_gate
+        lesson = lessons_by_capability.get(entry["capabilityId"], {})
+        visible_lessons = [
+            str(item)
+            for item in lesson.get("promptGuidance", entry["promptUpdateSummary"])
+            if item
+        ][:4]
+        title = str(lesson.get("title") or entry["capabilityId"])
+        if lesson:
+            entry["plainLanguageSummary"] = (
+                f"已把“{title}”的训练经验沉淀到 {entry['promotedAgentCount']} 个责任智能体；"
+                "后续遇到同类任务，会优先按这些中文规则执行。"
+            )
+        else:
+            entry["plainLanguageSummary"] = (
+                f"已把这项训练经验沉淀到 {entry['promotedAgentCount']} 个责任智能体；"
+                "后续会按已更新的中文 Prompt 执行。"
+            )
+        entry["visibleLessons"] = visible_lessons
+
+    return {
+        "status": ledger.get("status", "missing"),
+        "sourceReportPaths": ledger.get("sourceReportPaths", []),
+        "acceptedItemCount": ledger.get("acceptedItemCount", 0),
+        "promotedAgentCount": ledger.get("promotedAgentCount", 0),
+        "promotionGate": promotion_gate,
+        "byAgent": by_agent,
+        "byCapability": by_capability,
+    }
 
 
 def _failure_text(failure: dict[str, Any]) -> str:
@@ -79,12 +495,14 @@ def write_learning_promotion_report(
     round_name = _round_prefix(round_id)
     case_id = case_dir.name
     decision = classify_learning_failure(failure, case_id=case_id, scene=scene)
+    promotion_gate = build_failure_promotion_gate(failure=failure, decision=decision)
     report = {
         "case_id": case_id,
         "round": round_name,
         "scene": scene,
         "failure": failure,
         "decision": decision,
+        "promotionGate": promotion_gate,
         "mutated_targets": [],
         "notes": [
             "This report records promotion intent only.",
@@ -99,7 +517,7 @@ def write_learning_promotion_report(
 
 def _read_json(path: Path) -> tuple[dict[str, Any] | None, str | None]:
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
     except json.JSONDecodeError as exc:
         return None, f"{path.name}: invalid JSON ({exc.msg})"
     if not isinstance(data, dict):

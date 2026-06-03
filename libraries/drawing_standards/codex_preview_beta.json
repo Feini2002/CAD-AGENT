@@ -54,10 +54,73 @@
       "color": "8"
     }
   },
+  "style_tokens": {
+    "wall.cut.heavy_continuous": {
+      "description": "墙体 / 剖切实体主轮廓，源自用户线宽线型样板。",
+      "style_role": "primary_contour",
+      "layer_role": "wall",
+      "lineweight_mm": 0.7,
+      "linetype": "CONTINUOUS",
+      "linetype_scale": 1.0,
+      "color_policy": "by_layer",
+      "inheritance_mode": "by_layer"
+    },
+    "furniture.visible.medium": {
+      "description": "家具或构件可见外轮廓，中等线宽，不压过墙体。",
+      "style_role": "visible_contour",
+      "layer_role": "furniture",
+      "lineweight_mm": 0.35,
+      "linetype": "CONTINUOUS",
+      "linetype_scale": 1.0,
+      "color_policy": "by_layer",
+      "inheritance_mode": "by_layer"
+    },
+    "furniture.centerline.medium": {
+      "description": "家具 / 设备中心线或对称线。",
+      "style_role": "centerline",
+      "layer_role": "centerline",
+      "lineweight_mm": 0.35,
+      "linetype": "CENTER",
+      "linetype_scale": 25.0,
+      "color_policy": "by_layer",
+      "inheritance_mode": "by_layer"
+    },
+    "furniture.inner_detail.thin": {
+      "description": "家具内部细节、软包缝、坐垫分缝，不作为主轮廓。",
+      "style_role": "inner_detail",
+      "layer_role": "furniture",
+      "lineweight_mm": 0.13,
+      "linetype": "CONTINUOUS",
+      "linetype_scale": 1.0,
+      "color_policy": "by_layer",
+      "inheritance_mode": "by_layer"
+    },
+    "object.hidden.thin_dashed": {
+      "description": "隐藏边、内部轨道或不可见结构线。",
+      "style_role": "hidden_edge",
+      "layer_role": "hidden",
+      "lineweight_mm": 0.13,
+      "linetype": "DASHED",
+      "linetype_scale": 25.0,
+      "color_policy": "by_layer",
+      "inheritance_mode": "by_layer"
+    },
+    "annotation.guide.thin_dashed": {
+      "description": "标注辅助线、说明引导线或低干扰参考线。",
+      "style_role": "annotation_guide",
+      "layer_role": "annotation",
+      "lineweight_mm": 0.2,
+      "linetype": "DASHED",
+      "linetype_scale": 25.0,
+      "color_policy": "by_layer",
+      "inheritance_mode": "by_layer"
+    }
+  },
   "object_role_bindings": {
     "furniture": {
       "layer_role": "furniture",
-      "text_style_id": "CAD_LABEL"
+      "text_style_id": "CAD_LABEL",
+      "style_token_id": "furniture.visible.medium"
     },
     "block_insert": {
       "layer_role": "preview"
@@ -72,7 +135,8 @@
     },
     "annotation": {
       "layer_role": "annotation",
-      "text_style_id": "CAD_NOTE"
+      "text_style_id": "CAD_NOTE",
+      "style_token_id": "annotation.guide.thin_dashed"
     },
     "dimension": {
       "layer_role": "dimension",

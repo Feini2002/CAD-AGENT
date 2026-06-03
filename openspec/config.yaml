@@ -6,6 +6,11 @@ context: |
   Use OpenSpec for scoped complex changes that need proposal/spec/design/tasks alignment.
   Do not treat openspec/changes/* as a second master roadmap or backlog.
   User-facing status and summaries should remain Chinese unless explicitly requested otherwise.
+  Readiness checks are: openspec list --json; openspec status --change <name> --json;
+  openspec validate --all --strict --json --no-interactive.
+  The status command requires --change; a missing-change error is not an initialization failure.
+  Completed changes may remain under openspec/changes/ while repository docs still reference them.
+  Archive only when stable specs and repository references are updated together, or explicitly skip specs.
   Real CAD completion claims still require CAD_PLAN validation, dry-run, CODEX_PREVIEW execution,
   created-handle readback, entity checks, and screenshots when needed.
 
@@ -17,3 +22,6 @@ rules:
     - Keep tasks scoped to one OpenSpec change; do not duplicate the global PlanMD backlog.
   specs:
     - Specs describe stable capability behavior, not transient implementation chores.
+  archive:
+    - Before archiving a completed change, confirm whether docs still reference openspec/changes/<change>.
+    - Do not treat an empty openspec/specs list as an initialization failure when completed changes validate.

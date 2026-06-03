@@ -65,6 +65,8 @@ The capability map should stop growing as one HTML/application/data blob. Its re
 | Responsibility | Current pressure | Target boundary |
 | --- | --- | --- |
 | `data generator` | `scripts/build_capability_map_data.py` is already large | Build normalized capability view data only. |
+| sync runner | HTML snapshots can become stale after training / registry / coverage changes | `scripts/sync_training_workbench.py` refreshes coverage, rebuilds data, and runs the workbench agent check. |
+| agent check | dashboard drift is hard to spot manually | `scripts/run_training_workbench_agent_check.py` validates source refs, responsible agents, Table C snapshot alignment, and page sync affordances. |
 | normalized view model | mixed with generator details | Small JSON/JS contract that the page consumes. |
 | `page shell` | `capability-map.html` carries layout, copy, and rendering | Keep HTML/CSS/interaction shell separate from data. |
 | `display configuration` | labels, group order, and evidence policy are embedded | Move operator-facing grouping and labels to a small config layer. |

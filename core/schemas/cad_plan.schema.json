@@ -111,6 +111,50 @@
         },
         "semantic_layer": {
           "type": "string"
+        },
+        "style_token": {
+          "type": "string"
+        },
+        "style_role": {
+          "type": "string"
+        },
+        "style_resolution": {
+          "type": "object",
+          "properties": {
+            "source_profile_id": { "type": "string" },
+            "style_token": { "type": "string" },
+            "style_role": { "type": "string" },
+            "layer_role": { "type": "string" },
+            "semantic_layer": { "type": "string" },
+            "resolved_layer": { "type": "string" },
+            "lineweight_mm": { "type": "number" },
+            "resolved_cad_lineweight": { "type": "integer" },
+            "linetype": { "type": "string" },
+            "linetype_scale": { "type": "number" },
+            "color_policy": { "type": "string" },
+            "color": {},
+            "inheritance_mode": { "type": "string" },
+            "evidence_boundary": { "type": "object" }
+          },
+          "additionalProperties": true
+        },
+        "entity_style_overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "part_ref": { "type": "string" },
+              "primitive_role": { "type": "string" },
+              "style_token": { "type": "string" },
+              "override_reason": { "type": "string" },
+              "handle_ref_after_execution": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "style_assumptions": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       },
       "additionalProperties": true

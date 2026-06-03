@@ -91,6 +91,41 @@ class WorkflowDispatchTests(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertIn("cad_plan", result["artifacts"])
 
+    def test_orchestrator_reports_semantic_asset_route_before_generic_dispatch(self) -> None:
+        context = build_request_context(
+            context_id="req-orch-semantic-asset",
+            request_kind="draw",
+            user_request="放一个线型表到当前图",
+            allow_cad=True,
+        )
+
+        report = orchestrate_request(context, output_dir=artifact_path("workflow_dispatch", "semantic_asset_route"))
+
+        semantic_route = report["semantic_asset_route"]
+        self.assertEqual(semantic_route["status"], "ready", semantic_route)
+        self.assertEqual(semantic_route["fallback"], "system_asset_reuse_workflow")
+        self.assertEqual(semantic_route["workflow"]["reusePlans"][0]["assetId"], "linetype_style_summary_table")
+        self.assertFalse(semantic_route["savedCurrentDwg"])
+
+    def test_orchestrator_blocks_when_main_agent_dispatch_awareness_fails(self) -> None:
+        context = build_request_context(
+            context_id="req-orch-main-agent-awareness-fail",
+            request_kind="draw",
+            user_request="把系统资产 DWG 做成仓库货架排版",
+            allow_cad=True,
+        )
+        context["main_agent_self_check_override"] = {
+            "status": "fail",
+            "reason": "manifest policy missing during replay",
+        }
+
+        report = orchestrate_request(context)
+
+        self.assertEqual(report["a_to_a_task_contract"]["status"], "blocked")
+        self.assertIn("main_agent_dispatch_awareness", report["a_to_a_task_contract"]["failedHardGates"])
+        self.assertEqual(report["workflow_dispatch"]["status"], DISPATCH_BLOCKED)
+        self.assertIn("a-to-a hard gate", report["workflow_dispatch"]["reason"])
+
     def test_blocked_gate_skips_execution(self) -> None:
         context = build_request_context(
             context_id="req-orch-blocked",

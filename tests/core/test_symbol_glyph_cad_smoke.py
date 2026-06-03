@@ -4,8 +4,10 @@ import json
 import unittest
 from pathlib import Path
 
+from core.drawing_standard.drawing_standard_profile import apply_drawing_standard_to_plan
 from core.execution.execute_plan import execute_plan_file
 from core.execution.symbol_glyph_execute import expected_readback_type_counts
+from core.plan_engine.dry_run_report import create_dry_run_report
 from core.verification.evidence_contract import (
     EVIDENCE_DEFERRED_CAD_READBACK,
     EVIDENCE_READBACK_GEOMETRY_VERIFIED,
@@ -45,6 +47,64 @@ class SymbolGlyphCadSmokeTests(unittest.TestCase):
         self.assertEqual(result["layer"], "CODEX_PREVIEW")
         self.assertEqual(result["expected_readback_type_counts"], {"circle": 1, "line": 9})
         self.assertEqual(len(result["created_handles"]), 10)
+
+    def test_symbol_glyph_primitive_style_override_is_dry_run_and_executed(self) -> None:
+        plan = {
+            "version": "0.1",
+            "domain": "residential",
+            "intent": "draw_symbol_glyph",
+            "object": {
+                "type": "symbol_glyph",
+                "name": "Styled Sofa Detail",
+                "symbol_id": "styled-sofa-detail",
+                "glyph_primitives": [
+                    {
+                        "part_id": "outline",
+                        "kind": "visible_contour",
+                        "primitive": "line",
+                        "start_point": [0, 0, 0],
+                        "end_point": [1000, 0, 0],
+                    },
+                    {
+                        "part_id": "seat_seam",
+                        "kind": "inner_detail",
+                        "primitive": "line",
+                        "style_token": "furniture.inner_detail.thin",
+                        "start_point": [0, 120, 0],
+                        "end_point": [1000, 120, 0],
+                    },
+                ],
+            },
+            "placement": {"mode": "absolute", "base_point": [0, 0, 0]},
+            "drawing": {
+                "style_token": "furniture.visible.medium",
+                "include_label": False,
+                "include_dimensions": False,
+            },
+            "confidence": 1.0,
+            "needs_confirmation": False,
+        }
+        apply_drawing_standard_to_plan(plan)
+
+        dry_run = create_dry_run_report(plan)
+        self.assertEqual(dry_run["entities"][0]["style_resolution"]["style_token"], "furniture.visible.medium")
+        self.assertEqual(dry_run["entities"][1]["style_resolution"]["style_token"], "furniture.inner_detail.thin")
+        self.assertEqual(dry_run["entities"][1]["style_resolution"]["lineweight_mm"], 0.13)
+
+        plan_path = artifact_path("execute_plan", "symbol_glyph_styled_sofa_detail.json")
+        plan_path.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+        driver = FakeCadDriver()
+        result = execute_plan_file(plan_path, driver=driver)
+
+        handles = result["created_handles"]
+        self.assertEqual(len(handles), 2)
+        self.assertEqual(result["style_evidence"]["by_primitive"][0]["style_token"], "furniture.visible.medium")
+        self.assertEqual(result["style_evidence"]["by_primitive"][1]["style_token"], "furniture.inner_detail.thin")
+        self.assertEqual(getattr(driver.entities[handles[0]], "Lineweight"), 35)
+        self.assertEqual(getattr(driver.entities[handles[1]], "Lineweight"), 13)
+        self.assertEqual(getattr(driver.entities[handles[1]], "Linetype"), "CONTINUOUS")
+        self.assertFalse(hasattr(driver.entities[handles[0]], "Color"))
+        self.assertFalse(hasattr(driver.entities[handles[1]], "Color"))
 
     def test_symbol_glyph_smoke_verifies_created_handles(self) -> None:
         output_dir = artifact_path("symbol_glyph_cad_smoke", "pass")

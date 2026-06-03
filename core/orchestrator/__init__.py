@@ -1,5 +1,6 @@
 """Core orchestrator: request context, routing, and workflow dispatch."""
 
+from core.orchestrator.a_to_a_task_contract import build_a_to_a_task_contract
 from core.orchestrator.route_audit_report import build_route_audit_report, write_route_audit_report
 from core.orchestrator.workflow_dispatch import (
     DISPATCH_BLOCKED,
@@ -48,6 +49,7 @@ __all__ = [
     "GATE_STATUS_NEEDS_CLARIFICATION",
     "GATE_STATUS_READY",
     "REQUEST_KINDS",
+    "build_a_to_a_task_contract",
     "build_request_context",
     "build_route_audit_report",
     "evaluate_scene_activation",

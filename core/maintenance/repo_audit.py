@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ IGNORED_DIR_NAMES = {
     "output",
     "venv",
 }
+SEVERITY_RANK = {"low": 1, "medium": 2, "high": 3}
 
 
 def _iter_python_files(root: Path) -> list[Path]:
@@ -78,7 +80,17 @@ def _has_python_path_mutation_call(text: str) -> bool:
     return False
 
 
-def run_repo_audit(root: Path, *, max_python_lines: int = 500) -> dict[str, Any]:
+def _severity_counts(findings: list[dict[str, str]]) -> dict[str, int]:
+    counts = Counter(finding.get("severity", "medium") for finding in findings)
+    return {severity: counts.get(severity, 0) for severity in SEVERITY_RANK}
+
+
+def _blocking_finding_count(findings: list[dict[str, str]], *, fail_on_severity: str = "medium") -> int:
+    threshold = SEVERITY_RANK[fail_on_severity]
+    return sum(1 for finding in findings if SEVERITY_RANK.get(finding.get("severity", "medium"), 2) >= threshold)
+
+
+def run_repo_audit(root: Path, *, max_python_lines: int = 500, fail_on_severity: str = "medium") -> dict[str, Any]:
     """Return structured findings for maintainability risks that are cheap to verify."""
 
     root = root.resolve()
@@ -132,9 +144,15 @@ def run_repo_audit(root: Path, *, max_python_lines: int = 500) -> dict[str, Any]
                 )
             )
 
+    severity_counts = _severity_counts(findings)
     return {
         "status": "pass" if not findings else "findings",
         "root": str(root),
-        "summary": {"finding_count": len(findings)},
+        "summary": {
+            "finding_count": len(findings),
+            "severity_counts": severity_counts,
+            "blocking_severity": fail_on_severity,
+            "blocking_finding_count": _blocking_finding_count(findings, fail_on_severity=fail_on_severity),
+        },
         "findings": findings,
     }

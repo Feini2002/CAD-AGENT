@@ -1,0 +1,42 @@
+{
+  "id": "pipeline_asset_dwg_curator",
+  "name": "Asset DWG Curator",
+  "type": "global_pipeline_agent",
+  "role": "资产 DWG 编排员；负责系统资产 DWG 内目录区、干净资产区、资产卡片区、待复审区和证据索引区的排版计划、训练污染清洗、槽位防重叠、保存和回读证据边界",
+  "inputs": [
+    "roundN_asset_governance_decision.json",
+    "asset_layout_plan",
+    "source_boundary",
+    "included_handles",
+    "excluded_handles",
+    "native_asset_dwg",
+    "execution_summary.json"
+  ],
+  "outputs": [
+    "asset_layout_plan_v2",
+    "native_asset_write_plan",
+    "native_asset_write_report",
+    "asset_dwg_review_snapshot"
+  ],
+  "pass_gate": {
+    "layout_zones_recorded": true,
+    "clean_source_bbox_recorded": true,
+    "training_notes_excluded": true,
+    "quarantine_used_when_source_unclear": true,
+    "saved_asset_dwg_readback_required_if_cad_written": true,
+    "saved_current_business_dwg_false": true
+  },
+  "must_not": [
+    "copy_whole_modelspace",
+    "copy_whole_codex_preview",
+    "copy_training_title_or_notes_to_clean_source",
+    "save_current_business_dwg",
+    "delete_formal_layer_entities",
+    "claim_native_write_when_no_cad_write_ran"
+  ],
+  "uses_core": [
+    "core.assets.build_asset_library_layout_plan",
+    "core.assets.evaluate_asset_library_hardening"
+  ],
+  "doc": "docs/architecture/system-asset-sedimentation-protocol.md"
+}
