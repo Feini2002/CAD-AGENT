@@ -8,7 +8,7 @@ Core Lab 施工已收口。本目录是**默认工作入口**：用 CAD Designer
 
 - 开基础课：读本节、`cad-designer-growth-path.md` 和 `agents/cad_designer/rules.md` 即可，不默认全文展开旧案例。
 - 开家装案例：再读 `residential-primary.md`、案例 `brief.md` / `feedback.md` 和必要的 `expected/`。
-- 查训练事实源：读 `training-sources.json`；`capability-map-data.js` 与 `capability-map.html` 只是派生快照。
+- 查训练事实源：读 `training-sources.json`；`capability-map-data.js` 与 `capability-map.html` 只是派生快照。查训练前 / 收尾数据体积风险时，先看 data-bloat / retention 诊断报告的 protected / candidate / blocked 摘要，但它们不得当训练事实源。
 - 查历史方案：`visual-first-agent-plan.md` 等标记为 HISTORY-ONLY 的文件只作背景，不当作当前待执行 Phase。
 
 ## 总训练对象
@@ -51,7 +51,7 @@ Core Lab 施工已收口。本目录是**默认工作入口**：用 CAD Designer
 
 **系统资产沉淀口径：** 用户明确说“沉淀 XX 资产 / 通用资产 / 收进资产库”时，才进入 `libraries/system_library/`。默认按 [`../architecture/system-asset-sedimentation-protocol.md`](../architecture/system-asset-sedimentation-protocol.md) 执行四件套：机器契约、CAD 原生资产位置、应用 / 验收工具、全局索引。当前通用入口是 `scripts/sediment_system_asset.py`；它可以先登记合同并预留 `*_assets.dwg`，但若 `nativeDwgExists=false`，不得声称原生 DWG 已导出或新 CAD 文件已自动具备该资产。
 
-**资产库守门员：** 沉淀前先过 `pipeline_asset_governor`。它判断来源边界、是否能进入 clean reusable source、是否需要资产馆员 / DWG 编排员 / 复用审计员，以及收尾是否还需继续润色加固。系统资产 DWG 不得把训练面板、训练标题、临时说明、边框、尺寸线或证据文字原封不动搬进可复制源区；来源不清时进入 `metadata_only` / `03_REVIEW_QUARANTINE`。
+**资产库守门员：** 沉淀前先过 `pipeline_asset_governor`。它判断来源边界、是否能进入 clean reusable source、是否需要资产馆员 / DWG 编排员 / 复用审计员，以及收尾是否还需继续润色加固。系统资产 DWG 不得把训练面板、训练标题、临时说明、边框、尺寸线或证据文字原封不动搬进可复制源区；来源不清时进入 `metadata_only` / `03_REVIEW_QUARANTINE`。`03_REVIEW_QUARANTINE` 是系统资产 DWG 的可视复审区，不是训练证据归档区；训练 evidence / archive 不得搬进 clean asset 或 quarantine 当资产源。
 
 **分类资产库规则：** 同类资产沉淀到同一个稳定包。比如沙发资产进入 `libraries/system_library/furniture/seating/sofas/`，沙发 A / B 连续沉淀时更新同一个 `assets.json` 和同一个 `sofa_assets.dwg` 位置；绘图标准进入 `libraries/system_library/drawing_standards/basic/`，统一线宽、线型、尺寸样式、文字和引线样式等标准。
 
@@ -311,9 +311,9 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 
 队列脚本不无人值守保存或覆盖 DWG；真实落图仍必须只写 `CODEX_PREVIEW`，并按本页理想链路保留 validate、dry-run、handles 回读、审计和用户反馈。
 
-通过项的收尾由脚本自动做：`--decision pass` 会触发训练工作台同步，并在 JSON 输出里写入 `postTrainingSync`；中间项采用轻量同步，最后一项通过并完成队列时会跑完整 `scripts/sync_training_workbench.py`，自动完成 learning promotion、`capability-map-data.js` 重建和 Agent check。除非调试时显式传 `--no-post-sync`，不要再让用户额外提醒“同步前端 / 沉淀 Prompt”。
+通过项的收尾由脚本自动做：`--decision pass` 会触发训练工作台同步，并在 JSON 输出里写入 `postTrainingSync`；中间项采用轻量同步，最后一项通过并完成队列时会跑完整 `scripts/sync_training_workbench.py`，自动完成 learning promotion、`capability-map-data.js` 重建和 Agent check。除非调试时显式传 `--no-post-sync`，不要再让用户额外提醒“同步前端 / 沉淀 Prompt”。新建或修改训练脚本还要在输出中保留 `postTrainingDataBloat` 或等价摘要：说明本轮是否产生 debug / test artifacts / 临时报告、是否只做 dry-run、是否存在 blocked 引用，不得因为派生快照体积 warning 把已通过训练改判失败；既有脚本若暂时只有 `postTrainingArtifactRetention`，必须把 data-bloat 脚本缺口标为 `pending_implementation`，不得误报 `scripts/run_data_bloat_audit.py` 已存在。
 
-正式训练、focused 复训或纠错收尾还必须生成 `promotionGate`。它负责把“是否写训练事实源、是否刷新工作台、是否同步 Agent 校准、是否需要 reviewed package 改底座规则 / 单项规则 / 检查器、是否回测原任务”写成机器可读决策。`quick_trial` 的 gate 只能是 `observation`；缺 handles/readback、缺 Agent 自检、只有截图推断或用户明确“先别沉淀”时，不得写入 Agent 校准或工作台已沉淀状态。规则 delta 和检查器 delta 只进入 `needs_reviewed_package`，不能由训练脚本静默改全局规则。
+正式训练、focused 复训或纠错收尾还必须生成 `promotionGate`。它负责把“是否写训练事实源、是否刷新工作台、是否同步 Agent 校准、是否需要 reviewed package 改底座规则 / 单项规则 / 检查器、是否回测原任务、是否需要数据防膨胀门禁”写成机器可读决策。`quick_trial` 的 gate 只能是 `observation`；缺 handles/readback、缺 Agent 自检、只有截图推断或用户明确“先别沉淀”时，不得写入 Agent 校准或工作台已沉淀状态。规则 delta、检查器 delta 和数据防膨胀策略变化只进入 `needs_reviewed_package`，不能由训练脚本静默改全局规则。
 
 剩余 21 项基础操作已改用批量无监督入口 `scripts/run_cad_foundation_remaining_training.py`。该脚本默认连接当前 AutoCAD，只写 `CODEX_PREVIEW`，生成 `cad-foundation-remaining-21` 的结构化训练计划、dry-run、execution summary、验收报告、队列状态和预览截图，并在通过后自动运行 `scripts/sync_training_workbench.py`。当前最终证据为 `output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json`，21/21 pass、235/235 句柄回读，中文标注复训后 `chinese_labels=text_labels=65 latin_terms=0`；它让 CAD 基础操作 31/31 进入训练沉淀，但不提升表 C。
 
@@ -332,6 +332,8 @@ Intake 协议与扫描：`docs/runbooks/project-sample-intake.md`。
 用户为了查看方便可以手动移动已经生成的训练面板；只要不是炸开、删除或重画，原实体句柄通常仍可回读。复训脚本应优先读取上一轮 `execution_summary` 的 created handles，并以这些 handles 的当前位置 / bbox 作为训练停放区参考，避免训练目标按全画布最右侧一路漂移。找不到旧 handles 时才退回当前 `CODEX_PREVIEW` 全局 bbox 右侧空白区，并在报告里记录 `parking_anchor.source`。
 
 收尾后还要执行训练产物保留策略：长期只保留最终验收报告、队列状态、learning ledger / Agent memory / Prompt addendum，以及最近一份人工复核预览图；中间 retry 目录、临时 `CAD_PLAN` / dry-run / execution summary、旧截图和一次性脚本应在确认不再被引用后清理。默认入口是 `scripts/run_training_artifact_retention.py`：先 dry-run 写 `retention_report.json`，确认未引用旧图后才允许显式 `--write` 归档到 `archive/training_artifacts/`；训练队列 pass 后会把 dry-run 摘要写入 `postTrainingArtifactRetention`。清理前必须先把失败根因或可复用教训写入 `training-errors.md`、learning promotion 或对应规则，不能把教训随临时文件一起删掉。
+
+数据防膨胀门禁是保留策略的前置判断，不等于立即删除。正式训练、focused 复训、队列 completed、正式收尾型工作台同步或资产沉淀前后都要能区分四类路径：`protected` 为 active `fact_source`、final report、queue state、learning ledger、Agent memory / Prompt addendum、表 C / registry / 系统资产证据和仍被状态文档引用的路径；`candidate` 为短期 debug、test artifacts、retry、dry-run、execution summary、旧截图和临时报告；`blocked` 为 active fact source 缺失、引用根未覆盖、候选仍被引用或会让证据断链变差；`derived` 为 `capability-map-data.js`、HTML、sync report、retention report 和 data-bloat audit。`derived` 只能帮助诊断，不得登记为训练事实源。`capability-map-data.js` 的目标生成策略是 compact 输出；脚本尚未实现时必须标为 `pending_implementation`，pretty 调试快照只放 `output/debug/`，并按短期产物处理。
 
 自动化训练还必须带超时与熔断保护：队列里的每个 CAD / 脚本 / 截图 / 回读 / 同步子动作默认最多等待 30 秒。超时后先由 Agent 读取 stdout / stderr、最近报告、队列状态和 CAD 会话状态，自行尝试一次有限恢复，例如重连、刷新、重取景、重跑该子步骤或改用 deferred；不得无限 retry。
 

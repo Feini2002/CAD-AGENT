@@ -4,6 +4,16 @@ Change marker: `ARCH-BOUNDARY-HARDENING-01`
 
 This snapshot is the boundary contract for the architecture slimming package. It does not replace `CORE_RESTRUCTURE_PLAN.md`; this document is **not a second roadmap**. It only says where code belongs today and what evidence is required before code moves between layers.
 
+## Default Request Chain
+
+All architecture docs should describe the same request path:
+
+```text
+User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> execution -> verification -> promotion/sync
+```
+
+`semantic route` classifies the request before any CAD action. `A-to-A contract` records responsibility dispatch and hard gates for complex or high-risk workflows. The downstream branch must be exactly one of `CAD_PLAN`, `asset workflow`, or `training route`; after execution, every branch returns to verification and only then to promotion/sync.
+
 ## Boundary Buckets
 
 ### Stable Core
@@ -19,6 +29,13 @@ Current stable Core examples:
 
 Stable Core rule: code can live here only when it has clear inputs/outputs, tests or machine checks, no project-path dependency, and no hidden training-case assumption.
 
+### Stable Core Ownership Guardrails
+
+- `core/orchestrator/`: routes requests, records semantic route audits, builds contracts, and dispatches workflows; it must not draw CAD details, mutate asset metadata directly, or invent scene vocabulary.
+- `core/assets/`: owns system asset semantics, registry contracts, source-boundary checks, reuse planning, and asset-governance gates; it must not treat raw reference input as verified capability, save the current business DWG, or write training facts.
+- `core/training/`: owns queues, focused retraining helpers, promotion gates, learning ledger decisions, and workbench sync inputs; it must not claim Table C gains, become a scene rule store, or bypass CAD validation when formal acceptance is requested.
+- `core/verification/`: owns report contracts, evidence validation, readback / visual audit interpretation, and gate results; it must not become the runner backlog, the status page, or a second capability registry.
+
 ### Training Experiments
 
 Training Experiments are useful for learning, evaluation, and repeated case loops, but they are not automatically platform behavior.
@@ -31,6 +48,11 @@ Current training experiment examples:
 - `capability-map.html`, `capability-map-data.js`, and `scripts/build_capability_map_data.py`: operator-facing capability map surface. It is a dashboard and data generator, not the source of truth for Table C.
 
 Training Experiment rule: code can graduate only after it has a stable contract, no hidden dependency on one case folder, and a test or audit command that proves the behavior outside one run.
+
+### Agent Boundary Guardrails
+
+- `agents/pipeline/`: owns Agent contracts, prompt addenda, manifest roles, and A-to-A responsibility wording; it must not duplicate Core algorithms or silently weaken Core gates.
+- `agents/<scenario>/`: owns scene preference, vocabulary, object priority, and local examples; it must not implement CAD execution, readback, registry writeback, system asset verification, or general training promotion logic.
 
 ### Case-Only
 

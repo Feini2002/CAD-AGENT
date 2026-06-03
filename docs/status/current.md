@@ -1,12 +1,14 @@
 # 通用 CAD Agent 开发包当前进展
 
 ## 2026-06-03 本轮补充
-
-repo audit 已删除 `core/execution/execute_plan.py` 与 `core/verification/self_check.py` 的本地 `sys.path.insert`，由脚本层共享 `_bootstrap.py` 负责入口路径；`scripts/run_repo_audit.py` 新增 severity 汇总和 `--fail-on-severity medium`，当前仓库 `medium=0/high=0/blocking_finding_count=0`，剩余 20 个 `large_python_file` 为 low 治理项。coverage 报告新增 `claim_level_boundary`，明确 `showcase` 有证据路径但不等同严格 `claim_level=verified` 几何回写；当前 `strict_geometry_verified_count=0`、`evidence_path_showcase_count=303`。
+`DATA-BLOAT-A0-A3-IMPLEMENTATION-01` 已把前一轮“训练前 / 收尾防数据膨胀”从规则落到可执行脚本和回归测试：新增只读 `core.maintenance.data_bloat_audit` 与 `scripts/run_data_bloat_audit.py`，输出 `protected`、`derived`、`candidate`、`blocked` 和 capability-map ratchet；`scripts/build_capability_map_data.py` 默认写 compact 单行快照并删除 `capabilities` / `agents` / `stages` / `coverageSnapshot` 重复别名，`capability-map.html` 用 `normalizeWorkbenchData()` 兼容旧快照；`run_training_artifact_retention.py` 默认扫描 `output/debug` / `output/test_artifacts`，引用根扩到 handoffs / projects / validation / system library，`core.training.artifact_retention` 显式保护 `.json` / `.dwg` / `.dwt`，`--write` 时生成 relocation manifest 和 hash。当前真实 `capability-map-data.js` 已降到 1,361,055 bytes / 1 行，`node --check` 通过。真实仓库 `run_data_bloat_audit.py --summary-only` 正确返回 `blocked`：13 个 active fact_source 缺失，coverage `report_path_missing=303`；`sync_training_workbench.py` 因同一 `training_source_paths_exist` 缺口失败。这是证据链阻断，不是快照瘦身失败。
+repo audit 已删除 `core/execution/execute_plan.py` 与 `core/verification/self_check.py` 的本地 `sys.path.insert`，由脚本层共享 `_bootstrap.py` 负责入口路径；`scripts/run_repo_audit.py` 新增 severity 汇总和 `--fail-on-severity medium`，当前仓库 `medium=0/high=0/blocking_finding_count=0`，剩余 20 个 `large_python_file` 为 low 治理项。coverage 报告新增 `claim_level_boundary`，明确 `showcase` 有证据路径但不等同严格 `claim_level=verified` 几何回写；当前 `strict_geometry_verified_count=0`、`evidence_path_showcase_count=303`。本轮 `ARCHITECTURE-DOC-HARDENING-02` 已把统一请求链路、系统硬门禁索引和模块禁止边界纳入 `architecture_hardening` 文档治理子报告，检查 3 个入口。
 
 dev volume audit 已新增 severity 汇总、默认中风险阻断计数、`--fail-on-severity`、未跟踪文件分组、已跟踪变更分组、按 group 聚合的行数变化、top group 摘要和 `--summary-only --top-groups` 紧凑输出。当前真实仓库仍被 `--fail-on-severity medium` 阻断：`changed_file_count=185`、`untracked_file_count=105`、`blocking_finding_count=2`；紧凑审计 top 5 收口簇为 `tests/core`、`agents/pipeline`、`openspec/changes`、`core/training`、`docs/training`，最大派生 delta 仍是 `capability-map-data.js`。这些属于待分包收口的源码 / 合同 / 测试 / 派生快照变更，不是可直接忽略的缓存垃圾。
 
-最后更新：2026-06-03（A-to-A TaskContract 门禁 + 系统资产 DWG 视觉仓库验收）
+本轮 `DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01` 已把“训练前 / 收尾防数据膨胀”接入全局规则、A-to-A 总链路、CAD Designer Agent、pipeline 共享 Prompt 合同和 manifest。新规则要求训练、复训、正式收尾型工作台同步、系统资产沉淀或仓库级治理产生新 output / debug / test artifacts 前后，区分 `protected`、`candidate`、`blocked`、`derived`；`data_bloat_governance` 成为相关 A-to-A 合同 hard gate；`workbench_snapshot_refresh` 保持轻量查看例外；retention report、data-bloat audit report、sync report 和 `capability-map-data.js` 只能作 diagnostic / derived，不进入训练事实源。`run_doc_governance_audit.py` 新增 `data_bloat_governance` 子项，检查 manifest 的 task kind → hard gate 映射、阻断完成声明、报告 artifact 模板和 Agent README 覆盖。边界：本轮不实现 compact 输出、不写清理脚本、不运行 CAD、不提升表 C。
+
+最后更新：2026-06-03（架构链路硬门禁索引 + A-to-A TaskContract 门禁 + 系统资产 DWG 视觉仓库验收）
 
 本文只保留“现在到哪、证据是什么、风险边界是什么”。历史流水见 `docs/status/changelog.md`，瘦身前全文快照见 `docs/history/snapshots/finished-architecture-2026-05-28/docs__status__current.md`，能力矩阵见 `CORE_STATUS.md`，唯一 `PlanMD` / 主计划见 `CORE_RESTRUCTURE_PLAN.md`。后续任务和优先级只写入 PlanMD，避免状态页变成第二份计划。
 
@@ -16,13 +18,9 @@ dev volume audit 已新增 severity 汇总、默认中风险阻断计数、`--fa
 
 **A-to-A 编排门禁**：主编排已新增 `a_to_a_task_contract`。系统资产沉淀会固定派发资产守门员、资产馆员、资产 DWG 编排员和复用审计员；系统资产 DWG 仓库 / 货架 / 置物架 / 动线 / 可扩展布局任务还必须派发 `pipeline_visual_layout_reviewer`。缺任一必需 Agent 输出时，`workflow_dispatch` 以 `a-to-a hard gate` 阻断，不允许用“截图非空 / 对象数量正确 / 回读通过”替代视觉布局复审。治理检查入口：`scripts/run_a_to_a_orchestration_gate_check.py`。
 
-## 默认输出口径
+## 默认输出与工具中立口径
 
-普通最终回复默认不附进度表、表单或表 A/B/C；只有用户明确点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C、真实 CAD 实力或刷新表 C 时，才展开表格。
-
-## 工具中立口径
-
-训练链路和交接材料面向 Codex、Cursor 及其它同类 agent 工具通用；Phase A 是“一个交互式 Agent 会话按角色分步”，不强制绑定 Cursor 或任一单一软件。
+普通最终回复默认不附进度表、表单或表 A/B/C；只有用户明确点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C、真实 CAD 实力或刷新表 C 时，才展开表格。训练链路和交接材料面向 Codex、Cursor 及其它同类 agent 工具通用；Phase A 是“一个交互式 Agent 会话按角色分步”，不强制绑定 Cursor 或任一单一软件。
 
 ## 表 C 当前机器快照
 
@@ -40,11 +38,7 @@ dev volume audit 已新增 severity 汇总、默认中风险阻断计数、`--fa
 
 ## 工程节奏（表 A）
 
-| 指标 | 当前值 |
-| --- | --- |
-| Core 底座 | **100%**（`docs/verification/core_platform_completion_gate.md`） |
-| Agent 多场景 | 约 93% |
-| 总进度 | 约 97% |
+Core 底座 **100%**（`docs/verification/core_platform_completion_gate.md`）；Agent 多场景约 93%；总进度约 97%。
 
 ## 最近有效包
 

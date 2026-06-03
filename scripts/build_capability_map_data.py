@@ -1764,11 +1764,7 @@ def build_data() -> dict[str, Any]:
         "trainingLearning": learning,
         "trainingSources": training_source_rows(),
         "tableCBoundary": table_c,
-        "coverageSnapshot": table_c,
         "workbenchSync": workbench_sync_status(generated_at, table_c),
-        "stages": TRAINING_STAGE_COLUMNS,
-        "agents": profiles,
-        "capabilities": programs,
         "failureModes": failure_modes(),
         "learningRoutes": learning_routes(),
         "sources": sources(),
@@ -1784,7 +1780,7 @@ def build_data() -> dict[str, Any]:
 
 def write_data(output: Path = OUTPUT) -> dict[str, Any]:
     data = build_data()
-    payload = json.dumps(data, ensure_ascii=False, indent=2)
+    payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(f"window.CAD_CAPABILITY_MAP_DATA = {payload};\n", encoding="utf-8")
     return data

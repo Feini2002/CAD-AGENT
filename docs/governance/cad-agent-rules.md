@@ -329,6 +329,8 @@ Agent 必须先拆解复合任务：
 
 完整系统任务链路见 `docs/architecture/cad-agent-task-chain.md`。复合任务不能只停在“执行成功”或“训练通过”单侧闭环；凡涉及新失败模式、精准复训、资产复用 / 沉淀或 Agent 分工变化，都要判断是否需要同步底座规则、单一任务规则、检查器、Prompt / memory 和 A-to-A 校准。
 
+训练、复训、正式收尾型工作台同步、资产沉淀或仓库级治理还必须带数据防膨胀与证据闭合判断。主 Agent 不能只说“清理 output”：必须先区分 `protected`（active 事实源、final report、queue state、learning ledger、Agent memory / Prompt addendum、表 C / registry / 系统资产证据和仍被状态文档引用的路径）、`candidate`（短期 debug、test artifacts、retry、dry-run、execution summary、旧截图和临时报告）、`blocked`（事实源缺失、引用根未覆盖、候选仍被引用或证据断链会变差）和 `derived`（`capability-map-data.js`、HTML、sync report、retention report、data-bloat audit）。`derived` 不得反向登记为训练事实源；清理 / 归档写入前必须先有 retention dry-run 或等价 evidence-closure gate。A-to-A 合同若涉及训练收尾、正式工作台收尾或系统资产沉淀，应显式包含 `data_bloat_governance` hard gate；缺该 gate 时不得声称 A-to-A 已打通或产物治理完成。只为查看而刷新派生工作台快照属于轻量 `workbench_snapshot_refresh`，不得借此宣称正式训练 / 资产收尾完成。
+
 ## 7.1 系统资产沉淀协议
 
 当用户明确说“沉淀 XX 资产 / 把这个作为通用资产 / 收进资产库”时，Codex 必须执行系统资产沉淀协议，而不是只保存截图或当前 DWG 预览结果。

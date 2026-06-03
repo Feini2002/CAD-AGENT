@@ -16,14 +16,25 @@
 | `pipeline_asset_reuse_auditor` | 资产复用审计员，管复用回放、created handles、readback 和 verified 门禁 |
 | `pipeline_orchestrator` | 编排轮次，禁止亲自落图 |
 | `pipeline_visual_intent` | 参考图 / 样式目标 → `visual_parts` |
+| `pipeline_visual_layout_reviewer` | 系统资产 DWG / 仓库式布局的视觉复审把关 |
 | `pipeline_intent` | 白话 → `intent.json` + checklist |
 | `pipeline_execute` | 落 `CODEX_PREVIEW` |
 | `pipeline_audit` | `training_geometry_audit` + checklist |
 | `pipeline_repair` | 读 failures，最小修复，回环 |
 | `pipeline_delivery` | 截图 + 自检 + 请你 feedback |
+| `pipeline_learning_promoter` | training-sources、ledger、Agent memory / Prompt addendum 的沉淀边界 |
 
 清单：`pipeline_manifest.json`
 架构说明：`docs/training/global-agent-pipeline.md`
+
+## 数据防膨胀协同
+
+训练、复训、工作台同步、系统资产沉淀或仓库级治理会产生大量 output / debug / test artifacts 时，不新增临场 Agent；由已登记 Agent 共同承担 `data_bloat_governance`：
+
+- `pipeline_context_curator`：识别 active `fact_source`、历史引用根和当前工作区已有证据。
+- `pipeline_audit`：核对 protected / candidate / blocked / derived 分类，发现断链或仍被引用的清理候选时阻断。
+- `pipeline_learning_promoter`：确认 learning ledger、Agent memory / Prompt addendum 和 training-sources 的事实源边界没有被诊断报告污染。
+- `pipeline_delivery`：交付时只汇报 dry-run / audit 摘要，不把 retention report、data-bloat audit 或 workbench sync report 当成训练通过证据。
 
 ## 主 Agent 派发边界
 

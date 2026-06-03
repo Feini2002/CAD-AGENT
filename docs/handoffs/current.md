@@ -1,4 +1,37 @@
 # 当前交接包窗口
+## DATA-BLOAT-A0-A3-IMPLEMENTATION-01
+1. **包名**：`DATA-BLOAT-A0-A3-IMPLEMENTATION-01`
+2. **修改文件列表**：新增 `core/maintenance/data_bloat_audit.py`、`scripts/run_data_bloat_audit.py`、`tests/core/test_data_bloat_audit.py`；更新 `scripts/build_capability_map_data.py`、`capability-map.html`、`core/training/artifact_retention.py`、`scripts/run_training_artifact_retention.py`、`tests/core/test_training_workbench_sync.py`、`tests/core/test_training_artifact_retention.py`、`capability-map-data.js`、状态 / changelog / issues / handoff 索引。
+3. **关键设计说明**：A0/A2 是只读审计，不删除、不归档，输出 `protected`、`derived`、`candidate`、`blocked`；active fact_source 缺失、派生快照误登记 fact_source、coverage `report_path_missing` 会 blocked。A1 默认 compact 单行快照，HTML 用 `normalizeWorkbenchData()` 兼容旧 aliases。A3 retention 仍只计划 / 归档旧图片，`.json` / `.dwg` / `.dwt` 显式 protected；`--write` 时写 relocation manifest、原路径、归档路径、hash、原因和恢复提示。
+4. **新增/修改测试**：新增 A0 data-bloat audit 3 个回归；新增 A1 compact / HTML normalize 断言；扩展 A3 默认 roots、protected suffix 和 relocation manifest 测试。
+5. **实际运行的命令和结果**：`python -m unittest tests.core.test_data_bloat_audit tests.core.test_training_artifact_retention -v` → 8 OK；A1 compact / normalize + A3 retention 目标测试 7 OK；`python scripts\build_capability_map_data.py` → wrote；`node --check capability-map-data.js` → pass；真实快照 1,361,055 bytes / 1 行；`scripts/run_training_artifact_retention.py --output ...` → pass、`candidateCount=0`、`protectedArtifactCount=16`、未归档；`scripts/run_data_bloat_audit.py --summary-only` → exit 1 / blocked；`scripts/sync_training_workbench.py` → exit 1 / Agent check 仅 `training_source_paths_exist` fail。
+6. **是否运行真实 CAD**：否。本包只改审计、快照、retention 和文档；不连接 AutoCAD、不写 DWG、不保存当前图。
+7. **机器可读证据路径**：`scripts/run_data_bloat_audit.py --summary-only` stdout；`output/validation_runs/training-artifact-retention/retention_report.json`；`output/validation_runs/training-workbench-sync/training_workbench_sync_report.json`；`capability-map-data.js`。
+8. **结论分类表**：A0/A2 data-bloat audit 已落地（code + tests +真实 blocked 报告，geometry_verified=否）；A1 快照瘦身已落盘（1 行 compact，node check pass）；A3 retention dry-run / protected suffix / manifest 行为已落地（code + tests，未执行 write 归档）。
+9. **剩余风险**：当前仓库证据链未闭合：13 个 active fact_source 缺失，coverage `report_path_missing=303`。这不是本包要自动修复的垃圾清理问题；后续必须恢复事实源或审查归档引用后再让工作台同步变绿。
+---
+## DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01
+1. **包名**：`DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01`
+2. **修改文件列表**：更新 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md`、`agents/cad_designer/rules.md`、`agents/COMMON_PROMPT_CONTRACT.md`、`agents/pipeline/README.md`、`agents/pipeline/pipeline_manifest.json`、`core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、状态 / changelog / issues / handoff 索引。
+3. **关键设计说明**：把训练前 / 收尾数据防膨胀从一次性讨论沉淀为系统规则和 A-to-A 共识。后续训练、复训、正式收尾型工作台同步、系统资产沉淀或仓库级治理产生 output / debug / test artifacts 前后，必须区分 `protected`、`candidate`、`blocked`、`derived`；相关 A-to-A 合同必须列 `data_bloat_governance` hard gate。`workbench_snapshot_refresh` 保持轻量查看例外；诊断报告和工作台快照不得反向成为训练事实源。
+4. **新增/修改测试**：新增 `check_data_bloat_governance_manifest()` 和 2 个回归测试，确认 manifest task kind / hard gate / blocks / artifact 模板 / Agent README 覆盖不跑偏；总文档治理报告新增 `data_bloat_governance` 子项。
+5. **实际运行的命令和结果**：`python -m unittest tests.core.test_doc_governance -v` → 29 OK；`python -m json.tool agents/pipeline/pipeline_manifest.json` → ok；`python scripts/run_doc_governance_audit.py` → pass，`finding_count=0` 且 `data_bloat_governance.finding_count=0`；关键 `rg` 规则检索命中；`git diff --check` 无 whitespace error（仅 CRLF warning）。
+6. **是否运行真实 CAD**：否。本包不连接 AutoCAD、不写 DWG、不保存当前图；它只同步规则、Agent 合同和交接事实。
+7. **机器可读证据路径**：`agents/pipeline/pipeline_manifest.json` 的 `required_hard_gates_by_task_kind` / `data_bloat_governance`；`core/maintenance/doc_governance.py` 的 `data_bloat_governance` 审计子项；`tests/core/test_doc_governance.py` 回归测试；无新增 `output/validation_runs/**` 证据。
+8. **结论分类表**：训练前数据防膨胀治理已进入规则 / Agent / A-to-A 共识并纳入文档治理审计（docs + manifest + tests，geometry_verified=否）；compact 输出、data-bloat audit CLI、retention 扩展和真实清理写入尚未实现。
+9. **剩余风险**：后续 A 包仍需实现 `scripts/run_data_bloat_audit.py`、compact / 去重输出和 retention 引用闭合检查；当前只保证后续 Agent 不会忘记这条门禁。
+---
+## ARCHITECTURE-DOC-HARDENING-02
+1. **包名**：`ARCHITECTURE-DOC-HARDENING-02`
+2. **修改文件列表**：更新 `README.md`、`docs/architecture/README.md`、`docs/architecture/current-module-boundaries.md`、`core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、`openspec/changes/architecture-boundary-hardening-01/tasks.md`、状态 / changelog / handoff 索引。
+3. **关键设计说明**：统一架构链路为 `User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> execution -> verification -> promotion/sync`；补系统硬门禁索引和 Core / Agent 禁止边界；复用既有 completed OpenSpec change，不新开第二套主线。
+4. **新增/修改测试**：`check_architecture_hardening_index()` 和 `test_architecture_hardening_index_flags_missing_tokens`，综合报告新增 `architecture_hardening` 子项。
+5. **实际运行的命令和结果**：`python -m unittest tests.core.test_doc_governance -v` → 27 OK；`scripts/run_doc_governance_audit.py` → pass，`finding_count=0`。
+6. **是否运行真实 CAD**：否。本包只改文档和治理审计，不连接 AutoCAD、不写 DWG、不保存当前图。
+7. **机器可读证据路径**：OpenSpec 记录在 `openspec/changes/architecture-boundary-hardening-01/tasks.md`；审计输出来自 `scripts/run_doc_governance_audit.py`。
+8. **结论分类表**：架构链路 / 模块边界 / 门禁索引已纳入机器文档治理（docs + tests，geometry_verified=否）。
+9. **剩余风险**：本轮是“架构收口 + 轻量加固”，不迁移 `core/verification`、capability map 或具体 Core 模块。
+---
 ## SYSTEM-ASSET-LIBRARY-GOVERNANCE-01
 1. **包名**：`SYSTEM-ASSET-LIBRARY-GOVERNANCE-01`
 2. **修改文件列表**：新增 `openspec/changes/harden-system-asset-library-governance/`、`core/assets/system_asset_library_governance.py`、`scripts/run_asset_library_governance_check.py` 和 4 个资产治理 Agent；更新 `core/orchestrator/a_to_a_task_contract.py`、`scripts/layout_system_asset_shelves.py`、`agents/pipeline/visual_layout_reviewer/agent.json`、`agents/COMMON_PROMPT_CONTRACT.md`、Prompt 生成源、系统资产协议、全局规则、状态 / changelog / issues / handoff 索引。本轮第三次纠偏新增 visual readability 硬门禁。
@@ -102,26 +135,4 @@
 7. **机器可读证据路径**：OpenSpec 契约在 `openspec/changes/polish-openspec-system-contract/`；无新增 `output/validation_runs/**`。
 8. **结论分类表**：OpenSpec 初始化可用性已复核（CLI + docs，geometry_verified=否）；系统契约已润色（docs，geometry_verified=否）；真实 CAD 能力提升：未做（geometry_verified=否）。
 9. **剩余风险**：旧 completed changes 仍留在 `openspec/changes/`，这是有意保留；后续若要归档，应另轮同步 stable specs 和所有引用。
----
-## DESIGNER-AGENT-GROWTH-PATH-01
-1. **包名**：`DESIGNER-AGENT-GROWTH-PATH-01`
-2. **修改文件列表**：新增 `openspec/changes/introduce-designer-agent-growth-path/`、`agents/cad_designer/agent.json`、`agents/cad_designer/rules.md`、`docs/training/cad-designer-growth-path.md`；更新 `scripts/build_capability_map_data.py`、`scripts/run_training_workbench_agent_check.py`、`tests/core/test_training_workbench_sync.py`、`capability-map.html`、`capability-map-data.js`、`AGENTS.md`、`README.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`docs/training/README.md`、`docs/planning/任务清单.md`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：按用户确认的 B 中改方案，新增 `CAD Designer Agent` 作为总训练对象；现有 pipeline、场景、资产和审计 Agent 变成它可调用的流程/知识能力。第一阶段毕业目标采用 C“电子设计师雏形”，但第一批课程从 A 的基础 CAD 操作铺开。现有能力矩阵保留为能力护照。
-4. **新增/修改测试**：更新 `tests/core/test_training_workbench_sync.py`，先红后绿新增 `test_designer_agent_growth_path_declared`，并让 Agent 校验 CLI 必须检查 `designer_agent_declared` / `foundation_courses_declared`。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_training_workbench_sync` → 6 tests OK；`scripts/sync_training_workbench.py --skip-coverage` → status pass、Agent 校验 20/20 pass；`node --check capability-map-data.js` → pass；`scripts/run_doc_governance_audit.py` → pass；浏览器打开 `http://127.0.0.1:8776/capability-map.html` 验证顶部显示 `CAD Designer Agent`、`L0 CAD 基础操作`、7 个基础课程和 `CAD 基础操作` 分组。
-6. **是否运行真实 CAD**：否。
-7. **机器可读证据路径**：`output/validation_runs/training-workbench-sync/training_workbench_sync_report.json`；`output/validation_runs/training-workbench-sync/agent_check.json`；OpenSpec 契约在 `openspec/changes/introduce-designer-agent-growth-path/`。
-8. **结论分类表**：总设计师 Agent 成长路径已落地（OpenSpec + docs + data + tests，geometry_verified=否）；基础课程已纳入工作台（data + browser check，geometry_verified=否）；真实 CAD 能力提升：未做（geometry_verified=否）。
-9. **剩余风险**：本包只建立成长路径和第一批课程入口；后续仍需逐课开训练轮，用真实 CAD 或明确 deferred 证据让基础课程逐步从 planned 走向 pass。
----
-## CAPABILITY-MAP-SYNC-01
-1. **包名**：`CAPABILITY-MAP-SYNC-01`
-2. **修改文件列表**：新增 `scripts/sync_training_workbench.py`、`scripts/run_training_workbench_agent_check.py`、`tests/core/test_training_workbench_sync.py`、`start_training_workbench.bat`；更新 `scripts/build_capability_map_data.py`、`capability-map.html`、`capability-map-data.js`、`AGENTS.md`、`README.md`、`CORE_CONTEXT_BRIEF.md`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：训练工作台保持静态 HTML + 数据快照架构，但事实源仍是仓库文件和机器证据。同步脚本先刷新 coverage，再生成 `capability-map-data.js`，最后用 Agent 校验守住 source refs、责任智能体、表 C 边界和页面同步提示；bat 只是日常启动器，不是新的事实源。
-4. **新增/修改测试**：新增 `tests/core/test_training_workbench_sync.py`，覆盖 Prompt source refs 必须存在、数据必须声明同步边界、Agent 校验 CLI、同步 CLI 和 bat 启动链。
-5. **实际运行的命令和结果**：先跑新增测试红灯（缺脚本、路径错、同步字段缺失），实现后 `python -m unittest tests.core.test_training_workbench_sync` → 5 tests OK；`scripts/sync_training_workbench.py` → status pass，coverage pass，Agent 校验 17/17 pass。
-6. **是否运行真实 CAD**：否。
-7. **机器可读证据路径**：`output/validation_runs/training-workbench-sync/training_workbench_sync_report.json`；`output/validation_runs/training-workbench-sync/agent_check.json`；coverage 刷新到 `output/validation_runs/capability-lab/cad_capability_coverage.json`。
-8. **结论分类表**：训练工作台同步链路已落地（script + HTML + tests，geometry_verified=否）；真实 CAD 能力提升：未做（geometry_verified=否）。
-9. **剩余风险**：能力项本体仍主要在生成器常量中，后续可再拆到独立 training-program registry；本包先保证同步和校验，不做全量数据源迁移。
 ---

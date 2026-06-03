@@ -23,6 +23,15 @@
 - 单项复验、focused retraining、视觉复核和正式验收需要截图时，Agent 必须报告 screenshotDecision 和 visualPreview，并说明截图只是 visual_aid_only。
 - 截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。
 
+## 数据防膨胀与事实源边界规则
+
+- 训练、复训、工作台同步、资产沉淀或仓库级治理任务产生 output / debug / test artifacts 前后，所有 Agent 都要区分 `protected`、`candidate`、`blocked` 和 `derived`，不得把“文件少了”当作训练更可靠。
+- `protected` 包括 active `fact_source`、最终验收报告、队列状态、learning ledger、Agent memory、Prompt addendum、表 C / registry evidence、系统资产 registry / assets.json / native DWG、状态 / handoff / issue / case feedback 中仍引用的证据。
+- `candidate` 仅指短期 debug、test artifacts、retry、临时 CAD_PLAN / dry-run / execution summary、旧截图、一次性脚本和草稿报告；清理前必须先 dry-run 并确认未被引用。
+- `blocked` 包括 active fact source 缺失、引用根未覆盖、候选仍被引用、路径 / hash 不明或会让证据断链变差；blocked 时不得声称训练收尾、正式工作台收尾或产物清理完成。
+- `derived` 包括 capability-map-data.js、capability-map.html、sync report、retention report 和 data-bloat audit report；它们只能帮助诊断或显示，不得登记为训练事实源，也不得证明训练通过。
+- `capability-map-data.js` 只能由生成 / 同步脚本重建；目标策略是 compact 并避免磁盘重复别名。若当前脚本尚未实现 compact，Agent 必须标为 `pending_implementation`，不得声称 compact 已生效；pretty 调试快照只放 output/debug/，按短期产物处理。
+
 ## 系统资产与样式复用规则
 
 - 白话出现调用、复用、套用或强匹配系统库资产时，先检索 libraries/system_library/registry.json，并生成 system_asset_reuse_workflow；弱匹配只给候选，不直接落图。

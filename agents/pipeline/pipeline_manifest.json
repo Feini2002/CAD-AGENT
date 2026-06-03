@@ -18,9 +18,18 @@
     "dynamic_dispatch_policy": {
       "mode": "high_risk_only",
       "high_risk_task_kinds": [
+        "training_closeout",
+        "focused_training_closeout",
+        "training_queue_completion",
+        "formal_training_workbench_sync",
         "system_asset_sedimentation",
         "asset_dwg_layout",
-        "visual_layout_review"
+        "visual_layout_review",
+        "repository_artifact_governance",
+        "training_data_bloat_governance"
+      ],
+      "low_risk_task_kinds": [
+        "workbench_snapshot_refresh"
       ],
       "registered_agent_only": true,
       "reason_required": true,
@@ -61,6 +70,8 @@
         "pipeline_asset_librarian",
         "pipeline_asset_dwg_curator",
         "pipeline_asset_reuse_auditor",
+        "pipeline_audit",
+        "pipeline_learning_promoter",
         "pipeline_delivery"
       ],
       "asset_dwg_layout": [
@@ -71,7 +82,54 @@
         "pipeline_asset_dwg_curator",
         "pipeline_asset_reuse_auditor",
         "pipeline_visual_layout_reviewer",
+        "pipeline_audit",
+        "pipeline_learning_promoter",
         "pipeline_delivery"
+      ],
+      "training_data_bloat_governance": [
+        "pipeline_context_curator",
+        "pipeline_audit",
+        "pipeline_learning_promoter",
+        "pipeline_delivery"
+      ]
+    },
+    "required_hard_gates_by_task_kind": {
+      "training_closeout": [
+        "data_bloat_governance",
+        "learning"
+      ],
+      "focused_training_closeout": [
+        "data_bloat_governance",
+        "learning"
+      ],
+      "training_queue_completion": [
+        "data_bloat_governance",
+        "learning"
+      ],
+      "formal_training_workbench_sync": [
+        "data_bloat_governance"
+      ],
+      "system_asset_sedimentation": [
+        "main_agent_dispatch_awareness",
+        "asset_governance",
+        "asset_library_indexing",
+        "asset_dwg_curation",
+        "asset_reuse_audit",
+        "data_bloat_governance"
+      ],
+      "asset_dwg_layout": [
+        "main_agent_dispatch_awareness",
+        "asset_governance",
+        "asset_dwg_curation",
+        "asset_reuse_audit",
+        "visual_layout_review",
+        "data_bloat_governance"
+      ],
+      "repository_artifact_governance": [
+        "data_bloat_governance"
+      ],
+      "training_data_bloat_governance": [
+        "data_bloat_governance"
       ]
     },
     "visual_contract_required": true,
@@ -153,6 +211,29 @@
           "workflow_dispatch",
           "delivery_complete_claim",
           "unregistered_agent_activation"
+        ]
+      },
+      "data_bloat_governance": {
+        "requires": [
+          "protected_paths",
+          "candidate_paths",
+          "blocked_paths",
+          "derived_reports_declared",
+          "active_fact_sources_preserved",
+          "retention_dry_run_before_write",
+          "diagnostic_reports_not_fact_sources"
+        ],
+        "blocks": [
+          "training_closeout_complete_claim",
+          "workbench_sync_complete_claim",
+          "formal_workbench_sync_complete_claim",
+          "a_to_a_complete_claim",
+          "system_asset_sedimentation_complete_claim",
+          "asset_governance_complete_claim",
+          "asset_dwg_layout_complete_claim",
+          "repository_artifact_governance_complete_claim",
+          "artifact_cleanup_write",
+          "delivery_complete_claim"
         ]
       },
       "standard_library_intake": {
@@ -329,6 +410,9 @@
     "asset_reuse_audit": "projects/<case>/runs/roundN_asset_reuse_audit.json",
     "visual_layout_review": "projects/<case>/runs/roundN_visual_layout_review.json",
     "standard_library_intake": "projects/<case>/runs/roundN_standard_library_intake.json",
+    "data_bloat_audit": "projects/<case>/runs/roundN_data_bloat_audit.json",
+    "retention_report": "projects/<case>/runs/roundN_retention_report.json",
+    "evidence_closure_summary": "projects/<case>/runs/roundN_evidence_closure_summary.json",
     "reference_manifest": "libraries/reference_library/manifests/<source_slug>/ref.*.json",
     "route": "projects/<case>/runs/roundN_route.json",
     "style_target": "projects/<case>/expected/style_target_*.png",

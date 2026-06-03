@@ -182,6 +182,7 @@ block 导出必须先锁定来源边界：优先使用用户选中实体、刚�
 2. 为本项涉及的责任智能体写入 `training_memory.json` 和 `prompt_addendum.md`。
 3. 在 `output/training_learning/agent_learning_ledger.json` 记录：来源报告、通过能力项、责任智能体、Prompt 更新摘要和证据边界。
 4. 重新运行 `scripts/sync_training_workbench.py`，让前端训练阶段、责任智能体 chip、Prompt source refs 和 Agent check 同步。
+5. 记录数据防膨胀门禁摘要：本轮新增哪些 output/debug/test artifacts/临时报告，哪些是 protected / candidate / blocked / derived，是否只做 dry-run，是否存在证据闭合问题。
 
 如果前端存在已验收训练项，但缺少 learning promotion，`scripts/run_training_workbench_agent_check.py` 必须失败；此时不得声称“智能体已经变聪明”或“训练工作台已同步”。
 
@@ -192,9 +193,21 @@ block 导出必须先锁定来源边界：优先使用用户选中实体、刚�
 1. 调用 `scripts/sync_training_workbench.py` 这一总入口，不在各训练脚本里复制 promotion / data rebuild / Agent check 逻辑。
 2. 中间单项 `pass` 可以使用轻量同步刷新训练工作台；完整队列 `completed` 必须跑完整同步。
 3. 脚本 JSON 输出必须包含 `postTrainingSync`，说明同步是否执行、learning promotion 状态、责任智能体沉淀数量和 Agent check 状态。
-4. 除非显式传入调试用跳过参数，否则不得要求用户手动再说一遍“同步前端 / 沉淀 Prompt”。
+4. 新建或修改训练脚本时，JSON 输出必须包含 `postTrainingDataBloat` 或等价摘要，说明是否运行 data-bloat / retention dry-run、是否存在 blocked 引用、是否只产生 derived 诊断报告；既有脚本若暂时只有 `postTrainingArtifactRetention`，只能作为过渡 retention 摘要，收尾 Agent 必须把缺口标为 `postTrainingDataBloat=pending_implementation`，不得声称脚本级 data-bloat audit 已落地。
+5. 除非显式传入调试用跳过参数，否则不得要求用户手动再说一遍“同步前端 / 沉淀 Prompt”。
 
 `scripts/run_training_queue.py` 是当前监督式基础队列的参考实现：`--decision pass` 后自动同步；最后一项通过后自动跑完整训练工作台同步。
+
+## 训练前数据防膨胀与证据闭合
+
+CAD Designer Agent 每次进入 focused retraining、formal acceptance、训练队列 completed、正式收尾型工作台同步或系统资产沉淀前后，都要先判断是否会让仓库产物无限堆积。该判断不替代 CAD 验收，只保护训练事实源和派生快照。
+
+1. `protected`：active `fact_source`、最终验收报告、队列状态、learning ledger、Agent memory、Prompt addendum、表 C / registry evidence、系统资产 registry / assets.json / native DWG、状态 / handoff / issue / case feedback 中仍引用的路径，一律不得清理或移动。
+2. `candidate`：短期 debug、test artifacts、retry、临时 `CAD_PLAN` / dry-run / execution summary、旧截图、一次性脚本和草稿报告，只能先进入 dry-run 候选。
+3. `blocked`：active fact source 缺失、引用根未覆盖、候选仍被引用、路径 / hash 不明或会让 `report_path_missing` 变差时，必须阻断并报告 `dataBloatGate=blocked`。
+4. `derived`：`capability-map-data.js`、`capability-map.html`、sync report、retention report、data-bloat audit report 只是诊断或显示快照，不得写入训练事实源，也不得证明训练通过。
+
+`capability-map-data.js` 默认只能由生成脚本重建，目标策略是 compact 和去重复别名；脚本尚未实现时必须标为 `pending_implementation`，不得声称 compact 已生效。pretty 调试快照只允许写入 `output/debug/`，按短期产物处理。体积 warning 不应把已通过训练改判失败；但 JS 快照解析失败、关键字段缺失、事实源断链或清理候选仍被引用时，CAD Designer Agent 必须阻断“收尾已打通”的口吻。
 
 ## 自动化训练超时与熔断保护
 
@@ -210,7 +223,7 @@ CAD Designer Agent 面向大面积自动化训练时，必须把“不会长时�
 
 1. 长期保留：最终验收报告、队列状态、learning ledger、责任智能体 `training_memory.json` / `prompt_addendum.md`，以及最近一份人工复核预览图。
 2. 默认清理：中间 retry 目录、临时 `CAD_PLAN` / dry-run / execution summary、旧截图、一次性探针脚本和不再被引用的草稿报告。
-3. 删除前校验：不得删除 `capability-map-data.js`、`output/training_learning/agent_learning_ledger.json`、Agent memory、`docs/training/training-errors.md` 或最终验收报告仍引用的路径。
-4. 清理结果必须写进脚本输出或训练记录，让用户知道保留了什么、清掉了什么。
+3. 删除前校验：不得删除 `capability-map-data.js`、`output/training_learning/agent_learning_ledger.json`、Agent memory、`docs/training/training-errors.md` 或最终验收报告仍引用的路径；也不得移动表 C registry、系统资产 registry / assets.json / native DWG 或状态 / handoff / issue 仍引用的证据。
+4. 清理结果必须写进脚本输出或训练记录，让用户知道保留了什么、候选是什么、为什么阻断，以及是否只是 dry-run。
 
 如果某个中间失败暴露了新的反模式，例如英文标注、重叠已有图块、等待过久、未回读 handles，必须先写入 `docs/training/training-errors.md` 或 learning promotion，再清理临时文件。

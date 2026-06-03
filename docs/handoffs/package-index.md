@@ -2,6 +2,9 @@
 
 | 序号 | 开发包 | 位置 |
 | --- | --- | --- |
+| 0 | DATA-BLOAT-A0-A3-IMPLEMENTATION-01：训练前防膨胀 A0-A3 实施 | `current.md` |
+| 0 | DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01：训练前数据防膨胀与 A-to-A 共识收尾 | `current.md` |
+| 0 | ARCHITECTURE-DOC-HARDENING-02：架构链路与硬门禁索引轻量加固 | `current.md` |
 | 0 | SYSTEM-ASSET-LIBRARY-GOVERNANCE-01：系统资产库守门员、layoutPlan v2、视觉仓库 clearance/readability 验收 | `current.md` |
 | 0 | SCREENSHOT-ORCHESTRATION-HARDENING-01：截图底座任务级编排与 Agent 共识 | `current.md` |
 | 0 | CAD-TRAINING-PROMOTION-GATE-01：训练沉淀 Promotion Gate 与 A-to-A 校准门禁 | `current.md` |
@@ -13,8 +16,8 @@
 | 0 | REPO-CONTEXT-HYGIENE-02：默认上下文瘦身与训练事实源 manifest | `current.md` |
 | 0 | DESIGNER-TRAINING-BATCH-CHECKERS-01：V2.1 训练批次依赖图与验收器骨架 | `archive/2026-06.md` |
 | 0 | OPENSPEC-SYSTEM-CONTRACT-01：OpenSpec 初始化可用性与系统契约润色 | `current.md` |
-| 0 | DESIGNER-AGENT-GROWTH-PATH-01：总设计师 Agent 成长路径 | `current.md` |
-| 0 | CAPABILITY-MAP-SYNC-01：训练工作台同步与 Agent 校验 | `current.md` |
+| 0 | DESIGNER-AGENT-GROWTH-PATH-01：总设计师 Agent 成长路径 | `archive/2026-06.md` |
+| 0 | CAPABILITY-MAP-SYNC-01：训练工作台同步与 Agent 校验 | `archive/2026-06.md` |
 | 0 | ARCH-BOUNDARY-HARDENING-01：架构瘦身与边界加固 01 | `archive/2026-06.md` |
 | 0 | CAD-ASSET-RAW-INTAKE-AUTO-01：标准图库自动 raw intake | `archive/2026-06.md` |
 | 0 | OPENSPEC-CONTRACT-LITE-01：OpenSpec 变更契约轻量护栏 | `archive/2026-06.md` |

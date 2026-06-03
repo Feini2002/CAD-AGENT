@@ -10,6 +10,24 @@ from tests.helpers import PROJECT_ROOT, temporary_artifact_dir
 
 
 class TrainingArtifactRetentionTests(unittest.TestCase):
+    def test_default_roots_cover_short_lived_artifacts_and_long_lived_references(self) -> None:
+        from scripts.run_training_artifact_retention import default_reference_roots, default_scan_roots
+
+        scan_roots = {path.relative_to(PROJECT_ROOT).as_posix() for path in default_scan_roots(PROJECT_ROOT)}
+        reference_roots = {path.relative_to(PROJECT_ROOT).as_posix() for path in default_reference_roots(PROJECT_ROOT)}
+
+        self.assertTrue({"output/previews", "output/training_queues", "output/debug", "output/test_artifacts"}.issubset(scan_roots))
+        self.assertTrue(
+            {
+                "docs/training",
+                "docs/handoffs",
+                "examples/capability_proof",
+                "projects",
+                "output/validation_runs",
+                "libraries/system_library",
+            }.issubset(reference_roots)
+        )
+
     def test_dry_run_keeps_referenced_and_latest_preview_while_planning_unreferenced_archive(self) -> None:
         from core.training.artifact_retention import run_training_artifact_retention
 
@@ -91,6 +109,46 @@ class TrainingArtifactRetentionTests(unittest.TestCase):
             self.assertTrue(latest_image.is_file())
             self.assertEqual(report["archivedCount"], 1)
             self.assertEqual(report["archived"][0]["archivePath"], "archive/output/training_queues/queue-a/retry-preview.png")
+
+    def test_write_records_relocation_manifest_and_protects_json_and_dwg(self) -> None:
+        from core.training.artifact_retention import run_training_artifact_retention
+
+        with temporary_artifact_dir("training_artifact_retention_manifest") as root:
+            scan_dir = root / "output" / "debug"
+            scan_dir.mkdir(parents=True)
+            stale_image = scan_dir / "old-preview.png"
+            latest_image = scan_dir / "latest-preview.png"
+            stale_image.write_bytes(b"old-image")
+            latest_image.write_bytes(b"latest-image")
+            (scan_dir / "dry_run.json").write_text("{}", encoding="utf-8")
+            (scan_dir / "source.dwg").write_bytes(b"dwg")
+            os.utime(stale_image, (1_700_000_001, 1_700_000_001))
+            os.utime(latest_image, (1_700_000_002, 1_700_000_002))
+
+            report = run_training_artifact_retention(
+                project_root=root,
+                scan_roots=[scan_dir],
+                reference_roots=[root],
+                archive_root=root / "archive",
+                keep_latest_per_dir=1,
+                write=True,
+            )
+
+            manifest_path = root / report["relocationManifestPath"]
+            self.assertTrue(manifest_path.is_file())
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(len(manifest["relocations"]), 1)
+            relocation = manifest["relocations"][0]
+            self.assertEqual(relocation["originalPath"], "output/debug/old-preview.png")
+            self.assertEqual(relocation["archivePath"], "archive/output/debug/old-preview.png")
+            self.assertEqual(relocation["reason"], "unreferenced_old_preview")
+            self.assertEqual(relocation["sourceSha256"], relocation["archiveSha256"])
+            self.assertIn("restoreHint", relocation)
+            protected_paths = {item["path"]: item["reason"] for item in report["protectedArtifacts"]}
+            self.assertEqual(protected_paths["output/debug/dry_run.json"], "protected_suffix")
+            self.assertEqual(protected_paths["output/debug/source.dwg"], "protected_suffix")
+            self.assertEqual(report["protectedArtifactCount"], 2)
+            self.assertEqual(report["archived"][0]["sourceSha256"], relocation["sourceSha256"])
 
     def test_cli_writes_dry_run_retention_report(self) -> None:
         with temporary_artifact_dir("training_artifact_retention_cli") as root:

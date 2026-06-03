@@ -13,3 +13,10 @@
 
 - [x] 3.1 Update current status/changelog/issue notes for the architecture hardening package.
 - [x] 3.2 Run documentation governance and repository test verification.
+
+## 4. Follow-Up Documentation Hardening
+
+- [x] 4.1 Reuse this completed change as the historical boundary contract; do not open a duplicate `architecture-doc-hardening` change.
+- [x] 4.2 Add the shared request-chain wording to root and architecture docs.
+- [x] 4.3 Add the system hard-gate index and module forbidden-boundary wording.
+- [x] 4.4 Add a focused doc-governance check that keeps the architecture chain, hard-gate index, and module boundary tokens discoverable.

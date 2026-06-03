@@ -7,7 +7,7 @@
 本文把两条必要链路合并为系统默认流程：
 
 - **执行编排链路**：白话需求 -> Agent 语义拆分 -> 规则匹配 -> 复杂任务拆成单一子任务 -> 分发 -> 执行 -> 审计 -> 交付。
-- **训练学习链路**：训练计划 / 精准复训 -> 机器校验 -> 原任务回测 -> 底座规则 / 单一任务规则同步 -> A-to-A 校准 -> 事实源同步。
+- **训练学习链路**：训练计划 / 精准复训 -> 机器校验 -> 原任务回测 -> 底座规则 / 单一任务规则同步 -> A-to-A 校准 -> 数据防膨胀与证据闭合 -> 事实源同步。
 
 两条链路互相补充。执行链路保证当轮任务不从白话直接跳 CAD；训练链路保证失败和新能力不会只停留在一次对话、截图或临时脚本里。
 
@@ -121,6 +121,7 @@
   -> focused retraining 或 formal acceptance
   -> 回测原任务
   -> A-to-A 校准
+  -> 数据防膨胀与证据闭合
   -> 同步事实源和工作台
 ```
 
@@ -137,6 +138,7 @@ A-to-A 校准不是一句“已学习”。它必须说明每个责任 Agent 以
 | `positiveExamples` | 以后应怎样拆分和执行 |
 | `negativeExamples` | 以后禁止怎样做，例如整屏 block export、旁边重画 |
 | `evidenceBoundary` | 哪些证据能证明，哪些只能 not_checked |
+| `dataBloatBoundary` | 哪些产物是长期事实源、短期诊断、可归档候选或必须阻断 |
 | `affectedAgents` | Intent、Asset、Execute、Audit、Repair、Learning、Delivery 各自影响 |
 
 校准后要回写到合适事实源：共享 Prompt 合同、责任 Agent addendum / memory、训练事实源、治理规则、检查器、资产 registry 或 changelog。不能只写在本轮聊天记录里。
@@ -152,6 +154,8 @@ A-to-A 校准不是一句“已学习”。它必须说明每个责任 Agent 以
 - `missingRequiredAgents` / `failedHardGates`：缺失或失败时必须写明，并阻断 `delivery_complete_claim`。
 
 系统资产沉淀默认要求 `pipeline_asset_governor`、`pipeline_asset_librarian`、`pipeline_asset_dwg_curator`、`pipeline_asset_reuse_auditor` 四个 Agent 的结论。系统资产 DWG 排版、仓库货架、置物架、动线、可扩展货位、展示形式等视觉布局任务，还必须额外要求 `pipeline_visual_layout_reviewer` 输出 `visual_layout_review`。该视觉复审只判断布局语义和检索体验是否符合用户隐喻；截图非空、模型空间有对象、机器回读数量正确，都不能替代该门禁。
+
+训练、复训、正式收尾型工作台同步、系统资产沉淀或任何会产生大量 debug / test artifacts 的仓库级任务，还必须在合同里列出 `data_bloat_governance` gate。该 gate 不要求新增临场 Agent；默认由 `pipeline_orchestrator` 派发已登记的 `pipeline_context_curator`、`pipeline_audit`、`pipeline_learning_promoter` 和 `pipeline_delivery` 共同确认：哪些路径是 active `fact_source`，哪些只是 derived / diagnostic，哪些候选可以 dry-run 归档，哪些因为引用未闭合而阻断。缺该 gate 时，不得声称训练收尾、正式工作台收尾、产物清理或 A-to-A 已打通。
 
 主编排入口 `core.orchestrator.workflow_dispatch.orchestrate_request()` 必须把合同写入报告。只要合同为 `blocked`，`workflow_dispatch` 就必须显示 `a-to-a hard gate` 阻断原因，不得继续执行或声称完成。仓库级检查入口为 `scripts/run_a_to_a_orchestration_gate_check.py`。
 
@@ -175,9 +179,23 @@ A-to-A 校准不是一句“已学习”。它必须说明每个责任 Agent 以
 | `decisions.updateAgentCalibration` | 是否同步责任 Agent memory / prompt addendum |
 | `decisions.updateChecker` | 是否需要新增或修改机器检查器 |
 | `decisions.retestOriginalTask` | 是否必须回测触发本次纠错的原任务 |
+| `decisions.runDataBloatGate` | 是否需要运行 / 记录数据防膨胀审计、retention dry-run 或证据闭合检查 |
 | `agentCalibration` | 受影响 Agent、正反例、证据边界和 A-to-A 校准输入 |
 
 `quick_trial` 默认只能生成 `observation`，不写训练事实源、不刷新工作台、不写 Agent 校准。`focused_retraining` / `formal_acceptance` 只有在验收报告可 promotion、handles/readback 和 Agent 自检通过后，才允许进入 `systemized`。底座规则、检查器、资产 verified、系统资产 DWG 保存、正式图层和原任务回测都不能被 promotion gate 静默完成；gate 只能把它们标为 `needs_reviewed_package` 或 `required`。
+
+`runDataBloatGate` 的默认策略是“先诊断、后写入”：快试不跑；focused / formal 训练在收尾报告里至少记录是否产生了新增 output/debug/test artifacts；队列 completed、正式收尾型工作台同步、系统资产沉淀和仓库级治理包必须记录 data-bloat audit / retention dry-run 摘要。只为查看页面而刷新派生快照属于 `workbench_snapshot_refresh`，不用升级为完整 hard gate，也不能借此声称正式收尾完成。体积超预算在 A 包阶段只作为 warning / ratchet，不得让已经通过的训练因为派生快照大小直接变成失败；但 JS 快照无法解析、active fact source 缺失、清理候选仍被引用、或会让表 C / registry evidence 断链更差时，必须阻断。
+
+## 7.3 数据防膨胀与证据闭合
+
+数据防膨胀不是“删 output”。它先回答四个问题：
+
+1. `protected`：哪些是长期事实源，必须保留并可从 `docs/training/training-sources.json`、learning ledger、Agent memory、Prompt addendum、表 C registry、系统资产 registry / assets.json / native DWG、状态 / handoff / issue / case feedback 中追溯。
+2. `candidate`：哪些只是短期 debug、test artifacts、retry、dry-run、execution summary、旧截图或临时报告，可以在 dry-run 中列为归档候选。
+3. `blocked`：哪些因为 active fact source 缺失、引用根未扫描、仍被引用、hash / 路径不明、或会让 `report_path_missing` 变差而必须阻断清理。
+4. `derived`：哪些只是工作台 / 审计 / retention 诊断派生产物，不得反向登记为训练事实源。
+
+`capability-map-data.js` 只能作为静态工作台快照；目标生成策略是 compact 输出，旧兼容字段应尽量由 HTML 端 normalization 承担，避免在磁盘快照里重复整份数据。若生成脚本尚未实现 compact，必须在治理摘要中标为 `pending_implementation`，不得声称 compact 已生效。`retention_report.json`、data-bloat audit report 和 sync report 只能证明治理动作被检查过，不能证明训练通过、表 C 提升或 CAD 几何准确。
 
 ## 8. 不晋升的情况
 
@@ -196,6 +214,7 @@ A-to-A 校准不是一句“已学习”。它必须说明每个责任 Agent 以
 按影响范围同步事实源：
 
 - 训练事实：`docs/training/training-sources.json`、learning ledger、Agent memory / Prompt addendum、`scripts/sync_training_workbench.py`。
+- 数据防膨胀事实边界：data-bloat audit / retention report 只作 diagnostic / derived；若要作为治理证据引用，必须保留 protected / candidate / blocked 摘要和不作为训练事实源的说明。
 - 系统规则：`docs/governance/cad-agent-rules.md`、`AGENTS.md`、相关 runbook。
 - 架构规则：`docs/architecture/*.md`、必要时 OpenSpec change。
 - 系统资产：`libraries/system_library/registry.json`、分类 `assets.json`、对应 `*_assets.dwg` / `.dwt`。

@@ -39,6 +39,13 @@ flowchart TD
 1. `CAD_PLAN` 或结构化绘图意图必须先于真实 CAD 执行。
 2. 资产检索、常识命中、参考图命中只算上游证据，不能跳过 validate、dry-run、`CODEX_PREVIEW`、readback 和 audit。
 
+同一口径收束为：
+
+```text
+User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> execution -> verification -> promotion/sync
+```
+其中 `semantic route` 先识别普通绘图、系统资产复用 / 沉淀、训练 / 复训、局部修复等语义；复杂或高风险任务必须生成 `a_to_a_task_contract`，由必需 Agent 输出和 hard gate 决定是否能继续。下游只能进入 `CAD_PLAN`、`asset workflow` 或 `training route` 之一；无论哪条路，执行后都要回到 verification，并按证据边界决定是否 promotion / sync。
+
 ## 架构分层
 
 - `core/`：通用能力层，负责 CAD IO、执行、安全、schema、审计、训练 gate 和能力登记。

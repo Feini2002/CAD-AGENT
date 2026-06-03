@@ -12,8 +12,10 @@ import core.maintenance.doc_governance as doc_governance
 
 from core.maintenance.doc_governance import (
     check_active_doc_size_budgets,
+    check_architecture_hardening_index,
     build_doc_governance_report,
     build_doc_registry,
+    check_data_bloat_governance_manifest,
     check_doc_source_of_truth,
     check_handoff_files,
     check_handoff_document,
@@ -93,6 +95,113 @@ class DocGovernanceTests(unittest.TestCase):
         report = build_doc_governance_report(root)
 
         self.assertIn("openspec_contracts", report)
+        self.assertIn("architecture_hardening", report)
+        self.assertIn("data_bloat_governance", report)
+
+    def test_architecture_hardening_index_flags_missing_tokens(self) -> None:
+        root = artifact_path("doc_governance", "architecture_hardening_missing")
+        (root / "docs" / "architecture").mkdir(parents=True, exist_ok=True)
+        (root / "README.md").write_text(
+            "User Request -> semantic route -> A-to-A contract\n",
+            encoding="utf-8",
+        )
+        (root / "docs" / "architecture" / "README.md").write_text(
+            "UTF-8 preflight\n",
+            encoding="utf-8",
+        )
+        (root / "docs" / "architecture" / "current-module-boundaries.md").write_text(
+            "core/orchestrator/\n",
+            encoding="utf-8",
+        )
+
+        report = check_architecture_hardening_index(root)
+
+        self.assertEqual(report["status"], "findings")
+        codes = {finding["code"] for finding in report["findings"]}
+        paths = {finding["path"] for finding in report["findings"]}
+        self.assertIn("architecture_hardening_missing_token", codes)
+        self.assertIn("README.md", paths)
+        self.assertIn("docs/architecture/README.md", paths)
+        self.assertIn("docs/architecture/current-module-boundaries.md", paths)
+
+    def test_data_bloat_manifest_flags_missing_gate_and_ambiguous_workbench(self) -> None:
+        root = artifact_path("doc_governance", "data_bloat_manifest_bad")
+        (root / "agents" / "pipeline").mkdir(parents=True, exist_ok=True)
+        (root / "AGENTS.md").write_text("data_bloat_governance\n", encoding="utf-8")
+        (root / "agents" / "pipeline" / "README.md").write_text(
+            "`pipeline_context_curator`\n", encoding="utf-8"
+        )
+        (root / "agents" / "pipeline" / "pipeline_manifest.json").write_text(
+            json.dumps(
+                {
+                    "orchestration": {
+                        "dynamic_dispatch_policy": {
+                            "high_risk_task_kinds": ["training_workbench_sync"],
+                            "low_risk_task_kinds": [],
+                        },
+                        "required_hard_gates_by_task_kind": {"training_workbench_sync": []},
+                        "hard_gates": {"data_bloat_governance": {"blocks": []}},
+                        "flow_variants": {"training_data_bloat_governance": ["pipeline_context_curator"]},
+                    },
+                    "agents": [{"agent_id": "pipeline_context_curator"}],
+                    "artifacts": {},
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        report = check_data_bloat_governance_manifest(root)
+
+        codes = {finding["code"] for finding in report["findings"]}
+        self.assertIn("data_bloat_ambiguous_workbench_sync", codes)
+        self.assertIn("data_bloat_missing_workbench_refresh_exemption", codes)
+        self.assertIn("data_bloat_task_kind_missing_hard_gate", codes)
+        self.assertIn("data_bloat_gate_missing_blocks", codes)
+
+    def test_data_bloat_manifest_passes_valid_manifest(self) -> None:
+        root = artifact_path("doc_governance", "data_bloat_manifest_pass")
+        (root / "agents" / "pipeline").mkdir(parents=True, exist_ok=True)
+        agent_ids = sorted(doc_governance.DATA_BLOAT_FLOW_AGENTS)
+        (root / "agents" / "pipeline" / "README.md").write_text(
+            "\n".join(f"`{agent_id}`" for agent_id in agent_ids),
+            encoding="utf-8",
+        )
+        (root / "agents" / "pipeline" / "pipeline_manifest.json").write_text(
+            json.dumps(
+                {
+                    "orchestration": {
+                        "dynamic_dispatch_policy": {
+                            "high_risk_task_kinds": sorted(
+                                doc_governance.DATA_BLOAT_GOVERNANCE_TASK_KINDS
+                            ),
+                            "low_risk_task_kinds": ["workbench_snapshot_refresh"],
+                        },
+                        "required_hard_gates_by_task_kind": {
+                            task_kind: ["data_bloat_governance"]
+                            for task_kind in doc_governance.DATA_BLOAT_GOVERNANCE_TASK_KINDS
+                        },
+                        "hard_gates": {
+                            "data_bloat_governance": {
+                                "blocks": sorted(doc_governance.DATA_BLOAT_GOVERNANCE_BLOCKS)
+                            }
+                        },
+                        "flow_variants": {"training_data_bloat_governance": agent_ids},
+                    },
+                    "agents": [{"agent_id": agent_id} for agent_id in agent_ids],
+                    "artifacts": {
+                        artifact_id: "projects/<case>/runs/report.json"
+                        for artifact_id in doc_governance.DATA_BLOAT_GOVERNANCE_ARTIFACTS
+                    },
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        report = check_data_bloat_governance_manifest(root)
+
+        self.assertEqual(report["status"], "pass", report["findings"])
 
     def test_registry_ignores_output_markdown_by_default(self) -> None:
         root = artifact_path("doc_governance", "registry")
@@ -387,6 +496,11 @@ class DocGovernanceTests(unittest.TestCase):
         self.assertIn("CORE_RESTRUCTURE_PLAN.md", registry_paths)
         self.assertIn("CORE_CONTEXT_BRIEF.md", registry_paths)
         self.assertNotIn("output/validation_runs/struct-audit-01/struct_audit_fragments.md", registry_paths)
+        self.assertEqual(
+            report["architecture_hardening"]["status"],
+            "pass",
+            report["architecture_hardening"]["findings"],
+        )
 
     def test_training_context_alignment_flags_missing_visual_first_contract(self) -> None:
         root = artifact_path("doc_governance", "training_context_missing")

@@ -142,6 +142,82 @@ OPENSPEC_NEGATION_MARKERS = (
     "rejected",
 )
 
+ARCHITECTURE_REQUEST_CHAIN = (
+    "User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> "
+    "execution -> verification -> promotion/sync"
+)
+
+ARCHITECTURE_HARDENING_REQUIREMENTS = {
+    "README.md": (
+        ARCHITECTURE_REQUEST_CHAIN,
+        "semantic route",
+        "a_to_a_task_contract",
+        "CAD_PLAN",
+        "asset workflow",
+        "training route",
+        "promotion / sync",
+    ),
+    "docs/architecture/README.md": (
+        ARCHITECTURE_REQUEST_CHAIN,
+        "UTF-8 preflight",
+        "CAD_PLAN validate/dry-run",
+        "CODEX_PREVIEW/no-save",
+        "A-to-A hard gate",
+        "asset source boundary",
+        "reuse readback",
+        "training promotion gate",
+        "workbench sync",
+    ),
+    "docs/architecture/current-module-boundaries.md": (
+        ARCHITECTURE_REQUEST_CHAIN,
+        "core/orchestrator/",
+        "core/assets/",
+        "core/training/",
+        "core/verification/",
+        "agents/pipeline/",
+        "agents/<scenario>/",
+        "must not draw CAD details",
+        "must not duplicate Core algorithms",
+    ),
+}
+
+DATA_BLOAT_GOVERNANCE_TASK_KINDS = {
+    "training_closeout",
+    "focused_training_closeout",
+    "training_queue_completion",
+    "formal_training_workbench_sync",
+    "system_asset_sedimentation",
+    "asset_dwg_layout",
+    "repository_artifact_governance",
+    "training_data_bloat_governance",
+}
+
+DATA_BLOAT_GOVERNANCE_BLOCKS = {
+    "training_closeout_complete_claim",
+    "workbench_sync_complete_claim",
+    "formal_workbench_sync_complete_claim",
+    "a_to_a_complete_claim",
+    "system_asset_sedimentation_complete_claim",
+    "asset_governance_complete_claim",
+    "asset_dwg_layout_complete_claim",
+    "repository_artifact_governance_complete_claim",
+    "artifact_cleanup_write",
+    "delivery_complete_claim",
+}
+
+DATA_BLOAT_GOVERNANCE_ARTIFACTS = {
+    "data_bloat_audit",
+    "retention_report",
+    "evidence_closure_summary",
+}
+
+DATA_BLOAT_FLOW_AGENTS = {
+    "pipeline_context_curator",
+    "pipeline_audit",
+    "pipeline_learning_promoter",
+    "pipeline_delivery",
+}
+
 
 def _rel(path: Path, root: Path) -> str:
     return path.relative_to(root).as_posix()
@@ -518,6 +594,201 @@ def check_openspec_contracts(root: Path) -> dict[str, Any]:
     }
 
 
+def check_architecture_hardening_index(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    findings: list[dict[str, str]] = []
+    checked_file_count = 0
+
+    for rel_path, required_tokens in sorted(ARCHITECTURE_HARDENING_REQUIREMENTS.items()):
+        path = root / rel_path
+        if not path.is_file():
+            findings.append(
+                _finding(
+                    "architecture_hardening_missing_doc",
+                    rel_path,
+                    "Architecture hardening requires this active documentation entry.",
+                )
+            )
+            continue
+
+        checked_file_count += 1
+        text = _read_text(path)
+        missing = [token for token in required_tokens if token not in text]
+        if missing:
+            findings.append(
+                _finding(
+                    "architecture_hardening_missing_token",
+                    rel_path,
+                    "Architecture hardening doc is missing required token(s): " + ", ".join(missing),
+                )
+            )
+
+    return {
+        "status": "pass" if not findings else "findings",
+        "summary": {
+            "checked_file_count": checked_file_count,
+            "finding_count": len(findings),
+        },
+        "findings": findings,
+    }
+
+
+def check_data_bloat_governance_manifest(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    manifest_path = root / "agents" / "pipeline" / "pipeline_manifest.json"
+    findings: list[dict[str, str]] = []
+
+    if not manifest_path.is_file():
+        if (root / "AGENTS.md").is_file() or (root / "agents").is_dir():
+            findings.append(
+                _finding(
+                    "data_bloat_manifest_missing",
+                    "agents/pipeline/pipeline_manifest.json",
+                    "Data-bloat governance requires the pipeline manifest to bind task kinds to hard gates.",
+                )
+            )
+        return {
+            "status": "pass" if not findings else "findings",
+            "summary": {
+                "manifest_present": False,
+                "checked_task_kind_count": 0,
+                "finding_count": len(findings),
+            },
+            "findings": findings,
+        }
+
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return {
+            "status": "findings",
+            "summary": {
+                "manifest_present": True,
+                "checked_task_kind_count": 0,
+                "finding_count": 1,
+            },
+            "findings": [
+                _finding(
+                    "data_bloat_manifest_invalid_json",
+                    _rel(manifest_path, root),
+                    f"Pipeline manifest is not valid JSON: {exc}",
+                )
+            ],
+        }
+
+    orchestration = manifest.get("orchestration", {})
+    high_risk = set(orchestration.get("dynamic_dispatch_policy", {}).get("high_risk_task_kinds", []))
+    low_risk = set(orchestration.get("dynamic_dispatch_policy", {}).get("low_risk_task_kinds", []))
+    required_gates = orchestration.get("required_hard_gates_by_task_kind", {})
+    hard_gates = orchestration.get("hard_gates", {})
+    data_bloat_gate = hard_gates.get("data_bloat_governance", {})
+    flow_variants = orchestration.get("flow_variants", {})
+    artifacts = manifest.get("artifacts", {})
+
+    if "training_workbench_sync" in high_risk or "training_workbench_sync" in required_gates:
+        findings.append(
+            _finding(
+                "data_bloat_ambiguous_workbench_sync",
+                _rel(manifest_path, root),
+                "Use formal_training_workbench_sync for hard-gated closeout; plain workbench refresh must stay lightweight.",
+            )
+        )
+    if "workbench_snapshot_refresh" not in low_risk:
+        findings.append(
+            _finding(
+                "data_bloat_missing_workbench_refresh_exemption",
+                _rel(manifest_path, root),
+                "Manifest must keep workbench_snapshot_refresh as a low-risk viewing refresh so daily opening is not over-gated.",
+            )
+        )
+
+    for task_kind in sorted(DATA_BLOAT_GOVERNANCE_TASK_KINDS):
+        if task_kind not in high_risk:
+            findings.append(
+                _finding(
+                    "data_bloat_task_kind_not_high_risk",
+                    _rel(manifest_path, root),
+                    f"{task_kind} must be listed as a high-risk task kind.",
+                )
+            )
+        gates = set(required_gates.get(task_kind, []))
+        if "data_bloat_governance" not in gates:
+            findings.append(
+                _finding(
+                    "data_bloat_task_kind_missing_hard_gate",
+                    _rel(manifest_path, root),
+                    f"{task_kind} must require the data_bloat_governance hard gate.",
+                )
+            )
+
+    missing_blocks = sorted(DATA_BLOAT_GOVERNANCE_BLOCKS - set(data_bloat_gate.get("blocks", [])))
+    if missing_blocks:
+        findings.append(
+            _finding(
+                "data_bloat_gate_missing_blocks",
+                _rel(manifest_path, root),
+                "data_bloat_governance must block completion claims: " + ", ".join(missing_blocks),
+            )
+        )
+
+    missing_artifacts = sorted(DATA_BLOAT_GOVERNANCE_ARTIFACTS - set(artifacts))
+    if missing_artifacts:
+        findings.append(
+            _finding(
+                "data_bloat_missing_artifact_templates",
+                _rel(manifest_path, root),
+                "Manifest must declare data-bloat report artifact templates: " + ", ".join(missing_artifacts),
+            )
+        )
+
+    missing_flow_agents = sorted(
+        DATA_BLOAT_FLOW_AGENTS - set(flow_variants.get("training_data_bloat_governance", []))
+    )
+    if missing_flow_agents:
+        findings.append(
+            _finding(
+                "data_bloat_flow_missing_agents",
+                _rel(manifest_path, root),
+                "training_data_bloat_governance flow must include: " + ", ".join(missing_flow_agents),
+            )
+        )
+
+    readme_path = root / "agents" / "pipeline" / "README.md"
+    if readme_path.is_file():
+        readme_text = _read_text(readme_path)
+        missing_readme_agents = sorted(
+            agent.get("agent_id", "")
+            for agent in manifest.get("agents", [])
+            if agent.get("agent_id") and agent.get("agent_id") not in readme_text
+        )
+        if missing_readme_agents:
+            findings.append(
+                _finding(
+                    "data_bloat_pipeline_readme_missing_agents",
+                    _rel(readme_path, root),
+                    "Pipeline README must list every manifest agent: " + ", ".join(missing_readme_agents),
+                )
+            )
+    else:
+        findings.append(
+            _finding(
+                "data_bloat_pipeline_readme_missing",
+                "agents/pipeline/README.md",
+                "Pipeline README must document manifest agents and data-bloat governance responsibilities.",
+            )
+        )
+
+    return {
+        "status": "pass" if not findings else "findings",
+        "summary": {
+            "manifest_present": True,
+            "checked_task_kind_count": len(DATA_BLOAT_GOVERNANCE_TASK_KINDS),
+            "finding_count": len(findings),
+        },
+        "findings": findings,
+    }
+
+
 def _is_active_table_c_doc(rel_path: str) -> bool:
     if rel_path in ACTIVE_TABLE_C_EXCLUDED:
         return False
@@ -795,6 +1066,8 @@ def build_doc_governance_report(
     training_context = check_training_context_alignment(root)
     output_policy = check_output_reply_policy(root)
     openspec_contracts = check_openspec_contracts(root)
+    architecture_hardening = check_architecture_hardening_index(root)
+    data_bloat_governance = check_data_bloat_governance_manifest(root)
     reports = {
         "doc_registry": registry,
         "source_of_truth": source,
@@ -806,6 +1079,8 @@ def build_doc_governance_report(
         "training_context": training_context,
         "output_policy": output_policy,
         "openspec_contracts": openspec_contracts,
+        "architecture_hardening": architecture_hardening,
+        "data_bloat_governance": data_bloat_governance,
     }
     finding_count = sum(report["summary"].get("finding_count", 0) for report in reports.values())
     return {

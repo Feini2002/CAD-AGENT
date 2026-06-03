@@ -1465,17 +1465,28 @@
 
   <script src="capability-map-data.js"></script>
   <script>
-    const systemData = window.CAD_CAPABILITY_MAP_DATA || {};
-    const programs = systemData.trainingPrograms || systemData.capabilities || [];
-    const agents = systemData.agentProfiles || systemData.agents || [];
-    const contracts = systemData.promptContracts || [];
-    const stageColumns = systemData.trainingStageColumns || systemData.stages || [
+    const defaultStageColumns = [
       { id: "raw", label: "标准图库", shortLabel: "图库" },
       { id: "knowledge", label: "常识整理", shortLabel: "常识" },
       { id: "trained", label: "训练沉淀", shortLabel: "训练" },
       { id: "system", label: "自产资产", shortLabel: "自产" }
     ];
-    const tableCBoundary = systemData.tableCBoundary || systemData.coverageSnapshot || {};
+    function normalizeWorkbenchData(raw) {
+      const data = raw || {};
+      return {
+        ...data,
+        trainingPrograms: data.trainingPrograms || data.capabilities || [],
+        agentProfiles: data.agentProfiles || data.agents || [],
+        trainingStageColumns: data.trainingStageColumns || data.stages || defaultStageColumns,
+        tableCBoundary: data.tableCBoundary || data.coverageSnapshot || {}
+      };
+    }
+    const systemData = normalizeWorkbenchData(window.CAD_CAPABILITY_MAP_DATA || {});
+    const programs = systemData.trainingPrograms;
+    const agents = systemData.agentProfiles;
+    const contracts = systemData.promptContracts || [];
+    const stageColumns = systemData.trainingStageColumns;
+    const tableCBoundary = systemData.tableCBoundary;
     const workbenchSync = systemData.workbenchSync || {};
 
     const groupOrder = ["全部", "CAD 基础操作", "基础家具", "储位家具", "厨卫对象", "基础绘图", "标注表达"];

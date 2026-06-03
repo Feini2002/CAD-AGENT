@@ -25,16 +25,23 @@ def default_scan_roots(root: Path) -> list[Path]:
     return [
         root / "output" / "previews",
         root / "output" / "training_queues",
+        root / "output" / "debug",
+        root / "output" / "test_artifacts",
     ]
 
 
 def default_reference_roots(root: Path) -> list[Path]:
     return [
         root / "docs" / "training",
+        root / "docs" / "handoffs",
         root / "agents",
+        root / "examples" / "capability_proof",
+        root / "projects",
         root / "output" / "training_queues",
         root / "output" / "training_learning",
+        root / "output" / "validation_runs",
         root / "output" / "validation_runs" / "training-workbench-sync",
+        root / "libraries" / "system_library",
         root / "docs" / "status",
         root / "capability-map-data.js",
     ]

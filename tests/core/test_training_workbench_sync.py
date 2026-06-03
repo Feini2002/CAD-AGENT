@@ -15,6 +15,40 @@ class TrainingWorkbenchSyncTests(unittest.TestCase):
         root.mkdir(parents=True, exist_ok=True)
         return root
 
+    def rewrite_training_sources_to_fixture_files(self, data_path: Path) -> None:
+        from scripts.run_training_workbench_agent_check import load_workbench_data
+
+        data = load_workbench_data(data_path)
+        source_root = self.artifact_root() / "training_source_fixture"
+        source_root.mkdir(parents=True, exist_ok=True)
+
+        path_map: dict[str, str] = {}
+        for index, source in enumerate(data.get("trainingSources", [])):
+            old_path = str(source.get("path", ""))
+            if not old_path or source.get("status", "active") != "active":
+                continue
+            suffix = Path(old_path).suffix or ".json"
+            fixture_path = source_root / f"source_{index}{suffix}"
+            if suffix.lower() in {".png", ".jpg", ".jpeg"}:
+                fixture_path.write_bytes(b"fixture image placeholder")
+            else:
+                fixture_path.write_text(
+                    json.dumps({"fixtureFor": old_path}, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+            new_path = fixture_path.relative_to(PROJECT_ROOT).as_posix()
+            path_map[old_path] = new_path
+            source["path"] = new_path
+
+        for program in data.get("trainingPrograms", []):
+            acceptance = program.get("trainingAcceptance", {})
+            source_path = acceptance.get("source")
+            if source_path in path_map:
+                acceptance["source"] = path_map[source_path]
+
+        payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+        data_path.write_text(f"window.CAD_CAPABILITY_MAP_DATA = {payload};\n", encoding="utf-8")
+
     def test_generated_prompt_source_refs_point_to_real_files(self) -> None:
         from scripts import build_capability_map_data
 
@@ -69,6 +103,34 @@ class TrainingWorkbenchSyncTests(unittest.TestCase):
         self.assertIn("scripts\\sync_training_workbench.py", sync.get("recommendedCommand", ""))
         self.assertEqual(sync.get("launcher"), "start_training_workbench.bat")
         self.assertIn("generatedAfterCoverage", sync)
+
+    def test_workbench_snapshot_is_compact_and_omits_legacy_aliases(self) -> None:
+        from scripts import build_capability_map_data
+        from scripts.run_training_workbench_agent_check import load_workbench_data
+
+        output_path = self.artifact_root() / "compact" / "capability-map-data.js"
+
+        build_capability_map_data.write_data(output_path)
+
+        text = output_path.read_text(encoding="utf-8")
+        self.assertLessEqual(text.count("\n"), 1)
+        data = load_workbench_data(output_path)
+        self.assertIn("trainingPrograms", data)
+        self.assertIn("agentProfiles", data)
+        self.assertIn("trainingStageColumns", data)
+        self.assertIn("tableCBoundary", data)
+        for legacy_key in ("capabilities", "agents", "stages", "coverageSnapshot"):
+            self.assertNotIn(legacy_key, data)
+
+    def test_workbench_html_uses_normalized_data_instead_of_snapshot_duplication(self) -> None:
+        html = (PROJECT_ROOT / "capability-map.html").read_text(encoding="utf-8")
+
+        self.assertIn("function normalizeWorkbenchData", html)
+        self.assertIn("const systemData = normalizeWorkbenchData(window.CAD_CAPABILITY_MAP_DATA || {})", html)
+        self.assertNotIn("systemData.trainingPrograms || systemData.capabilities", html)
+        self.assertNotIn("systemData.agentProfiles || systemData.agents", html)
+        self.assertNotIn("systemData.trainingStageColumns || systemData.stages", html)
+        self.assertNotIn("systemData.tableCBoundary || systemData.coverageSnapshot", html)
 
     def test_training_source_manifest_declares_fact_sources_and_derived_snapshots(self) -> None:
         from scripts import build_capability_map_data
@@ -431,12 +493,45 @@ class TrainingWorkbenchSyncTests(unittest.TestCase):
         self.assertEqual(check_by_name["systemized_training_has_promotion_gate"]["status"], "fail")
         self.assertIn("cad-primitives", check_by_name["systemized_training_has_promotion_gate"]["detail"])
 
-    def test_agent_check_cli_validates_generated_snapshot(self) -> None:
+    def test_agent_check_cli_blocks_missing_training_sources_in_generated_snapshot(self) -> None:
+        from scripts import build_capability_map_data
+
+        data_output = self.artifact_root() / "capability-map-data-agent-check-missing-sources.js"
+        output = self.artifact_root() / "agent_check_missing_sources.json"
+        build_capability_map_data.write_data(data_output)
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "scripts" / "run_training_workbench_agent_check.py"),
+                "--data",
+                str(data_output),
+                "--output",
+                str(output),
+            ],
+            cwd=PROJECT_ROOT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+        )
+
+        self.assertEqual(completed.returncode, 1)
+        report = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(report["status"], "fail")
+        check_by_name = {item["name"]: item for item in report["checks"]}
+        self.assertEqual(check_by_name["training_source_paths_exist"]["status"], "fail")
+        self.assertIn(
+            "output/training_learning/agent_learning_ledger.json",
+            check_by_name["training_source_paths_exist"]["detail"],
+        )
+
+    def test_agent_check_cli_passes_when_training_source_paths_exist(self) -> None:
         from scripts import build_capability_map_data
 
         data_output = self.artifact_root() / "capability-map-data-agent-check.js"
         output = self.artifact_root() / "agent_check.json"
         build_capability_map_data.write_data(data_output)
+        self.rewrite_training_sources_to_fixture_files(data_output)
         completed = subprocess.run(
             [
                 sys.executable,
@@ -468,7 +563,7 @@ class TrainingWorkbenchSyncTests(unittest.TestCase):
         self.assertIn("systemized_training_has_promotion_gate", check_names)
         self.assertIn("promotion_gate_decisions_complete", check_names)
 
-    def test_sync_cli_refreshes_data_and_runs_agent_check(self) -> None:
+    def test_sync_cli_refreshes_data_and_blocks_missing_training_sources(self) -> None:
         temp_path = self.artifact_root() / "sync_cli"
         temp_path.mkdir(parents=True, exist_ok=True)
         data_output = temp_path / "capability-map-data.js"
@@ -490,11 +585,13 @@ class TrainingWorkbenchSyncTests(unittest.TestCase):
             capture_output=True,
         )
 
-        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(completed.returncode, 1)
         self.assertTrue(data_output.is_file())
         report = json.loads((output_dir / "training_workbench_sync_report.json").read_text(encoding="utf-8"))
-        self.assertEqual(report["status"], "pass")
-        self.assertEqual(report["agent_check"]["status"], "pass")
+        self.assertEqual(report["status"], "fail")
+        self.assertEqual(report["agent_check"]["status"], "fail")
+        check_by_name = {item["name"]: item for item in report["agent_check"]["checks"]}
+        self.assertEqual(check_by_name["training_source_paths_exist"]["status"], "fail")
         self.assertIn("promotionGate", report["learning_promotion"])
 
     def test_launcher_bat_runs_sync_before_serving_page(self) -> None:

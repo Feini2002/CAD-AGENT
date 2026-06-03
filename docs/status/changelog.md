@@ -4,6 +4,14 @@
 
 ## 2026-06-03
 
+### DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01：训练前数据防膨胀与 A-to-A 共识收尾
+
+- **触发**：用户担心进入训练阶段后，`capability-map-data.js`、debug 中间物、test artifacts、retry / dry-run / execution summary 和旧截图会持续膨胀；同时担心后续 Agent 忘记本轮优化，训练越跑越堆。
+- **反方校验结论**：多 Agent 评审认为第一包不应直接 chunk，也不应把 `2MB/30000行` 作为立刻 hard fail；应先把 evidence closure、protected / candidate / blocked / derived 分类和 A-to-A hard gate 写入系统规则。诊断报告和工作台快照不能反向成为训练事实源。
+- **规则接通**：更新 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md`、`agents/cad_designer/rules.md`、`agents/COMMON_PROMPT_CONTRACT.md`、`agents/pipeline/README.md` 和 `agents/pipeline/pipeline_manifest.json`。`pipeline_manifest.json` 新增 task kind → hard gate 映射、`data_bloat_governance` 阻断完成声明、治理报告 artifact 模板和 `workbench_snapshot_refresh` 轻量例外。
+- **机器治理**：`core/maintenance/doc_governance.py` 新增 `data_bloat_governance` 子项；`tests/core/test_doc_governance.py` 补坏 manifest / 好 manifest 回归，防止后续 Agent 或配置改动漏掉这条门禁。
+- **边界**：本轮不实现 `scripts/run_data_bloat_audit.py`、不改 `build_capability_map_data.py` compact 输出、不移动 / 删除 output，不运行 CAD，不提升表 C；相关文档把未实现项标为 `pending_implementation`，不得误报已落地。
+
 ### REPO-AUDIT-TABLEC-BOUNDARY-01：审计阻断口径与表 C claim 边界
 
 - **触发**：用户指出当前仓库有大量变更、未跟踪文件、`sys.path` 入口问题，以及 `verified_count=0` / `showcase_count=303` 容易被误读。
@@ -2719,6 +2727,14 @@
 - **验证**：`tests.core.test_dimension_style_training tests.core.test_verification_report` 共 19 OK；`tests.core.test_render_preview` 共 9 OK；真实报告 `encodingPreflight=pass`、`savedCurrentDwg=false`、`assetSedimentation=not_started`。
 - **边界**：本轮不保存当前业务 DWG，不删除实体，不覆盖已有 `Standard`，不沉淀资产；后续沉淀需要走系统资产四件套。
 
+### DATA-BLOAT-A0-A3-IMPLEMENTATION-01：训练前防膨胀 A0-A3 实施
+
+- **触发**：前一轮已把数据防膨胀写进规则和 A-to-A 共识，但没有真正的审计 CLI、compact 快照和 retention manifest。
+- **实现**：新增 `core/maintenance/data_bloat_audit.py` 和 `scripts/run_data_bloat_audit.py`，只读输出 `protected` / `derived` / `candidate` / `blocked`；active fact_source 缺失、派生快照误登记 fact_source、coverage `report_path_missing` 会 hard block。`capability-map-data.js` 生成器改为 compact 单行并去掉重复 legacy aliases；HTML 新增 `normalizeWorkbenchData()` 兼容旧快照。retention 扫描根扩到 debug / test artifacts，引用根扩到 handoffs、projects、validation runs、system library，`.json` / `.dwg` / `.dwt` 显式保护，写归档时生成 relocation manifest 与 SHA256。
+- **验证**：A0 / A3 单测 8 OK；A1 新增 compact / normalize 测试和 A3 全套 retention 测试 7 OK；`python scripts\build_capability_map_data.py` 成功，真实快照为 1,361,055 bytes / 1 行；`node --check capability-map-data.js` pass；retention dry-run pass，`candidateCount=0`、`protectedArtifactCount=16`、未归档；`run_data_bloat_audit.py --summary-only` 返回 blocked，快照 ratchet 无 warning。
+- **当前阻断**：`scripts\sync_training_workbench.py` 仍 fail，Agent check 仅 `training_source_paths_exist` 失败：13 个 active fact_source 缺失；coverage `evidence_path_audit.report_path_missing=303`。这符合 A0 设计，不能把页面健康显示当成证据链闭合。
+- **边界**：本包不删除、不移动、不归档真实仓库文件；不连接 AutoCAD、不写 DWG、不提升表 C。
+
 ### DIMENSION-STYLE-ARCH-SCALE-RETRAIN-01：建筑尺寸样式比例重训
 
 - **触发**：用户指出上一版虽有建筑标注形态，但样式仍可能重复，且建筑标记比例偏大；要求删除失败测试结果、重画，并由独立 Agent 校验。
@@ -2829,3 +2845,12 @@
 - **A-to-A 检查**：`scripts/run_a_to_a_orchestration_gate_check.py` 现在检查 main agent identity、dynamic dispatch policy、unregistered agent policy、未登记 Agent 不激活、forced unregistered effective agent 阻断，以及 `layoutReadabilityAcceptable`。
 - **验证**：先写红灯测试确认新字段缺失会失败；实现后 `tests.core.test_a_to_a_task_contract` 11 OK，`tests.core.test_workflow_dispatch` 9 OK，`scripts/run_a_to_a_orchestration_gate_check.py` status=`pass`。
 - **边界**：本轮是 no-CAD 编排门禁加固，未写 CAD、未保存 DWG、不提升表 C；主 Agent 自检是工程责任边界，不是人格或真实 CAD 证据。
+
+### ARCHITECTURE-DOC-HARDENING-02：架构链路与硬门禁索引轻量加固
+
+- **触发**：按用户给出的优化清单，做中等范围“架构收口 + 轻量加固”，不展开大拆迁。
+- **实现**：根 `README.md`、`docs/architecture/README.md` 和 `docs/architecture/current-module-boundaries.md` 统一为 `User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> execution -> verification -> promotion/sync` 链路；架构 README 新增 UTF-8、CAD_PLAN validate/dry-run、`CODEX_PREVIEW/no-save`、A-to-A、资产来源、复用 readback、训练 promotion 和 workbench sync 的硬门禁索引；模块边界补 `core/orchestrator`、`core/assets`、`core/training`、`core/verification`、`agents/pipeline`、`agents/<scenario>` 的禁止边界。
+- **OpenSpec**：复用已 complete 的 `openspec/changes/architecture-boundary-hardening-01/` 作为历史边界合同，在 tasks 中记录 follow-up；未新开重复 change，未归档其它 completed changes。
+- **审计**：`core.maintenance.doc_governance` 新增 `architecture_hardening` 子报告，并补 `tests.core.test_doc_governance` 回归，缺链路 / 门禁 / 模块 token 会进入 findings。
+- **验证**：`python -m unittest tests.core.test_doc_governance -v` 27 OK；`scripts/run_doc_governance_audit.py` status=`pass`、`finding_count=0`、`architecture_hardening.checked_file_count=3`。
+- **边界**：本轮只做文档架构和审计入口加固；未改 CAD 执行、未连接 AutoCAD、未保存 DWG、不提升表 C。

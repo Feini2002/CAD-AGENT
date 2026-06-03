@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import shutil
 from datetime import UTC, datetime
 from pathlib import Path
@@ -8,6 +9,7 @@ from typing import Any, Iterable
 
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg"}
+PROTECTED_ARCHIVE_SUFFIXES = {".json", ".dwg", ".dwt"}
 REFERENCE_SUFFIXES = {".json", ".md", ".txt", ".js", ".py", ".html"}
 DEFAULT_ARCHIVE_ROOT = Path("archive") / "training_artifacts"
 
@@ -55,6 +57,24 @@ def _iter_image_candidates(scan_roots: Iterable[Path], root: Path, archive_root:
             except ValueError:
                 candidates.append(path.resolve())
     return sorted(candidates, key=lambda item: _display_path(item, root))
+
+
+def _iter_protected_artifacts(scan_roots: Iterable[Path], root: Path, archive_root: Path) -> list[Path]:
+    artifacts: list[Path] = []
+    resolved_archive = archive_root.resolve()
+    for raw_scan_root in scan_roots:
+        scan_root = _resolve_under_root(raw_scan_root, root)
+        if not scan_root.exists():
+            continue
+        for path in scan_root.rglob("*"):
+            if not path.is_file() or path.suffix.lower() not in PROTECTED_ARCHIVE_SUFFIXES:
+                continue
+            try:
+                path.resolve().relative_to(resolved_archive)
+                continue
+            except ValueError:
+                artifacts.append(path.resolve())
+    return sorted(artifacts, key=lambda item: _display_path(item, root))
 
 
 def _iter_reference_files(reference_roots: Iterable[Path], root: Path, archive_root: Path) -> list[Path]:
@@ -111,6 +131,14 @@ def _latest_images_by_dir(candidates: Iterable[Path], keep_latest_per_dir: int) 
     return keep
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def run_training_artifact_retention(
     *,
     project_root: Path,
@@ -124,12 +152,17 @@ def run_training_artifact_retention(
     root = project_root.resolve()
     archive_base = _resolve_under_root(archive_root or DEFAULT_ARCHIVE_ROOT, root)
     candidates = _iter_image_candidates(scan_roots, root, archive_base)
+    protected_artifacts = _iter_protected_artifacts(scan_roots, root, archive_base)
     reference_files = _iter_reference_files(reference_roots, root, archive_base)
     reference_texts = _read_reference_texts(reference_files)
     latest_keep = _latest_images_by_dir(candidates, keep_latest_per_dir)
 
     kept: list[dict[str, str]] = []
     archive_planned: list[dict[str, str]] = []
+    protected_rows = [
+        {"path": _display_path(path, root), "reason": "protected_suffix", "suffix": path.suffix.lower()}
+        for path in protected_artifacts
+    ]
     for candidate in candidates:
         reference = _find_reference(candidate, root, reference_texts)
         if reference:
@@ -144,10 +177,14 @@ def run_training_artifact_retention(
                     "path": _display_path(candidate, root),
                     "reason": "unreferenced_old_preview",
                     "archivePath": _display_path(archive_path, root),
+                    "sourceSha256": _sha256(candidate),
+                    "restoreHint": "Move archivePath back to originalPath if a later report still needs this visual artifact.",
                 }
             )
 
     archived: list[dict[str, str]] = []
+    relocations: list[dict[str, str]] = []
+    relocation_manifest_path = archive_base / "relocation_manifest.json"
     if write:
         for item in archive_planned:
             source = root / item["path"]
@@ -157,7 +194,34 @@ def run_training_artifact_retention(
                 stamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
                 target = target.with_name(f"{target.stem}-{stamp}{target.suffix}")
             shutil.move(str(source), str(target))
-            archived.append({**item, "archivePath": _display_path(target, root)})
+            archived_item = {**item, "archivePath": _display_path(target, root), "archiveSha256": _sha256(target)}
+            archived.append(archived_item)
+            relocations.append(
+                {
+                    "originalPath": item["path"],
+                    "archivePath": archived_item["archivePath"],
+                    "sourceSha256": item["sourceSha256"],
+                    "archiveSha256": archived_item["archiveSha256"],
+                    "reason": item["reason"],
+                    "references": "",
+                    "restoreHint": item["restoreHint"],
+                }
+            )
+        if relocations:
+            relocation_manifest_path.parent.mkdir(parents=True, exist_ok=True)
+            relocation_manifest_path.write_text(
+                json.dumps(
+                    {
+                        "version": "0.1",
+                        "generatedAt": datetime.now(UTC).replace(microsecond=0).isoformat(),
+                        "relocations": relocations,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
 
     report = {
         "version": "0.1",
@@ -169,17 +233,21 @@ def run_training_artifact_retention(
             "keepLatestPerDir": keep_latest_per_dir,
             "deleteFiles": False,
             "archiveRoot": _display_path(archive_base, root),
+            "protectedSuffixes": sorted(PROTECTED_ARCHIVE_SUFFIXES),
         },
         "scanRoots": [_display_path(_resolve_under_root(path, root), root) for path in scan_roots],
         "referenceRoots": [_display_path(_resolve_under_root(path, root), root) for path in reference_roots],
         "candidateCount": len(candidates),
+        "protectedArtifactCount": len(protected_rows),
         "referenceFileCount": len(reference_files),
         "keptCount": len(kept),
         "archivePlannedCount": len(archive_planned),
         "archivedCount": len(archived),
         "kept": kept,
+        "protectedArtifacts": protected_rows,
         "archivePlanned": archive_planned,
         "archived": archived,
+        "relocationManifestPath": _display_path(relocation_manifest_path, root) if relocations else None,
     }
 
     if output_path:

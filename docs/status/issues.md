@@ -1,3 +1,15 @@
+## 2026-06-03 训练前防膨胀不能绕过证据闭合
+
+现象：`capability-map-data.js` 已经是明显膨胀的派生快照，训练、复训、正式收尾型工作台同步和系统资产沉淀还会持续产生 debug、test artifacts、retry、dry-run、execution summary、旧截图和临时报告。反方复核还指出当前事实源闭合可能已有缺口：若 active `fact_source`、registry evidence 或表 C report path 不可达，直接清理只会把断链包装成健康状态。
+
+影响：如果后续 Agent 只按“output 太大就删”执行，可能误删 still-referenced preview、训练验收报告、created handles/readback 证据、learning ledger、Agent memory、Prompt addendum、系统资产 registry / assets.json / native DWG 或状态 / handoff / issue 中仍引用的路径；如果只压缩 `capability-map-data.js`，也可能让工作台继续显示“已沉淀”但底层事实源不可复盘。
+
+修复 / 计划：本轮已把 `DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01` 写入全局规则、A-to-A 任务链路、CAD Designer rules、common prompt contract 和 pipeline manifest，并纳入 `run_doc_governance_audit.py` 的 `data_bloat_governance` 子项。后续真正实现 A 包时，应先做 `data_bloat_audit` / retention dry-run 的 protected / candidate / blocked / derived 报告，再考虑 compact、去重复别名、ratchet threshold 和清理写入。
+
+以后规则：`retention_report.json`、data-bloat audit report、sync report 和 `capability-map-data.js` 只能是 diagnostic / derived，不进入 `training-sources.json` 的 `fact_source`。清理 / 归档写入前必须先证明 active fact source 仍可追溯、候选未被引用、引用根覆盖充分，且不会让 `report_path_missing` 或 registry evidence 断链变差。否则报告 `dataBloatGate=blocked`，不得声称训练收尾或 A-to-A 已打通。仅为查看而刷新工作台快照属于 `workbench_snapshot_refresh`，不能借此宣称正式收尾完成。
+
+相关文件：`AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md`、`agents/COMMON_PROMPT_CONTRACT.md`、`agents/pipeline/pipeline_manifest.json`、`core/maintenance/doc_governance.py`
+
 ## 2026-06-03 dev volume 审计不能只报原始数量，工作树收口也不能靠误删
 
 现象：仓库当前有大量 tracked / untracked 变更；旧 `run_dev_volume_audit.py` 只报告总数和阈值 findings，无法判断 `105` 个 untracked 是缓存垃圾、派生文件，还是新的源码 / Agent / OpenSpec / 测试包。
@@ -1065,6 +1077,20 @@
 以后规则：遇到可见 AutoCAD 但 COM / 窗口枚举失败时，先检查 window station / thread desktop / input desktop，不再默认认为用户没打开 CAD；CAD 对象类型归一化中，Dimension 类必须优先于 Line / Arc / Circle 等名称子串判断。
 
 相关文件：`scripts/run_dimension_style_training.py`、`core/verification/render_preview.py`、`core/verification/inspect_dwg.py`、`core/training/dimension_style_training.py`
+
+### 问题：快照瘦身成功后，训练事实源和 coverage 证据链仍会阻断同步
+
+日期：2026-06-03
+
+现象：`capability-map-data.js` 已从多 MB / 多万行派生快照瘦到 1,361,055 bytes / 1 行，legacy aliases 已移除；但 `scripts/run_data_bloat_audit.py --summary-only` 仍返回 `blocked`，`scripts/sync_training_workbench.py` 也仍失败。失败原因不是 compact 输出，而是 13 个 active `fact_source` 路径不存在，且 coverage `evidence_path_audit.report_path_missing=303`。
+
+影响：如果只看工作台页面能否打开或快照大小，就会误判系统健康；如果为了让同步变绿而把缺失事实源改成 derived 或删除引用，会把“证据链断裂”伪装成“治理完成”。
+
+修复 / 计划：本轮新增 A0 data-bloat audit，只读报告 `protected`、`derived`、`candidate`、`blocked`；active fact_source 缺失、派生快照误登记 fact_source、coverage report path missing 都会 hard block。后续要么恢复这些事实源文件，要么审查后把不再代表当前事实的条目降级 / 归档，并同步 coverage 证据索引；不得用空 stub 或页面快照替代真实报告。
+
+以后规则：防膨胀第一步先看 A0 blocked，而不是先清 output 或改快照；`capability-map-data.js`、sync report、retention report、data-bloat audit report 只能是 derived / diagnostic，不得作为训练 fact_source。
+
+相关文件：`core/maintenance/data_bloat_audit.py`、`scripts/run_data_bloat_audit.py`、`docs/training/training-sources.json`、`output/validation_runs/capability-lab/cad_capability_coverage.json`
 
 ### 问题：尺寸样式训练不能靠数量凑差异，AutoCAD 箭头块读回还会本地化
 
