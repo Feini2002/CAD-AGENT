@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "deterministic-intent/v1",
+  "status": "ready",
+  "agentId": "pipeline_intent",
+  "cadPlanDraftStatus": "candidate_written",
+  "cadPlanRef": "candidate_outputs/cad_plan.candidate.json",
+  "sourceAgentOutputs": [
+    "agent_outputs/pipeline_design_director.json",
+    "agent_outputs/pipeline_style_generator.json",
+    "agent_outputs/pipeline_design_reviewer.json",
+    "agent_outputs/pipeline_visual_intent.json"
+  ],
+  "structuredIntentDraft": {
+    "kind": "preview_cad_plan_candidate",
+    "targetLayer": "CODEX_PREVIEW",
+    "cadExecutionAuthorized": false,
+    "savedCurrentDwg": false,
+    "requiresBeforeCad": [
+      "validate_plan",
+      "dry_run_plan"
+    ]
+  },
+  "blockingReasons": [],
+  "modelProviderStatus": {
+    "modelInvoked": false,
+    "route": "deterministic_downstream_agent",
+    "schemaValid": true,
+    "blocking": false
+  }
+}

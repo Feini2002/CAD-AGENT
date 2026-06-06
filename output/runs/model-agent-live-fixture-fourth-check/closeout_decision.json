@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "closeout-decision/v1",
+  "status": "not_verified",
+  "can_deliver": false,
+  "closeoutState": "cad_evidence_missing",
+  "stateMachineVersion": "closeout-state-machine/v1",
+  "requiredEvidence": [
+    "schemaValid=true when model output is required",
+    "validate_plan=pass",
+    "dry_run=pass",
+    "created_handles_readback=ok",
+    "targetLayer=CODEX_PREVIEW",
+    "savedCurrentDwg=false",
+    "visual_acceptance_review=pass",
+    "neighbor_protection=pass"
+  ],
+  "missingEvidence": [
+    "created_handles_readback=ok",
+    "real CAD geometry verified",
+    "visual_acceptance_review=pass",
+    "neighbor_protection=pass"
+  ],
+  "blocking_reasons": [
+    "created_handles_readback not ok",
+    "visual_acceptance_review missing",
+    "neighbor_protection missing",
+    "real CAD geometry not verified"
+  ],
+  "required_repairs": [],
+  "evidence_boundary": {
+    "checked": [
+      "validate_plan=pass",
+      "dry_run=pass",
+      "savedCurrentDwg=false",
+      "targetLayer=CODEX_PREVIEW"
+    ],
+    "not_checked": [
+      "created_handles_readback",
+      "created_handles_readback=ok",
+      "neighbor_protection",
+      "neighbor_protection=pass",
+      "real CAD geometry verified",
+      "visual_acceptance_review",
+      "visual_acceptance_review=pass"
+    ],
+    "screenshots": {
+      "role": "visual_aid_only",
+      "count": 0,
+      "files": [],
+      "cannotReplace": [
+        "created_handles_readback",
+        "visual_acceptance_review"
+      ]
+    },
+    "notProven": [
+      "user acceptance",
+      "geometry outside the reported created handles/readback",
+      "future edits after this closeout decision"
+    ]
+  },
+  "final_response_allowed_claims": [],
+  "input_files": [
+    "cad_reports/dry_run_report.json",
+    "cad_reports/readback_summary.json",
+    "cad_reports/validation_report.json",
+    "dispatch_plan.json",
+    "state.json",
+    "task_contract.json"
+  ],
+  "output_files": [
+    "closeout_decision.json"
+  ],
+  "generatedAt": "2026-06-05T08:59:07Z",
+  "writer": "core.orchestrator.closeout_gate"
+}

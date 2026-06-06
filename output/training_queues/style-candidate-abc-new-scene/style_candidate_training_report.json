@@ -1,0 +1,1058 @@
+{
+  "schemaVersion": "style-candidate-training/v1",
+  "status": "needs_user_choice",
+  "trainingId": "style-candidate-abc-new-scene",
+  "generatedAt": "2026-06-05T04:25:43.897681+00:00",
+  "scope": {
+    "mode": "focused",
+    "requestedCapabilityIds": [
+      "annotation-dimension-style",
+      "style-candidate-generation"
+    ],
+    "scopeReason": "用户要求新场景 A/B/C 三套尺寸样式，不复刻旧 10 个样式。"
+  },
+  "encodingPreflight": {
+    "status": "pass",
+    "checkedTextCount": 22,
+    "issueCount": 0,
+    "issues": [],
+    "policy": "fail_before_cad_write_or_asset_contract_write"
+  },
+  "desktopSwitch": {
+    "status": "skipped",
+    "reason": "fake CAD driver"
+  },
+  "legacyStyleReuse": {
+    "status": "pass",
+    "reusedLegacyStyleCount": 0,
+    "reusedLegacyStyles": [],
+    "rule": "本轮只允许 A/B/C 新场景参数化候选，不复刻旧 10 个 canonical 尺寸样式。"
+  },
+  "styleCandidateCount": 3,
+  "styleCandidateIds": [
+    "A",
+    "B",
+    "C"
+  ],
+  "styleCandidates": {
+    "schemaVersion": "style-candidates/v1",
+    "caseId": "style-candidate-abc-new-scene",
+    "scenario": {
+      "domain": "residential",
+      "drawingType": "dimension_style_showcase",
+      "expressionPurpose": "为小户型玄关鞋柜生成三套尺寸表达，让用户选择偏好的图面风格。"
+    },
+    "styleIntent": "新场景参数化生成 A/B/C 三套尺寸样式；不要复刻旧 10 个 canonical 尺寸样式。",
+    "generationMethod": "parameterized_new_scene",
+    "selection": {
+      "selectedCandidateId": "",
+      "needsUserChoice": true,
+      "autoSelectPolicy": "ask_user"
+    },
+    "candidates": [
+      {
+        "candidateId": "A",
+        "label": "A 紧凑",
+        "summary": "紧凑尺寸表达，标注贴近对象，适合小图面快速扫读。",
+        "parameters": {
+          "objectType": "shoe_cabinet",
+          "objectName": "玄关鞋柜 A",
+          "width": 1200,
+          "depth": 350,
+          "basePoint": [
+            72000,
+            42000,
+            0
+          ],
+          "styleToken": "furniture.visible.medium",
+          "includeLabel": true,
+          "includeDimensions": true,
+          "textHierarchy": "compact",
+          "lineSpacing": 90,
+          "density": "high",
+          "layerStrategy": "preview_semantic_furniture"
+        },
+        "rationale": "用更短标注间距和更小对象宽度表达紧凑收纳。",
+        "tradeoffs": [
+          "信息密度高",
+          "适合小空间",
+          "需要用户确认是否过挤"
+        ]
+      },
+      {
+        "candidateId": "B",
+        "label": "B 均衡",
+        "summary": "均衡尺寸表达，标注距离和对象比例较稳，默认推荐。",
+        "parameters": {
+          "objectType": "shoe_cabinet",
+          "objectName": "玄关鞋柜 B",
+          "width": 1400,
+          "depth": 380,
+          "basePoint": [
+            74200,
+            42000,
+            0
+          ],
+          "styleToken": "furniture.visible.medium",
+          "includeLabel": true,
+          "includeDimensions": true,
+          "textHierarchy": "balanced",
+          "lineSpacing": 140,
+          "density": "medium",
+          "layerStrategy": "preview_semantic_furniture"
+        },
+        "rationale": "在图面占用和尺寸可读之间保持平衡。",
+        "tradeoffs": [
+          "默认可读性更稳",
+          "图面占用适中",
+          "视觉个性较弱"
+        ]
+      },
+      {
+        "candidateId": "C",
+        "label": "C 展示",
+        "summary": "展示型尺寸表达，留白更大，适合请用户目视挑选。",
+        "parameters": {
+          "objectType": "shoe_cabinet",
+          "objectName": "玄关鞋柜 C",
+          "width": 1600,
+          "depth": 420,
+          "basePoint": [
+            76700,
+            42000,
+            0
+          ],
+          "styleToken": "furniture.visible.medium",
+          "includeLabel": true,
+          "includeDimensions": true,
+          "textHierarchy": "presentation",
+          "lineSpacing": 190,
+          "density": "low",
+          "layerStrategy": "preview_semantic_furniture"
+        },
+        "rationale": "扩大对象和标注留白，让候选更便于用户比较。",
+        "tradeoffs": [
+          "图面最舒展",
+          "占用最多",
+          "适合方案展示"
+        ]
+      }
+    ],
+    "evidenceBoundary": {
+      "checked": [
+        "schema",
+        "candidate_count",
+        "preview_plan_generation",
+        "created_handles_readback"
+      ],
+      "notChecked": [
+        "user_choice",
+        "plot_output",
+        "formal_sheet_layout"
+      ]
+    }
+  },
+  "execution": {
+    "schemaVersion": "style-candidate-execution/v1",
+    "status": "executed",
+    "source": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\style_candidates.json",
+    "candidateCount": 3,
+    "candidateIds": [
+      "A",
+      "B",
+      "C"
+    ],
+    "needsUserChoice": true,
+    "targetLayer": "CODEX_PREVIEW",
+    "savedCurrentDwg": false,
+    "candidateSummaries": [
+      {
+        "candidateId": "A",
+        "label": "A 紧凑",
+        "summary": "紧凑尺寸表达，标注贴近对象，适合小图面快速扫读。",
+        "cadPlanPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\A_cad_plan.json",
+        "executionSummaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\A_execution_summary.json",
+        "executionSummary": {
+          "status": "executed",
+          "plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\A_cad_plan.json",
+          "intent": "draw_object",
+          "object_type": "shoe_cabinet",
+          "object_name": "玄关鞋柜 A",
+          "object_size": [
+            1200.0,
+            350.0
+          ],
+          "base_point": [
+            72000.0,
+            42000.0,
+            0.0
+          ],
+          "layer": "CODEX_PREVIEW",
+          "semantic_layer": "A-FURN",
+          "preview_only": true,
+          "entities": {
+            "rectangle": 1,
+            "text": 1,
+            "dimensions": 2
+          },
+          "created_handles": [
+            "H101",
+            "H102",
+            "H103",
+            "H104",
+            "H105",
+            "H106",
+            "H107"
+          ],
+          "style_evidence": {
+            "expected": {
+              "source_profile_id": "codex_preview_beta",
+              "style_token": "furniture.visible.medium",
+              "style_role": "visible_contour",
+              "layer_role": "furniture",
+              "semantic_layer": "A-FURN",
+              "resolved_layer": "CODEX_PREVIEW",
+              "lineweight_mm": 0.35,
+              "resolved_cad_lineweight": 35,
+              "linetype": "CONTINUOUS",
+              "linetype_scale": 1.0,
+              "color_policy": "by_layer",
+              "inheritance_mode": "by_layer",
+              "evidence_boundary": {
+                "checked": [
+                  "style_token_resolved",
+                  "semantic_layer_preserved",
+                  "preview_layer_resolution",
+                  "cad_property_write_intent"
+                ],
+                "not_checked": [
+                  "ctb_stb_plot_mapping",
+                  "plot_output",
+                  "viewport_linetype_scaling",
+                  "visual_readability"
+                ]
+              }
+            },
+            "expected_handles": [
+              "H101",
+              "H102",
+              "H103",
+              "H104",
+              "H105",
+              "H106",
+              "H107"
+            ],
+            "style_verified": false,
+            "property_verified": false,
+            "plot_verified": false,
+            "checked": [
+              "style_token_resolved",
+              "semantic_layer_preserved",
+              "preview_layer_resolution",
+              "cad_property_write_intent"
+            ],
+            "not_checked": [
+              "ctb_stb_plot_mapping",
+              "plot_output",
+              "viewport_linetype_scaling",
+              "visual_readability"
+            ]
+          },
+          "safety": {
+            "layer": "CODEX_PREVIEW",
+            "allowed_layers": [
+              "CODEX_DIAGNOSTIC",
+              "CODEX_PREVIEW"
+            ],
+            "saved_dwg": false,
+            "deleted_entities": false,
+            "modified_formal_layers": false,
+            "writes_only_preview_layer": true,
+            "writes_only_allowed_layers": true,
+            "saves_dwg": false,
+            "deletes_entities": false,
+            "modifies_formal_layers": false
+          }
+        }
+      },
+      {
+        "candidateId": "B",
+        "label": "B 均衡",
+        "summary": "均衡尺寸表达，标注距离和对象比例较稳，默认推荐。",
+        "cadPlanPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\B_cad_plan.json",
+        "executionSummaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\B_execution_summary.json",
+        "executionSummary": {
+          "status": "executed",
+          "plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\B_cad_plan.json",
+          "intent": "draw_object",
+          "object_type": "shoe_cabinet",
+          "object_name": "玄关鞋柜 B",
+          "object_size": [
+            1400.0,
+            380.0
+          ],
+          "base_point": [
+            74200.0,
+            42000.0,
+            0.0
+          ],
+          "layer": "CODEX_PREVIEW",
+          "semantic_layer": "A-FURN",
+          "preview_only": true,
+          "entities": {
+            "rectangle": 1,
+            "text": 1,
+            "dimensions": 2
+          },
+          "created_handles": [
+            "H108",
+            "H109",
+            "H110",
+            "H111",
+            "H112",
+            "H113",
+            "H114"
+          ],
+          "style_evidence": {
+            "expected": {
+              "source_profile_id": "codex_preview_beta",
+              "style_token": "furniture.visible.medium",
+              "style_role": "visible_contour",
+              "layer_role": "furniture",
+              "semantic_layer": "A-FURN",
+              "resolved_layer": "CODEX_PREVIEW",
+              "lineweight_mm": 0.35,
+              "resolved_cad_lineweight": 35,
+              "linetype": "CONTINUOUS",
+              "linetype_scale": 1.0,
+              "color_policy": "by_layer",
+              "inheritance_mode": "by_layer",
+              "evidence_boundary": {
+                "checked": [
+                  "style_token_resolved",
+                  "semantic_layer_preserved",
+                  "preview_layer_resolution",
+                  "cad_property_write_intent"
+                ],
+                "not_checked": [
+                  "ctb_stb_plot_mapping",
+                  "plot_output",
+                  "viewport_linetype_scaling",
+                  "visual_readability"
+                ]
+              }
+            },
+            "expected_handles": [
+              "H108",
+              "H109",
+              "H110",
+              "H111",
+              "H112",
+              "H113",
+              "H114"
+            ],
+            "style_verified": false,
+            "property_verified": false,
+            "plot_verified": false,
+            "checked": [
+              "style_token_resolved",
+              "semantic_layer_preserved",
+              "preview_layer_resolution",
+              "cad_property_write_intent"
+            ],
+            "not_checked": [
+              "ctb_stb_plot_mapping",
+              "plot_output",
+              "viewport_linetype_scaling",
+              "visual_readability"
+            ]
+          },
+          "safety": {
+            "layer": "CODEX_PREVIEW",
+            "allowed_layers": [
+              "CODEX_DIAGNOSTIC",
+              "CODEX_PREVIEW"
+            ],
+            "saved_dwg": false,
+            "deleted_entities": false,
+            "modified_formal_layers": false,
+            "writes_only_preview_layer": true,
+            "writes_only_allowed_layers": true,
+            "saves_dwg": false,
+            "deletes_entities": false,
+            "modifies_formal_layers": false
+          }
+        }
+      },
+      {
+        "candidateId": "C",
+        "label": "C 展示",
+        "summary": "展示型尺寸表达，留白更大，适合请用户目视挑选。",
+        "cadPlanPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\C_cad_plan.json",
+        "executionSummaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\C_execution_summary.json",
+        "executionSummary": {
+          "status": "executed",
+          "plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\C_cad_plan.json",
+          "intent": "draw_object",
+          "object_type": "shoe_cabinet",
+          "object_name": "玄关鞋柜 C",
+          "object_size": [
+            1600.0,
+            420.0
+          ],
+          "base_point": [
+            76700.0,
+            42000.0,
+            0.0
+          ],
+          "layer": "CODEX_PREVIEW",
+          "semantic_layer": "A-FURN",
+          "preview_only": true,
+          "entities": {
+            "rectangle": 1,
+            "text": 1,
+            "dimensions": 2
+          },
+          "created_handles": [
+            "H115",
+            "H116",
+            "H117",
+            "H118",
+            "H119",
+            "H120",
+            "H121"
+          ],
+          "style_evidence": {
+            "expected": {
+              "source_profile_id": "codex_preview_beta",
+              "style_token": "furniture.visible.medium",
+              "style_role": "visible_contour",
+              "layer_role": "furniture",
+              "semantic_layer": "A-FURN",
+              "resolved_layer": "CODEX_PREVIEW",
+              "lineweight_mm": 0.35,
+              "resolved_cad_lineweight": 35,
+              "linetype": "CONTINUOUS",
+              "linetype_scale": 1.0,
+              "color_policy": "by_layer",
+              "inheritance_mode": "by_layer",
+              "evidence_boundary": {
+                "checked": [
+                  "style_token_resolved",
+                  "semantic_layer_preserved",
+                  "preview_layer_resolution",
+                  "cad_property_write_intent"
+                ],
+                "not_checked": [
+                  "ctb_stb_plot_mapping",
+                  "plot_output",
+                  "viewport_linetype_scaling",
+                  "visual_readability"
+                ]
+              }
+            },
+            "expected_handles": [
+              "H115",
+              "H116",
+              "H117",
+              "H118",
+              "H119",
+              "H120",
+              "H121"
+            ],
+            "style_verified": false,
+            "property_verified": false,
+            "plot_verified": false,
+            "checked": [
+              "style_token_resolved",
+              "semantic_layer_preserved",
+              "preview_layer_resolution",
+              "cad_property_write_intent"
+            ],
+            "not_checked": [
+              "ctb_stb_plot_mapping",
+              "plot_output",
+              "viewport_linetype_scaling",
+              "visual_readability"
+            ]
+          },
+          "safety": {
+            "layer": "CODEX_PREVIEW",
+            "allowed_layers": [
+              "CODEX_DIAGNOSTIC",
+              "CODEX_PREVIEW"
+            ],
+            "saved_dwg": false,
+            "deleted_entities": false,
+            "modified_formal_layers": false,
+            "writes_only_preview_layer": true,
+            "writes_only_allowed_layers": true,
+            "saves_dwg": false,
+            "deletes_entities": false,
+            "modifies_formal_layers": false
+          }
+        }
+      }
+    ],
+    "createdHandles": [
+      "H101",
+      "H102",
+      "H103",
+      "H104",
+      "H105",
+      "H106",
+      "H107",
+      "H108",
+      "H109",
+      "H110",
+      "H111",
+      "H112",
+      "H113",
+      "H114",
+      "H115",
+      "H116",
+      "H117",
+      "H118",
+      "H119",
+      "H120",
+      "H121"
+    ],
+    "createdHandleCount": 21,
+    "evidenceBoundary": {
+      "checked": [
+        "style_candidates_schema",
+        "cad_plan_generation",
+        "validate_plan_inside_execute_plan",
+        "preview_layer_write",
+        "created_handles_returned"
+      ],
+      "notChecked": [
+        "user_choice",
+        "plot_output",
+        "real_cad_readback_if_fake_driver",
+        "visual_acceptance"
+      ]
+    }
+  },
+  "readback": {
+    "status": "pass",
+    "requestedHandleCount": 21,
+    "readbackEntityCount": 21,
+    "layerCounts": {
+      "CODEX_PREVIEW": 21
+    },
+    "typeCounts": {
+      "line": 12,
+      "text": 3,
+      "dimension": 6
+    },
+    "entities": [
+      {
+        "handle": "H101",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          72000.0,
+          42000.0,
+          0.0
+        ],
+        "end_point": [
+          73200.0,
+          42000.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H102",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          73200.0,
+          42000.0,
+          0.0
+        ],
+        "end_point": [
+          73200.0,
+          42350.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H103",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          73200.0,
+          42350.0,
+          0.0
+        ],
+        "end_point": [
+          72000.0,
+          42350.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H104",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          72000.0,
+          42350.0,
+          0.0
+        ],
+        "end_point": [
+          72000.0,
+          42000.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H105",
+        "object_name": "AcDbText",
+        "layer": "CODEX_PREVIEW",
+        "type": "text",
+        "text": "玄关鞋柜 A",
+        "position": [
+          72600.0,
+          42175.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H106",
+        "object_name": "AcDbAlignedDimension",
+        "layer": "CODEX_PREVIEW",
+        "type": "dimension",
+        "text": "",
+        "measurement": 1200.0,
+        "text_height": 0.0,
+        "text_position": [
+          72600.0,
+          41880.0,
+          0.0
+        ],
+        "xline1_point": [
+          72000.0,
+          42000.0,
+          0.0
+        ],
+        "xline2_point": [
+          73200.0,
+          42000.0,
+          0.0
+        ],
+        "bbox": {
+          "min": [
+            72000.0,
+            41880.0
+          ],
+          "max": [
+            73200.0,
+            42000.0
+          ]
+        }
+      },
+      {
+        "handle": "H107",
+        "object_name": "AcDbAlignedDimension",
+        "layer": "CODEX_PREVIEW",
+        "type": "dimension",
+        "text": "",
+        "measurement": 350.0,
+        "text_height": 0.0,
+        "text_position": [
+          71880.0,
+          42175.0,
+          0.0
+        ],
+        "xline1_point": [
+          72000.0,
+          42000.0,
+          0.0
+        ],
+        "xline2_point": [
+          72000.0,
+          42350.0,
+          0.0
+        ],
+        "bbox": {
+          "min": [
+            71880.0,
+            42000.0
+          ],
+          "max": [
+            72000.0,
+            42350.0
+          ]
+        }
+      },
+      {
+        "handle": "H108",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          74200.0,
+          42000.0,
+          0.0
+        ],
+        "end_point": [
+          75600.0,
+          42000.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H109",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          75600.0,
+          42000.0,
+          0.0
+        ],
+        "end_point": [
+          75600.0,
+          42380.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H110",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          75600.0,
+          42380.0,
+          0.0
+        ],
+        "end_point": [
+          74200.0,
+          42380.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H111",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          74200.0,
+          42380.0,
+          0.0
+        ],
+        "end_point": [
+          74200.0,
+          42000.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H112",
+        "object_name": "AcDbText",
+        "layer": "CODEX_PREVIEW",
+        "type": "text",
+        "text": "玄关鞋柜 B",
+        "position": [
+          74900.0,
+          42190.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H113",
+        "object_name": "AcDbAlignedDimension",
+        "layer": "CODEX_PREVIEW",
+        "type": "dimension",
+        "text": "",
+        "measurement": 1400.0,
+        "text_height": 0.0,
+        "text_position": [
+          74900.0,
+          41880.0,
+          0.0
+        ],
+        "xline1_point": [
+          74200.0,
+          42000.0,
+          0.0
+        ],
+        "xline2_point": [
+          75600.0,
+          42000.0,
+          0.0
+        ],
+        "bbox": {
+          "min": [
+            74200.0,
+            41880.0
+          ],
+          "max": [
+            75600.0,
+            42000.0
+          ]
+        }
+      },
+      {
+        "handle": "H114",
+        "object_name": "AcDbAlignedDimension",
+        "layer": "CODEX_PREVIEW",
+        "type": "dimension",
+        "text": "",
+        "measurement": 380.0,
+        "text_height": 0.0,
+        "text_position": [
+          74080.0,
+          42190.0,
+          0.0
+        ],
+        "xline1_point": [
+          74200.0,
+          42000.0,
+          0.0
+        ],
+        "xline2_point": [
+          74200.0,
+          42380.0,
+          0.0
+        ],
+        "bbox": {
+          "min": [
+            74080.0,
+            42000.0
+          ],
+          "max": [
+            74200.0,
+            42380.0
+          ]
+        }
+      },
+      {
+        "handle": "H115",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          76700.0,
+          42000.0,
+          0.0
+        ],
+        "end_point": [
+          78300.0,
+          42000.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H116",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          78300.0,
+          42000.0,
+          0.0
+        ],
+        "end_point": [
+          78300.0,
+          42420.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H117",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          78300.0,
+          42420.0,
+          0.0
+        ],
+        "end_point": [
+          76700.0,
+          42420.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H118",
+        "object_name": "AcDbLine",
+        "layer": "CODEX_PREVIEW",
+        "type": "line",
+        "lineweight": 35,
+        "linetype": "CONTINUOUS",
+        "linetype_scale": 1.0,
+        "start_point": [
+          76700.0,
+          42420.0,
+          0.0
+        ],
+        "end_point": [
+          76700.0,
+          42000.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H119",
+        "object_name": "AcDbText",
+        "layer": "CODEX_PREVIEW",
+        "type": "text",
+        "text": "玄关鞋柜 C",
+        "position": [
+          77500.0,
+          42210.0,
+          0.0
+        ]
+      },
+      {
+        "handle": "H120",
+        "object_name": "AcDbAlignedDimension",
+        "layer": "CODEX_PREVIEW",
+        "type": "dimension",
+        "text": "",
+        "measurement": 1600.0,
+        "text_height": 0.0,
+        "text_position": [
+          77500.0,
+          41874.0,
+          0.0
+        ],
+        "xline1_point": [
+          76700.0,
+          42000.0,
+          0.0
+        ],
+        "xline2_point": [
+          78300.0,
+          42000.0,
+          0.0
+        ],
+        "bbox": {
+          "min": [
+            76700.0,
+            41874.0
+          ],
+          "max": [
+            78300.0,
+            42000.0
+          ]
+        }
+      },
+      {
+        "handle": "H121",
+        "object_name": "AcDbAlignedDimension",
+        "layer": "CODEX_PREVIEW",
+        "type": "dimension",
+        "text": "",
+        "measurement": 420.0,
+        "text_height": 0.0,
+        "text_position": [
+          76574.0,
+          42210.0,
+          0.0
+        ],
+        "xline1_point": [
+          76700.0,
+          42000.0,
+          0.0
+        ],
+        "xline2_point": [
+          76700.0,
+          42420.0,
+          0.0
+        ],
+        "bbox": {
+          "min": [
+            76574.0,
+            42000.0
+          ],
+          "max": [
+            76700.0,
+            42420.0
+          ]
+        }
+      }
+    ]
+  },
+  "designReview": {
+    "status": "pass",
+    "designReview": "A/B/C 三套候选均已落成预览对象；本轮目标是请用户选方向，而不是自动替用户定稿。",
+    "professionalDrawingLike": "pass",
+    "readability": "pass",
+    "industryHabitFit": "pass",
+    "scaleAndProportionFit": "pass",
+    "styleCandidateFit": "pass",
+    "contentMatchesDesignPurpose": "pass",
+    "needsUserChoice": true,
+    "repairOrRegenerateRecommendation": {
+      "mode": "ask_user_choice",
+      "reason": "三个候选服务于不同密度和展示目的，需要用户选择 A/B/C。"
+    },
+    "learningCandidate": {
+      "status": "not_required",
+      "reason": "fake/real readback pass 后等待用户偏好，不做长期晋升。"
+    }
+  },
+  "askUserToChoose": {
+    "status": "ready",
+    "options": [
+      "A",
+      "B",
+      "C"
+    ],
+    "prompt": "请你在 A/B/C 中选一个方向，或指出想混合哪两个候选。"
+  },
+  "safety": {
+    "targetLayer": "CODEX_PREVIEW",
+    "savedCurrentDwg": false,
+    "modifiedFormalLayers": false,
+    "assetSedimentation": "not_started"
+  },
+  "postTrainingSync": {
+    "status": "not_required",
+    "reason": "Focused training case awaits user choice; no workbench or fact-source promotion yet."
+  }
+}

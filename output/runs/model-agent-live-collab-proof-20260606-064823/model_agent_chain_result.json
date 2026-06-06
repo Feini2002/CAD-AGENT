@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "no-cad-model-agent-chain-result/v1",
+  "status": "blocked",
+  "runId": "model-agent-live-collab-proof-20260606-064823",
+  "route": "standard_draw",
+  "agentsCalled": [
+    "pipeline_design_director",
+    "pipeline_style_generator",
+    "pipeline_design_reviewer"
+  ],
+  "upstreamOutputs": [
+    {
+      "agentId": "pipeline_orchestrator",
+      "path": "agent_outputs/pipeline_orchestrator.json",
+      "status": "pass",
+      "summary": "pass",
+      "sha256": "d1e4faaa471fc67ea7c0dbb27b080532e4e5714d0e49cb1b44f18c8c171714e2",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false
+    },
+    {
+      "agentId": "pipeline_design_director",
+      "path": "agent_outputs/pipeline_design_director.json",
+      "status": "pass",
+      "summary": "pass 室内/家具平面 CAD 符号：茶几 top-view symbol，适合放入平面布置图，不是施工详图、三维渲染或完整产品设计图。",
+      "sha256": "3fa5929735c0d570d4292973a221636e9a949325e134ad00745b89b073ff9a43",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false,
+      "handoffPath": "agent_outputs/pipeline_design_director.handoff.json",
+      "handoffSha256": "79089c47591576f01892d2fa805fda8a020b657b4c095a46d2972bf96fe280b3"
+    },
+    {
+      "agentId": "pipeline_style_generator",
+      "path": "agent_outputs/pipeline_style_generator.json",
+      "status": "pass",
+      "summary": "pass single",
+      "sha256": "53f8adc83c289634ae4a11273f599836caba26ee3e9cb3eb2e37e506019b6692",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false,
+      "handoffPath": "agent_outputs/pipeline_style_generator.handoff.json",
+      "handoffSha256": "df586bb400483795bf9f4443733911285c0eb1022cb576c335fc5a0d4184fb1c"
+    },
+    {
+      "agentId": "pipeline_design_reviewer",
+      "path": "agent_outputs/pipeline_design_reviewer.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "30fc6dfebd97821abcd1e81b38756bc1c6d0001864185813267c7baf9b02bd1c",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false,
+      "handoffPath": "agent_outputs/pipeline_design_reviewer.handoff.json",
+      "handoffSha256": "0541baca1eaeb09f05a2553a0c3a97bc126c604c180a71be0ee1936c36f0bd26"
+    }
+  ],
+  "blockingReasons": [
+    "pipeline_design_reviewer model output not pass"
+  ],
+  "cadExecutionAuthorized": false,
+  "savedCurrentDwg": false,
+  "nextCadPreflight": [
+    "validate_plan",
+    "dry_run",
+    "created_handles_readback"
+  ],
+  "evidenceBoundary": [
+    "model chain is no-CAD and no-save",
+    "model pass does not replace CAD readback",
+    "output can only feed a later CAD_PLAN/intent preflight"
+  ],
+  "writtenFiles": [
+    "dispatch_plan.json",
+    "task_contract.json",
+    "required_agents.json",
+    "risk_assessment.json",
+    "rule_context_pack.json",
+    "rule_context_packs/pipeline_design_director.json",
+    "agent_outputs/pipeline_design_director.json",
+    "agent_outputs/pipeline_design_director.handoff.json",
+    "rule_context_packs/pipeline_style_generator.json",
+    "agent_outputs/pipeline_style_generator.json",
+    "agent_outputs/pipeline_style_generator.handoff.json",
+    "rule_context_packs/pipeline_design_reviewer.json",
+    "agent_outputs/pipeline_design_reviewer.json",
+    "agent_outputs/pipeline_design_reviewer.handoff.json",
+    "agent_outputs/pipeline_intent.json",
+    "agent_outputs/pipeline_audit.json",
+    "agent_outputs/pipeline_delivery.chain.json"
+  ],
+  "generatedAt": "2026-06-06T06:51:05Z"
+}

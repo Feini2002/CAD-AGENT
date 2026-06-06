@@ -185,6 +185,7 @@ def _run_real_cad_user_gate(
 
     preview_path = output_dir / "migration-reverify-window.png"
     execution_summary_path = output_dir / "migration-reverify-execution-summary.json"
+    execution_summary_path.parent.mkdir(parents=True, exist_ok=True)
     execution_summary_path.write_text(
         json.dumps(
             execution_payload

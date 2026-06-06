@@ -25,7 +25,6 @@ IGNORED_MARKDOWN_DIRS = {
 HISTORY_PARTS = {"archive", "history", "snapshots", "completed-plans"}
 ACTIVE_TABLE_C_ROOT_FILES = {
     "AGENTS.md",
-    "当前状态入口.md",
     "CORE_CONTEXT_BRIEF.md",
     "CORE_STATUS.md",
     "README.md",
@@ -142,34 +141,110 @@ OPENSPEC_NEGATION_MARKERS = (
     "rejected",
 )
 
-ARCHITECTURE_REQUEST_CHAIN = (
+OPENSPEC_TASK_BACKLOG_MARKERS = (
+    "全局 next",
+    "总 next",
+    "全局 backlog",
+    "总 backlog",
+    "剩余开发包队列",
+    "remaining package queue",
+    "global backlog",
+    "global next",
+)
+
+TABLE_C_SUBJECT_MARKERS = (
+    "表 C",
+    "旧表 C",
+    "真实 CAD 实力",
+    "cad_strength_headline_percent",
+    "cad_strength_index_percent",
+)
+
+TABLE_C_END_TO_END_CLAIM_MARKERS = (
+    "端到端",
+    "真实项目",
+    "项目交付",
+    "交付准备",
+    "可交付",
+    "已经具备",
+    "已具备",
+    "能画准",
+    "施工图能力",
+    "完整施工图",
+    "白话已训通",
+    "真实任务能力",
+    "Agent Task Maturity",
+    "Project Delivery Readiness",
+)
+
+TABLE_C_BOUNDARY_NEGATION_MARKERS = (
+    "不代表",
+    "不再代表",
+    "不再表示",
+    "不证明",
+    "不能",
+    "不得",
+    "不是",
+    "不等于",
+    "不可",
+    "不提升",
+    "不计入",
+    "不替代",
+    "≠",
+    "只表示",
+    "只说明",
+    "仅表示",
+    "仅说明",
+    "另看",
+    "区分",
+    "拆成",
+    "误以为",
+    "高估",
+    "误导",
+    "not ",
+    "does not",
+    "cannot",
+    "must not",
+    "shall not",
+)
+
+ARCHITECTURE_REQUEST_CHAIN_LEGACY = (
     "User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> "
     "execution -> verification -> promotion/sync"
 )
 
 ARCHITECTURE_HARDENING_REQUIREMENTS = {
     "README.md": (
-        ARCHITECTURE_REQUEST_CHAIN,
+        "request context / run package",
+        "Orchestrator Host / A-to-A contract",
+        "required agents + hard gates",
         "semantic route",
         "a_to_a_task_contract",
         "CAD_PLAN",
         "asset workflow",
         "training route",
+        "verification / closeout",
+        "Reviewer Host / delivery claims",
         "promotion / sync",
     ),
     "docs/architecture/README.md": (
-        ARCHITECTURE_REQUEST_CHAIN,
+        "request context / run package",
+        "Orchestrator Host / A-to-A contract",
+        "required agents + hard gates",
+        "verification / closeout",
+        "Reviewer Host / delivery claims",
         "UTF-8 preflight",
         "CAD_PLAN validate/dry-run",
         "CODEX_PREVIEW/no-save",
         "A-to-A hard gate",
+        "model trace chain",
         "asset source boundary",
         "reuse readback",
         "training promotion gate",
         "workbench sync",
     ),
     "docs/architecture/current-module-boundaries.md": (
-        ARCHITECTURE_REQUEST_CHAIN,
+        ARCHITECTURE_REQUEST_CHAIN_LEGACY,
         "core/orchestrator/",
         "core/assets/",
         "core/training/",
@@ -240,6 +315,22 @@ def _line_claims_openspec_master_plan(line: str) -> bool:
     has_subject = any(marker in lowered for marker in OPENSPEC_MASTER_PLAN_SUBJECT_MARKERS)
     has_authority = any(marker in lowered for marker in OPENSPEC_MASTER_PLAN_AUTHORITY_MARKERS)
     return has_subject and has_authority
+
+
+def _line_claims_openspec_global_backlog(line: str) -> bool:
+    lowered = line.lower()
+    if any(marker in lowered for marker in OPENSPEC_NEGATION_MARKERS):
+        return False
+    return any(marker in lowered for marker in OPENSPEC_TASK_BACKLOG_MARKERS)
+
+
+def _line_claims_table_c_end_to_end(line: str) -> bool:
+    lowered = line.lower()
+    if not any(marker.lower() in lowered for marker in TABLE_C_SUBJECT_MARKERS):
+        return False
+    if not any(marker.lower() in lowered for marker in TABLE_C_END_TO_END_CLAIM_MARKERS):
+        return False
+    return not any(marker.lower() in lowered for marker in TABLE_C_BOUNDARY_NEGATION_MARKERS)
 
 
 def _first_heading(text: str) -> str:
@@ -573,6 +664,15 @@ def check_openspec_contracts(root: Path) -> dict[str, Any]:
             for md_path in sorted(change_dir.rglob("*.md")):
                 active_change_file_count += 1
                 for line in _read_text(md_path).splitlines():
+                    if md_path.name == "tasks.md" and _line_claims_openspec_global_backlog(line):
+                        findings.append(
+                            _finding(
+                                "openspec_change_tasks_claims_global_backlog",
+                                _rel(md_path, root),
+                                "OpenSpec change tasks must stay scoped to the change; global next/backlog belongs in CORE_RESTRUCTURE_PLAN.md and docs/planning/任务清单.md.",
+                            )
+                        )
+                        break
                     if _line_claims_openspec_master_plan(line):
                         findings.append(
                             _finding(
@@ -857,23 +957,70 @@ def _table_c_numbers_from_relevant_lines(text: str) -> list[float]:
     return values
 
 
+def check_table_c_semantic_boundary(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    findings: list[dict[str, str]] = []
+    checked_file_count = 0
+
+    for path in sorted(root.rglob("*.md")):
+        if _is_ignored_path(path, root, include_output=False):
+            continue
+        rel_path = _rel(path, root)
+        if any(part in HISTORY_PARTS for part in Path(rel_path).parts):
+            continue
+        if not _is_active_table_c_doc(rel_path):
+            continue
+        text = _read_text(path)
+        if not any(marker in text for marker in TABLE_C_SUBJECT_MARKERS):
+            continue
+        checked_file_count += 1
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            if _line_claims_table_c_end_to_end(line):
+                findings.append(
+                    _finding(
+                        "table_c_end_to_end_claim",
+                        rel_path,
+                        (
+                            "Active docs must describe table C as Core Proof Coverage only; "
+                            f"line {line_number} implies end-to-end task maturity or project delivery readiness."
+                        ),
+                    )
+                )
+                break
+
+    return {
+        "status": "pass" if not findings else "findings",
+        "summary": {
+            "checked_file_count": checked_file_count,
+            "finding_count": len(findings),
+        },
+        "findings": findings,
+    }
+
+
 def check_root_migration_stubs(root: Path) -> dict[str, Any]:
     root = root.resolve()
     findings: list[dict[str, str]] = []
     checked_stub_count = 0
+    documented_deleted_stub_count = 0
+    migration_index = root / "docs" / "README.md"
+    migration_index_text = _read_text(migration_index) if migration_index.is_file() else ""
     for rel_path, target in sorted(ROOT_MIGRATION_STUB_TARGETS.items()):
         stub_path = root / rel_path
+        target_path = root / target
         if not stub_path.is_file():
-            findings.append(
-                _finding(
-                    "missing_root_migration_stub",
-                    rel_path,
-                    "Expected root compatibility stub is missing after DOC-ARCH migration.",
+            if rel_path in migration_index_text and target in migration_index_text and target_path.is_file():
+                documented_deleted_stub_count += 1
+            else:
+                findings.append(
+                    _finding(
+                        "undocumented_root_migration_stub_deletion",
+                        rel_path,
+                        "Missing root compatibility stub must be documented in docs/README.md with its target.",
+                    )
                 )
-            )
             continue
         checked_stub_count += 1
-        target_path = root / target
         if not target_path.is_file():
             findings.append(
                 _finding(
@@ -884,7 +1031,11 @@ def check_root_migration_stubs(root: Path) -> dict[str, Any]:
             )
     return {
         "status": "pass" if not findings else "findings",
-        "summary": {"checked_stub_count": checked_stub_count, "finding_count": len(findings)},
+        "summary": {
+            "checked_stub_count": checked_stub_count,
+            "documented_deleted_stub_count": documented_deleted_stub_count,
+            "finding_count": len(findings),
+        },
         "findings": findings,
     }
 
@@ -1062,6 +1213,7 @@ def build_doc_governance_report(
     handoff = check_handoff_files(root)
     links = check_markdown_links(root)
     stubs = check_root_migration_stubs(root)
+    table_c_semantic_boundary = check_table_c_semantic_boundary(root)
     active_doc_size = check_active_doc_size_budgets(root)
     training_context = check_training_context_alignment(root)
     output_policy = check_output_reply_policy(root)
@@ -1075,6 +1227,7 @@ def build_doc_governance_report(
         "handoff": handoff,
         "links": links,
         "root_stubs": stubs,
+        "table_c_semantic_boundary": table_c_semantic_boundary,
         "active_doc_size": active_doc_size,
         "training_context": training_context,
         "output_policy": output_policy,

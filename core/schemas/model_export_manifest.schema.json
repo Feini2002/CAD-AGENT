@@ -1,0 +1,135 @@
+{
+  "title": "Model Export Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "route",
+    "agentId",
+    "traceId",
+    "approvalBasis",
+    "sentArtifacts",
+    "blockedArtifacts",
+    "unexpectedLocalFiles",
+    "forbiddenScan",
+    "blockingReasons",
+    "evidenceBoundary"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "enum": ["model-export-manifest/v1"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pass", "blocked"]
+    },
+    "route": {
+      "type": "string"
+    },
+    "agentId": {
+      "type": "string"
+    },
+    "traceId": {
+      "type": "string"
+    },
+    "approvalBasis": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sentArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "blockedArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blockedArtifact"
+      }
+    },
+    "unexpectedLocalFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbiddenScan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "secretLikeCount",
+        "wholeRepoRequested",
+        "wholeOutputRequested",
+        "fullScreenScreenshotRequested"
+      ],
+      "properties": {
+        "secretLikeCount": {
+          "type": "integer"
+        },
+        "wholeRepoRequested": {
+          "type": "boolean"
+        },
+        "wholeOutputRequested": {
+          "type": "boolean"
+        },
+        "fullScreenScreenshotRequested": {
+          "type": "boolean"
+        }
+      }
+    },
+    "blockingReasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceBoundary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "byteCount", "sha256", "status"],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "byteCount": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "blockedArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path"],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

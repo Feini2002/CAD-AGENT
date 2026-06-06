@@ -1,0 +1,50 @@
+{
+  "blocking": true,
+  "blockingReasons": [
+    "model report status is unavailable",
+    "dispatchPlan.status='blocked' and blockedBeforeExecution=true.",
+    "cad_policy.allow_cad=false while request_kind='draw'.",
+    "cadPlan, readback, and screenshot are all null in the evidence bundle.",
+    "Professional drawing assessment requires comparing final output against designStrategy/styleCandidate/CAD_PLAN/readback, but those final-output artifacts are absent."
+  ],
+  "contextLeakAudit": {
+    "blocking": false,
+    "schemaVersion": "model-context-leak-audit/v1",
+    "unexpectedProjectContextLoaded": false,
+    "warnings": []
+  },
+  "evidenceBoundary": [
+    "model gate decision does not prove CAD geometry",
+    "model gate decision does not authorize CAD writes, deletes, saves, or verified capability claims"
+  ],
+  "modelProviderStatus": {
+    "blocking": false,
+    "errorCategory": "model_business_blocked",
+    "modelInvoked": true,
+    "modelUnavailable": false,
+    "provider": "codex_cli",
+    "reason": "",
+    "required": true,
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "allowsImages": true,
+      "externalData": false,
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ],
+      "requiresUserAuthorization": false,
+      "route": "codex_cli_local",
+      "transport": "local_cli"
+    },
+    "schemaValid": true,
+    "status": "schema_valid"
+  },
+  "schemaValidation": {
+    "issues": [],
+    "missingFields": [],
+    "status": "pass"
+  },
+  "schemaVersion": 1,
+  "status": "blocked"
+}

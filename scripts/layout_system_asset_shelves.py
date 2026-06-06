@@ -464,6 +464,16 @@ def _unique(values: list[str] | tuple[str, ...] | None) -> list[str]:
     return result
 
 
+def _layer_counts(entries: list[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for entry in entries:
+        layer = str(entry.get("layer", "")).strip()
+        if not layer:
+            continue
+        counts[layer] = counts.get(layer, 0) + 1
+    return counts
+
+
 def _entity_from_handle(doc: Any, handle: str) -> Any | None:
     try:
         return doc.HandleToObject(str(handle))
@@ -530,6 +540,50 @@ def _normalize_protected_content_layers(doc: Any, protected_content: dict[str, A
     }
 
 
+def _purge_forbidden_preview_layer_content(
+    doc: Any,
+    *,
+    scope_bbox: dict[str, list[float]] | None = None,
+    scope_name: str = "",
+) -> dict[str, Any]:
+    if scope_bbox is None:
+        return {
+            "status": "not_run",
+            "deletedCount": 0,
+            "deletedHandles": [],
+            "skipped": [],
+            "scope": {"name": scope_name or "", "bbox": None},
+            "policy": "CODEX_PREVIEW cleanup is scoped-only. Without an explicit bbox, legacy proof geometry is normalized to ASSET_PROOF_CONTENT instead of deleted.",
+        }
+
+    deleted: list[str] = []
+    skipped: list[dict[str, Any]] = []
+    for entity in list(doc.ModelSpace):
+        layer = str(getattr(entity, "Layer", ""))
+        if layer not in FORBIDDEN_PROTECTED_CONTENT_LAYERS:
+            continue
+        handle = str(getattr(entity, "Handle", ""))
+        bbox = _entity_bbox(entity)
+        if bbox is None:
+            skipped.append({"handle": handle, "layer": layer, "bbox": None, "reason": "missing bbox for scoped cleanup"})
+            continue
+        if not _bbox_intersects(bbox, scope_bbox):
+            continue
+        try:
+            entity.Delete()
+            deleted.append(handle)
+        except Exception as exc:
+            skipped.append({"handle": handle, "layer": layer, "bbox": bbox, "reason": str(exc)})
+    return {
+        "status": "pass" if not skipped else "partial",
+        "deletedCount": len(deleted),
+        "deletedHandles": deleted[:80],
+        "skipped": skipped[:20],
+        "scope": {"name": scope_name or "", "bbox": scope_bbox},
+        "policy": "System asset DWG preview cleanup is allowed only inside an explicit target bbox; off-scope legacy proof geometry must not be deleted.",
+    }
+
+
 def _plan_readability_content_reflow(clusters: list[dict[str, Any]]) -> dict[str, Any]:
     clean_clusters = [cluster for cluster in clusters if isinstance(cluster, dict) and _bbox_area_xy(cluster.get("bbox")) > 0]
     clean_clusters.sort(key=lambda item: float(item["bbox"]["min"][0]))
@@ -568,7 +622,10 @@ def _clear_previous_shelves(
     skipped: list[dict[str, str]] = []
     mode = "previous_report_handles"
     entities: list[Any] = []
-    if previous_handles:
+    if clear_all_shelf_layers:
+        mode = "explicit_clear_all_shelf_layers"
+        entities = [entity for entity in list(doc.ModelSpace) if str(getattr(entity, "Layer", "")) in SHELF_LAYERS]
+    elif previous_handles:
         seen: set[str] = set()
         for handle in previous_handles:
             if handle in seen:
@@ -579,9 +636,6 @@ def _clear_previous_shelves(
                 missing.append(handle)
                 continue
             entities.append(entity)
-    elif clear_all_shelf_layers:
-        mode = "explicit_clear_all_shelf_layers"
-        entities = [entity for entity in list(doc.ModelSpace) if str(getattr(entity, "Layer", "")) in SHELF_LAYERS]
     else:
         return {
             "mode": "no_previous_manifest_no_delete",
@@ -706,6 +760,7 @@ def _content_clusters_from_entries(entries: list[dict[str, Any]]) -> list[dict[s
         if not bboxes:
             continue
         bbox = _union_bbox_list(bboxes)
+        layer_counts = _layer_counts(group)
         clusters.append(
             {
                 "clusterId": cluster_ids[index] if index < len(cluster_ids) else f"UNASSIGNED_CONTENT_{index + 1}",
@@ -713,6 +768,8 @@ def _content_clusters_from_entries(entries: list[dict[str, Any]]) -> list[dict[s
                 "entityCount": len(group),
                 "handles": [str(entry.get("handle", "")) for entry in group if str(entry.get("handle", ""))],
                 "handleSamples": [str(entry.get("handle", "")) for entry in group[:16] if str(entry.get("handle", ""))],
+                "layers": _unique(list(layer_counts.keys())),
+                "layerCounts": layer_counts,
                 "layerSamples": _unique([str(entry.get("layer", "")) for entry in group[:16] if str(entry.get("layer", ""))]),
             }
         )
@@ -742,11 +799,14 @@ def _readback_protected_asset_content(doc: Any) -> dict[str, Any]:
         entries.append(entry)
         union_bbox = _merge_bbox(union_bbox, bbox)
     clusters = _content_clusters_from_entries(entries)
+    layer_counts = _layer_counts(entries)
     return {
         "status": "ok" if entries and clusters else "empty",
         "entityCount": len(entries),
         "unionBbox": union_bbox,
         "clusters": clusters,
+        "layers": _unique(list(layer_counts.keys())),
+        "layerCounts": layer_counts,
         "sampleEntities": entries[:24],
         "policy": "Only non-shelf-layer entities are treated as protected reusable asset content; shelf labels, frames and evidence must avoid these bboxes.",
     }
@@ -952,13 +1012,44 @@ def _audit_visual_warehouse_readability(
         else:
             checked.append(f"{slot_id} content density")
 
+    layer_counts: dict[str, int] = {}
     layer_samples: list[str] = []
+    sample_only = False
     for cluster in protected_content.get("clusters", []):
         if not isinstance(cluster, dict):
             continue
-        layer_samples.extend(str(layer) for layer in cluster.get("layerSamples", []) if str(layer))
-    unique_layers = _unique(layer_samples)
+        cluster_counts = cluster.get("layerCounts")
+        if isinstance(cluster_counts, dict) and cluster_counts:
+            for layer, count in cluster_counts.items():
+                text = str(layer)
+                if text:
+                    layer_counts[text] = layer_counts.get(text, 0) + int(count or 0)
+            continue
+        full_layers = cluster.get("layers") or cluster.get("allLayers")
+        if isinstance(full_layers, list) and full_layers:
+            for layer in full_layers:
+                text = str(layer)
+                if text:
+                    layer_counts[text] = layer_counts.get(text, 0) + 1
+            continue
+        samples = [str(layer) for layer in cluster.get("layerSamples", []) if str(layer)]
+        if samples:
+            sample_only = True
+            layer_samples.extend(samples)
+            for layer in samples:
+                layer_counts[layer] = layer_counts.get(layer, 0) + 1
+    top_counts = protected_content.get("layerCounts")
+    if isinstance(top_counts, dict) and top_counts:
+        layer_counts = {}
+        for layer, count in top_counts.items():
+            text = str(layer)
+            if text:
+                layer_counts[text] = layer_counts.get(text, 0) + int(count or 0)
+    unique_layers = _unique(list(layer_counts.keys()) or layer_samples)
     metrics["protectedContentLayers"] = unique_layers
+    metrics["protectedContentLayerCounts"] = layer_counts
+    if sample_only and not (protected_content.get("layerCounts") or any(isinstance(cluster, dict) and (cluster.get("layerCounts") or cluster.get("layers") or cluster.get("allLayers")) for cluster in protected_content.get("clusters", []))):
+        issues.append("protected content layer census missing; layerSamples is not enough")
     if any(layer in FORBIDDEN_PROTECTED_CONTENT_LAYERS for layer in unique_layers):
         issues.append("protected asset proof content is still on CODEX_PREVIEW")
     else:
@@ -1239,11 +1330,10 @@ def _draw_standard_column(
     if asset_ids:
         drawer.text("assetId: " + ", ".join(str(asset_id) for asset_id in asset_ids), (x1 + 260, y1 + 1420), height=66, layer="ASSET_LABEL", color=7)
 
-    proof = (
-        _source_boundary_for_content(bbox, content_bbox)
-        if content_bbox is not None and _bbox_area_xy(content_bbox) > 0
-        else {"min": [x1 + 420, y1 + 1800], "max": [x2 - 420, y2 - 1450]}
-    )
+    if content_bbox is not None and _bbox_area_xy(content_bbox) > 0:
+        return
+
+    proof = {"min": [x1 + 420, y1 + 1800], "max": [x2 - 420, y2 - 1450]}
     drawer.rect(proof, "ASSET_PREVIEW_CARD", LAYER_COLORS["ASSET_PREVIEW_CARD"])
     drawer.text("PROOF_PANEL only: visible evidence, never a copy source", (x1 + 260, y1 + 1320), height=68, layer="ASSET_LABEL", color=8)
 
@@ -1251,10 +1341,7 @@ def _draw_standard_column(
     drawer.rect(source_token, "ASSET_SOURCE_BOUNDARY", LAYER_COLORS["ASSET_SOURCE_BOUNDARY"])
     drawer.text("STYLE_DEFINITION_SOURCE", (source_token["min"][0] + 90, source_token["min"][1] + 95), height=68, layer="ASSET_LABEL", color=30)
 
-    reserved_top = y1 + 1180.0
-    if content_bbox is not None and _bbox_area_xy(content_bbox) > 0:
-        reserved_top = min(reserved_top, float(content_bbox["min"][1]) - 420.0)
-    reserved = {"min": [x1 + 420, y1 + 320], "max": [x2 - 420, max(y1 + 780.0, reserved_top)]}
+    reserved = {"min": [x1 + 420, y1 + 320], "max": [x2 - 420, y1 + 1180.0]}
     _draw_secondary_slots(drawer, reserved, family, secondary_slot_ids)
 
 
@@ -1459,6 +1546,12 @@ def run(
     doc, opened_by_tool = _open_or_activate_asset_doc(app, asset_dwg)
     for layer, color in {**LAYER_COLORS, **CONTENT_LAYER_COLORS}.items():
         _ensure_layer(doc, layer, color)
+    preview_layer_purge = _purge_forbidden_preview_layer_content(doc)
+    if preview_layer_purge.get("deletedCount"):
+        try:
+            doc.Regen(1)
+        except Exception:
+            pass
     protected_content_before_normalize = _readback_protected_asset_content(doc)
     content_layer_normalization = _normalize_protected_content_layers(doc, protected_content_before_normalize)
     if content_layer_normalization.get("changedCount"):
@@ -1485,7 +1578,7 @@ def run(
             doc.Regen(1)
         except Exception:
             pass
-    content_mutation_count = int(content_layer_normalization.get("changedCount") or 0) + sum(
+    content_mutation_count = int(preview_layer_purge.get("deletedCount") or 0) + int(content_layer_normalization.get("changedCount") or 0) + sum(
         int(result.get("movedCount") or 0) for result in content_reflow_results if isinstance(result, dict)
     )
     protected_content = _readback_protected_asset_content(doc)
@@ -1529,6 +1622,7 @@ def run(
             "previousActiveDocument": previous_document,
             "openedByTool": opened_by_tool,
             "previousShelfHandleCount": len(previous_shelf_handles),
+            "previewLayerPurge": preview_layer_purge,
             "protectedContentBeforeNormalize": protected_content_before_normalize,
             "contentLayerNormalization": content_layer_normalization,
             "contentReflowPlan": content_reflow_plan,
@@ -1603,6 +1697,7 @@ def run(
         "activeDocument": active_document,
         "openedByTool": opened_by_tool,
         "previousShelfHandleCount": len(previous_shelf_handles),
+        "previewLayerPurge": preview_layer_purge,
         "protectedContentBeforeNormalize": protected_content_before_normalize,
         "contentLayerNormalization": content_layer_normalization,
         "contentReflowPlan": content_reflow_plan,

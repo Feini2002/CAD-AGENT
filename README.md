@@ -1,38 +1,20 @@
 # CAD Agent Core Lab
 
-CAD Agent Core Lab 是一个可迁移的 CAD Agent 开发包，用来训练“白话需求 -> 结构化绘图意图 -> CAD 预览落图 -> 机器审计 -> 截图自检 -> 用户验收”的完整闭环。它不把一句自然语言直接丢给 AutoCAD 硬画，而是把 CAD 生成拆成可审计、可回放、可修复、可跨机器迁移的工程链路。
+CAD Agent Core Lab 是一个可迁移的 CAD Agent 开发包，用来训练“极端白话需求 -> 主 Agent 理解和分发 -> 子 Agent 协同判断 -> 结构化绘图意图 -> CAD 预览落图 -> 机器审计 -> 用户验收”的完整闭环。它不把一句自然语言直接丢给 AutoCAD 硬画，而是把 CAD 生成拆成可审计、可回放、可修复、可跨机器迁移的工程链路。
 
-当前最新架构是 **CAD Designer Agent 成长路径 + Visual-First + CAD 常识底座 + 资产智能管线 + 多 Agent 编排**：
+当前最新架构是 **CAD Designer Agent 成长路径 + Visual-First + CAD 常识底座 + 资产智能管线 + 主 Agent / 多 Agent 编排**：
 
 - **CAD Designer Agent**：把系统当作电子设计师训练，从基础图元、选择、移动、旋转、偏移、修剪、图层、闭合和回读开始，逐步进入对象符号、房间平面、专业表达和施工图。
 - **Visual-First**：先看真实参考、截图裁剪或 CAD 参考块，再生成 `style_target`、`visual_parts` 和绘图约束。
 - **CAD 常识底座**：把“沙发要有座面和靠背”“参考不等于复制”等基础知识沉淀为可查、可测、可声明边界的规则候选。
 - **资产智能管线**：把 `standard_cad_library_raw/`、`reference_library`、`system_library`、`retrieval_pack`、promotion gate 串起来，区分“参考输入”和“系统已验证自产能力”。
-- **多 Agent 编排**：由 Context / Asset Retrieval / Visual Intent / Intent / Execute / Audit / Repair / Delivery / Learning Promotion 分工协作，但所有落图仍必须经过 Core 验证链。
+- **主 Agent / 多 Agent 编排**：`pipeline_orchestrator` 负责理解白话、生成 `a_to_a_task_contract`、动态加派已登记 Agent、收 hard gate 输出并阻断不可靠完成口吻；Context / Asset / Design / Intent / Execute / Audit / Repair / Delivery / Learning Promotion 等子 Agent 分工协作。
+- **GPT-5.5 模型桥**：通过本地 Codex CLI / 未来 SDK 做只读推理、设计判断、复审和交付建议；模型可以想、评、分发和建议修复，但不能直接写 CAD、保存 DWG、删除实体或替代 readback。
 - **证据优先**：截图、dry-run、Markdown、图库命中都不能单独证明真实 CAD 能力；对外声称完成前必须有结构化意图、真实输出、created handles 回读、审计和必要截图。
 
-一句话：这个仓库训练的不是“会画一张图的脚本”，而是一个能调用流程 Agent、场景规则和资产库，并在真实 CAD 约束下逐轮变准的电子设计师。
+一句话：这个仓库训练的不是“会画一张图的脚本”，而是一个能把用户白话拆成责任、证据和执行路径，再调用流程 Agent、场景规则和资产库，并在真实 CAD 约束下逐轮变准的电子设计师。
 
 ## 最新端到端架构
-
-```mermaid
-flowchart TD
-    U["用户白话 / 截图 / CAD参考"] --> C["Context Curator<br/>恢复上下文和案例状态"]
-    C --> Q["Asset Retrieval<br/>reference / system assets + evidence boundary"]
-    Q --> V["Visual Intent<br/>真实参考 + style_target + visual_parts"]
-    V --> P["Intent / CAD_PLAN<br/>结构化绘图意图"]
-    P --> G["Validate + Dry-run<br/>安全与可执行检查"]
-    G --> E["Execute<br/>只写 CODEX_PREVIEW"]
-    E --> R["Readback<br/>handles / bbox / layers / entity types"]
-    R --> A["Audit<br/>机器审计 + checklist"]
-    A --> S["Screenshot<br/>AutoCAD 预览截图"]
-    S --> J["Agent Review<br/>读图自检"]
-    J --> D{"Delivery Gate"}
-    D -->|fail| F["Repair<br/>最小修复并进入下一轮"]
-    D -->|pass| H["User Review<br/>用户目视验收"]
-    H -->|fail| F
-    H -->|pass| L["Learning Promotion<br/>沉淀规则和证据"]
-```
 
 这条链路有两个硬约束：
 
@@ -42,9 +24,50 @@ flowchart TD
 同一口径收束为：
 
 ```text
-User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> execution -> verification -> promotion/sync
+User Request
+  -> request context / run package
+  -> semantic route
+  -> Orchestrator Host / A-to-A contract
+  -> required agents + hard gates
+  -> CAD_PLAN / asset workflow / training route
+  -> execution
+  -> verification / closeout
+  -> Reviewer Host / delivery claims
+  -> promotion / sync
 ```
-其中 `semantic route` 先识别普通绘图、系统资产复用 / 沉淀、训练 / 复训、局部修复等语义；复杂或高风险任务必须生成 `a_to_a_task_contract`，由必需 Agent 输出和 hard gate 决定是否能继续。下游只能进入 `CAD_PLAN`、`asset workflow` 或 `training route` 之一；无论哪条路，执行后都要回到 verification，并按证据边界决定是否 promotion / sync。
+
+其中 `semantic route` 先识别普通绘图、系统资产复用 / 沉淀、训练 / 复训、局部修复、设计候选或只读治理等语义；复杂或高风险任务必须生成 `a_to_a_task_contract`，由必需 Agent 输出和 hard gate 决定是否能继续。下游只能进入 `CAD_PLAN`、`asset workflow` 或 `training route` 等结构化路径；无论哪条路，执行后都要回到 verification / closeout，并按证据边界决定是否 delivery、promotion / sync。
+
+## 模型型 Agent 升级方向
+
+当前多 Agent 系统正在从“角色契约 + 规则门禁”升级为 **可追踪的模型型 Agent 运行时**。升级目标不是让模型绕过 Core 自由写 CAD，而是让少数主脑和复审 Agent 通过本地 Codex CLI 做可审计推理、分发、视觉复审和交付判断。
+
+目标运行形态：
+
+```text
+User Request
+  -> output/runs/<run_id>/user_request.json + state.json
+  -> Orchestrator Host
+  -> dispatch_plan.json + task_contract.json + required_agents.json + risk_assessment.json
+  -> model / rule agents with trace and strict JSON
+  -> CAD validate / dry-run / execute / readback
+  -> closeout_decision.json
+  -> Reviewer Host
+  -> agent_outputs/pipeline_delivery.json + final_report.md
+  -> learning / workbench derived snapshot
+```
+
+核心边界：
+
+- **Trace / Run Package 优先**：先记录每次模型型 Agent 的 `agentId`、`taskType`、prompt、schema、sanitized command、stdout/stderr、last message、normalized output、gate decision、`trace_review.json`、`trace_summary.md` 和 `output/runs/<run_id>/state.json`，再逐个打磨 Prompt。
+- **Worker 编排 + 本地活体模型桥优先**：路线已收口到 `CORE_RESTRUCTURE_PLAN.md` 和 `core/orchestrator/local_live_model_bridge*.py`；先用本地 stand-in 固定 run state、task envelope、bridge lease / heartbeat、trace diagnostics 和 feature gates，再迁移到 Cloudflare Worker / Durable Object / Queue，最后扩真实多 Agent 互读和 CAD-MCP preview-only。
+- **活体协作优先验证**：下一步要先跑通 4-6 个 Agent 的 no-CAD / no-save 连续模型调用链，让下游 Agent 读取上游 `agent_outputs/*.json` 后再判断，而不是各自独立输出意见。
+- **事实源不用 JS**：长期事实源使用 JSON、Markdown 和 reports；`capability-map-data.js` / `capability-map.html` 只作为工作台展示派生文件。
+- **两个主脑优先**：先建设 Orchestrator Host 和 Reviewer Host；其他 Agent 作为被调用的模型 / 规则角色，不临场激活未登记 Agent。
+- **模型只读**：模型可以判断、分发、复审和建议修复，但不能直接写 CAD、删除实体、保存 DWG、修改正式图层或替代 readback / sourceSpec / reuse replay。
+- **可见 CAD 交付必须 closeout**：focused / formal CAD 可见交付应经过视觉验收、邻区保护、created handles readback 和保存边界检查；截图非空不能等于视觉通过。
+
+模型型 Agent 升级记录已并入 `CORE_RESTRUCTURE_PLAN.md` 和 `agents/pipeline/README.md`，临时执行卡已删除。`model-review-trace-observability` 已落文件化 trace 与自动复盘摘要；`run-package-state-machine` 已落可恢复 `output/runs/<run_id>/state.json`；`visual-acceptance-closeout-gate` 已落确定性 `closeout_decision.json`；`delete-scope-and-neighbor-protection-gate` 已落 `delete_scope_gate.json` / `neighbor_protection.json` 生成器；`model-agent-prompt-library` 已落 9 个真实 Prompt Pack；`orchestrator-host-runtime` 已能从 run package 写分发计划、任务合同、required agents 和风险评估；`reviewer-host-closeout-runtime` 已能生成 `agent_outputs/pipeline_delivery.json` 与 `final_report.md`；`workbench-trace-viewer` 已接入训练工作台的“模型 Trace”派生视图。真实 CAD 校验方法保留在主计划中，默认只写 `CODEX_PREVIEW`、不保存当前业务 DWG、不把截图或模型 pass 当几何证明。
 
 ## 架构分层
 
@@ -63,30 +86,7 @@ User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow /
 
 ## 资产智能管线
 
-资产智能不是“把图库塞进仓库就算会画”，而是把外部参考、自产对象和可执行证据分开管理：
-
-```text
-standard_cad_library_raw
-  -> reference_library
-  -> knowledge / benchmarks
-  -> system_library
-  -> retrieval_pack
-  -> OBJECT_SPEC / SYMBOL_SPEC / visual_parts
-  -> CAD_PLAN
-  -> CODEX_PREVIEW
-  -> audit / feedback
-  -> promotion
-```
-
-核心口径：
-
-- `standard_cad_library_raw/`：用户确认可随 git 迁移的原始标准图库，只是 raw reference input。
-- `libraries/reference_library/`：参考资产和来源边界，能说明“参考过什么”，不能证明系统已学会。
-- `libraries/system_library/`：系统自产资产，必须有 schema、lineage、生成方法、验证状态和 evidence boundary。
-- `retrieval_pack`：在 `CAD_PLAN` 前生成，汇总 object family、archetype、required parts、known failures、assumptions 和 not_checked。
-- promotion gate：只有经过来源门、结构门、执行门、审计门和泛化门，资产才可能从案例候选晋升为系统级能力。
-
-当前已落地基础目录、schema、轻量检索、raw intake、资产检索 Agent 和 promotion gate；这仍是架构与基础设施，不等同于表 C 或真实 CAD 实力自动提升。
+资产智能不是“把图库塞进仓库就算会画”，而是把外部参考、系统自产资产和可执行证据分开管理。`standard_cad_library_raw/` 和 `libraries/reference_library/` 只说明参考来源；`libraries/system_library/` 才承载系统自产资产，但仍必须有 schema、lineage、native 证据、复用 probe / replay 和 evidence boundary。`retrieval_pack` 只能作为 `CAD_PLAN` 上游上下文；只有经过来源门、结构门、执行门、审计门和泛化门，资产才可能从案例候选晋升为系统级能力。
 
 ## Visual-First 训练
 
@@ -94,14 +94,7 @@ Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 refe
 
 ## 历史训练样例
 
-`projects/residential_sofa_2seat_20260528/` 是第一条完整训练闭环样例，不是当前唯一主线。当前主线以 `CAD Designer Agent` 成长路径、V2 训练地图和 `docs/planning/任务清单.md` §0 为准；沙发 round14 只作为历史证据和训练教训来源。
-
-这个案例的主要价值不是“仓库里多了一个沙发脚本”，而是把训练期教训推进到全局链路：
-
-- reference profile 不能退化成圆角矩形。
-- 相邻部件要共享边，不能重复画线造成亮线 / 白线。
-- 沙发方向、靠背、坐垫和扶手语义必须进入 visual parts 和 audit checklist。
-- 机器审计通过仍不等于用户目视 pass，交付必须说明 checked、not_checked 和 assumptions。
+`projects/residential_sofa_2seat_20260528/` 是第一条完整训练闭环样例，不是当前唯一主线。当前主线以 `CAD Designer Agent` 成长路径、V2 训练地图和 `docs/planning/任务清单.md` §0 为准；沙发案例只作为历史证据和训练教训来源。
 
 ## 安全边界
 
@@ -114,11 +107,7 @@ Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 refe
 
 ## 换电脑继续
 
-仓库按可迁移开发包设计。新电脑 clone 后，需要恢复 AutoCAD / CAD-MCP / Python 环境，打开对应案例 DWG，再读取 `CORE_CONTEXT_BRIEF.md`、`docs/architecture/current-module-boundaries.md` 和案例 `feedback.md`，从最后一个 round 继续。用户确认要两地同步的标准图库原始文件放 `standard_cad_library_raw/` 并可随 git 携带；它们仍只是参考输入，不等于系统能力。非敏感、脱敏且体积可控的案例 DWG/DXF 可以作为训练 fixture 随案例提交；`.codegraph/`、Understand Anything 生成图、`output/`、缓存、CAD 锁文件和备份文件不会提交。
-
-换机前不要只看 `git clone` 是否成功，还要确认当前工作树已经形成可复现 checkpoint：先跑 `git status --short`，把有效源码、文档、Agent 契约、OpenSpec、系统资产索引和必要 fixture 纳入 commit；未确认来源和再分发边界的第三方 DWG 仍留在本机或 raw intake 区，不直接 push。提交后推送当前分支，再在新电脑重新安装 AutoCAD / CAD-MCP / Python 依赖，并重建 `.codegraph/`。
-
-换机后建议先用固定 CAD-MCP venv 跑最小复验：`scripts/self_check.py`、`scripts/render_preview.py --check`、`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-severity medium`、`scripts/run_capability_coverage.py --output output/validation_runs/capability-lab/cad_capability_coverage.json`。仓库不依赖本机 `output/`、`.codegraph/` 或 venv 缓存来继续开发；真实 CAD 能力声明仍以 validate / dry-run / `CODEX_PREVIEW` / created handles 回读 / audit 为准。
+仓库按可迁移开发包设计。换机前先确认 `git status --short`，把有效源码、文档、Agent 契约、OpenSpec、系统资产索引和必要 fixture 纳入 checkpoint；第三方 DWG 只有来源和再分发边界清楚时才随仓库迁移。新电脑 clone 后恢复 AutoCAD / CAD-MCP / Python 环境，读取 `CORE_CONTEXT_BRIEF.md` 和 `docs/onboarding/first-handoff.md`，再跑 `scripts/self_check.py`、`scripts/render_preview.py --check` 和必要 coverage / audit。
 
 ## 关键入口
 
@@ -138,3 +127,5 @@ Visual-First 的核心要求是：**先看真实参考，再画 CAD**。对 refe
 - `docs/status/current.md`：当前状态摘要。
 - `docs/status/issues.md`：失败教训和活跃风险。
 - `docs/handoffs/current.md`：最近包交接。
+
+旧根目录 Stub 入口已合并到本节和 `docs/README.md`，例如“当前状态入口 / 变更记录入口 / CAD 卡壳排障入口”等不再单独保留；需要对应内容时直接打开上面的事实源。

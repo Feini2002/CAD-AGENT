@@ -219,6 +219,42 @@
       align-items: center;
     }
 
+    .sync-evidence {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sync-evidence-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .sync-evidence-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sync-evidence p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .sync-evidence-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
     .sync-code {
       max-width: 460px;
       overflow: hidden;
@@ -392,6 +428,83 @@
       align-items: start;
     }
 
+    .flightdeck-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.65fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .flightdeck-stack {
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .flightdeck-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .candidate-list,
+    .gateboard-list,
+    .source-health-list {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .flightdeck-item {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfc;
+      padding: 10px;
+    }
+
+    .flightdeck-item.blocked {
+      border-color: #ddaaa5;
+      background: #fff6f4;
+    }
+
+    .flightdeck-item.warning,
+    .flightdeck-item.not_checked {
+      border-color: #dfca96;
+      background: #fff9ed;
+    }
+
+    .flightdeck-item.pass {
+      border-color: #98ccb9;
+      background: #f0faf5;
+    }
+
+    .flightdeck-item.derived,
+    .flightdeck-item.archived_only {
+      border-style: dashed;
+      background: #f7f9f9;
+    }
+
+    .flightdeck-item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 6px;
+    }
+
+    .flightdeck-item-head strong {
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .flightdeck-item p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
     .panel {
       border: 1px solid var(--line-strong);
       border-radius: 6px;
@@ -438,6 +551,7 @@
       vertical-align: top;
       text-align: left;
       font-size: 13px;
+      overflow-wrap: anywhere;
     }
 
     th {
@@ -478,6 +592,49 @@
       padding-right: 6px;
     }
 
+    .trace-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .trace-summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .trace-metric {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .trace-metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .trace-source-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .trace-boundary-note {
+      border-left: 3px solid var(--amber);
+      padding: 9px 10px;
+      background: #fff7e6;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
     tr {
       cursor: pointer;
     }
@@ -501,6 +658,7 @@
       gap: 9px;
       align-items: start;
       min-width: 0;
+      overflow-wrap: anywhere;
     }
 
     .priority {
@@ -519,6 +677,7 @@
       display: block;
       font-size: 16px;
       line-height: 1.25;
+      overflow-wrap: anywhere;
     }
 
     .subline {
@@ -937,6 +1096,68 @@
       line-height: 1.3;
     }
 
+    .agent-list-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+
+    .agent-kind {
+      display: inline-flex;
+      align-items: center;
+      min-height: 18px;
+      padding: 2px 6px;
+      border: 1px solid #d5dddd;
+      border-radius: 4px;
+      color: #48555a;
+      background: #f7f9f9;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .agent-kind.model_backed_reviewer {
+      border-color: #a5d4c0;
+      color: #0c6b4a;
+      background: #eaf8f1;
+    }
+
+    .agent-kind.model_assisted_gate {
+      border-color: #bdd1ea;
+      color: #24546f;
+      background: #eef6fb;
+    }
+
+    .agent-kind.main_session_contract {
+      border-color: #d8cab2;
+      color: #72531c;
+      background: #fbf7ee;
+    }
+
+    .agent-mode-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .agent-mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 24px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      color: var(--ink-soft);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
     .agent-detail {
       min-height: 680px;
     }
@@ -979,6 +1200,34 @@
 
     .prompt-focus li + li {
       margin-top: 4px;
+    }
+
+    .prompt-classification {
+      display: grid;
+      grid-template-columns: 1.1fr 1.9fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .prompt-classification-item {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .prompt-classification-item strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    .prompt-classification-item p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 1.55;
     }
 
     .maturity-grid {
@@ -1031,6 +1280,24 @@
 
     .prompt-grid .detail-block {
       margin: 0;
+    }
+
+    .model-prompt-block {
+      border-color: #b9dcca;
+      background: #f7fcf9;
+    }
+
+    .model-prompt-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .model-prompt-list li + li {
+      margin-top: 5px;
     }
 
     .wide {
@@ -1101,12 +1368,14 @@
       border: 1px solid var(--line);
       border-radius: 6px;
       background: var(--surface);
+      overflow-wrap: anywhere;
     }
 
     .route-card strong {
       display: block;
       margin-bottom: 5px;
       font-size: 13px;
+      overflow-wrap: anywhere;
     }
 
     .route-card p {
@@ -1209,6 +1478,9 @@
       .status-bar,
       .sync-panel,
       .workbench-grid,
+      .trace-layout,
+      .flightdeck-grid,
+      .flightdeck-row,
       .agent-workbench {
         grid-template-columns: 1fr;
       }
@@ -1223,6 +1495,14 @@
       }
 
       .status-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .trace-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .trace-summary {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
@@ -1242,6 +1522,7 @@
 
       .maturity-grid,
       .prompt-grid,
+      .prompt-classification,
       .boundary-grid,
       .quiet-map {
         grid-template-columns: 1fr;
@@ -1345,11 +1626,61 @@
     <section class="sync-panel" id="syncPanel" aria-live="polite"></section>
 
     <nav class="tabs" aria-label="页面视图">
+      <button class="tab" type="button" data-tab="overview">训练飞控台</button>
       <button class="tab" type="button" data-tab="plan">训练计划表单</button>
       <button class="tab" type="button" data-tab="agents">智能体 Prompt</button>
       <button class="tab" type="button" data-tab="failures">失败与沉淀</button>
+      <button class="tab" type="button" data-tab="traces">模型 Trace</button>
       <button class="tab" type="button" data-tab="boundary">证据边界</button>
     </nav>
+
+    <section class="section" id="view-overview" data-view="overview">
+      <div class="section-head">
+        <div>
+          <h2>CAD Agent 训练飞控台</h2>
+          <p>默认先看今天能不能训、训什么、谁负责、证据缺哪里。页面仍是派生快照，不是训练事实源。</p>
+        </div>
+        <div class="tag-row" id="commandCenterSummary"></div>
+      </div>
+
+      <div class="flightdeck-grid">
+        <div class="flightdeck-stack">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>今日训练候选</h3>
+                <p>候选来自 v3 派生视图；正式验收仍要看 active fact source、CAD readback 和 learning promotion。</p>
+              </div>
+            </div>
+            <div class="candidate-list" id="nextTrainingCandidates"></div>
+          </section>
+
+          <div class="flightdeck-row">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>Gateboard</h3>
+                  <p>阻断项比成功数字更重要；not_checked 不得冒充 pass。</p>
+                </div>
+              </div>
+              <div class="gateboard-list" id="flightdeckGateboard"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h3>事实源健康</h3>
+                  <p>active 才能驱动完成；archived 只提示恢复路径。</p>
+                </div>
+              </div>
+              <div class="source-health-list" id="flightdeckSourceHealth"></div>
+            </section>
+          </div>
+        </div>
+
+        <aside class="panel inspector" id="flightdeckInspector" aria-live="polite"></aside>
+      </div>
+    </section>
 
     <section class="section" id="view-plan" data-view="plan">
       <div class="section-head">
@@ -1395,7 +1726,8 @@
       <div class="section-head">
         <div>
           <h2>智能体 Prompt 工作台</h2>
-          <p>左侧选智能体，右侧看中文 Prompt 契约、职责边界、输入输出、硬门槛、禁止事项、调用契约和可调 Prompt 点。</p>
+          <p>左侧选智能体，右侧先看执行形态：模型型复审会展示后台 Prompt 中文映射；规则/脚本型只展示触发规则、输入输出和硬门槛。</p>
+          <div class="agent-mode-strip" id="agentModeSummary"></div>
         </div>
       </div>
 
@@ -1404,6 +1736,7 @@
           <div class="agent-toolbar">
             <input class="search" id="agentSearch" type="search" placeholder="搜索智能体、Prompt 或训练项">
             <select class="select" id="agentGroupFilter" aria-label="按智能体分组筛选"></select>
+            <select class="select" id="agentExecutionFilter" aria-label="按执行形态筛选"></select>
           </div>
           <div id="agentList"></div>
         </aside>
@@ -1452,6 +1785,57 @@
       </section>
     </section>
 
+    <section class="section" id="view-traces" data-view="traces">
+      <div class="section-head">
+        <div>
+          <h2>模型 Trace 派生视图</h2>
+          <p>汇总 run package、模型复审 trace 和 closeout gate，只帮助排查 Agent 调用链，不替代真实 CAD readback、表 C 或用户验收。</p>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input class="search" id="traceSearch" type="search" placeholder="搜索 runId、Agent、route 或 gate">
+      </div>
+
+      <div class="trace-summary" id="traceSummary"></div>
+      <div class="trace-layout">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Run Package Trace</h3>
+              <p>按最近 run package 汇总 Agent、hard gate、closeout 和 source JSON。</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Run</th>
+                  <th>状态 / 路由</th>
+                  <th>Agent</th>
+                  <th>Hard Gates</th>
+                  <th>Closeout</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="traceRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>外部模型 Trace</h3>
+              <p>来自 <code>output/model_reviews/traces/**</code> 的只读摘要。</p>
+            </div>
+          </div>
+          <div id="traceBoundary" class="trace-boundary-note"></div>
+          <div class="trace-source-list" id="externalTraceRows"></div>
+        </aside>
+      </div>
+    </section>
+
     <section class="section" id="view-boundary" data-view="boundary">
       <div class="section-head">
         <div>
@@ -1477,8 +1861,11 @@
         ...data,
         trainingPrograms: data.trainingPrograms || data.capabilities || [],
         agentProfiles: data.agentProfiles || data.agents || [],
+        trainingSourceSummary: data.trainingSourceSummary || {},
         trainingStageColumns: data.trainingStageColumns || data.stages || defaultStageColumns,
-        tableCBoundary: data.tableCBoundary || data.coverageSnapshot || {}
+        modelTraceViewer: data.modelTraceViewer || { summary: {}, runs: [], externalTraces: [], sourcePolicy: {} },
+        tableCBoundary: data.tableCBoundary || data.coverageSnapshot || {},
+        workbenchV3: data.workbenchV3 || {}
       };
     }
     const systemData = normalizeWorkbenchData(window.CAD_CAPABILITY_MAP_DATA || {});
@@ -1487,7 +1874,11 @@
     const contracts = systemData.promptContracts || [];
     const stageColumns = systemData.trainingStageColumns;
     const tableCBoundary = systemData.tableCBoundary;
+    const trainingSourceSummary = systemData.trainingSourceSummary || {};
     const workbenchSync = systemData.workbenchSync || {};
+    const traceViewer = systemData.modelTraceViewer || { summary: {}, runs: [], externalTraces: [], sourcePolicy: {} };
+    const workbenchV3 = systemData.workbenchV3 || {};
+    const commandCenter = workbenchV3.views?.commandCenter || {};
 
     const groupOrder = ["全部", "CAD 基础操作", "基础家具", "储位家具", "厨卫对象", "基础绘图", "标注表达"];
     const groupLabels = {
@@ -1497,6 +1888,23 @@
       demand: "需求侧角色"
     };
     const agentGroupOrder = ["全部", "designer", "scene", "pipeline", "demand"];
+    const executionLabels = {
+      main_session_contract: "主 Agent 会话契约",
+      model_backed_reviewer: "模型型复审 Agent",
+      model_assisted_gate: "模型辅助规则 Agent",
+      rule_contract: "规则/脚本型任务 Agent",
+      scene_rule: "场景规则型 Agent",
+      data_role: "数据/任务角色"
+    };
+    const executionShortLabels = {
+      main_session_contract: "主会话",
+      model_backed_reviewer: "模型型",
+      model_assisted_gate: "模型辅助",
+      rule_contract: "规则脚本",
+      scene_rule: "场景规则",
+      data_role: "数据"
+    };
+    const executionFilterOrder = ["全部", "model_backed_reviewer", "model_assisted_gate", "rule_contract", "scene_rule", "main_session_contract", "data_role"];
     const stateLabels = {
       none: "未纳入",
       not_applicable: "不适用",
@@ -1529,7 +1937,7 @@
     };
 
     const state = {
-      activeTab: "plan",
+      activeTab: "overview",
       activeGroup: "全部",
       planQuery: "",
       showFullyCompletePlans: false,
@@ -1538,6 +1946,8 @@
       selectedAgentId: defaultAgentId(),
       agentQuery: "",
       agentGroup: "全部",
+      agentExecutionFilter: "全部",
+      traceQuery: "",
       failureFilter: null
     };
 
@@ -1600,6 +2010,38 @@
 
     function contractForAgent(agentId) {
       return contracts.find((contract) => contract.agentId === agentId) || {};
+    }
+
+    function executionModelForAgent(agent) {
+      const contract = contractForAgent(agent.id);
+      return contract.executionModel || agent.executionModel || {
+        type: "rule_contract",
+        label: "规则/脚本型任务 Agent",
+        shortLabel: "规则脚本",
+        modeFamily: "rule",
+        statusNote: "仓库内未登记独立模型调用，按规则契约触发。",
+        triggerRules: []
+      };
+    }
+
+    function executionType(agent) {
+      return executionModelForAgent(agent).type || "rule_contract";
+    }
+
+    function executionLabel(model) {
+      return model.label || executionLabels[model.type] || "规则/脚本型任务 Agent";
+    }
+
+    function executionShortLabel(model) {
+      return model.shortLabel || executionShortLabels[model.type] || executionLabel(model);
+    }
+
+    function executionFilterLabel(type) {
+      return type === "全部" ? "全部执行形态" : executionLabels[type] || type;
+    }
+
+    function isModelStyle(model) {
+      return Boolean(model.modelBacked || model.modelAssisted || model.modeFamily === "model");
     }
 
     function percent(value) {
@@ -1675,6 +2117,22 @@
         : "当前快照可能早于 coverage 或缺少来源文件，请先运行同步脚本。");
       const command = workbenchSync.recommendedCommand || "$py scripts\\sync_training_workbench.py";
       const coverageTime = workbenchSync.coverageGeneratedAt || tableCBoundary.generatedAt || "";
+      const localAccepted = Number(trainingSourceSummary.localAcceptedTrainingProgramCount || 0);
+      const localComplete = Number(trainingSourceSummary.localFullyCompleteProgramCount || 0);
+      const archivedAcceptance = Number(trainingSourceSummary.archivedTrainingAcceptanceReportCount || 0);
+      const activeAcceptance = Number(trainingSourceSummary.activeTrainingAcceptanceReportCount || 0);
+      const activeMissing = Number(trainingSourceSummary.activeFactSourceMissingCount || 0);
+      const recommendationCode = trainingSourceSummary.recommendationCode || "";
+      const evidenceTone = activeMissing
+        ? "red"
+        : recommendationCode === "restore_remote_evidence_before_retraining"
+        ? "amber"
+        : localAccepted
+        ? "green"
+        : "blue";
+      const restorePaths = (trainingSourceSummary.restorePaths || []).slice(0, 3).join("、");
+      const evidenceAction = trainingSourceSummary.recommendedAction
+        || "训练状态依赖仓库事实源；如果换电脑后缺少 output 证据，优先同步旧电脑产物，再决定是否重训。";
       byId("syncPanel").innerHTML = `
         <div class="sync-main">
           <div class="sync-title">
@@ -1687,6 +2145,23 @@
         <div class="sync-actions">
           <code class="sync-code" title="${escapeHtml(command)}">${escapeHtml(command)}</code>
           <button class="sync-refresh" type="button" data-refresh-page>刷新页面</button>
+        </div>
+        <div class="sync-evidence">
+          <div class="sync-evidence-title">
+            <span>训练证据同步</span>
+            <small>${escapeHtml(trainingSourceSummary.portableEvidencePolicy || "训练状态依赖仓库事实源，不是浏览器缓存。")}</small>
+          </div>
+          <div class="sync-evidence-list">
+            ${tag(recommendationCode === "restore_remote_evidence_before_retraining" ? "先恢复旧电脑证据" : localAccepted ? "本机已有训练证据" : "继续训练或同步证据", evidenceTone)}
+            ${tag(`本机验收通过项：${localAccepted}`, localAccepted ? "green" : "amber")}
+            ${tag(`本机已结束折叠项：${localComplete}`, localComplete ? "green" : "blue")}
+            ${tag(`active 验收报告：${activeAcceptance}`, activeAcceptance ? "green" : "amber")}
+            ${tag(`archived 验收报告：${archivedAcceptance}`, archivedAcceptance ? "amber" : "blue")}
+            ${tag(`缺失 active fact source：${activeMissing}`, activeMissing ? "red" : "green")}
+          </div>
+          <p>${escapeHtml(evidenceAction)}</p>
+          ${restorePaths ? `<p>优先恢复路径：${escapeHtml(restorePaths)}。</p>` : ""}
+          <p>${escapeHtml(trainingSourceSummary.evidenceBoundary || "archived 只作历史索引；只有 active 且存在的验收报告和学习沉淀才会把训练项标为已完成。")}</p>
         </div>
       `;
     }
@@ -1728,6 +2203,144 @@
         (program.responsibleAgents || []).forEach((agent) => ids.add(agent.id));
       });
       return Array.from(ids).sort((a, b) => agentName(a).localeCompare(agentName(b), "zh-CN"));
+    }
+
+    function flightdeckTone(status) {
+      const value = String(status || "not_checked");
+      if (value === "active_fact_source") return "pass";
+      if (value === "missing_evidence") return "blocked";
+      if (value === "display_only") return "derived";
+      if (value === "historical_reference_only") return "archived_only";
+      return value;
+    }
+
+    function renderFlightdeckItem(title, meta, body, status = "not_checked", actions = "") {
+      return `
+        <article class="flightdeck-item ${escapeHtml(flightdeckTone(status))}">
+          <div class="flightdeck-item-head">
+            <div>
+              <strong>${escapeHtml(title || "未命名")}</strong>
+              ${meta ? `<span class="subline">${escapeHtml(meta)}</span>` : ""}
+            </div>
+            ${tag(status || "not_checked", status === "pass" ? "green" : status === "blocked" ? "amber" : "")}
+          </div>
+          ${body ? `<p>${escapeHtml(body)}</p>` : ""}
+          ${actions}
+        </article>
+      `;
+    }
+
+    function renderCommandCenter() {
+      const sourceRegistry = asArray(workbenchV3.views?.evidenceCenter?.sourceRegistry || workbenchV3.facts?.sourceRegistry);
+      const candidates = asArray(commandCenter.nextTrainingCandidates);
+      const gateboard = asArray(commandCenter.gateboard);
+      const sourceHealth = commandCenter.sourceHealth || {};
+      const dispatch = commandCenter.agentDispatchSummary || {};
+      const latestRun = commandCenter.latestRunSummary || {};
+      const blockedGates = gateboard.filter((gate) => gate.status === "blocked");
+      const warningGates = gateboard.filter((gate) => gate.status === "warning" || gate.status === "not_checked");
+
+      byId("commandCenterSummary").innerHTML = [
+        tag(`schema ${workbenchV3.schemaVersion || "missing"}`, workbenchV3.schemaVersion ? "green" : "amber"),
+        tag(`候选 ${candidates.length}`),
+        tag(`阻断 ${blockedGates.length}`, blockedGates.length ? "amber" : "green"),
+        tag(`Agent ${dispatch.agentCount ?? workbenchV3.facts?.agentCount ?? agents.length}`),
+        tag(`active fact source ${sourceHealth.activeFactSourceCount ?? 0}`, sourceHealth.activeFactSourceCount ? "green" : "amber")
+      ].join("");
+
+      byId("nextTrainingCandidates").innerHTML = candidates.map((candidate) => {
+        const responsible = asArray(candidate.responsibleAgentIds).slice(0, 4).map(agentName).join(" / ");
+        const blocking = asArray(candidate.blockingConditions).join(" ");
+        const evidence = asArray(candidate.evidenceRequired).slice(0, 2).join(" ");
+        const status = blocking ? "blocked" : "pass";
+        const actions = `
+          <div class="tag-row">
+            ${tag(candidate.priority || "P?", candidate.priority === "P0" ? "amber" : "")}
+            ${tag(candidate.routeMode || "formal_acceptance")}
+            ${responsible ? tag(responsible, "blue") : ""}
+          </div>
+          <button class="small-button" type="button" data-program-jump="${escapeHtml(candidate.programId || candidate.id || "")}">打开训练项</button>
+        `;
+        return renderFlightdeckItem(
+          candidate.label || candidate.capabilityId,
+          `${candidate.group || "未分组"} · ${candidate.reason || "待判断"}`,
+          blocking || evidence || "等待训练证据补齐。",
+          status,
+          actions
+        );
+      }).join("") || `<div class="empty">暂无下一轮训练候选。</div>`;
+
+      byId("flightdeckGateboard").innerHTML = gateboard.map((gate) => {
+        const claims = asArray(gate.blockedClaims).join(", ");
+        const actions = gate.sourcePath ? `<p><code>${escapeHtml(gate.sourcePath)}</code></p>` : "";
+        return renderFlightdeckItem(
+          gate.label || gate.id,
+          claims ? `blocked claims: ${claims}` : gate.id,
+          gate.detail || "门禁说明待补。",
+          gate.status || "not_checked",
+          actions
+        );
+      }).join("") || `<div class="empty">Gateboard 尚未生成。</div>`;
+
+      const sourceSummaryRows = [
+        ["active fact source", sourceHealth.activeFactSourceCount ?? 0, "eligible_fact_source", "pass"],
+        ["archived only", sourceHealth.archivedOnlyCount ?? 0, "historical_reference_only", "archived_only"],
+        ["derived snapshot", sourceHealth.derivedCount ?? 0, "display_only", "derived"],
+        ["missing evidence", sourceHealth.missingEvidenceCount ?? 0, "blocked_until_restored", "blocked"]
+      ];
+      const sourceExamples = sourceRegistry.slice(0, 6).map((source) => renderFlightdeckItem(
+        source.kind || source.id,
+        `${source.role || "unknown"} · ${source.evidenceUse || "not_checked"}`,
+        source.path || source.desc || "source path missing",
+        source.statusClass || "not_checked"
+      )).join("");
+      byId("flightdeckSourceHealth").innerHTML = `
+        ${sourceSummaryRows.map(([label, count, detail, status]) => renderFlightdeckItem(label, `${count}`, detail, status)).join("")}
+        ${sourceExamples}
+      `;
+
+      byId("flightdeckInspector").innerHTML = `
+        <div class="panel-head">
+          <div>
+            <h3>飞控台 Inspector</h3>
+            <p>把训练、Agent、Prompt、Trace 和证据边界放在同一处看，但不把派生快照当事实源。</p>
+          </div>
+        </div>
+        <section class="detail-block">
+          <h4>证据边界</h4>
+          <p>${escapeHtml(commandCenter.evidenceBoundary || workbenchV3.sourcePolicy?.notProofOf?.join(", ") || "CAD 几何仍以 handles/readback/audit 为准。")}</p>
+          <p>${escapeHtml(commandCenter.derivedBoundary || "capability-map-data.js 与 HTML 仅作显示。")}</p>
+        </section>
+        <section class="detail-block">
+          <h4>Agent 调度</h4>
+          <p>${escapeHtml(dispatch.primaryAgentId || "cad_designer")} · ${escapeHtml(dispatch.agentCount ?? agents.length)} agents · ${escapeHtml(dispatch.edgeCount ?? 0)} edges</p>
+        </section>
+        <section class="detail-block">
+          <h4>最新 Trace 摘要</h4>
+          <p>${escapeHtml(`runs ${latestRun.runCount ?? 0} / ready ${latestRun.readyRunCount ?? 0} / blocked ${latestRun.blockedRunCount ?? 0}`)}</p>
+        </section>
+        <section class="detail-block">
+          <h4>事实源策略</h4>
+          ${listMarkup(workbenchV3.sourcePolicy?.truthSources || [], "事实源路径待登记。")}
+        </section>
+        <section class="detail-block">
+          <h4>待关注</h4>
+          ${listMarkup([
+            ...blockedGates.map((gate) => `${gate.label || gate.id}: ${gate.detail || gate.status}`),
+            ...warningGates.slice(0, 3).map((gate) => `${gate.label || gate.id}: ${gate.status}`)
+          ], "当前没有阻断门禁。")}
+        </section>
+      `;
+
+      byId("nextTrainingCandidates").querySelectorAll("[data-program-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const id = button.dataset.programJump;
+          if (id) state.selectedProgramId = id;
+          state.activeTab = "plan";
+          renderAll();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
     }
 
     function renderPlanControls() {
@@ -2091,7 +2704,9 @@
       state.selectedAgentId = agentId;
       state.agentQuery = "";
       state.agentGroup = "全部";
+      state.agentExecutionFilter = "全部";
       byId("agentSearch").value = "";
+      byId("agentExecutionFilter").value = "全部";
       state.activeTab = "agents";
       renderTabs();
       renderAgentControls();
@@ -2104,7 +2719,9 @@
       const query = state.agentQuery.trim().toLowerCase();
       return agents.filter((agent) => {
         const contract = contractForAgent(agent.id);
+        const model = executionModelForAgent(agent);
         const groupMatch = state.agentGroup === "全部" || agent.group === state.agentGroup;
+        const executionMatch = state.agentExecutionFilter === "全部" || executionType(agent) === state.agentExecutionFilter;
         const searchable = [
           agent.name,
           agent.sourceName,
@@ -2112,8 +2729,16 @@
           agent.groupLabel,
           agent.trainingRole,
           agent.roleSummary,
+          executionLabel(model),
+          model.statusNote,
+          model.sourceSummary,
           contract.promptSummary,
           contract.roleSetting,
+          ...(model.triggerRules || []),
+          ...(model.backendPromptZh || []),
+          ...(model.modelInputs || []),
+          ...(model.modelOutputs || []),
+          ...(model.modelHardBoundaries || []),
           ...(contract.responsibilityBoundary || []),
           ...(contract.inputRequirements || []),
           ...(contract.outputFormat || []),
@@ -2122,7 +2747,7 @@
           ...(agent.ownedCapabilities || []).map((item) => item.name),
           ...(agent.activeTrainingItems || []).map((item) => item.name)
         ].join(" ").toLowerCase();
-        return groupMatch && (!query || searchable.includes(query));
+        return groupMatch && executionMatch && (!query || searchable.includes(query));
       });
     }
 
@@ -2130,6 +2755,20 @@
       byId("agentGroupFilter").innerHTML = agentGroupOrder.map((group) => `
         <option value="${escapeHtml(group)}"${group === state.agentGroup ? " selected" : ""}>${escapeHtml(group === "全部" ? "全部智能体" : groupLabels[group] || group)}</option>
       `).join("");
+      const existingTypes = new Set(agents.map((agent) => executionType(agent)));
+      byId("agentExecutionFilter").innerHTML = executionFilterOrder
+        .filter((type) => type === "全部" || existingTypes.has(type))
+        .map((type) => `<option value="${escapeHtml(type)}"${type === state.agentExecutionFilter ? " selected" : ""}>${escapeHtml(executionFilterLabel(type))}</option>`)
+        .join("");
+      const counts = agents.reduce((acc, agent) => {
+        const type = executionType(agent);
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {});
+      byId("agentModeSummary").innerHTML = executionFilterOrder
+        .filter((type) => type !== "全部" && counts[type])
+        .map((type) => `<span class="agent-mode-pill"><span class="agent-kind ${escapeHtml(type)}">${escapeHtml(executionShortLabels[type] || type)}</span>${escapeHtml(counts[type])}</span>`)
+        .join("");
     }
 
     function groupedAgentList(list) {
@@ -2165,12 +2804,19 @@
         return `
           <section class="agent-group">
             <h3>${escapeHtml(group.label)} · ${group.items.length}</h3>
-            ${group.items.map((agent) => `
-              <button class="agent-list-button" type="button" data-agent="${escapeHtml(agent.id)}" aria-pressed="${agent.id === state.selectedAgentId ? "true" : "false"}">
-                <strong>${escapeHtml(agent.name)}</strong>
-                <span class="subline">${escapeHtml(agent.statusLabel || "状态待补")} · ${escapeHtml(agent.roleSummary || agent.trainingRole || "职责待补")}</span>
-              </button>
-            `).join("")}
+            ${group.items.map((agent) => {
+              const model = executionModelForAgent(agent);
+              return `
+                <button class="agent-list-button" type="button" data-agent="${escapeHtml(agent.id)}" aria-pressed="${agent.id === state.selectedAgentId ? "true" : "false"}">
+                  <strong>${escapeHtml(agent.name)}</strong>
+                  <span class="agent-list-meta">
+                    <span class="agent-kind ${escapeHtml(model.type || "rule_contract")}">${escapeHtml(executionShortLabel(model))}</span>
+                    <span class="subline">${escapeHtml(agent.statusLabel || "状态待补")}</span>
+                  </span>
+                  <span class="subline">${escapeHtml(model.statusNote || agent.roleSummary || agent.trainingRole || "职责待补")}</span>
+                </button>
+              `;
+            }).join("")}
           </section>
         `;
       }).join("") || `<div class="empty">没有匹配的智能体。</div>`;
@@ -2213,6 +2859,16 @@
       `;
     }
 
+    function renderModelPromptBlock(title, lines, fallback) {
+      const arr = asArray(lines).filter((item) => String(item || "").trim());
+      return `
+        <section class="detail-block model-prompt-block wide">
+          <h4>${escapeHtml(title)}</h4>
+          ${arr.length ? `<ol class="model-prompt-list">${arr.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ol>` : `<p>${escapeHtml(fallback)}</p>`}
+        </section>
+      `;
+    }
+
     function renderAgentPromptInspector() {
       const agent = agentById(state.selectedAgentId);
       if (!agent) {
@@ -2220,35 +2876,49 @@
         return;
       }
       const contract = contractForAgent(agent.id);
+      const model = executionModelForAgent(agent);
+      const modelStyle = isModelStyle(model);
       const owned = (agent.ownedCapabilities || []).slice(0, 8).map((item) => `${item.name}：${item.nextTrainingTarget}`).join("；");
       const active = (agent.activeTrainingItems || []).slice(0, 8).map((item) => `${item.name}：${item.nextTrainingTarget}`).join("；");
-      const promptAdjustments = (contract.adjustablePromptPoints || agent.operation?.optimizationTips || []).slice(0, 3);
+      const promptAdjustments = (modelStyle ? (model.backendPromptZh || contract.backendPromptZh || contract.adjustablePromptPoints || agent.operation?.optimizationTips || []) : (model.triggerRules || contract.adjustablePromptPoints || agent.operation?.optimizationTips || [])).slice(0, 4);
       byId("agentPromptInspector").innerHTML = `
         <section class="prompt-hero">
           <div class="tag-row">
             ${tag(agent.groupLabel || groupLabels[agent.group] || "智能体", agent.group === "pipeline" ? "blue" : "green")}
+            <span class="agent-kind ${escapeHtml(model.type || "rule_contract")}">${escapeHtml(executionLabel(model))}</span>
             ${tag(agent.statusLabel || "状态待补", agent.status === "primary_training" ? "green" : "amber")}
             ${tag("这些百分比不是 CAD 通过率", "red")}
           </div>
           <h2 style="margin-top: 10px;">${escapeHtml(agent.name)}</h2>
-          <p class="prompt-summary"><strong>当前 Prompt 描述：</strong>${escapeHtml(contract.promptSummary || agent.roleSummary || "Prompt 摘要待补。")}</p>
+          <p class="prompt-summary"><strong>${escapeHtml(modelStyle ? "模型/后台 Prompt 状态：" : "执行形态说明：")}</strong>${escapeHtml(model.statusNote || contract.promptSummary || agent.roleSummary || "执行形态待补。")}</p>
+          <div class="prompt-classification">
+            <div class="prompt-classification-item">
+              <strong>分类依据</strong>
+              <p>${escapeHtml(model.sourceSummary || "维护入口见源文件列表。")}</p>
+            </div>
+            <div class="prompt-classification-item">
+              <strong>${escapeHtml(modelStyle ? "模型边界" : "触发方式")}</strong>
+              <p>${escapeHtml(textOf((modelStyle ? model.modelHardBoundaries : model.triggerRules) || [], modelStyle ? "只读模型建议，不能替代规则证据。" : "按上游产物和 hard gate 触发。"))}</p>
+            </div>
+          </div>
           <div class="prompt-focus">
-            <h3>本轮最值得调的 3 条 Prompt</h3>
-            ${listMarkup(promptAdjustments, "暂未生成可调 Prompt 点。")}
+            <h3>${escapeHtml(modelStyle ? "后台 Prompt 中文映射 / 最值得改的句子" : "触发规则 / 可改契约点")}</h3>
+            ${listMarkup(promptAdjustments, modelStyle ? "暂未登记后台模型 Prompt。" : "暂未登记触发规则。")}
           </div>
         </section>
         <section class="maturity-grid" aria-label="智能体成熟度">
           ${renderMaturityCards(agent)}
         </section>
         <section class="prompt-grid">
-          ${renderPromptBlock("角色设定", contract.roleSetting || agent.trainingRole || agent.roleSummary, "角色设定待补。")}
-          ${renderPromptBlock("职责边界", contract.responsibilityBoundary, "职责边界待补。")}
-          ${renderPromptBlock("输入要求", contract.inputRequirements || agent.operation?.inputs, "输入要求待补。")}
-          ${renderPromptBlock("输出格式", contract.outputFormat || agent.operation?.outputs, "输出格式待补。")}
+          ${modelStyle ? renderModelPromptBlock("后台模型 Prompt（中文映射）", model.backendPromptZh || contract.backendPromptZh, "该 Agent 还没有登记可展示的后台模型 Prompt。") : renderPromptBlock("触发规则", model.triggerRules, "触发规则待补。")}
+          ${renderPromptBlock(modelStyle ? "模型输入" : "任务定位", modelStyle ? (model.modelInputs || contract.inputRequirements || agent.operation?.inputs) : (contract.promptSummary || agent.roleSummary), modelStyle ? "模型输入待补。" : "任务定位待补。")}
+          ${renderPromptBlock(modelStyle ? "模型输出 / Schema 字段" : "输入要求", modelStyle ? (model.modelOutputs || contract.outputFormat || agent.operation?.outputs) : (contract.inputRequirements || agent.operation?.inputs), modelStyle ? "模型输出待补。" : "输入要求待补。")}
+          ${renderPromptBlock(modelStyle ? "模型不可越界" : "输出格式", modelStyle ? (model.modelHardBoundaries || contract.mustNot || agent.operation?.mustNot) : (contract.outputFormat || agent.operation?.outputs), modelStyle ? "模型边界待补。" : "输出格式待补。")}
           ${renderPromptBlock("硬门槛", contract.hardGates || agent.operation?.passGate, "硬门槛待补。")}
+          ${renderPromptBlock("职责边界", contract.responsibilityBoundary, "职责边界待补。")}
           ${renderPromptBlock("禁止事项", contract.mustNot || agent.operation?.mustNot, "禁止事项待补。")}
           ${renderPromptBlock("调用能力", contract.callCapabilities || agent.operation?.usesCore, "调用能力待补。")}
-          ${renderPromptBlock("可调 Prompt 点", contract.adjustablePromptPoints || agent.operation?.optimizationTips, "可调 Prompt 点待补。")}
+          ${renderPromptBlock(modelStyle ? "可调模型 Prompt 点" : "可调契约点", contract.adjustablePromptPoints || agent.operation?.optimizationTips, modelStyle ? "可调模型 Prompt 点待补。" : "可调契约点待补。")}
           ${renderPromptBlock("关联训练项", [owned || active || "暂无关联训练项。"], "暂无关联训练项。")}
           ${renderPromptBlock("证据边界", contract.evidenceBoundary || "本契约只帮助训练和调 Prompt，不代表真实 CAD 几何通过。", "证据边界待补。")}
         </section>
@@ -2342,6 +3012,87 @@
       `).join("") || `<div class="empty">暂无学习分流路线。</div>`;
     }
 
+    function traceSearchText(run) {
+      return [
+        run.runId,
+        run.stateStatus,
+        run.route,
+        ...(run.agentsCalled || []),
+        ...(run.hardGates || []),
+        run.closeout?.status,
+        run.runDir
+      ].join(" ").toLowerCase();
+    }
+
+    function filteredTraceRuns() {
+      const query = state.traceQuery.trim().toLowerCase();
+      const rows = asArray(traceViewer.runs);
+      if (!query) return rows;
+      return rows.filter((run) => traceSearchText(run).includes(query));
+    }
+
+    function renderTraceMetric(label, value, note = "") {
+      return `
+        <article class="trace-metric">
+          <small>${escapeHtml(label)}</small>
+          <strong>${escapeHtml(value)}</strong>
+          ${note ? `<span>${escapeHtml(note)}</span>` : ""}
+        </article>
+      `;
+    }
+
+    function renderTraceViewer() {
+      const summary = traceViewer.summary || {};
+      const sourcePolicy = traceViewer.sourcePolicy || {};
+      const filtered = filteredTraceRuns();
+      byId("traceSummary").innerHTML = [
+        renderTraceMetric("Run packages", summary.runCount ?? 0, `${filtered.length} visible`),
+        renderTraceMetric("Ready", summary.readyRunCount ?? 0),
+        renderTraceMetric("Blocked", summary.blockedRunCount ?? 0),
+        renderTraceMetric("Agents", summary.agentCount ?? 0),
+        renderTraceMetric("External traces", summary.externalTraceCount ?? 0)
+      ].join("");
+
+      byId("traceBoundary").textContent = sourcePolicy.evidenceBoundary || "该面板只读派生 trace；真实 CAD 仍以 source JSON、created handles 和用户验收为准。";
+
+      byId("traceRows").innerHTML = filtered.map((run) => {
+        const agentsText = asArray(run.agentsCalled).slice(0, 8).join(", ") || "none";
+        const gateSummary = asArray(run.gateSummary).map((gate) => `${gate.id}:${gate.status}`).join(", ");
+        const gatesText = asArray(run.hardGates).join(", ") || gateSummary || "none";
+        const closeout = run.closeout || {};
+        const closeoutTone = closeout.canDeliver ? "green" : "amber";
+        return `
+          <tr>
+            <td>
+              <strong>${escapeHtml(run.runId || "unknown")}</strong>
+              <div><code>${escapeHtml(run.runDir || "")}</code></div>
+            </td>
+            <td>
+              ${tag(run.stateStatus || "unknown", run.stateStatus === "ready_for_delivery" ? "green" : "")}
+              <div>${escapeHtml(run.route || "route 未登记")}</div>
+            </td>
+            <td>${escapeHtml(agentsText)}</td>
+            <td>${escapeHtml(gatesText)}</td>
+            <td>
+              ${tag(closeout.status || "missing", closeoutTone)}
+              <div>${escapeHtml(asArray(closeout.blockingReasons).join("; ") || "no blocking reason")}</div>
+            </td>
+            <td>
+              ${asArray(run.traceSources).slice(0, 3).map((source) => `<code>${escapeHtml(source)}</code>`).join("<br>") || `<code>${escapeHtml(run.runDir || "")}</code>`}
+            </td>
+          </tr>
+        `;
+      }).join("") || `<tr><td colspan="6" class="empty">暂无 run package trace；该面板不会主动生成 CAD 证据。</td></tr>`;
+
+      byId("externalTraceRows").innerHTML = asArray(traceViewer.externalTraces).slice(0, 16).map((trace) => `
+        <article class="route-card">
+          <strong>${escapeHtml(trace.agentId || "unknown agent")}</strong>
+          <p>${escapeHtml(trace.status || "unknown")} · <code>${escapeHtml(trace.traceId || "")}</code></p>
+          <p><code>${escapeHtml(trace.source || "")}</code></p>
+        </article>
+      `).join("") || `<div class="empty">暂无外部模型 trace。</div>`;
+    }
+
     function renderBoundaryCards() {
       const sourceCards = (systemData.sources || []).map((source) => `
         <li><strong>${escapeHtml(source.title)}</strong>：${escapeHtml(source.desc)} <code>${escapeHtml(source.path)}</code></li>
@@ -2354,9 +3105,9 @@
           <p><code>docs/training/cad-designer-growth-path.md</code></p>
         </article>
         <article class="boundary-card">
-          <h3>表 C 机器快照</h3>
-          <p><strong>${escapeHtml(tableCBoundary.label || "表 C 真实 CAD 机器快照")}</strong>：${escapeHtml(tableCBoundary.headlinePercent ?? "未生成")}${typeof tableCBoundary.headlinePercent === "number" ? "%" : ""}</p>
-          <p>${escapeHtml(tableCBoundary.note || "只作为 coverage JSON 和 registry 的机器指标，不参与训练计划和智能体成熟度计算。")}</p>
+          <h3>Core Proof Coverage 快照</h3>
+          <p><strong>${escapeHtml(tableCBoundary.label || "Core Proof Coverage 机器快照")}</strong>：${escapeHtml(tableCBoundary.headlinePercent ?? "未生成")}${typeof tableCBoundary.headlinePercent === "number" ? "%" : ""}</p>
+          <p>${escapeHtml(tableCBoundary.note || "只作为 coverage JSON 和 registry 的底座证据覆盖；不代表 Agent Task Maturity 或 Project Delivery Readiness。")}</p>
           <p><code>${escapeHtml(tableCBoundary.sourcePath || "output/validation_runs/capability-lab/cad_capability_coverage.json")}</code></p>
         </article>
         <article class="boundary-card">
@@ -2390,6 +3141,7 @@
       renderStatusMetrics();
       renderSyncPanel();
       renderTabs();
+      renderCommandCenter();
       renderPlanControls();
       renderPlanHead();
       renderPlanRows();
@@ -2399,6 +3151,7 @@
       renderAgentPromptInspector();
       renderFailures();
       renderLearningRoutes();
+      renderTraceViewer();
       renderBoundaryCards();
     }
 
@@ -2454,6 +3207,17 @@
         state.agentGroup = event.target.value;
         renderAgentList();
         renderAgentPromptInspector();
+      });
+
+      byId("agentExecutionFilter").addEventListener("change", (event) => {
+        state.agentExecutionFilter = event.target.value;
+        renderAgentList();
+        renderAgentPromptInspector();
+      });
+
+      byId("traceSearch").addEventListener("input", (event) => {
+        state.traceQuery = event.target.value;
+        renderTraceViewer();
       });
 
       byId("syncPanel").addEventListener("click", (event) => {

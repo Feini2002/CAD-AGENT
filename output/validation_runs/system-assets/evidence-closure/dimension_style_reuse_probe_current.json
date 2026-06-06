@@ -1,0 +1,129 @@
+{
+  "kind": "system_asset_reuse_workflow",
+  "status": "ready",
+  "phrase": "复用尺寸样式标准到当前图",
+  "understanding": {
+    "shouldSearchSystemAssets": true,
+    "trigger": "explicit_asset_id",
+    "reason": "asset ids were provided explicitly",
+    "bestMatch": {},
+    "candidateMatches": [],
+    "taskCount": 1,
+    "readyTaskCount": 1,
+    "blockedTaskCount": 0
+  },
+  "clauses": [
+    "复用尺寸样式标准到当前图"
+  ],
+  "tasks": [
+    {
+      "taskId": "asset_reuse_1",
+      "query": "复用尺寸样式标准到当前图",
+      "status": "matched",
+      "assetId": "interior_dimension_style_visual_standard",
+      "match": {
+        "assetId": "interior_dimension_style_visual_standard",
+        "score": 999999.0,
+        "matchedTerms": [
+          "interior_dimension_style_visual_standard"
+        ]
+      },
+      "decision": "explicit_asset_id",
+      "planStatus": "ready",
+      "sourceSpec": {
+        "mode": "style_definition",
+        "assetId": "interior_dimension_style_visual_standard",
+        "nativeWrite": "written_to_standard_assets_dwg",
+        "verificationStatus": "native_style_definition_written",
+        "reason": "style_standard.native_style_definition_written"
+      },
+      "target": {
+        "layer": "CODEX_PREVIEW",
+        "basePoint": [],
+        "saveCurrentDwg": false
+      },
+      "reason": ""
+    }
+  ],
+  "reusePlans": [
+    {
+      "status": "ready",
+      "query": "复用尺寸样式标准到当前图",
+      "shouldSearchSystemAssets": true,
+      "assetId": "interior_dimension_style_visual_standard",
+      "assetName": "室内尺寸样式视觉标准",
+      "category": "drawing_standards.basic",
+      "assetKind": "style_standard",
+      "verificationStatus": "native_style_definition_written",
+      "nativeDwg": "C:\\Users\\User\\Desktop\\CAD-AGENT\\libraries\\system_library\\drawing_standards\\basic\\standard_assets.dwg",
+      "sourceSpec": {
+        "mode": "style_definition",
+        "assetId": "interior_dimension_style_visual_standard",
+        "nativeWrite": "written_to_standard_assets_dwg",
+        "verificationStatus": "native_style_definition_written",
+        "reason": "style_standard.native_style_definition_written"
+      },
+      "target": {
+        "layer": "CODEX_PREVIEW",
+        "basePoint": [],
+        "saveCurrentDwg": false
+      },
+      "match": {
+        "score": 999999.0,
+        "matchedTerms": [
+          "interior_dimension_style_visual_standard"
+        ]
+      },
+      "encodingPreflight": {
+        "status": "pass",
+        "checkedTextCount": 206,
+        "issueCount": 0,
+        "issues": [],
+        "policy": "fail_before_cad_write_or_asset_contract_write",
+        "scope": "system_asset_registry_text",
+        "assetCount": 4
+      },
+      "semanticRules": {
+        "status": "matched",
+        "phrase": "复用尺寸样式标准到当前图",
+        "matchedRuleCount": 1,
+        "matchedRules": [
+          {
+            "ruleId": "system_asset_reuse",
+            "name": "系统资产跨 DWG 复用",
+            "matchedTerms": [
+              "复用"
+            ],
+            "routes": [
+              "system_asset_reuse"
+            ],
+            "requiredGuards": [
+              "registry_encoding_preflight",
+              "native_source_gate",
+              "reuse_workflow_probe",
+              "created_handles_readback",
+              "no_current_dwg_save"
+            ],
+            "forbiddenBehaviors": [
+              "weak_match_auto_reuse",
+              "metadata_only_reuse",
+              "save_current_business_dwg"
+            ],
+            "validationHooks": [
+              "system_asset_reuse_workflow",
+              "readback_ok_gate"
+            ],
+            "evidenceBoundary": "ready plan requires sourceSpec; asset_reused requires created handles and readbackStatus=ok; style_definition plans must not copy training panels",
+            "priority": 80
+          }
+        ]
+      }
+    }
+  ],
+  "blockedTasks": [],
+  "target": {
+    "layer": "CODEX_PREVIEW",
+    "basePoint": [],
+    "saveCurrentDwg": false
+  }
+}

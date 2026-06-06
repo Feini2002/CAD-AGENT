@@ -48,23 +48,39 @@ def _read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _is_number(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def _is_valid_offset_delta(delta: Any) -> bool:
+    return isinstance(delta, list) and len(delta) >= 2 and all(_is_number(value) for value in delta[:3])
+
+
 def apply_placement_offsets(
     placements: list[dict[str, Any]],
     object_specs: list[dict[str, Any]],
     offsets: dict[str, Any],
-) -> tuple[list[dict[str, Any]], list[str]]:
+) -> tuple[list[dict[str, Any]], list[str], list[str], list[str]]:
     """Apply per-object_spec_id [dx, dy, dz?] offsets to placement base points."""
 
     if not offsets:
-        return placements, []
+        return placements, [], [], []
 
     updated: list[dict[str, Any]] = []
     applied: list[str] = []
+    invalid: list[str] = []
+    known_object_ids = {
+        str(spec.get("object_id", ""))
+        for spec in object_specs
+        if isinstance(spec, dict) and str(spec.get("object_id", ""))
+    }
     for placement, spec in zip(placements, object_specs):
         patched = copy.deepcopy(placement)
         object_id = str(spec.get("object_id", ""))
         delta = offsets.get(object_id)
-        if isinstance(delta, list) and len(delta) >= 2:
+        if delta is not None and not _is_valid_offset_delta(delta):
+            invalid.append(object_id)
+        elif _is_valid_offset_delta(delta):
             base = list(patched.get("base_point", [0, 0, 0]))
             if len(base) == 2:
                 base = [base[0], base[1], 0]
@@ -72,7 +88,8 @@ def apply_placement_offsets(
             patched["base_point"] = [base[0] + float(delta[0]), base[1] + float(delta[1]), base[2] + dz]
             applied.append(object_id)
         updated.append(patched)
-    return updated, applied
+    ignored = sorted(str(object_id) for object_id in offsets if str(object_id) not in known_object_ids)
+    return updated, applied, ignored, sorted(invalid)
 
 
 def ensure_layout_confirmed_candidate_id(proposal: dict[str, Any], layout: dict[str, Any]) -> dict[str, Any]:
@@ -150,7 +167,7 @@ def recompute_cad_plans_from_pipeline_artifacts(
                     offsets.setdefault(str(key), value)
 
     object_specs = [_object_spec_from_placement(item) for item in placements if isinstance(item, dict)]
-    placements, applied_offsets = apply_placement_offsets(placements, object_specs, offsets)
+    placements, applied_offsets, ignored_offsets, invalid_offsets = apply_placement_offsets(placements, object_specs, offsets)
     layout = _layout_from_placements(
         project_model=project_model,
         object_specs=object_specs,
@@ -172,6 +189,8 @@ def recompute_cad_plans_from_pipeline_artifacts(
             "modules_skipped": list(SKIPPED_UPSTREAM_MODULES),
             "modules_recomputed": ["placements", "layout_proposal", "design_proposal"],
             "placement_offsets_applied": applied_offsets,
+            "placement_offsets_ignored": ignored_offsets,
+            "placement_offsets_invalid": invalid_offsets,
         }
 
     cad_plans = [item["cad_plan"] for item in plan_result["plans"]]
@@ -201,6 +220,8 @@ def recompute_cad_plans_from_pipeline_artifacts(
         "modules_skipped": list(SKIPPED_UPSTREAM_MODULES),
         "modules_recomputed": list(RECOMPUTED_DOWNSTREAM_MODULES),
         "placement_offsets_applied": applied_offsets,
+        "placement_offsets_ignored": ignored_offsets,
+        "placement_offsets_invalid": invalid_offsets,
         "cad_plan_count": len(cad_plans),
         "dry_run_summary": dry_run_summary,
         "verification_summary": summarize_verification_reports(verification_reports),

@@ -1,0 +1,854 @@
+{
+  "status": "pass",
+  "suite_id": "office-scene-beta-benchmark",
+  "summary": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "evidence_summary": {
+    "case_count": 9,
+    "evidence_state_counts": {
+      "benchmark_pass_non_cad": 7,
+      "blocked_expected_non_cad": 2
+    },
+    "pipeline_status_counts": {
+      "ok": 7,
+      "blocked": 2
+    },
+    "geometry_accuracy_counts": {
+      "not_verified_without_cad_readback": 9
+    },
+    "screenshot_role_counts": {
+      "visual_aid_only": 9
+    },
+    "failure_category_counts": {
+      "insufficient_space": 1,
+      "entry_clearance_conflict": 1
+    },
+    "benchmark_pass_non_cad_count": 7,
+    "blocked_expected_non_cad_count": 2,
+    "invalid_configuration_count": 0,
+    "readback_geometry_verified_count": 0,
+    "cad_capability_verified_count": 0,
+    "deferred_cad_readback_count": 0,
+    "dry_run_valid_plan_only_count": 0,
+    "geometry_verified_case_count": 0,
+    "non_cad_only": true
+  },
+  "evidence_summary_errors": [],
+  "cases": [
+    {
+      "case_id": "beta_office_computer_desk_object",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 0,
+        "zone_placement_candidate_count": 0,
+        "circulation_branch_count": 0,
+        "object_coverage_rate": 0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "",
+        "preferences_scenario": "",
+        "preferences_path": "",
+        "has_comparison_detail": false,
+        "has_proposal_comparison_summary": false,
+        "ranking_reason_codes": [],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [],
+        "circulation_continuity": "",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 0,
+        "placed_count": 0,
+        "placement_count": 0,
+        "cad_plan_count": 1,
+        "failed_check_count": 0,
+        "object_types": [
+          "computer_desk"
+        ],
+        "object_roles": [],
+        "object_type": "computer_desk",
+        "object_count": null,
+        "composition_id": null,
+        "persona_role": null,
+        "visual_preview_status": null,
+        "width": 1200,
+        "depth": 700,
+        "height": 750,
+        "component_roles": [
+          "cable_side_hint",
+          "clearance_zone",
+          "monitor_zone",
+          "worktop"
+        ],
+        "clearance_refs": [],
+        "clearance_ref_roles": [],
+        "placement_role": "screen_workstation",
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": null,
+        "failure_category": "",
+        "blocked_reasons": []
+      },
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "computer_desk",
+        "placement_role": "screen_workstation"
+      },
+      "artifacts": {
+        "object_spec": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_computer_desk_object\\object_spec.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_computer_desk_object\\cad_plan.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_computer_desk_object\\dry_run_report.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_computer_desk_object\\verification_report.json"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_computer_desk_object"
+    },
+    {
+      "case_id": "beta_office_storage_cabinet_object",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 0,
+        "zone_placement_candidate_count": 0,
+        "circulation_branch_count": 0,
+        "object_coverage_rate": 0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "",
+        "preferences_scenario": "",
+        "preferences_path": "",
+        "has_comparison_detail": false,
+        "has_proposal_comparison_summary": false,
+        "ranking_reason_codes": [],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [],
+        "circulation_continuity": "",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 0,
+        "placed_count": 0,
+        "placement_count": 0,
+        "cad_plan_count": 1,
+        "failed_check_count": 0,
+        "object_types": [
+          "storage_cabinet"
+        ],
+        "object_roles": [],
+        "object_type": "storage_cabinet",
+        "object_count": null,
+        "composition_id": null,
+        "persona_role": null,
+        "visual_preview_status": null,
+        "width": 1200,
+        "depth": 450,
+        "height": 2000,
+        "component_roles": [
+          "body",
+          "cabinet_front_clearance",
+          "front_panel",
+          "shelf"
+        ],
+        "clearance_refs": [
+          {
+            "role": "cabinet_front_clearance",
+            "bound_to": "storage_cabinet",
+            "front_depth_mm": 800
+          }
+        ],
+        "clearance_ref_roles": [
+          "cabinet_front_clearance"
+        ],
+        "placement_role": "general_storage",
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": null,
+        "failure_category": "",
+        "blocked_reasons": []
+      },
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "storage_cabinet",
+        "contains_clearance_refs": [
+          "cabinet_front_clearance"
+        ]
+      },
+      "artifacts": {
+        "object_spec": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_storage_cabinet_object\\object_spec.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_storage_cabinet_object\\cad_plan.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_storage_cabinet_object\\dry_run_report.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_storage_cabinet_object\\verification_report.json"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_storage_cabinet_object"
+    },
+    {
+      "case_id": "beta_office_file_cabinet_object",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 0,
+        "zone_placement_candidate_count": 0,
+        "circulation_branch_count": 0,
+        "object_coverage_rate": 0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "",
+        "preferences_scenario": "",
+        "preferences_path": "",
+        "has_comparison_detail": false,
+        "has_proposal_comparison_summary": false,
+        "ranking_reason_codes": [],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [],
+        "circulation_continuity": "",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 0,
+        "placed_count": 0,
+        "placement_count": 0,
+        "cad_plan_count": 1,
+        "failed_check_count": 0,
+        "object_types": [
+          "file_cabinet"
+        ],
+        "object_roles": [],
+        "object_type": "file_cabinet",
+        "object_count": null,
+        "composition_id": null,
+        "persona_role": null,
+        "visual_preview_status": null,
+        "width": 900,
+        "depth": 450,
+        "height": 1100,
+        "component_roles": [
+          "body",
+          "cabinet_front_clearance",
+          "drawer_stack"
+        ],
+        "clearance_refs": [
+          {
+            "role": "cabinet_front_clearance",
+            "bound_to": "file_cabinet",
+            "front_depth_mm": 800
+          }
+        ],
+        "clearance_ref_roles": [
+          "cabinet_front_clearance"
+        ],
+        "placement_role": "document_storage",
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": null,
+        "failure_category": "",
+        "blocked_reasons": []
+      },
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "object_type": "file_cabinet",
+        "placement_role": "document_storage"
+      },
+      "artifacts": {
+        "object_spec": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_file_cabinet_object\\object_spec.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_file_cabinet_object\\cad_plan.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_file_cabinet_object\\dry_run_report.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_file_cabinet_object\\verification_report.json"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_file_cabinet_object"
+    },
+    {
+      "case_id": "beta_office_desk_chair_micro_scene",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 0,
+        "zone_placement_candidate_count": 0,
+        "circulation_branch_count": 0,
+        "object_coverage_rate": 0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "",
+        "preferences_scenario": "",
+        "preferences_path": "",
+        "has_comparison_detail": false,
+        "has_proposal_comparison_summary": false,
+        "ranking_reason_codes": [],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [],
+        "circulation_continuity": "",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 0,
+        "placed_count": 0,
+        "placement_count": 0,
+        "cad_plan_count": 2,
+        "failed_check_count": 0,
+        "object_types": [
+          "chair",
+          "desk"
+        ],
+        "object_roles": [
+          "seating_for_desk",
+          "work_surface"
+        ],
+        "object_type": null,
+        "object_count": 2,
+        "composition_id": "single_desk_chair_pair",
+        "persona_role": "office_planner",
+        "visual_preview_status": "written",
+        "width": null,
+        "depth": null,
+        "height": null,
+        "component_roles": [],
+        "clearance_refs": [
+          {
+            "role": "chair_pullback_clearance",
+            "bound_to": "chair-01",
+            "behind_depth_mm": 800,
+            "side_margin_mm": 150
+          }
+        ],
+        "clearance_ref_roles": [
+          "chair_pullback_clearance"
+        ],
+        "placement_role": null,
+        "binding_relations": [
+          "seating_for_desk"
+        ],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": null,
+        "failure_category": "",
+        "blocked_reasons": []
+      },
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "single_desk_chair_pair",
+        "persona_role": "office_planner",
+        "object_count": 2,
+        "cad_plan_count": 2,
+        "contains_binding_relations": [
+          "seating_for_desk"
+        ]
+      },
+      "artifacts": {
+        "composition_spec": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\composition_spec.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\cad_plan.json",
+        "cad_plans": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\cad_plans.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\dry_run_report.json",
+        "dry_run_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\dry_run_reports.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\verification_report.json",
+        "verification_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\verification_reports.json",
+        "preview_svg": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene\\preview.svg"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_desk_chair_micro_scene"
+    },
+    {
+      "case_id": "beta_office_entry_reception_micro_scene",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 0,
+        "zone_placement_candidate_count": 0,
+        "circulation_branch_count": 0,
+        "object_coverage_rate": 0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "",
+        "preferences_scenario": "",
+        "preferences_path": "",
+        "has_comparison_detail": false,
+        "has_proposal_comparison_summary": false,
+        "ranking_reason_codes": [],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [],
+        "circulation_continuity": "",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 0,
+        "placed_count": 0,
+        "placement_count": 0,
+        "cad_plan_count": 1,
+        "failed_check_count": 0,
+        "object_types": [
+          "desk"
+        ],
+        "object_roles": [
+          "reception_surface"
+        ],
+        "object_type": null,
+        "object_count": 1,
+        "composition_id": "entry_reception_clearance",
+        "persona_role": "office_planner",
+        "visual_preview_status": "written",
+        "width": null,
+        "depth": null,
+        "height": null,
+        "component_roles": [],
+        "clearance_refs": [
+          {
+            "role": "entry_clearance",
+            "opening_id": "entry-01",
+            "clear_depth_mm": 1200,
+            "clear_width_mm": 1200
+          }
+        ],
+        "clearance_ref_roles": [
+          "entry_clearance"
+        ],
+        "placement_role": null,
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": null,
+        "failure_category": "",
+        "blocked_reasons": []
+      },
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "composition_id": "entry_reception_clearance",
+        "contains_clearance_refs": [
+          "entry_clearance"
+        ]
+      },
+      "artifacts": {
+        "composition_spec": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\composition_spec.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\cad_plan.json",
+        "cad_plans": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\cad_plans.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\dry_run_report.json",
+        "dry_run_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\dry_run_reports.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\verification_report.json",
+        "verification_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\verification_reports.json",
+        "preview_svg": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene\\preview.svg"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_entry_reception_micro_scene"
+    },
+    {
+      "case_id": "beta_office_small_suite_blank_shell",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 3,
+        "zone_placement_candidate_count": 5,
+        "circulation_branch_count": 3,
+        "object_coverage_rate": 1.0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "straight_spine",
+        "preferences_scenario": "office",
+        "preferences_path": "agents/office/preferences.json",
+        "has_comparison_detail": true,
+        "has_proposal_comparison_summary": true,
+        "ranking_reason_codes": [
+          "circulation_status",
+          "highest_weighted_score",
+          "zone_placement_best",
+          "circulation_branch_selected",
+          "no_failed_checks"
+        ],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [
+          "straight_spine"
+        ],
+        "circulation_continuity": "blocked",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 2,
+        "placed_count": 5,
+        "placement_count": 5,
+        "cad_plan_count": 5,
+        "failed_check_count": 0,
+        "object_types": [
+          "cabinet",
+          "chair",
+          "desk",
+          "shelf",
+          "table"
+        ],
+        "object_roles": [],
+        "object_type": null,
+        "object_count": null,
+        "composition_id": null,
+        "persona_role": null,
+        "visual_preview_status": null,
+        "width": null,
+        "depth": null,
+        "height": null,
+        "component_roles": [],
+        "clearance_refs": [],
+        "clearance_ref_roles": [],
+        "placement_role": null,
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 1,
+        "fixed_obstacle_count": 1,
+        "shell_id": "shell-office-small-suite",
+        "failure_category": "",
+        "blocked_reasons": []
+      },
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "office",
+        "preferences_path_contains": "agents/office/preferences.json",
+        "selected_circulation_strategy": "straight_spine",
+        "shell_id": "shell-office-small-suite",
+        "minimums": {
+          "candidate_count": 2,
+          "cad_plan_count": 1,
+          "placement_count": 5
+        },
+        "contains_object_types": [
+          "desk",
+          "chair",
+          "cabinet"
+        ]
+      },
+      "artifacts": {
+        "shell_model": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\shell_model.json",
+        "project_model": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\project_model.json",
+        "circulation_candidates": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\circulation_candidates.json",
+        "candidate_sets": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\candidate_sets.json",
+        "function_zones": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\function_zones.json",
+        "placements": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\placements.json",
+        "layout_proposal": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\layout_proposal.json",
+        "design_proposal": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\design_proposal.json",
+        "proposal_comparison_summary": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\proposal_comparison_summary.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\cad_plan.json",
+        "cad_plans": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\cad_plans.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\dry_run_report.json",
+        "dry_run_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\dry_run_reports.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\verification_report.json",
+        "verification_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell\\verification_reports.json"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_small_suite_blank_shell"
+    },
+    {
+      "case_id": "beta_office_long_narrow_blank_shell",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 3,
+        "zone_placement_candidate_count": 5,
+        "circulation_branch_count": 3,
+        "object_coverage_rate": 1.0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "straight_spine",
+        "preferences_scenario": "office",
+        "preferences_path": "agents/office/preferences.json",
+        "has_comparison_detail": true,
+        "has_proposal_comparison_summary": true,
+        "ranking_reason_codes": [
+          "circulation_status",
+          "highest_weighted_score",
+          "zone_placement_best",
+          "circulation_branch_selected",
+          "no_failed_checks"
+        ],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [
+          "straight_spine"
+        ],
+        "circulation_continuity": "blocked",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 2,
+        "placed_count": 4,
+        "placement_count": 4,
+        "cad_plan_count": 4,
+        "failed_check_count": 0,
+        "object_types": [
+          "cabinet",
+          "chair",
+          "desk",
+          "shelf"
+        ],
+        "object_roles": [],
+        "object_type": null,
+        "object_count": null,
+        "composition_id": null,
+        "persona_role": null,
+        "visual_preview_status": null,
+        "width": null,
+        "depth": null,
+        "height": null,
+        "component_roles": [],
+        "clearance_refs": [],
+        "clearance_ref_roles": [],
+        "placement_role": null,
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": "shell-office-long-narrow",
+        "failure_category": "",
+        "blocked_reasons": []
+      },
+      "expected": {
+        "pipeline_status": "ok",
+        "dry_run_status": "valid",
+        "verification_status": "unverified",
+        "evidence_state": "benchmark_pass_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "preferences_scenario": "office",
+        "preferences_path_contains": "agents/office/preferences.json",
+        "selected_circulation_strategy": "straight_spine",
+        "shell_id": "shell-office-long-narrow",
+        "minimums": {
+          "candidate_count": 3,
+          "placement_count": 4,
+          "cad_plan_count": 4
+        }
+      },
+      "artifacts": {
+        "shell_model": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\shell_model.json",
+        "project_model": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\project_model.json",
+        "circulation_candidates": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\circulation_candidates.json",
+        "candidate_sets": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\candidate_sets.json",
+        "function_zones": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\function_zones.json",
+        "placements": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\placements.json",
+        "layout_proposal": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\layout_proposal.json",
+        "design_proposal": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\design_proposal.json",
+        "proposal_comparison_summary": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\proposal_comparison_summary.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\cad_plan.json",
+        "cad_plans": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\cad_plans.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\dry_run_report.json",
+        "dry_run_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\dry_run_reports.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\verification_report.json",
+        "verification_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell\\verification_reports.json"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_long_narrow_blank_shell"
+    },
+    {
+      "case_id": "beta_office_too_small_failure",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "blocked",
+        "dry_run_status": "unknown",
+        "verification_status": "unknown",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 3,
+        "zone_placement_candidate_count": 0,
+        "circulation_branch_count": 0,
+        "object_coverage_rate": 0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "",
+        "preferences_scenario": "",
+        "preferences_path": "",
+        "has_comparison_detail": false,
+        "has_proposal_comparison_summary": false,
+        "ranking_reason_codes": [],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [],
+        "circulation_continuity": "",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 0,
+        "placed_count": 0,
+        "placement_count": 4,
+        "cad_plan_count": 0,
+        "failed_check_count": 0,
+        "object_types": [],
+        "object_roles": [],
+        "object_type": null,
+        "object_count": null,
+        "composition_id": null,
+        "persona_role": null,
+        "visual_preview_status": null,
+        "width": null,
+        "depth": null,
+        "height": null,
+        "component_roles": [],
+        "clearance_refs": [],
+        "clearance_ref_roles": [],
+        "placement_role": null,
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": "shell-office-too-small-workstation",
+        "failure_category": "insufficient_space",
+        "blocked_reasons": [
+          "insufficient remaining zone space for placement.",
+          "bbox exceeds zone geometry."
+        ]
+      },
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "insufficient_space",
+        "shell_id": "shell-office-too-small-workstation",
+        "contains_blocked_reason": "insufficient",
+        "maximums": {
+          "cad_plan_count": 0
+        }
+      },
+      "artifacts": {},
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_too_small_failure"
+    },
+    {
+      "case_id": "beta_office_door_clearance_failure",
+      "status": "pass",
+      "errors": [],
+      "actual": {
+        "pipeline_status": "blocked",
+        "dry_run_status": "unknown",
+        "verification_status": "unknown",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "candidate_count": 0,
+        "zone_placement_candidate_count": 0,
+        "circulation_branch_count": 0,
+        "object_coverage_rate": 0,
+        "selected_placement_failed_count": 0,
+        "selected_circulation_strategy": "",
+        "preferences_scenario": "",
+        "preferences_path": "",
+        "has_comparison_detail": false,
+        "has_proposal_comparison_summary": false,
+        "ranking_reason_codes": [],
+        "layout_failed_checks": [],
+        "blocked_circulation_strategies": [],
+        "circulation_continuity": "",
+        "failed_reason_distribution": {},
+        "selected_failed_reason_distribution": {},
+        "zone_count": 0,
+        "placed_count": 0,
+        "placement_count": 0,
+        "cad_plan_count": 0,
+        "failed_check_count": 0,
+        "object_types": [],
+        "object_roles": [],
+        "object_type": null,
+        "object_count": null,
+        "composition_id": "door_clearance_conflict",
+        "persona_role": "office_planner",
+        "visual_preview_status": null,
+        "width": null,
+        "depth": null,
+        "height": null,
+        "component_roles": [],
+        "clearance_refs": [
+          {
+            "role": "entry_clearance",
+            "opening_id": "entry-main",
+            "clear_depth_mm": 1200,
+            "clear_width_mm": 1200
+          }
+        ],
+        "clearance_ref_roles": [
+          "entry_clearance"
+        ],
+        "placement_role": null,
+        "binding_relations": [],
+        "circulation_roles": [],
+        "no_place_zone_count": 0,
+        "fixed_obstacle_count": 0,
+        "shell_id": null,
+        "failure_category": "entry_clearance_conflict",
+        "blocked_reasons": [
+          "entry_clearance_conflict: desk-entry-blocked overlaps entry clearance zone."
+        ]
+      },
+      "expected": {
+        "pipeline_status": "blocked",
+        "evidence_state": "blocked_expected_non_cad",
+        "geometry_accuracy": "not_verified_without_cad_readback",
+        "screenshot_role": "visual_aid_only",
+        "failure_category": "entry_clearance_conflict",
+        "contains_blocked_reason": "entry_clearance_conflict"
+      },
+      "artifacts": {
+        "composition_spec": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\composition_spec.json",
+        "cad_plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\cad_plan.json",
+        "cad_plans": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\cad_plans.json",
+        "dry_run_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\dry_run_report.json",
+        "dry_run_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\dry_run_reports.json",
+        "verification_report": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\verification_report.json",
+        "verification_reports": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\verification_reports.json",
+        "preview_svg": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure\\preview.svg"
+      },
+      "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\scene-prod-06-regression-gate-no-cad\\office\\beta_office_door_clearance_failure"
+    }
+  ]
+}

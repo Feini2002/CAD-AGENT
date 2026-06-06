@@ -1,0 +1,17 @@
+{
+  "model_type": "agent_handoff_packet",
+  "data": {
+    "schemaVersion": "handoff_packet/v1",
+    "fromAgentId": "pipeline_design_reviewer",
+    "toAgentIds": ["pipeline_delivery"],
+    "status": "ready",
+    "decisionSummary": "missing source hash",
+    "statePatch": {},
+    "evidenceRefs": [],
+    "evidenceMissing": [],
+    "openQuestions": [],
+    "downstreamInstructions": [],
+    "allowedClaims": [],
+    "forbiddenClaims": []
+  }
+}

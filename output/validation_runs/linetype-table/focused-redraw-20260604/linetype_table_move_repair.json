@@ -1,0 +1,39 @@
+{
+  "status": "pass",
+  "repairId": "LINETYPE-TABLE-MOVE-RIGHT-20260604",
+  "generatedAt": "2026-06-03T17:57:16.900316+00:00",
+  "reason": "Default linetype table position overlapped existing dimension style panels; move only this run created CODEX_PREVIEW handles to the right-side blank area.",
+  "sourceReport": "output\\validation_runs\\linetype-table\\focused-redraw-20260604\\linetype_table_report.json",
+  "targetLayer": "CODEX_PREVIEW",
+  "requestedHandleCount": 450,
+  "movedHandleCount": 450,
+  "skippedCount": 0,
+  "skipped": [],
+  "targetBase": [
+    17450.0,
+    1264.0,
+    0.0
+  ],
+  "bboxBefore": {
+    "min": [
+      10830.6,
+      1802.0
+    ],
+    "max": [
+      18450.0,
+      6060.0
+    ]
+  },
+  "bboxAfter": {
+    "min": [
+      20080.600000000002,
+      1802.0
+    ],
+    "max": [
+      27700.0,
+      6060.0
+    ]
+  },
+  "savedCurrentDwg": false,
+  "modifiedFormalLayers": false
+}

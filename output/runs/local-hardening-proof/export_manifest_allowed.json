@@ -1,0 +1,46 @@
+{
+  "agentId": "pipeline_design_director",
+  "approvalBasis": [
+    "MODEL_DATA_EXPORT_AUTHORIZATION.md#default-allowed-data"
+  ],
+  "blockedArtifacts": [],
+  "blockingReasons": [],
+  "evidenceBoundary": [
+    "manifest pass only proves export boundary, not model quality or CAD geometry",
+    "manifest pass does not prove provider availability or user acceptance"
+  ],
+  "forbiddenScan": {
+    "fullScreenScreenshotRequested": false,
+    "secretLikeCount": 0,
+    "wholeOutputRequested": false,
+    "wholeRepoRequested": false
+  },
+  "route": "codex_cli_local",
+  "schemaVersion": "model-export-manifest/v1",
+  "sentArtifacts": [
+    {
+      "byteCount": 26,
+      "kind": "prompt_text",
+      "path": "",
+      "sha256": "d67c195d1f0880d591970969edb965152887fce1296bb31f8e3f7e2b14ee8c02",
+      "status": "inline"
+    },
+    {
+      "byteCount": 12482,
+      "kind": "schema_snapshot",
+      "path": "core/model_review/schemas/design_director_review.schema.json",
+      "sha256": "742c61a09652381db46c816b9cb4ad08d0ae4fa1294dd8b3010d3d04989167eb",
+      "status": "present"
+    },
+    {
+      "byteCount": 0,
+      "kind": "payload_ref",
+      "path": "user_request.json",
+      "sha256": "",
+      "status": "reference_only"
+    }
+  ],
+  "status": "pass",
+  "traceId": "local-hardening-export",
+  "unexpectedLocalFiles": []
+}

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "prompt-pack-context/v1",
+  "promptPackId": "pipeline_visual_acceptance_reviewer",
+  "promptPackVersion": 1,
+  "taskType": "visual_acceptance_review",
+  "converter": "visual_acceptance",
+  "schemaPath": "core/model_review/schemas/visual_acceptance_review.schema.json",
+  "promptPath": "core/model_review/prompt_packs/pipeline_visual_acceptance_reviewer/prompt.md",
+  "inputSchemaPath": "core/model_review/prompt_packs/pipeline_visual_acceptance_reviewer/input_schema.json"
+}

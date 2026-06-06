@@ -1,0 +1,57 @@
+{
+  "aestheticAcceptable": true,
+  "alignmentAcceptable": true,
+  "alternativesConsidered": [],
+  "assumptions": [
+    "synthetic connectivity probe only"
+  ],
+  "blockingReasons": [],
+  "canAskUserToReview": true,
+  "contentMatchesIntent": true,
+  "decision": "pass",
+  "evidenceBoundaryRespected": true,
+  "evidenceMissing": [],
+  "evidenceUsed": [],
+  "finalResponseAllowedClaims": [
+    "synthetic connectivity probe only"
+  ],
+  "learningCandidate": {
+    "checkerDelta": "none",
+    "correctPattern": "none",
+    "decision": "none",
+    "errorPattern": "none",
+    "promptDelta": "none",
+    "responsibleAgentIds": [],
+    "retestOriginalTask": false,
+    "trigger": "synthetic connectivity probe only"
+  },
+  "lookHereFirst": [
+    "synthetic probe only"
+  ],
+  "nextRequiredEvidence": [],
+  "noMojibake": true,
+  "noSevereClipping": true,
+  "noSevereOverlap": true,
+  "nonScreenshotEvidenceChecked": true,
+  "repairRecommendation": {
+    "mode": "none",
+    "nextChecks": [],
+    "reason": "synthetic connectivity probe only",
+    "targetHandles": [],
+    "targetZone": "none"
+  },
+  "reusableOutputLikely": true,
+  "statePatch": {
+    "blockedReason": "none",
+    "completedEvidence": [],
+    "nextSafeAction": "none",
+    "pendingEvidence": [],
+    "pendingUserAction": "none",
+    "phase": "synthetic_probe",
+    "phaseLabelForUser": "Synthetic probe"
+  },
+  "status": "pass",
+  "textReadable": true,
+  "toolIntent": null,
+  "visualProblems": []
+}

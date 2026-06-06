@@ -1,0 +1,542 @@
+{
+  "$defs": {
+    "toolIntent": {
+      "additionalProperties": false,
+      "properties": {
+        "expectedEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "forbiddenEffects": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "inputs": {
+          "$ref": "#/$defs/toolIntentInputs"
+        },
+        "permissionClass": {
+          "enum": [
+            "read_only",
+            "safe_generate",
+            "deterministic_verify",
+            "cad_preview",
+            "cad_write",
+            "delete_or_replace",
+            "save_current_dwg"
+          ],
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "requestedByAgentId": {
+          "type": "string"
+        },
+        "requestedEffects": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "riskLevel": {
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "type": "string"
+        },
+        "schemaVersion": {
+          "type": "string"
+        },
+        "targetScope": {
+          "$ref": "#/$defs/toolIntentTargetScope"
+        },
+        "toolIntentId": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "toolIntentId",
+        "requestedByAgentId",
+        "toolName",
+        "purpose",
+        "inputs",
+        "targetScope",
+        "riskLevel",
+        "permissionClass",
+        "expectedEvidence",
+        "forbiddenEffects",
+        "requestedEffects"
+      ],
+      "type": "object"
+    },
+    "toolIntentInputs": {
+      "additionalProperties": false,
+      "properties": {
+        "agentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "auditJson": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cadPlanPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "driverMode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executionMode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executionSummaryPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paths": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payloadJson": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schemaRef": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summaryPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetLayer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "runId",
+        "path",
+        "paths",
+        "schemaRef",
+        "agentId",
+        "planPath",
+        "cadPlanPath",
+        "summaryPath",
+        "executionSummaryPath",
+        "targetLayer",
+        "driverMode",
+        "executionMode",
+        "payloadJson",
+        "auditJson"
+      ],
+      "type": "object"
+    },
+    "toolIntentTargetScope": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "previewOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "savedCurrentDwg": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scopeRef": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scopeType": {
+          "type": "string"
+        },
+        "targetHandles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetLayer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "scopeType",
+        "targetLayer",
+        "targetHandles",
+        "targetPath",
+        "scopeRef",
+        "bbox",
+        "previewOnly",
+        "savedCurrentDwg",
+        "notes"
+      ],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "additionalAgentRequests": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "agentId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "needs_reviewed_package",
+              "needs_openspec_change"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "agentId",
+          "reason",
+          "status"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "blockedBeforeExecution": {
+      "type": "boolean"
+    },
+    "blockingReasons": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "dispatchRationale": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "agentId": {
+            "type": "string"
+          },
+          "gate": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agentId",
+          "reason",
+          "gate"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "evidenceMissing": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "evidenceUsed": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "finalResponseAllowedClaims": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "hardGates": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "needsUserConfirmation": {
+      "type": "boolean"
+    },
+    "requiredAgents": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "route": {
+      "type": "string"
+    },
+    "statePatch": {
+      "additionalProperties": false,
+      "properties": {
+        "blockedReason": {
+          "type": "string"
+        },
+        "completedEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "nextSafeAction": {
+          "type": "string"
+        },
+        "pendingEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pendingUserAction": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "phaseLabelForUser": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase",
+        "phaseLabelForUser",
+        "completedEvidence",
+        "pendingEvidence",
+        "pendingUserAction",
+        "blockedReason",
+        "nextSafeAction"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "taskKind": {
+      "type": "string"
+    },
+    "toolIntent": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/toolIntent"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "userIntentSummary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "route",
+    "taskKind",
+    "userIntentSummary",
+    "requiredAgents",
+    "dispatchRationale",
+    "hardGates",
+    "needsUserConfirmation",
+    "blockedBeforeExecution",
+    "blockingReasons",
+    "additionalAgentRequests",
+    "statePatch",
+    "finalResponseAllowedClaims",
+    "evidenceUsed",
+    "evidenceMissing",
+    "toolIntent"
+  ],
+  "type": "object"
+}

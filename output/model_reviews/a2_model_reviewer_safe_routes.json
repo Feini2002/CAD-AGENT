@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-06-03",
+  "task": "A2 model reviewer safe route evaluation",
+  "status": "route_candidates_recorded",
+  "context": {
+    "remoteGpt55AttemptStatus": "external_export_blocked",
+    "manualReviewStatus": "needs_user_review",
+    "localPrescreenStatus": "needs_user_review"
+  },
+  "localProviderProbe": {
+    "codexCliSupportsOssLocalProvider": true,
+    "ollamaOnPath": false,
+    "lmstudioOnPath": false,
+    "codexCommand": "C:\\Users\\User\\AppData\\Roaming\\npm\\codex.cmd",
+    "status": "no_local_provider_detected_on_path"
+  },
+  "routes": [
+    {
+      "routeId": "manual_human_review",
+      "status": "available_now",
+      "dataExportRisk": "none",
+      "inputs": [
+        "output/previews/system-asset-warehouse-evidence-closure-a2-crop.png",
+        "output/model_reviews/a2_local_visual_prescreen.json"
+      ],
+      "canProduceModelBackedReview": false,
+      "canProduceUserAcceptance": true,
+      "requiresUserAction": true,
+      "notes": "This is the safest next route for A2 readability acceptance."
+    },
+    {
+      "routeId": "local_oss_model_review",
+      "status": "candidate_not_available_yet",
+      "dataExportRisk": "none_if_provider_is_local",
+      "requiredSetup": [
+        "Install or start a local provider such as Ollama or LM Studio",
+        "Confirm model vision support if using screenshots",
+        "Run codex.cmd exec --oss --local-provider <provider> with the same JSON schema"
+      ],
+      "canProduceModelBackedReview": true,
+      "requiresUserAction": true,
+      "blockingReason": "No Ollama or LM Studio command was detected on PATH."
+    },
+    {
+      "routeId": "remote_summary_only_review",
+      "status": "candidate_requires_explicit_export_approval",
+      "dataExportRisk": "lower_than_image_export_but_not_zero",
+      "inputs": [
+        "output/model_reviews/a2_summary_only_review_input_candidate.json"
+      ],
+      "canProduceModelBackedReview": true,
+      "requiresUserAction": true,
+      "blockingReason": "Any remote review still exports project-derived content to api.openai.com."
+    },
+    {
+      "routeId": "remote_image_and_report_review",
+      "status": "blocked_without_explicit_export_approval",
+      "dataExportRisk": "high",
+      "inputs": [
+        "A2 screenshot",
+        "shelf report",
+        "governance report",
+        "evidence closure report"
+      ],
+      "canProduceModelBackedReview": true,
+      "requiresUserAction": true,
+      "blockingReason": "The prior escalated retry was rejected as external data export risk."
+    }
+  ],
+  "recommendedNextAction": {
+    "routeId": "manual_human_review",
+    "reason": "A2 user acceptance is already the active plan gate, and it does not export workspace data."
+  },
+  "evidenceBoundary": {
+    "doesNotInvokeRemoteModel": true,
+    "doesNotSendDataExternally": true,
+    "doesNotReplaceCadReadback": true,
+    "doesNotReplaceUserAcceptance": true,
+    "doesNotAuthorizeCadExecution": true,
+    "doesNotPromoteTableC": true
+  }
+}

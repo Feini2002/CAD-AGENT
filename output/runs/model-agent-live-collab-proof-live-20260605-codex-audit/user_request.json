@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "run-package-user-request/v1",
+  "runId": "model-agent-live-collab-proof-live-20260605-codex-audit",
+  "writtenAt": "2026-06-05T08:02:44Z",
+  "userRequest": {
+    "text": "让模型型 Agent 协作设计一个茶几符号，并做 preview-only CAD 校验。",
+    "requestKind": "draw"
+  }
+}

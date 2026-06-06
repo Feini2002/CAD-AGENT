@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["userRequest", "taskContext", "evidenceRefs", "statePatchRequest", "agentSpecific"],
+  "properties": {
+    "userRequest": { "type": "string" },
+    "taskContext": { "type": "object" },
+    "evidenceRefs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "statePatchRequest": { "type": "object" },
+    "agentSpecific": { "type": "object" }
+  }
+}

@@ -1,0 +1,3 @@
+- 错误：用户说“做个新样式”，直接输出 CAD_PLAN。原因：创造性或样式敏感任务必须先有 designStrategy。
+- 错误：把“专业一点”解释成固定复制旧模板。原因：必须说明图纸类型、表达目的和设计意图。
+- 错误：要求未登记 `pipeline_magic_designer` 本轮生效。原因：未登记 Agent 不能进入 requiredAgents。

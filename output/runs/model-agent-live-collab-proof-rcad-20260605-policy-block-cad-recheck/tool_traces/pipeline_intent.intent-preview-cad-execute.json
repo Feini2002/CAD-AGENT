@@ -1,0 +1,53 @@
+{
+  "blockingReasons": [
+    "No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None)"
+  ],
+  "deterministicEntryPoint": "core.orchestrator.tool_contract.controlled_cad_tools.preview_cad_execute",
+  "downstreamArtifactPath": "tool_traces/pipeline_intent.intent-preview-cad-execute.json",
+  "downstreamReadableSummary": "preview_cad_execute failed orchestrator-owned execution: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None)",
+  "evidenceBoundary": [
+    "tool intent gate only permits orchestrator-owned allowlisted execution",
+    "model requests cannot authorize CAD writes outside controlled CODEX_PREVIEW execution, deletes, saves, registry mutations, or table C claims",
+    "allowed verification or controlled-CAD intent only means the orchestrator may run the relevant gate; the model cannot decide pass/fail"
+  ],
+  "executionStatus": "failed",
+  "expectedEvidence": [
+    "cad_reports/execution_summary.json",
+    "cad_reports/readback_summary.json",
+    "cad_reports/cad_preview_tool_report.json"
+  ],
+  "generatedAt": "2026-06-05T07:50:01Z",
+  "orchestratorDecision": "blocked",
+  "permissionClass": "cad_preview",
+  "requestedByAgentId": "pipeline_intent",
+  "result": {
+    "cadGeometryVerified": false,
+    "driverMode": "autocad_existing",
+    "evidenceBoundary": [
+      "Stage 4 CAD tool execution is orchestrator-owned, not model-owned",
+      "execution requires prior validate_plan and dry_run_plan pass reports for the same CAD_PLAN",
+      "only CODEX_PREVIEW preview execution is allowed; savedCurrentDwg=false",
+      "delete/replace, formal-layer write, registry mutation, training source mutation, and table C claims remain forbidden",
+      "screenshot is visual_aid_only and cannot replace created handles readback, closeout gate, or user acceptance"
+    ],
+    "planPath": "candidate_outputs/cad_plan.candidate.json",
+    "reason": "No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None)",
+    "reportPath": "cad_reports/cad_preview_tool_report.json",
+    "savedCurrentDwg": false,
+    "status": "fail",
+    "toolStage": "stage4_controlled_cad"
+  },
+  "riskLevel": "high",
+  "runId": "model-agent-live-collab-proof-rcad-20260605-policy-block-cad-recheck",
+  "schemaVersion": "tool-trace/v1",
+  "targetScope": {
+    "previewOnly": true,
+    "savedCurrentDwg": false,
+    "scopeType": "run_artifact",
+    "targetLayer": "CODEX_PREVIEW",
+    "targetPath": "candidate_outputs/cad_plan.candidate.json"
+  },
+  "toolIntentId": "intent-preview-cad-execute",
+  "toolName": "preview_cad_execute",
+  "toolSchemaVersion": "tool-intent/v1"
+}

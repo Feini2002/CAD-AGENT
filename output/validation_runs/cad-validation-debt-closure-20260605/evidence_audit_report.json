@@ -1,0 +1,2442 @@
+{
+  "version": "0.1",
+  "report_id": "table-c-capability-evidence-audit",
+  "status": "fail",
+  "generated_at": "2026-06-05T02:53:12Z",
+  "registry_path": "examples/capability_proof/cad_capability_registry.json",
+  "summary": {
+    "audited_count": 303,
+    "passed_count": 0,
+    "failed_count": 303
+  },
+  "rows": [
+    {
+      "capability_id": "intent.delete_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-final-gap-20260528-cad/intent-lab/intent_delete_object_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-final-gap-20260528-cad/intent-lab/intent_delete_object_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "intent.draw_annotation",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-final-gap-20260528-cad/intent-lab/intent_draw_annotation_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-final-gap-20260528-cad/intent-lab/intent_draw_annotation_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "intent.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/intent-lab/intent_draw_object_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/intent-lab/intent_draw_object_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "intent.draw_symbol_glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/intent-lab/intent_draw_symbol_glyph_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/intent-lab/intent_draw_symbol_glyph_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "intent.insert_block_alpha",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/intent-lab/intent_insert_block_alpha_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/intent-lab/intent_insert_block_alpha_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "intent.modify_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-final-gap-20260528-cad/intent-lab/intent_modify_object_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-final-gap-20260528-cad/intent-lab/intent_modify_object_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.arc",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.block_reference",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.circle",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.dimension",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.hatch",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/hatch-smoke/hatch_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/hatch-smoke/hatch_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.line",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.polyline",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.rectangle",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "primitive.text",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.commercial_fitout.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/domain-commercial-fitout/domain_commercial_fitout_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/domain-commercial-fitout/domain_commercial_fitout_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.custom.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_custom_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_custom_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.education.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_education_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_education_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.exhibition.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_exhibition_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_exhibition_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.generic.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_generic_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_generic_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.healthcare.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_healthcare_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_healthcare_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.hotel.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_hotel_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_hotel_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.industrial.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_industrial_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_industrial_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.office.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_office_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_office_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.residential.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_residential_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_residential_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.restaurant.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_restaurant_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_restaurant_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "domain.retail.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_retail_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_retail_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.bed.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.bed.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.cabinet.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.cabinet.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.chair.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.chair.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.computer_desk.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.computer_desk.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.counter.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.counter.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.desk.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.desk.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.display_unit.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_12/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_12/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.display_unit.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_12/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_12/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.file_cabinet.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.file_cabinet.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.monitor.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_13/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_13/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.monitor.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_13/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_13/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.rug.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_14/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_14/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.rug.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_14/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_14/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.shelf.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.shelf.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.sofa.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.sofa.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.storage_cabinet.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.storage_cabinet.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.table.draw_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.table.glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.workstation_cluster",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/workstation_cluster/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/workstation_cluster/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.desk",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/desk/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/desk/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.office_chair",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/office_chair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/office_chair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.file_cabinet",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/file_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/file_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.printer_station",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/printer_station/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/printer_station/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.equipment_cabinet",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/equipment_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/equipment_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.meeting_table",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/meeting_table/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/meeting_table/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.meeting_chair",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/meeting_chair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/meeting_chair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.side_cabinet",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/side_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/side_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.av_console",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/av_console/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/av_console/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.reception_desk",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/reception_desk/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/reception_desk/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.waiting_sofa",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/waiting_sofa/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/waiting_sofa/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.feature_wall",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/feature_wall/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/feature_wall/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "catalog.commercial_fitout.storage_cabinet",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/storage_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/storage_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.bedroom_bed_rug",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.cabinet_pullback_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/cabinet_pullback_conflict/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/cabinet_pullback_conflict/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.desk_with_back_cabinet",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.dining_table_set",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.door_clearance_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/door_clearance_conflict/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/door_clearance_conflict/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.entry_reception_clearance",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.fitout_file_cabinet_front_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_file_cabinet_front_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_file_cabinet_front_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.fitout_main_aisle_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_main_aisle_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_main_aisle_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.fitout_meeting_seating_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_meeting_seating_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_meeting_seating_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.fitout_meeting_table_chairs",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_meeting_table_micro_scene/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_meeting_table_micro_scene/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.fitout_open_office_desk_chair",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_open_office_desk_chair_micro_scene/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_open_office_desk_chair_micro_scene/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.fitout_reception_counter_waiting",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_reception_counter_micro_scene/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_reception_counter_micro_scene/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.fitout_reception_entry_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_reception_entry_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_reception_entry_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.office_desk_combo",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/office_planner_desk_combo/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/office_planner_desk_combo/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.single_desk_chair_pair",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "composition.two_workstations_shared_aisle",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.archetype.display",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_display/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_display/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.archetype.seating",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_seating/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_seating/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.archetype.sleeping",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_sleeping/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_sleeping/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.archetype.storage",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_storage/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_storage/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.archetype.surface",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_surface/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_surface/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.archetype.workstation",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_workstation/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/glyph-matrix/archetype_workstation/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_shelf_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_shelf/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_shelf/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_chair_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/capability-proof-vproof61-20260527/chair/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/capability-proof-vproof61-20260527/chair/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_bed_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_bed/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_bed/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_cabinet_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_cabinet/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_cabinet/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_desk_1400_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/capability-proof-vproof61-20260527/desk/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/capability-proof-vproof61-20260527/desk/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.surface_table_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/capability-proof-vproof61-20260527/table/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/capability-proof-vproof61-20260527/table/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_workstation_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_workstation/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-symbol-specs-20260528-cad/symbol_workstation/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.benchmark_non_cad_suite",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/non-cad-cad/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/non-cad-cad/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.drawing_analysis_load_shell_model",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.layout_create_candidates",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.layout_create_zone_placements",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.layout_generate_circulation_candidates",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.layout_split_function_zones",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.object_explain",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.plan_model_to_plans",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.project_model_build",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundI-20260528-cad/complex-smoke/complex_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundI-20260528-cad/complex-smoke/complex_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.proposal_compare_layout_candidates",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_generic_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_generic_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.verification_no_cad_report",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-final-gap-20260528-cad/verification_no_cad_cad/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-final-gap-20260528-cad/verification_no_cad_cad/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.workflow_artifact_graph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "core.api.workflow_blank_shell_pipeline",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "scene.no_scene",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_generic_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_generic_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "scene.office",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "scene.residential",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "scene.restaurant",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "scene.commercial_fitout",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "scene.exhibition",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_exhibition_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_exhibition_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "scene.custom",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_custom_cad_report.json",
+      "message": "report not found: output/validation_runs/tablec-object-domain-glyph-20260528-cad/domain-smoke/domain_custom_cad_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.retail_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-regression-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-regression-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.office_small_suite",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.residential_living_room",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.restaurant_small_front",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.long_narrow_office_main_aisle",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.office_obstacle_avoidance_riser",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.too_small_room_for_workstation",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.blank_shell_core_benchmark.corridor_riser_blocks_main_path",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundN-20260528-cad/local-regression/composition_cad/composition_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundN-20260528-cad/local-regression/composition_cad/composition_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_open_office_desk_chair_micro_scene",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_open_office_desk_chair_micro_scene/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_open_office_desk_chair_micro_scene/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_reception_counter_micro_scene",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_reception_counter_micro_scene/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_reception_counter_micro_scene/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_meeting_table_micro_scene",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_meeting_table_micro_scene/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-composition-20260528-cad/composition_cad/fitout_meeting_table_micro_scene/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_desk_object_spec",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/desk/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/desk/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_reception_entry_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_reception_entry_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_reception_entry_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_file_cabinet_front_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_file_cabinet_front_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_file_cabinet_front_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_main_aisle_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_main_aisle_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_main_aisle_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.commercial_fitout_micro_scene_benchmark.fitout_meeting_seating_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_meeting_seating_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/fitout-conflict-cad/fitout_meeting_seating_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_residential_beginner_dining_table",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_residential_beginner_dining_table/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_residential_beginner_dining_table/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_residential_detail_bedroom_set",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_residential_detail_bedroom_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_residential_detail_bedroom_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_office_admin_task_chair",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_office_admin_task_chair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_office_admin_task_chair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_office_workstation_pair",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_office_workstation_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_office_workstation_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_restaurant_owner_dining_set",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_restaurant_owner_dining_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_restaurant_owner_dining_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_restaurant_service_counter",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_restaurant_service_counter/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_restaurant_service_counter/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_commercial_owner_display_unit",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_commercial_owner_display_unit/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_commercial_owner_display_unit/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_commercial_designer_counter",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_commercial_designer_counter/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_commercial_designer_counter/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_exhibition_curator_display_unit",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_exhibition_curator_display_unit/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_exhibition_curator_display_unit/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.demand_side_agent_benchmark.demand_custom_vague_table",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_custom_vague_table/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/demand-smoke/demand_cad/demand_custom_vague_table/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.drawing_read_benchmark.geometry_feature_full_chain_pass",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.drawing_read_benchmark.geometry_candidates_without_shell_export_pass",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.drawing_read_benchmark.walls_only_missing_opening_blocked",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.interior_delivery_benchmark.interior_designer_bedroom_bed_rug",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.interior_delivery_benchmark.home_designer_dining_table_set",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.interior_delivery_benchmark.office_planner_desk_combo",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/office_planner_desk_combo/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/office_planner_desk_combo/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.non_cad_core_benchmark.minimal_cabinet_non_cad",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundN-20260528-cad/non-cad-cad/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundN-20260528-cad/non-cad-cad/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.office_desk_default_spec",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.office_chair_default_spec",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.office_cabinet_default_spec",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.computer_desk_default_spec",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.storage_cabinet_front_clearance",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.file_cabinet_default_spec",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.single_desk_chair_pair",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.desk_with_back_cabinet",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.two_workstations_shared_aisle",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.entry_reception_clearance",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.long_narrow_office_main_aisle",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-regression-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-regression-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.office_obstacle_avoidance_riser",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.meeting_computer_mixed_zone",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.office_small_suite_alpha",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.too_small_room_for_workstation",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.office_invalid_workflow_input",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundK-20260528-cad/project-sample/project_sample_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundK-20260528-cad/project-sample/project_sample_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.door_clearance_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/door_clearance_conflict/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/door_clearance_conflict/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.cabinet_pullback_conflict",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/cabinet_pullback_conflict/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/office-conflict-cad/cabinet_pullback_conflict/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_computer_desk_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_storage_cabinet_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_file_cabinet_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_desk_chair_micro_scene",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_entry_reception_micro_scene",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_small_suite_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_long_narrow_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_too_small_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_scene_beta_benchmark.beta_office_door_clearance_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundL-20260528-cad/office-beta-conflict-cad/beta_office_door_clearance_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundL-20260528-cad/office-beta-conflict-cad/beta_office_door_clearance_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.project_sample_benchmark.sample_blank_shell_pass",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.project_sample_benchmark.sample_blank_shell_too_small_blocked",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundN-20260528-cad/project-sample-pass/project_sample_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.proposal_comparison_benchmark.retail_comparison_summary",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/reception_desk/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-fitout-catalog-20260528-cad/batch/reception_desk/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.proposal_comparison_benchmark.residential_full_coverage_summary",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.proposal_comparison_benchmark.long_narrow_circulation_summary",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/two_workstations_shared_aisle/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.proposal_comparison_benchmark.obstacle_avoidance_conflict_summary",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/desk_with_back_cabinet/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.proposal_confirmed_benchmark.retail_confirmed_finalize",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundI-20260528-cad/complex-smoke/complex_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundI-20260528-cad/complex-smoke/complex_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.proposal_confirmed_benchmark.residential_confirmed_finalize",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_sofa_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_bed_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_bedroom_combo",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_dining_combo",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_shelf_storage",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_cabinet_storage",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_living_room_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.residential_scene_beta_benchmark.beta_residential_clearance_conflict_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/res-conflict-cad/beta_residential_clearance_conflict_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/res-conflict-cad/beta_residential_clearance_conflict_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_table_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_chair_object",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_counter_entrance",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_entry_clearance_combo",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_dining_seating_combo",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_back_of_house_storage",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_front_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/entry_reception_clearance/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.restaurant_scene_beta_benchmark.beta_restaurant_entry_conflict_failure",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/rest-conflict-cad/beta_restaurant_entry_conflict_failure/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/rest-conflict-cad/beta_restaurant_entry_conflict_failure/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.scene_alpha_benchmark.scene_alpha_office_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-office-composition-20260528-cad/composition_cad/single_desk_chair_pair/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.scene_alpha_benchmark.scene_alpha_residential_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.scene_alpha_benchmark.scene_alpha_restaurant_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-interior-composition-20260528-cad/composition_cad/home_designer_dining_table_set/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.symbol_fallback_policy_01.desk_symbol_glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_surface/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_surface/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.symbol_fallback_policy_01.desk_elevation_component_preview",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.symbol_fallback_policy_01.counter_deferred",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.fallback_tier.block",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.fallback_tier.symbol_glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_workstation/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_workstation/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.fallback_tier.component_preview",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.fallback_tier.bbox_placeholder",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.fallback_tier.deferred_unsupported_symbol",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.baseline_cad_validation",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/local-regression/baseline_cad_validation/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.project_sample_cad_check",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/local-regression/project_sample_cad/project_sample_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/local-regression/project_sample_cad/project_sample_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.composition_cad_check",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/local-regression/composition_cad/composition_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/local-regression/composition_cad/composition_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.primitive_matrix_no_cad",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundI-20260528-cad/primitive-matrix/primitive_matrix_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundI-20260528-cad/primitive-matrix/primitive_matrix_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.primitive_matrix_cad",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/local-regression/primitive_matrix_cad/primitive_matrix_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/local-regression/primitive_matrix_cad/primitive_matrix_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.cad_plan_fixture_suite_no_cad",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundK-20260528-cad/cad-plan-fixture/cad_plan_fixture_suite_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundK-20260528-cad/cad-plan-fixture/cad_plan_fixture_suite_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.cad_plan_fixture_suite_cad",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/local-regression/cad_plan_fixture_suite_cad/cad_plan_fixture_suite_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/local-regression/cad_plan_fixture_suite_cad/cad_plan_fixture_suite_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "regression.complex_cad_smoke",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/local-regression/complex_cad_smoke/complex_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/local-regression/complex_cad_smoke/complex_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.controlled_test_block_001",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.controlled_test_block_002",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_cabinet_1800",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_table_1200",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_mid_room/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_mid_room/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_shelf_900",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_far_corner/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_anchor_far_corner/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_chair_500",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_rotation_45/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_rotation_45/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_counter_1800",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_rotation_90/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_rotation_90/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_desk_1400",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_scale_half/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_scale_half/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_sofa_2200",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_scale_125/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_scale_125/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.library.block_display_unit_1200",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_combined_transform/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundM-20260528-cad/block-beta/beta_combined_transform/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.arm",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.back",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.back_panel",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.base",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.body",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.boundary",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.cabinet_front_clearance",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.cable_side_hint",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.clearance_zone",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.display_surface",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.drawer_stack",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.front_panel",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_12/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_12/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.kickboard",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_13/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_13/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.monitor_zone",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_14/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_14/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.screen",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.seat",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.shelf",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.sleep_surface",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_04/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.soft_zone",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.storage_level",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.support",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.top",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_08/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.top_rail",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_09/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.upright",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_10/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "component_role.worktop",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_11/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.insert_block_alpha.matrix",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/local-regression/baseline_cad_validation/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.insert_block_alpha.anchor",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.insert_block_alpha.rotation",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_rotation_45/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_rotation_45/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.insert_block_alpha.scale",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_scale_half/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_scale_half/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "block.insert_block_alpha.attributes",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-intent-block-demand-20260528-cad/block-beta/beta_anchor_origin/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.symbol_sofa_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/rcad-15-symbol-glyph-sofa-20260527/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/rcad-15-symbol-glyph-sofa-20260527/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.surface_monitor_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-symbol-specs-20260528-cad/surface_monitor/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-symbol-specs-20260528-cad/surface_monitor/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.spec.surface_rug_plan",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-symbol-specs-20260528-cad/surface_rug/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-symbol-specs-20260528-cad/surface_rug/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.readability_status.deferred_unsupported_symbol",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.readability_status.fallback_bbox_placeholder",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_05/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.readability_status.fallback_component_preview",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.readability_status.symbol_readable",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_workstation/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_workstation/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.readability_status.visual_review_required",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_display/symbol_glyph_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/glyph-matrix/archetype_display/symbol_glyph_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.sample.commercial_fitout_meeting_room",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/capability-proof-vproof63-20260527/cad/commercial_fitout_meeting_sample/commercial_fitout_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/capability-proof-vproof63-20260527/cad/commercial_fitout_meeting_sample/commercial_fitout_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.sample.commercial_fitout_reception",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/capability-proof-vproof63-20260527/cad/commercial_fitout_reception_sample/commercial_fitout_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/capability-proof-vproof63-20260527/cad/commercial_fitout_reception_sample/commercial_fitout_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "drawing_standard.beta.drawing_standard_beta_04",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "drawing_standard.beta.role_furniture_preview_layer",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "drawing_standard.beta.role_clearance_hatch_style",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/hatch-smoke/hatch_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/hatch-smoke/hatch_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "drawing_standard.beta.layer_role_shell_semantic_only",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "drawing_standard.beta.block_insert_plan_resolution",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "drawing_standard.beta.primitive_text_style",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "drawing_standard.beta.primitive_dimension_style",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundO-20260528-cad/drawing-standard/drawing_standard_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.block_first.symbol_block_first_tier_01",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundK-20260528-cad/symbol-block-first/symbol_block_first_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundK-20260528-cad/symbol-block-first/symbol_block_first_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.block_first.controlled_block_wins",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundK-20260528-cad/symbol-block-first/symbol_block_first_cad_smoke_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundK-20260528-cad/symbol-block-first/symbol_block_first_cad_smoke_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.block_first.metadata_only_block_falls_to_glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "symbol.block_first.block_preferred_without_library_glyph",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/drawing-standard-smoke/block_alpha_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.regression.manifest",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.regression.sample.sample_blank_shell",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundK-20260528-cad/project-sample/project_sample_cad_check_report.json",
+      "message": "report not found: output/validation_runs/tablec-roundK-20260528-cad/project-sample/project_sample_cad_check_report.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.regression.sample.commercial_fitout_sample",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.regression.sample.commercial_fitout_meeting_sample",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_002.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_002.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.regression.sample.commercial_fitout_reception_sample",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_003.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/fitout_smoke/batch/verification_reports/verification_report_003.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.regression.sample.sample_blank_shell_too_small",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_005.json",
+      "message": "report not found: output/validation_runs/tablec-scene-blank-20260528-cad/project_sample/batch/verification_reports/verification_report_005.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "trend.dashboard.rollup",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "trend.dashboard.local_cad_regression",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "trend.dashboard.cad_validation_index",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "trend.dashboard.capability_coverage",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "lab.nightly.rollup",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "lab.nightly.tier_l1",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.component_detail.suite",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.table.component_detail",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_03/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.desk.component_detail",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.chair.component_detail",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_02/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.bed.component_detail",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_06/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "object.sofa.component_detail",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_07/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "benchmark.office_alpha_benchmark.object_spec_suite",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "message": "report not found: output/validation_runs/tablec-roundH-20260528-cad/object-smoke/batch/object_01/verification_reports/verification_report_001.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.cross_machine.playbook",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    },
+    {
+      "capability_id": "project.cross_machine.coverage_recalc",
+      "claim_level": "showcase",
+      "status": "fail",
+      "report_path": "output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "message": "report not found: output/validation_runs/tablec-roundP-20260528-cad/guard-full/subreports/capability_probe/cad_capability_probe.json",
+      "failure_category": "report_path_missing"
+    }
+  ],
+  "notes": [
+    "Only verified/showcase registry rows are audited.",
+    "Screenshots are visual aids; table C geometry proof still requires CAD readback evidence."
+  ]
+}

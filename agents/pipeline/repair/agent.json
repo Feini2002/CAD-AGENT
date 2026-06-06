@@ -9,10 +9,18 @@
     "runs/roundN_style_compare.md",
     "runs/roundN_visual_parts.json",
     "runs/roundN_visual_style_brief.md",
+    "runs/roundN_model_repair_plan_review.json",
+    "modelBackedRepairPlan",
+    "repairPlanCandidate",
     "feedback.md",
     "docs/training/training-errors.md"
   ],
-  "outputs": ["runs/roundN_repair_plan.json", "updated intent/checklist/runs script diff"],
+  "outputs": [
+    "runs/roundN_repair_plan.json",
+    "modelBackedRepairPlan",
+    "repairPlanCandidate",
+    "updated intent/checklist/runs script diff"
+  ],
   "repair_priority": [
     "forbidden_visual_patterns",
     "plan_view_role_direction_errors",
@@ -23,7 +31,16 @@
     "machine_cleanliness",
     "machine_size_drift_only"
   ],
-  "uses_core": ["verification.training_geometry_audit", "execution"],
+  "uses_core": [
+    "verification.training_geometry_audit",
+    "execution",
+    "core.model_review.repair_plan_review"
+  ],
+  "pass_gate": {
+    "model_repair_plan_proposal_only": true,
+    "model_repair_plan_cannot_authorize_execution": true,
+    "broad_scope_delete_blocked": true
+  },
   "must_not": [
     "rewrite_entire_case_without_root_cause",
     "disable_audit_checks_to_pass",
@@ -32,7 +49,10 @@
     "ignore_style_target_mismatch",
     "ignore_user_common_sense_correction",
     "repair_size_or_fillet_when_visual_still_fail",
-    "repair_size_only_when_visual_all_pass"
+    "repair_size_only_when_visual_all_pass",
+    "execute_cad_commands_from_model_repair_plan",
+    "save_current_dwg_from_model_repair_plan",
+    "delete_entities_from_broad_model_scope"
   ],
   "promotion_rule": "repeatable failure → core probe or pipeline rule, not new case audit script",
   "doc": "docs/training/vision-first-style.md"

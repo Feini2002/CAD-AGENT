@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "handoff_packet/v1",
+  "fromAgentId": "pipeline_design_director",
+  "toAgentIds": [
+    "pipeline_style_generator",
+    "pipeline_design_reviewer"
+  ],
+  "status": "blocked",
+  "decisionSummary": "unavailable",
+  "statePatch": {},
+  "evidenceRefs": [],
+  "evidenceMissing": [],
+  "openQuestions": [],
+  "downstreamInstructions": [],
+  "allowedClaims": [],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "sha256OfSourceOutput": "0d4547a0509862dff6b86669e9a894dad2efc6855e6de1951751c36de0995968"
+}

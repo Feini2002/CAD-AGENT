@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "reviewer-host-delivery-review/v1",
+  "status": "fail",
+  "deliveryDecision": "not_verified",
+  "openingLine": "暂不交付",
+  "whatChanged": [
+    "Reviewer Host 已读取 run package 证据并生成交付口径"
+  ],
+  "evidenceProves": [
+    "validate_plan=pass",
+    "dry_run=pass"
+  ],
+  "evidenceDoesNotProve": [
+    "截图只作视觉辅助",
+    "模型 pass 不等于 CAD 几何证明",
+    "closeout pass 不等于用户已验收"
+  ],
+  "lookHereFirst": [
+    "主要对象位置",
+    "中文文字是否可读",
+    "遮挡 / 裁剪 / 贴边",
+    "本轮 created handles 范围"
+  ],
+  "usefulUserFeedback": "请直接指出不对的对象、位置或文字；如果只是局部错误，我会按 handles / bbox 原位修。",
+  "blockingReasons": [
+    "created_handles_readback missing",
+    "visual_acceptance_review missing",
+    "neighbor_protection missing",
+    "targetLayer is not CODEX_PREVIEW",
+    "savedCurrentDwg is not false"
+  ],
+  "statePatch": {
+    "phase": "blocked",
+    "phaseLabelForUser": "交付复审未通过",
+    "completedEvidence": [
+      "validate_plan=pass",
+      "dry_run=pass"
+    ],
+    "pendingEvidence": [
+      "created_handles_readback",
+      "created_handles_readback=ok",
+      "neighbor_protection",
+      "neighbor_protection=pass",
+      "savedCurrentDwg=false",
+      "targetLayer=CODEX_PREVIEW",
+      "visual_acceptance_review",
+      "visual_acceptance_review=pass"
+    ],
+    "pendingUserAction": "",
+    "blockedReason": "created_handles_readback missing; visual_acceptance_review missing; neighbor_protection missing; targetLayer is not CODEX_PREVIEW; savedCurrentDwg is not false",
+    "nextSafeAction": "fix_missing_evidence"
+  },
+  "finalResponseAllowedClaims": [],
+  "evidenceUsed": [
+    "cad_reports/dry_run_report.json",
+    "cad_reports/validation_report.json",
+    "dispatch_plan.json",
+    "state.json",
+    "task_contract.json"
+  ],
+  "evidenceMissing": [
+    "created_handles_readback",
+    "created_handles_readback=ok",
+    "neighbor_protection",
+    "neighbor_protection=pass",
+    "savedCurrentDwg=false",
+    "targetLayer=CODEX_PREVIEW",
+    "visual_acceptance_review",
+    "visual_acceptance_review=pass"
+  ],
+  "screenshotEvidence": {
+    "role": "visual_aid_only",
+    "count": 0
+  },
+  "modelProviderStatus": {
+    "modelInvoked": false,
+    "route": "deterministic_reviewer_host",
+    "schemaValid": true,
+    "blocking": true
+  }
+}

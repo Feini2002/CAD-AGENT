@@ -1,0 +1,44 @@
+{
+  "version": "0.1",
+  "object_id": "object-computer_desk-1200x700",
+  "type": "computer_desk",
+  "name": "Computer Desk",
+  "style_profile_id": "style-modern",
+  "size": {
+    "width": 1200,
+    "depth": 700,
+    "height": 750
+  },
+  "components": [
+    {
+      "component_id": "computer-desk-worktop",
+      "role": "worktop",
+      "count": 1
+    },
+    {
+      "component_id": "computer-desk-knee-clearance",
+      "role": "clearance_zone",
+      "count": 1
+    },
+    {
+      "component_id": "computer-desk-monitor-zone",
+      "role": "monitor_zone",
+      "count": 1
+    },
+    {
+      "component_id": "computer-desk-cable-side",
+      "role": "cable_side_hint",
+      "count": 1
+    }
+  ],
+  "placement_requirements": [
+    "base point is lower-left plan corner"
+  ],
+  "drawing_intent": "plan_preview",
+  "placement_role": "screen_workstation",
+  "assertion_hints": [
+    "monitor_zone",
+    "cable_side_hint",
+    "wall_adjacent_preferred"
+  ]
+}

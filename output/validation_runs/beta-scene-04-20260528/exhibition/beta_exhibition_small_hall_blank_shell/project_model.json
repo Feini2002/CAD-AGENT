@@ -1,0 +1,117 @@
+{
+  "version": "0.1",
+  "project_id": "project-blank-shell-layout",
+  "domain": "generic",
+  "units": "mm",
+  "brief_id": "brief-blank-shell-layout",
+  "drawing_model_id": "drawing-empty-room",
+  "spaces": [
+    {
+      "space_id": "space-exhibition-small-hall",
+      "name": "Shell Area",
+      "boundary": {
+        "min": [
+          0,
+          0
+        ],
+        "max": [
+          12000,
+          7000
+        ]
+      },
+      "shell_id": "shell-exhibition-small-hall",
+      "source": "shell_model.boundary"
+    }
+  ],
+  "requirements": [
+    "Create repeatable non-CAD blank-shell layout options before generating any CAD_PLAN."
+  ],
+  "constraints": [
+    "preview_only",
+    "use_CODEX_PREVIEW",
+    "manual_shell_input",
+    "fixed_obstacle:structural-column",
+    "no_place_zone:entry-approach-buffer",
+    "opening:entry-main",
+    "opening:service-door"
+  ],
+  "uncertainties": [
+    "Exhibition hall shell is hand-authored and not verified from CAD readback."
+  ],
+  "pending_questions": [
+    "Exhibition hall shell is hand-authored and not verified from CAD readback."
+  ],
+  "shell_id": "shell-exhibition-small-hall",
+  "source": {
+    "type": "shell_model",
+    "shell_id": "shell-exhibition-small-hall"
+  },
+  "shell_context": {
+    "openings": [
+      {
+        "opening_id": "entry-main",
+        "type": "entry",
+        "center": [
+          0,
+          3500
+        ],
+        "width": 1400
+      },
+      {
+        "opening_id": "service-door",
+        "type": "service",
+        "center": [
+          12000,
+          3500
+        ],
+        "width": 1000
+      }
+    ],
+    "fixed_obstacles": [
+      {
+        "obstacle_id": "structural-column",
+        "bbox": {
+          "min": [
+            5200,
+            2800
+          ],
+          "max": [
+            5600,
+            3200
+          ]
+        }
+      }
+    ],
+    "no_place_zones": [
+      {
+        "zone_id": "entry-approach-buffer",
+        "bbox": {
+          "min": [
+            0,
+            2800
+          ],
+          "max": [
+            1800,
+            4200
+          ]
+        }
+      }
+    ],
+    "required_connections": [
+      {
+        "connection_id": "entry-to-service",
+        "target": "service-door",
+        "point": [
+          12000,
+          3500
+        ]
+      }
+    ],
+    "building_elements": [
+      {
+        "element_id": "front-display-glass",
+        "type": "storefront"
+      }
+    ]
+  }
+}

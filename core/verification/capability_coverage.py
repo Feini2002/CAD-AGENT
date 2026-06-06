@@ -257,11 +257,23 @@ def build_capability_coverage_report(
                 "showcase_readiness_percent": cad_strength["showcase_readiness_percent"],
             },
         },
+        "metric_labels": {
+            "cad_strength_headline_percent": "Core Proof Coverage headline",
+            "cad_strength_index_percent": "Core proof weighted index",
+            "cad_proof_coverage_percent": "Core proof registry coverage",
+            "legacy_alias": "旧表 C",
+        },
+        "claim_boundary": {
+            "semantic_layer": "capability_and_evidence",
+            "label": "Core Proof Coverage",
+            "not_proof_of": ["Agent Task Maturity", "Project Delivery Readiness"],
+            "note": "Coverage JSON fields stay machine-compatible; user-facing docs must not present them as end-to-end CAD task maturity.",
+        },
         "notes": [
             "cad_proof_coverage_rate counts claim_level verified or showcase only.",
             "smoke and deferred rows are registered but do not increase CAD proof coverage.",
             "geometry_verified must be backed by evidence.report_path before raising claim_level.",
-            "cad_strength_headline_percent = min(cad_strength_index, scene_fragment L3+, showcase_readiness); not RCAD chimney completion.",
+            "cad_strength_headline_percent = Core Proof Coverage headline; it is not Agent Task Maturity, Project Delivery Readiness, or RCAD chimney completion.",
         ],
     }
 

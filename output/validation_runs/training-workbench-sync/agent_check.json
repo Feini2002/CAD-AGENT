@@ -1,0 +1,311 @@
+{
+  "status": "pass",
+  "data_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\capability-map-data.js",
+  "html_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\capability-map.html",
+  "checks": [
+    {
+      "name": "schema_v2",
+      "status": "pass",
+      "detail": "训练工作台数据必须是 schemaVersion=2。"
+    },
+    {
+      "name": "has_training_programs",
+      "status": "pass",
+      "detail": "trainingPrograms=217"
+    },
+    {
+      "name": "has_agent_profiles",
+      "status": "pass",
+      "detail": "agentProfiles=28"
+    },
+    {
+      "name": "has_prompt_contracts",
+      "status": "pass",
+      "detail": "promptContracts=28"
+    },
+    {
+      "name": "designer_agent_declared",
+      "status": "pass",
+      "detail": "designerAgent.id=cad_designer"
+    },
+    {
+      "name": "growth_stages_declared",
+      "status": "pass",
+      "detail": "growthStages=7"
+    },
+    {
+      "name": "foundation_courses_declared",
+      "status": "pass",
+      "detail": "foundationCourses=7"
+    },
+    {
+      "name": "training_batches_declared",
+      "status": "pass",
+      "detail": "trainingBatches=8"
+    },
+    {
+      "name": "validation_checkers_declared",
+      "status": "pass",
+      "detail": "validationCheckers=10"
+    },
+    {
+      "name": "training_batch_program_refs_exist",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "training_batch_dependencies_exist",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "training_batch_checker_refs_exist",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "responsible_agents_have_profiles",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "responsible_agents_have_contracts",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "source_refs_are_concrete",
+      "status": "pass",
+      "detail": "wildcard=[]"
+    },
+    {
+      "name": "source_refs_exist",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "common_prompt_contract_referenced",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "screenshot_orchestration_rules_in_common_contract",
+      "status": "pass",
+      "detail": "missing_phrases=[]"
+    },
+    {
+      "name": "system_asset_reuse_rules_in_common_contract",
+      "status": "pass",
+      "detail": "missing_phrases=[]"
+    },
+    {
+      "name": "visual_warehouse_rules_in_common_contract",
+      "status": "pass",
+      "detail": "missing_phrases=[]"
+    },
+    {
+      "name": "model_backed_agent_rules_in_common_contract",
+      "status": "pass",
+      "detail": "missing_phrases=[]"
+    },
+    {
+      "name": "prompt_addenda_do_not_duplicate_common_rules",
+      "status": "pass",
+      "detail": "duplicates=[]"
+    },
+    {
+      "name": "training_sources_declared",
+      "status": "pass",
+      "detail": "trainingSources=30"
+    },
+    {
+      "name": "training_source_paths_exist",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "training_source_summary_declared",
+      "status": "pass",
+      "detail": "schemaVersion=training-source-summary/v1"
+    },
+    {
+      "name": "training_source_summary_portable_policy_declared",
+      "status": "pass",
+      "detail": "recommendationCode=restore_remote_evidence_before_retraining restorePaths=['output/training_queues/**', 'output/training_learning/**', 'agents/**/training_memory.json', 'agents/**/prompt_addendum.md', 'docs/training/training-sources.json']"
+    },
+    {
+      "name": "accepted_training_sources_registered",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "accepted_training_uses_fact_sources",
+      "status": "pass",
+      "detail": "derived_used=[]"
+    },
+    {
+      "name": "accepted_training_has_learning_promotion",
+      "status": "pass",
+      "detail": "missing_learning=[]"
+    },
+    {
+      "name": "systemized_training_has_promotion_gate",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "promotion_gate_decisions_complete",
+      "status": "pass",
+      "detail": "incomplete=[]"
+    },
+    {
+      "name": "accepted_training_has_plain_language_summary",
+      "status": "pass",
+      "detail": "missing_plain=[]"
+    },
+    {
+      "name": "accepted_training_visible_text_hides_backend_paths",
+      "status": "pass",
+      "detail": "raw_path_visible=[]"
+    },
+    {
+      "name": "agent_learning_refs_exist",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "prompt_contracts_include_learning_refs",
+      "status": "pass",
+      "detail": "missing=[]"
+    },
+    {
+      "name": "coverage_source_exists",
+      "status": "pass",
+      "detail": "output/validation_runs/capability-lab/cad_capability_coverage.json"
+    },
+    {
+      "name": "table_c_headline_matches_coverage",
+      "status": "pass",
+      "detail": "data=90.99, coverage=90.99"
+    },
+    {
+      "name": "table_c_three_maturity_boundary_declared",
+      "status": "pass",
+      "detail": "Core Proof Coverage 机器快照 Core Proof Coverage 旧表 C 这是 registry 和 coverage JSON 的底座证据覆盖机器快照；旧表 C 字段保留兼容，但不代表 Agent Task Maturity 或 Project Delivery Readiness。 Agent Task Maturity Project Delivery Readiness"
+    },
+    {
+      "name": "snapshot_generated_after_coverage",
+      "status": "pass",
+      "detail": "snapshot=2026-06-06T08:17:08+00:00, coverage=2026-06-06T08:17:08Z"
+    },
+    {
+      "name": "sync_boundary_declared",
+      "status": "pass",
+      "detail": "workbenchSync.mode=static_snapshot"
+    },
+    {
+      "name": "sync_command_declared",
+      "status": "pass",
+      "detail": "$py scripts\\sync_training_workbench.py"
+    },
+    {
+      "name": "launcher_declared",
+      "status": "pass",
+      "detail": "start_training_workbench.bat"
+    },
+    {
+      "name": "model_trace_viewer_declared",
+      "status": "pass",
+      "detail": "schemaVersion=workbench-trace-viewer/v1"
+    },
+    {
+      "name": "model_trace_viewer_derived_only",
+      "status": "pass",
+      "detail": "derivedOnly=True notProofOf=['does_not_prove_cad_geometry', 'does_not_replace_created_handles_readback', 'does_not_replace_user_visual_acceptance', 'does_not_upgrade_table_c']"
+    },
+    {
+      "name": "model_trace_viewer_truth_sources_declared",
+      "status": "pass",
+      "detail": "truthSources=['output/model_reviews/traces/**', 'output/runs/**']"
+    },
+    {
+      "name": "workbench_v3_declared",
+      "status": "pass",
+      "detail": "schemaVersion=workbench-data-contract/v3-draft"
+    },
+    {
+      "name": "workbench_v3_source_policy_derived_only",
+      "status": "pass",
+      "detail": "derivedOnly=True derivedArtifacts=['capability-map-data.js', 'capability-map.html'] truthSources=['agents/**/prompt_addendum.md', 'agents/**/training_memory.json', 'docs/training/training-sources.json', 'output/runs/**', 'output/validation_runs/capability-lab/cad_capability_coverage.json'] notProofOf=['cad_geometry', 'table_c_promotion', 'training_acceptance', 'user_acceptance']"
+    },
+    {
+      "name": "workbench_v3_source_registry_declared",
+      "status": "pass",
+      "detail": "sourceRegistry=30"
+    },
+    {
+      "name": "workbench_v3_command_center_declared",
+      "status": "pass",
+      "detail": "keys=['agentDispatchSummary', 'derivedBoundary', 'evidenceBoundary', 'gateboard', 'latestRunSummary', 'nextTrainingCandidates', 'sourceHealth', 'summary', 'title']"
+    },
+    {
+      "name": "workbench_v3_next_candidates_declared",
+      "status": "pass",
+      "detail": "nextTrainingCandidates=5"
+    },
+    {
+      "name": "workbench_v3_gateboard_declared",
+      "status": "pass",
+      "detail": "gateboard=8"
+    },
+    {
+      "name": "workbench_v3_agent_graph_declared",
+      "status": "pass",
+      "detail": "nodes=311 edges=1217"
+    },
+    {
+      "name": "workbench_v3_evidence_bundles_declared",
+      "status": "pass",
+      "detail": "evidenceBundles=217"
+    },
+    {
+      "name": "html_sync_panel_present",
+      "status": "pass",
+      "detail": "页面必须显示同步状态。"
+    },
+    {
+      "name": "html_polling_present",
+      "status": "pass",
+      "detail": "HTTP 启动时页面必须能检测新快照。"
+    },
+    {
+      "name": "html_boundary_copy_present",
+      "status": "pass",
+      "detail": "页面必须保留 Core Proof Coverage / Agent Task Maturity / Project Delivery Readiness 三口径边界说明。"
+    },
+    {
+      "name": "html_learning_promotion_present",
+      "status": "pass",
+      "detail": "页面必须显示智能体学习沉淀状态。"
+    },
+    {
+      "name": "html_trace_viewer_present",
+      "status": "pass",
+      "detail": "页面必须显示模型 Trace 派生视图。"
+    },
+    {
+      "name": "html_flightdeck_overview_present",
+      "status": "pass",
+      "detail": "页面必须默认提供训练飞控台首屏。"
+    },
+    {
+      "name": "html_training_source_sync_present",
+      "status": "pass",
+      "detail": "页面必须解释跨电脑训练证据同步状态。"
+    }
+  ],
+  "summary": {
+    "check_count": 60,
+    "failed_check_count": 0
+  }
+}

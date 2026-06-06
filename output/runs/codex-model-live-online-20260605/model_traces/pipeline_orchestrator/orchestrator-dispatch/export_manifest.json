@@ -1,0 +1,39 @@
+{
+  "agentId": "pipeline_orchestrator",
+  "approvalBasis": [
+    "MODEL_DATA_EXPORT_AUTHORIZATION.md#default-allowed-data"
+  ],
+  "blockedArtifacts": [],
+  "blockingReasons": [],
+  "evidenceBoundary": [
+    "manifest pass only proves export boundary, not model quality or CAD geometry",
+    "manifest pass does not prove provider availability or user acceptance"
+  ],
+  "forbiddenScan": {
+    "fullScreenScreenshotRequested": false,
+    "secretLikeCount": 0,
+    "wholeOutputRequested": false,
+    "wholeRepoRequested": false
+  },
+  "route": "codex_cli_local",
+  "schemaVersion": "model-export-manifest/v1",
+  "sentArtifacts": [
+    {
+      "byteCount": 24890,
+      "kind": "prompt_text",
+      "path": "",
+      "sha256": "220c4cb7e89b5bd379278d970dbf10cce46e19e5a430845b06eab7fd25a9047e",
+      "status": "inline"
+    },
+    {
+      "byteCount": 12801,
+      "kind": "schema_snapshot",
+      "path": "core/model_review/schemas/orchestrator_dispatch_review.schema.json",
+      "sha256": "005e8f49a8bbf68d68846f05ef7102a71e9154299c2298642541df5685cf89b5",
+      "status": "present"
+    }
+  ],
+  "status": "pass",
+  "traceId": "orchestrator-dispatch",
+  "unexpectedLocalFiles": []
+}

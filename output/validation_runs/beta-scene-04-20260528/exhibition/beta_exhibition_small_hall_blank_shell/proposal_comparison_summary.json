@@ -1,0 +1,48 @@
+{
+  "version": "0.1",
+  "object_coverage": {
+    "requested_types": [
+      "display_unit",
+      "counter",
+      "shelf",
+      "table",
+      "chair"
+    ],
+    "placed_types": [
+      "chair",
+      "counter",
+      "display_unit",
+      "shelf",
+      "table"
+    ],
+    "coverage_rate": 1.0,
+    "placed_count": 5,
+    "placement_count": 5
+  },
+  "circulation": {
+    "continuity": "degraded",
+    "selected_strategy": "along_wall",
+    "blocked_strategies": [
+      "l_spine",
+      "straight_spine"
+    ],
+    "branch_count": 3
+  },
+  "conflicts": {
+    "failed_check_count": 0,
+    "layout_failed_checks": [],
+    "placement_failed_count": 0
+  },
+  "failure_reasons": {
+    "all_distribution": {},
+    "selected_distribution": {}
+  },
+  "ranking_reason_codes": [
+    "circulation_status",
+    "circulation_branch_selected",
+    "highest_weighted_score",
+    "zone_placement_best",
+    "no_failed_checks"
+  ],
+  "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected along_wall / zone-shell-exhibition-small-hall-along_wall-left with object coverage 100%, 0 failed check(s), circulation continuity=degraded."
+}

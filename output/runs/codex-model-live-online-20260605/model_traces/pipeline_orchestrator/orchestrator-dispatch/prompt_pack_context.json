@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "prompt-pack-context/v1",
+  "promptPackId": "pipeline_orchestrator",
+  "promptPackVersion": 1,
+  "taskType": "orchestrator_dispatch_review",
+  "converter": "identity",
+  "schemaPath": "core/model_review/schemas/orchestrator_dispatch_review.schema.json",
+  "promptPath": "core/model_review/prompt_packs/pipeline_orchestrator/prompt.md",
+  "inputSchemaPath": "core/model_review/prompt_packs/pipeline_orchestrator/input_schema.json"
+}

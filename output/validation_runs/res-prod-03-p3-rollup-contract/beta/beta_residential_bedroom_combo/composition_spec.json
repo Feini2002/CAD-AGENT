@@ -1,0 +1,59 @@
+{
+  "version": "0.1",
+  "composition_id": "bedroom_bed_rug",
+  "name": "Bedroom Bed + Rug Set",
+  "domain": "residential",
+  "persona_role": "home_designer",
+  "request_text": "卧室床铺与地毯组合",
+  "objects": [
+    {
+      "instance_id": "rug-01",
+      "type": "rug",
+      "name": "Area Rug",
+      "role": "soft_zone",
+      "base_point": [
+        0,
+        0,
+        0
+      ],
+      "size": {
+        "width": 2400,
+        "depth": 1900,
+        "height": 20
+      },
+      "include_dimensions": false,
+      "include_label": false
+    },
+    {
+      "instance_id": "bed-01",
+      "type": "bed",
+      "name": "Bed",
+      "role": "primary_bed",
+      "base_point": [
+        200,
+        200,
+        0
+      ],
+      "size": {
+        "width": 2000,
+        "depth": 1500,
+        "height": 600
+      },
+      "include_dimensions": false
+    }
+  ],
+  "bbox": {
+    "min": [
+      0,
+      0
+    ],
+    "max": [
+      2400,
+      1900
+    ]
+  },
+  "evidence": {
+    "geometry_accuracy": "not_verified_without_cad_readback",
+    "screenshot_role": "visual_aid_only"
+  }
+}

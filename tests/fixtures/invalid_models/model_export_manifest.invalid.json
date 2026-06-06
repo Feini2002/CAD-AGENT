@@ -1,0 +1,21 @@
+{
+  "model_type": "model_export_manifest",
+  "data": {
+    "schemaVersion": "model-export-manifest/v1",
+    "status": "pass",
+    "agentId": "pipeline_design_reviewer",
+    "traceId": "bad-export-manifest",
+    "approvalBasis": [],
+    "sentArtifacts": [],
+    "blockedArtifacts": [],
+    "unexpectedLocalFiles": [],
+    "forbiddenScan": {
+      "secretLikeCount": 0,
+      "wholeRepoRequested": false,
+      "wholeOutputRequested": false,
+      "fullScreenScreenshotRequested": false
+    },
+    "blockingReasons": [],
+    "evidenceBoundary": []
+  }
+}

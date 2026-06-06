@@ -1,0 +1,35 @@
+{
+  "blockingReasons": [
+    "model requested forbidden direct tool: save_current_dwg",
+    "model requested forbidden permission class: save_current_dwg",
+    "model requested forbidden effect: dwg_save"
+  ],
+  "deterministicEntryPoint": "",
+  "downstreamArtifactPath": "tool_traces/pipeline_design_director.intent-save-blocked.json",
+  "downstreamReadableSummary": "save_current_dwg blocked before execution: model requested forbidden direct tool: save_current_dwg; model requested forbidden permission class: save_current_dwg; model requested forbidden effect: dwg_save",
+  "evidenceBoundary": [
+    "tool intent gate only permits orchestrator-owned allowlisted execution",
+    "model requests cannot authorize CAD writes outside controlled CODEX_PREVIEW execution, deletes, saves, registry mutations, or table C claims",
+    "allowed verification or controlled-CAD intent only means the orchestrator may run the relevant gate; the model cannot decide pass/fail"
+  ],
+  "executionStatus": "blocked_before_execution",
+  "expectedEvidence": [
+    "blocked trace"
+  ],
+  "generatedAt": "2026-06-05T08:59:52Z",
+  "orchestratorDecision": "blocked",
+  "permissionClass": "save_current_dwg",
+  "requestedByAgentId": "pipeline_design_director",
+  "result": {},
+  "resultStatus": "not_verified",
+  "riskLevel": "critical",
+  "runId": "local-hardening-proof-recheck",
+  "schemaVersion": "tool-trace/v1",
+  "targetScope": {
+    "scopeRef": "active_document",
+    "scopeType": "current_dwg"
+  },
+  "toolIntentId": "intent-save-blocked",
+  "toolName": "save_current_dwg",
+  "toolSchemaVersion": "tool-intent/v1"
+}

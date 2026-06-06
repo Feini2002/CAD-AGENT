@@ -1,0 +1,51 @@
+{
+  "bbox": {
+    "max": [
+      69200.0,
+      36600.0
+    ],
+    "min": [
+      67820.0,
+      35820.0
+    ]
+  },
+  "cadGeometryVerified": false,
+  "createdHandleCount": 7,
+  "created_handles": [
+    "H101",
+    "H102",
+    "H103",
+    "H104",
+    "H105",
+    "H106",
+    "H107"
+  ],
+  "driverMode": "fake_driver_preflight",
+  "entityTypeCounts": {
+    "dimension": 2,
+    "line": 4,
+    "text": 1
+  },
+  "evidenceBoundary": [
+    "Stage 4 CAD tool execution is orchestrator-owned, not model-owned",
+    "execution requires prior validate_plan and dry_run_plan pass reports for the same CAD_PLAN",
+    "only CODEX_PREVIEW preview execution is allowed; savedCurrentDwg=false",
+    "delete/replace, formal-layer write, registry mutation, training source mutation, and table C claims remain forbidden",
+    "screenshot is visual_aid_only and cannot replace created handles readback, closeout gate, or user acceptance"
+  ],
+  "executionSummaryPath": "cad_reports/execution_summary.json",
+  "generatedAt": "2026-06-05T08:57:00Z",
+  "planPath": "candidate_outputs/cad_plan.candidate.json",
+  "readbackEntityCount": 7,
+  "readbackStatus": "not_verified",
+  "readbackSummaryPath": "cad_reports/readback_summary.json",
+  "reason": "no real AutoCAD geometry verification in fake-driver preflight",
+  "requestedByAgentId": "pipeline_intent",
+  "resultStatus": "not_verified",
+  "savedCurrentDwg": false,
+  "schemaVersion": "controlled-cad-preview-tool-report/v1",
+  "status": "pass",
+  "targetLayer": "CODEX_PREVIEW",
+  "toolIntentId": "intent-preview-cad-execute",
+  "toolStage": "stage4_controlled_cad"
+}

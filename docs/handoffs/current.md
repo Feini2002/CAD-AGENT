@@ -1,138 +1,117 @@
-# 当前交接包窗口
-## DATA-BLOAT-A0-A3-IMPLEMENTATION-01
-1. **包名**：`DATA-BLOAT-A0-A3-IMPLEMENTATION-01`
-2. **修改文件列表**：新增 `core/maintenance/data_bloat_audit.py`、`scripts/run_data_bloat_audit.py`、`tests/core/test_data_bloat_audit.py`；更新 `scripts/build_capability_map_data.py`、`capability-map.html`、`core/training/artifact_retention.py`、`scripts/run_training_artifact_retention.py`、`tests/core/test_training_workbench_sync.py`、`tests/core/test_training_artifact_retention.py`、`capability-map-data.js`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：A0/A2 是只读审计，不删除、不归档，输出 `protected`、`derived`、`candidate`、`blocked`；active fact_source 缺失、派生快照误登记 fact_source、coverage `report_path_missing` 会 blocked。A1 默认 compact 单行快照，HTML 用 `normalizeWorkbenchData()` 兼容旧 aliases。A3 retention 仍只计划 / 归档旧图片，`.json` / `.dwg` / `.dwt` 显式 protected；`--write` 时写 relocation manifest、原路径、归档路径、hash、原因和恢复提示。
-4. **新增/修改测试**：新增 A0 data-bloat audit 3 个回归；新增 A1 compact / HTML normalize 断言；扩展 A3 默认 roots、protected suffix 和 relocation manifest 测试。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_data_bloat_audit tests.core.test_training_artifact_retention -v` → 8 OK；A1 compact / normalize + A3 retention 目标测试 7 OK；`python scripts\build_capability_map_data.py` → wrote；`node --check capability-map-data.js` → pass；真实快照 1,361,055 bytes / 1 行；`scripts/run_training_artifact_retention.py --output ...` → pass、`candidateCount=0`、`protectedArtifactCount=16`、未归档；`scripts/run_data_bloat_audit.py --summary-only` → exit 1 / blocked；`scripts/sync_training_workbench.py` → exit 1 / Agent check 仅 `training_source_paths_exist` fail。
-6. **是否运行真实 CAD**：否。本包只改审计、快照、retention 和文档；不连接 AutoCAD、不写 DWG、不保存当前图。
-7. **机器可读证据路径**：`scripts/run_data_bloat_audit.py --summary-only` stdout；`output/validation_runs/training-artifact-retention/retention_report.json`；`output/validation_runs/training-workbench-sync/training_workbench_sync_report.json`；`capability-map-data.js`。
-8. **结论分类表**：A0/A2 data-bloat audit 已落地（code + tests +真实 blocked 报告，geometry_verified=否）；A1 快照瘦身已落盘（1 行 compact，node check pass）；A3 retention dry-run / protected suffix / manifest 行为已落地（code + tests，未执行 write 归档）。
-9. **剩余风险**：当前仓库证据链未闭合：13 个 active fact_source 缺失，coverage `report_path_missing=303`。这不是本包要自动修复的垃圾清理问题；后续必须恢复事实源或审查归档引用后再让工作台同步变绿。
----
-## DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01
-1. **包名**：`DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01`
-2. **修改文件列表**：更新 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md`、`agents/cad_designer/rules.md`、`agents/COMMON_PROMPT_CONTRACT.md`、`agents/pipeline/README.md`、`agents/pipeline/pipeline_manifest.json`、`core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：把训练前 / 收尾数据防膨胀从一次性讨论沉淀为系统规则和 A-to-A 共识。后续训练、复训、正式收尾型工作台同步、系统资产沉淀或仓库级治理产生 output / debug / test artifacts 前后，必须区分 `protected`、`candidate`、`blocked`、`derived`；相关 A-to-A 合同必须列 `data_bloat_governance` hard gate。`workbench_snapshot_refresh` 保持轻量查看例外；诊断报告和工作台快照不得反向成为训练事实源。
-4. **新增/修改测试**：新增 `check_data_bloat_governance_manifest()` 和 2 个回归测试，确认 manifest task kind / hard gate / blocks / artifact 模板 / Agent README 覆盖不跑偏；总文档治理报告新增 `data_bloat_governance` 子项。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_doc_governance -v` → 29 OK；`python -m json.tool agents/pipeline/pipeline_manifest.json` → ok；`python scripts/run_doc_governance_audit.py` → pass，`finding_count=0` 且 `data_bloat_governance.finding_count=0`；关键 `rg` 规则检索命中；`git diff --check` 无 whitespace error（仅 CRLF warning）。
-6. **是否运行真实 CAD**：否。本包不连接 AutoCAD、不写 DWG、不保存当前图；它只同步规则、Agent 合同和交接事实。
-7. **机器可读证据路径**：`agents/pipeline/pipeline_manifest.json` 的 `required_hard_gates_by_task_kind` / `data_bloat_governance`；`core/maintenance/doc_governance.py` 的 `data_bloat_governance` 审计子项；`tests/core/test_doc_governance.py` 回归测试；无新增 `output/validation_runs/**` 证据。
-8. **结论分类表**：训练前数据防膨胀治理已进入规则 / Agent / A-to-A 共识并纳入文档治理审计（docs + manifest + tests，geometry_verified=否）；compact 输出、data-bloat audit CLI、retention 扩展和真实清理写入尚未实现。
-9. **剩余风险**：后续 A 包仍需实现 `scripts/run_data_bloat_audit.py`、compact / 去重输出和 retention 引用闭合检查；当前只保证后续 Agent 不会忘记这条门禁。
----
-## ARCHITECTURE-DOC-HARDENING-02
-1. **包名**：`ARCHITECTURE-DOC-HARDENING-02`
-2. **修改文件列表**：更新 `README.md`、`docs/architecture/README.md`、`docs/architecture/current-module-boundaries.md`、`core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、`openspec/changes/architecture-boundary-hardening-01/tasks.md`、状态 / changelog / handoff 索引。
-3. **关键设计说明**：统一架构链路为 `User Request -> semantic route -> A-to-A contract -> CAD_PLAN / asset workflow / training route -> execution -> verification -> promotion/sync`；补系统硬门禁索引和 Core / Agent 禁止边界；复用既有 completed OpenSpec change，不新开第二套主线。
-4. **新增/修改测试**：`check_architecture_hardening_index()` 和 `test_architecture_hardening_index_flags_missing_tokens`，综合报告新增 `architecture_hardening` 子项。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_doc_governance -v` → 27 OK；`scripts/run_doc_governance_audit.py` → pass，`finding_count=0`。
-6. **是否运行真实 CAD**：否。本包只改文档和治理审计，不连接 AutoCAD、不写 DWG、不保存当前图。
-7. **机器可读证据路径**：OpenSpec 记录在 `openspec/changes/architecture-boundary-hardening-01/tasks.md`；审计输出来自 `scripts/run_doc_governance_audit.py`。
-8. **结论分类表**：架构链路 / 模块边界 / 门禁索引已纳入机器文档治理（docs + tests，geometry_verified=否）。
-9. **剩余风险**：本轮是“架构收口 + 轻量加固”，不迁移 `core/verification`、capability map 或具体 Core 模块。
----
-## SYSTEM-ASSET-LIBRARY-GOVERNANCE-01
-1. **包名**：`SYSTEM-ASSET-LIBRARY-GOVERNANCE-01`
-2. **修改文件列表**：新增 `openspec/changes/harden-system-asset-library-governance/`、`core/assets/system_asset_library_governance.py`、`scripts/run_asset_library_governance_check.py` 和 4 个资产治理 Agent；更新 `core/orchestrator/a_to_a_task_contract.py`、`scripts/layout_system_asset_shelves.py`、`agents/pipeline/visual_layout_reviewer/agent.json`、`agents/COMMON_PROMPT_CONTRACT.md`、Prompt 生成源、系统资产协议、全局规则、状态 / changelog / issues / handoff 索引。本轮第三次纠偏新增 visual readability 硬门禁。
-3. **关键设计说明**：显式“沉淀资产”先过 `pipeline_asset_governor`；`visualRackPlan` 不只验 v2 架构和 shelf/content clearance，还必须有 `visualReadabilityAudit`：A1/A2 与 A2/B 通道、内容密度、proof content 图层、source/proof 分离和非截图证据都要过关。A-to-A `visual_layout_review` 也必须输出同一组可读性字段，否则主 Agent 不能完成。
-4. **新增/修改测试**：扩展 `tests/core/test_system_asset_sedimentation.py` 和 `tests/core/test_a_to_a_task_contract.py`，覆盖旧 reviewer 五字段 pass 被阻断、failed readability report、零重叠但 A1/A2 拥挤且 proof content 仍在 `CODEX_PREVIEW` 的负例。
-5. **实际运行的命令和结果**：`python -m unittest -v tests.core.test_a_to_a_task_contract` → 6 OK；`python -m unittest -v tests.core.test_system_asset_sedimentation` → 27 OK；`scripts/run_a_to_a_orchestration_gate_check.py` → pass；`scripts/layout_system_asset_shelves.py --clear-all-shelf-layers` → status pass；`scripts/run_asset_library_governance_check.py --output output/validation_runs/system-assets/asset-library-governance/governance_check.json` → pass；`scripts/render_preview.py --check` → ready；`scripts/render_preview.py --capture-autocad-window ... --output output/previews/system-asset-warehouse-readability.png` → captured。
-6. **是否运行真实 CAD**：是。打开 / 激活并保存 `libraries/system_library/drawing_standards/basic/standard_assets.dwg`；旧 proof panel 从 `CODEX_PREVIEW` 迁到 `ASSET_PROOF_CONTENT`，A2 内容簇按 handles 右移；新建货架 handles 219，`createdEntityReadback.status=ok`、`resolvedHandleCount=219`、`unmanagedLayerCount=0`、`visualClearanceAudit.status=pass`、`overlapCount=0`、`visualReadabilityAudit.status=pass`、`issueCount=0`、`savedAssetDwg=true`、`savedCurrentBusinessDwg=false`。
-7. **机器可读证据路径**：`output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json`、`output/validation_runs/system-assets/asset-library-governance/governance_check.json`、`output/previews/system-asset-warehouse-readability.png`；OpenSpec 契约在 `openspec/changes/harden-system-asset-library-governance/`。
-8. **结论分类表**：系统资产库守门员已落地（agents + manifest + docs + tests，geometry_verified=否）；系统资产 DWG 货架脚手架已真实写入并保存（created handles + readback + clearance + readability audit + screenshot，geometry_verified=局限于仓库脚手架）；真实对象 block 复用 replay 仍按各资产单独证明。
-9. **剩余风险**：本包证明 `drawing_standards.basic` 的可视仓库架构、本轮货架实体回读、shelf/content bbox clearance 和视觉可读性过关；对象资产 block 本体仍需进入各自分类 DWG。截图仍是 `visual_aid_only`，不能替代 handles / bbox / readback / audit。
----
-## SCREENSHOT-ORCHESTRATION-HARDENING-01
-1. **包名**：`SCREENSHOT-ORCHESTRATION-HARDENING-01`
-2. **修改文件列表**：新增 `openspec/changes/harden-agent-screenshot-orchestration/`；更新 `core/verification/render_preview.py`、`core/verification/visual_cad_review.py`、`core/training/foundation_batch_training.py`、`core/training/learning_promotion.py`、`scripts/run_training_workbench_agent_check.py`、`agents/COMMON_PROMPT_CONTRACT.md`、相关单测、`capability-map-data.js`、Agent memory 派生文件、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：截图入口现在先生成 `screenshotDecision`，按 `target_handles`、`repair_plan`、bbox、`execution_summary.created_handles` 的顺序选择任务焦点；局部修复和 focused / formal 验收要求截图，快试且关键 readback 足够时可跳过。截图结果固定声明 `visualAidOnly=true`，不得替代 CAD readback 或 created handles。
-4. **新增/修改测试**：新增截图 decision、runner payload、focused training preview payload、Agent 共用合同和工作台 Agent check 断言；补 learning promotion 测试，确保同步重写共用合同时不会丢失截图编排规则。
-5. **实际运行的命令和结果**：`python -m unittest -v tests.core.test_render_preview tests.core.test_table_c_evidence_gate tests.core.test_cad_foundation_remaining_training tests.core.test_training_workbench_sync tests.core.test_training_learning_promotion` → 66 OK；`openspec.cmd validate --all --strict --json --no-interactive` → 12/12 pass；`scripts/render_preview.py --check` → ready；`scripts/sync_training_workbench.py` → pass，Agent check 40/40 pass。
-6. **是否运行真实 CAD**：是。连接 `Autodesk AutoCAD 2026 - [Drawing2.dwg]`，只执行客户区 `PrintWindow` 截图和视图聚焦；未保存当前业务 DWG，未删除实体，未修改正式图层。
-7. **机器可读证据路径**：`output/previews/screenshot-orchestration-target-1F7C.png`；`output/validation_runs/training-workbench-sync/training_workbench_sync_report.json`；`output/validation_runs/training-workbench-sync/agent_check.json`；OpenSpec 契约位于 `openspec/changes/harden-agent-screenshot-orchestration/`。
-8. **结论分类表**：截图底座任务级编排已落地（code + tests + real AutoCAD capture，geometry_verified=否）；Agent 共用截图理解已同步（common contract + workbench Agent check，geometry_verified=否）。真实 CAD 几何能力未因本包提升，截图仍为视觉辅助。
-9. **剩余风险**：本包证明截图可以聚焦单 handle 并在后台/非置顶情况下走客户区截图；后续如果要把更多 runner 接入自动截图策略，仍需逐入口传递 `target_handles` / `repair_plan`，并继续用 readback 证明几何准确。
----
-## CAD-TRAINING-PROMOTION-GATE-01
-1. **包名**：`CAD-TRAINING-PROMOTION-GATE-01`
-2. **修改文件列表**：新增 `core/training/promotion_gate.py`；更新 `core/training/learning_promotion.py`、`scripts/run_training_workbench_agent_check.py`、`scripts/sync_training_workbench.py`、`tests/core/test_training_learning_promotion.py`、`tests/core/test_training_workbench_sync.py`、`docs/architecture/cad-agent-task-chain.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md`、`docs/training/training-sources.json`、`capability-map-data.js`、Agent memory / prompt 派生文件、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：新增训练收尾 `promotionGate`：正式训练通过后必须机器声明训练事实源、工作台同步、Agent 校准、底座规则、单项规则、检查器和原任务回测七项决策；`quick_trial` 保持 `observation`，未知 `capabilityId` 不再 fallback 到 `cad_designer`，规则 / 检查器 delta 只进入 `needs_reviewed_package`。
-4. **新增/修改测试**：新增 promotion gate、quick trial 负例、未知能力负例、规则 delta 候选、纠错候选 gate、工作台缺 gate 失败和 sync 报告 gate 字段测试。
-5. **实际运行的命令和结果**：`tests.core.test_training_learning_promotion` 10 OK；`tests.core.test_training_workbench_sync` 15 OK；`scripts/sync_training_workbench.py --skip-coverage` pass，Agent check 39/39 pass。
-6. **是否运行真实 CAD**：否。本包只改训练收尾、工作台同步和文档规则，不连接 AutoCAD、不写 DWG、不保存当前图。
-7. **机器可读证据路径**：`output/training_learning/agent_learning_ledger.json`、`output/validation_runs/training-workbench-sync/training_workbench_sync_report.json`、`output/validation_runs/training-workbench-sync/agent_check.json`、`capability-map-data.js`。
-8. **结论分类表**：训练 promotion gate 已落地（code + tests + workbench sync，geometry_verified=否）；A-to-A 校准机器决策已写入 ledger / workbench；真实 CAD 能力提升：未做。
-9. **剩余风险**：promotion gate 能证明“是否需要沉淀 / 校准 / 回测”的机器决策存在，但不能替代 reviewed package 的规则质量审查，也不能证明视觉语义或原任务回测质量。
-## CAD-AGENT-TASK-CHAIN-01
-1. **包名**：`CAD-AGENT-TASK-CHAIN-01`
-2. **修改文件列表**：新增 `docs/architecture/cad-agent-task-chain.md`；更新 `CORE_CONTEXT_BRIEF.md`、`docs/architecture/README.md`、`docs/training/global-agent-pipeline.md`、`docs/training/README.md`、`docs/governance/cad-agent-rules.md`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：把执行编排链路和训练学习链路合并成系统默认任务链路：白话先做输入分流、语义拆分、单一子任务和责任分发；稳定失败或新能力再回流到训练 / 复训、原任务回测、底座规则、单一任务规则、检查器、Prompt / memory、A-to-A 校准和事实源同步。
-4. **新增/修改测试**：无新增单测；使用文档治理审计和 diff 检查验收。
-5. **实际运行的命令和结果**：`scripts/run_doc_governance_audit.py`、`git diff --check -- CORE_CONTEXT_BRIEF.md docs/architecture/cad-agent-task-chain.md docs/architecture/README.md docs/training/global-agent-pipeline.md docs/training/README.md docs/governance/cad-agent-rules.md docs/status/current.md docs/status/changelog.md docs/status/issues.md docs/handoffs/current.md docs/handoffs/package-index.md`。
-6. **是否运行真实 CAD**：否。本包只沉淀系统链路文档，不连接 AutoCAD、不写 DWG、不保存当前图。
-7. **机器可读证据路径**：无新增 `output/validation_runs/**`；主要证据为 `docs/architecture/cad-agent-task-chain.md` 和文档治理结果。
-8. **结论分类表**：系统任务链路已落地（docs / governance，geometry_verified=否）；训练或真实 CAD 能力提升：未做。
-9. **剩余风险**：本包只定义链路和入口；后续若要强制机器校验“每次根源修复都同步 A-to-A 校准”，还需要另包接入可执行检查器。
-## CAD-NATIVE-ASSET-REUSE-HARDENING-01
-1. **包名**：`CAD-NATIVE-ASSET-REUSE-HARDENING-01`
-2. **修改文件列表**：未改 Core 代码；新增真实 CAD 证据 `output/validation_runs/system-assets/cad-native-hardening/reuse_workflow_real.json` 与截图 `output/previews/system-asset-reuse-hardening-20260602.png`；同步 `docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、本交接窗口和 package index。
-3. **关键设计说明**：本包专门补上上一轮语义资产复用升级未新增的真实 CAD-native 复用证据，验证系统资产库 DWG 可以跨图写入当前业务 DWG 的 `CODEX_PREVIEW`，且不保存当前业务 DWG。
-4. **新增/修改测试**：无新增单测；使用真实 AutoCAD COM、报告硬断言和窗口截图做验收。
-5. **实际运行的命令和结果**：普通沙箱执行 `scripts/reuse_system_asset.py --workflow "放一个线型表到当前图"` 因 COM 隔离失败；提权后同命令成功。`linetype_style_summary_table` 从 `standard_assets.dwg` 复制到 `Drawing2.dwg`，source selected 450、created handles 450、readback 450、`copyMethod=copyobjects_handle_diff`、`savedCurrentDwg=false`；`render_preview.py --capture-autocad-window --execution-summary ...` 成功截图并按 450 handles bbox 取景。
-6. **是否运行真实 CAD**：是。连接 `Autodesk AutoCAD 2026 - [Drawing2.dwg]`，只写 `CODEX_PREVIEW`，未保存当前业务 DWG，未修改正式图层。
-7. **机器可读证据路径**：`output/validation_runs/system-assets/cad-native-hardening/reuse_workflow_real.json`；`output/previews/system-asset-reuse-hardening-20260602.png`。
-8. **结论分类表**：跨 DWG 线型表资产复用已完成真实 CAD-native 回读验收（geometry_verified=复用级 created handles/readback）；截图为视觉辅助，不替代 handles 证据。
-9. **剩余风险**：本包不验证系统资产 DWG 新增原生内容后的 `Saved=true` / 打开复审链路；该链路应在真正执行“沉淀资产 CAD-native 写入”时单独验收。
-## CAD-SEMANTIC-ASSET-REUSE-UPGRADE-01
-1. **包名**：`CAD-SEMANTIC-ASSET-REUSE-UPGRADE-01`
-2. **修改文件列表**：新增 `openspec/changes/cad-semantic-asset-reuse-upgrade/`、`docs/architecture/cad-semantic-asset-reuse-upgrade.md`、`core/assets/semantic_rules.py`、`core/training/linetype_table_audit.py`、`core/orchestrator/semantic_asset_route.py`、`tests/core/test_semantic_asset_rules.py`；更新 `core/assets/system_asset_reuse.py`、`core/assets/__init__.py`、`core/training/linetype_table_demo.py`、`core/orchestrator/workflow_dispatch.py`、`tests/core/test_linetype_table_demo.py`、`tests/core/test_workflow_dispatch.py`、`docs/architecture/system-asset-reuse-workflow.md`、`docs/governance/cad-agent-rules.md`、`AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：把用户反馈中的线型表排版、资产复用、沉淀保存边界和中文编码问题提升为系统底座。`semantic_rules` 固化资产沉淀、线型表、系统资产复用和局部修复的触发词、必跑门禁、禁止行为和证据边界；资产复用在 registry 文本匹配前运行编码预检，并按 score、生命周期、native DWG、精确来源可用性稳定排序；orchestrator 会先报告 `semantic_asset_route`，再走普通 workflow dispatch；线型表生成器支持可变行数并通过独立 layout audit 审计。
-4. **新增/修改测试**：新增 `tests/core/test_semantic_asset_rules.py`，覆盖坏 registry 编码阻断、候选排序、语义规则命中和弱匹配负例；更新 `tests/core/test_linetype_table_demo.py`，覆盖可变 17 行表和“报告字段被篡改也能由实体越格审计失败”；更新 `tests/core/test_workflow_dispatch.py`，覆盖主调度报告语义资产路由。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_semantic_asset_rules tests.core.test_workflow_dispatch` → 12 tests OK；第一轮相邻回归 `tests.core.test_semantic_asset_rules tests.core.test_system_asset_reuse tests.core.test_system_asset_sedimentation tests.core.test_linetype_table_demo tests.core.test_script_bootstrap` → 40 tests OK；`scripts/reuse_system_asset.py --workflow --plan-only "放一个线型表到当前图"` → status ready，`encodingPreflight=pass`；`scripts/draw_linetype_table.py --fake-cad --no-stream-demo` → status pass，`layoutAudit.status=pass`。
-6. **是否运行真实 CAD**：否。本包使用 Core / fake CAD / plan-only 验证；未连接 AutoCAD 写新实体，未保存当前业务 DWG。真实跨 DWG 复用证据沿用上一包 `linetype_table_reuse_real.json`，本包不新增真实 CAD 证明。
-7. **机器可读证据路径**：`output/validation_runs/system-assets/semantic-upgrade/reuse_workflow_plan.json`；`output/validation_runs/linetype-table/semantic-upgrade/linetype_table_report.json`；OpenSpec 契约在 `openspec/changes/cad-semantic-asset-reuse-upgrade/`。
-8. **结论分类表**：语义规则库已落地（code + tests，geometry_verified=否）；资产复用 registry 编码预检和稳定排序已落地（code + tests，geometry_verified=否）；主调度语义资产路由已接入（code + tests，geometry_verified=否）；线型表可变行数和独立 layout audit 已落地（fake CAD readback，geometry_verified=否）。
-9. **剩余风险**：沉淀资产 DWG 的 `Saved=true` / 打开复审链路目前是规则和协议要求，未在本包做真实 CAD-native 保存验收；线型表 fake CAD 审计不能证明 CTB/STB、PDF 或打印输出效果；后续对象资产应补真实 CAD readback、保存复审和人工复核。
+﻿# 当前交接包窗口
+## ARCH-CONVERGENCE-01
 
-## SYSTEM-ASSET-SEDIMENTATION-PROTOCOL-01
-1. **包名**：`SYSTEM-ASSET-SEDIMENTATION-PROTOCOL-01`
-2. **修改文件列表**：新增 / 更新 `core/assets/system_asset_sedimentation.py`、`scripts/sediment_system_asset.py`、`tests/core/test_system_asset_sedimentation.py`、`docs/architecture/system-asset-sedimentation-protocol.md`、`openspec/changes/system-asset-sedimentation-protocol/`、`libraries/system_library/registry.json`、`libraries/system_library/drawing_standards/basic/assets.json`、`libraries/system_library/furniture/seating/sofas/assets.json`；同步 `AGENTS.md`、`docs/training/README.md`、`agents/cad_designer/rules.md`、`docs/governance/cad-agent-rules.md`、`CORE_CONTEXT_BRIEF.md`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：把用户口令“沉淀 XX 资产”加固成系统资产四件套 + 晋升门禁 + 源边界防污染门禁。每条资产现在带 `candidate/systemized/verified/deprecated` 状态流、`retrieval`、`native.layoutPlan`、`versioning`、`verification`、`feedbackLoop`、`exportManifest` 和 `antiContamination`；对象 `block_export` 只允许精确 handles / bbox / named block 来源，样式标准走 `style_export`。
-4. **新增/修改测试**：`tests/core/test_system_asset_sedimentation.py` 从 4 个用例扩到 11 个，覆盖生命周期 / 检索 / 排版 / 反馈字段、冲突拒绝与 `_v2` 变体、元数据验收、CLI 新参数、对象来源边界、禁止整屏 block export 和样式导出。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_system_asset_sedimentation tests.core.test_asset_raw_intake tests.core.test_training_workbench_sync` → 28 tests OK；两个 seed 包 `scripts/sediment_system_asset.py --verify --category furniture.seating.sofas` / `drawing_standards.basic` → pass；OpenSpec 9/9 pass；doc governance pass；`scripts/sync_training_workbench.py` pass、Agent check 37/37 pass；`node --check capability-map-data.js` 与 `git diff --check` pass。
-6. **是否运行真实 CAD**：否。只写仓库 JSON、OpenSpec 和文档；不连接 AutoCAD、不保存 DWG、不导出 block、不删除实体、不改正式图层。
-7. **机器可读证据路径**：`libraries/system_library/registry.json`；`libraries/system_library/drawing_standards/basic/assets.json`；`libraries/system_library/furniture/seating/sofas/assets.json`；OpenSpec 契约在 `openspec/changes/system-asset-sedimentation-protocol/`。
-8. **结论分类表**：系统资产沉淀协议 V3 源边界加固已落地（code + tests + OpenSpec + docs，geometry_verified=否）；绘图标准 seed 为 `style_standard/style_export`，沙发 seed 为 `object_block/metadata_only`；真实 native DWG export / CAD insertion replay：未做。
-9. **剩余风险**：`nativeDwgExists=false` 时只证明合同、索引、排版计划和元数据门禁存在；后续若要把资产升为 `verified`，必须另包做原生 DWG 写入 / block 定义导出 / 样式导入 / CAD readback 和必要截图验收。
-## TRAINING-FOUNDATION-REMAINING-21-01
-1. **包名**：`TRAINING-FOUNDATION-REMAINING-21-01`
-2. **修改文件列表**：新增 `core/training/foundation_batch_training.py`、`core/training/foundation_panel_drawings.py`、`scripts/run_cad_foundation_remaining_training.py`、`tests/core/test_cad_foundation_remaining_training.py`；更新 `core/training/learning_promotion.py`、`scripts/build_capability_map_data.py`、`tests/core/test_training_learning_promotion.py`、`docs/training/training-sources.json`、`capability-map-data.js`、状态 / changelog / issues / training README / 任务清单 / handoff 索引；新增训练证据位于 `output/training_queues/cad-foundation-remaining-21/`。
-3. **关键设计说明**：把 `CAD 基础操作` 剩余 21 项做成可重复跑的自动化训练批次，默认连接真实 AutoCAD 并只写 `CODEX_PREVIEW`。批次会生成结构化训练 plan、dry-run、execution summary、验收 report 和 queue state；验收报告使用通用 `all_items_generated` 计数检查，避免后续批次被 `all_10_items_generated` 写死。图块插入训练统一使用等比 scale，防止真实 CAD `insert_block_alpha` 拒绝非等比块。
-4. **新增/修改测试**：新增剩余 21 项训练批次测试，覆盖报告可被 learning promotion 接收、21 项全部写出、图块 scale 等比；更新 learning promotion 测试，覆盖通用 item-count check 和 UTF-8 BOM 报告读取。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_cad_foundation_remaining_training tests.core.test_training_learning_promotion` → 6 tests OK；真实 CAD 执行 `scripts/run_cad_foundation_remaining_training.py` → 21/21 pass，created/readback handles 235/235，formal layer / save / overwrite / delete 守卫均阻断；`scripts/render_preview.py --capture-autocad-window` → 生成 `remaining_21_preview.png`；`scripts/sync_training_workbench.py` → status pass，learning promotion acceptedItemCount=31，Agent check 35/35 pass。
-6. **是否运行真实 CAD**：是。连接 AutoCAD `Drawing2.dwg`，仅向 `CODEX_PREVIEW` 写入训练实体，未保存当前 DWG，未覆盖原图，未写正式图层。首轮真实 CAD 在第 16 项暴露非等比 block scale 问题，已修复并登记到训练错误记录。
-7. **机器可读证据路径**：`output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json`、`remaining_21_execution_summary.json`、`remaining_21_dry_run.json`、`remaining_21_training_plan.json`、`remaining_21_preview.png`；队列状态在 `output/training_queues/cad-foundation-remaining-21/queue_state.json`；同步报告在 `output/validation_runs/training-workbench-sync/training_workbench_sync_report.json` 和 `agent_check.json`。
-8. **结论分类表**：`CAD 基础操作` 剩余 21 项已完成训练 + 机器验收 + 真实 CAD 回读 + 前端同步（training evidence，geometry_verified=训练级几何回读）；`CAD 基础操作` 工作台状态从 10/31 提升到 31/31；表 C 能力主指标未因此自动提升。
-9. **剩余风险**：本包证明的是基础操作训练项在受控预览图层可生成、可回读、可沉淀，不等同完整施工图能力；`scripts/build_capability_map_data.py` 仍偏大，本轮只补通用验收接入口；后续新批次仍需登记 `training-sources.json` 并跑工作台同步。
-## REPO-CONTEXT-HYGIENE-02
-1. **包名**：`REPO-CONTEXT-HYGIENE-02`
-2. **修改文件列表**：更新 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`README.md`、`docs/governance/cad-agent-rules.md`、`docs/planning/post-backlog.md`、`docs/ROADMAP.md`、`docs/roadmap/README.md`、`docs/training/README.md`、`docs/training/visual-first-agent-plan.md`、`docs/architecture/shell-layout-foundation-design.md`；新增 `docs/training/training-sources.json`、`core/training/source_manifest.py`；更新 `scripts/build_capability_map_data.py`、`scripts/sync_training_workbench.py`、`scripts/run_training_workbench_agent_check.py`、`core/execution/execute_plan.py`、`core/verification/self_check.py`、`tests/core/test_training_workbench_sync.py`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：本包不做大重构，只做上下文治理、训练事实源 manifest 和小边界修补。训练验收报告、队列状态、learning ledger、Agent memory / Prompt addendum 是事实源；`capability-map-data.js` 与 HTML 是派生快照。
-4. **新增/修改测试**：`tests/core/test_training_workbench_sync.py` 新增训练 source manifest 断言；Agent check 新增训练源存在、已验收来源登记和派生快照不得冒充事实源检查。
-5. **实际运行的命令和结果**：`python -m unittest tests.core.test_training_workbench_sync tests.core.test_training_learning_promotion` → 15 tests OK；`python -m unittest tests.core.test_script_bootstrap tests.core.test_preview_only_audit tests.core.test_cad_session_guard` → 15 tests OK；`scripts/sync_training_workbench.py` → status pass，Agent check 35/35 pass。
-6. **是否运行真实 CAD**：否。
-7. **机器可读证据路径**：`docs/training/training-sources.json`；`output/validation_runs/training-workbench-sync/training_workbench_sync_report.json`；`output/validation_runs/training-workbench-sync/agent_check.json`；coverage 刷新到 `output/validation_runs/capability-lab/cad_capability_coverage.json`。
-8. **结论分类表**：1-5 子包已验收闭环：默认上下文瘦身已落地（docs + governance，geometry_verified=否）；历史文档降噪已落地（docs，geometry_verified=否）；训练事实源 manifest 已接入（data + Agent check，geometry_verified=否）；工作台同步和 Agent 校验已接入（scripts + data，geometry_verified=否）；Core 反向脚本依赖与交接复核已清理（code + tests + handoff，geometry_verified=否）；真实 CAD 能力提升：未做。
-9. **剩余风险**：`scripts/build_capability_map_data.py` 仍然偏大，本包只切走事实源入口；后续若继续膨胀，再拆 view-model / registry / writer。训练 manifest 当前登记第一批验收源，后续新队列必须继续登记。
-## OPENSPEC-SYSTEM-CONTRACT-01
-1. **包名**：`OPENSPEC-SYSTEM-CONTRACT-01`
-2. **修改文件列表**：新增 `openspec/changes/polish-openspec-system-contract/`、`openspec/README.md`；更新 `openspec/config.yaml`、`AGENTS.md`、`CORE_RESTRUCTURE_PLAN.md`、状态 / changelog / issues / handoff 索引。
-3. **关键设计说明**：OpenSpec 已可用，本包只补 readiness 和契约口径：`status` 必须带 `--change`；`list --specs` 暂空不等于未初始化；completed changes 可先留在 `openspec/changes/`，归档时再同步稳定 specs 与仓库引用。
-4. **新增/修改测试**：无新增单测；本包是文档 / 契约润色。
-5. **实际运行的命令和结果**：`openspec.cmd list --json` 可列出 completed changes；逐 change `openspec.cmd status --change <name> --json` 正常；`openspec.cmd validate --all --strict --json --no-interactive` pass；`scripts/run_doc_governance_audit.py` pass；`python -m unittest -v tests.core.test_doc_governance` 26 tests OK。
-6. **是否运行真实 CAD**：否。
-7. **机器可读证据路径**：OpenSpec 契约在 `openspec/changes/polish-openspec-system-contract/`；无新增 `output/validation_runs/**`。
-8. **结论分类表**：OpenSpec 初始化可用性已复核（CLI + docs，geometry_verified=否）；系统契约已润色（docs，geometry_verified=否）；真实 CAD 能力提升：未做（geometry_verified=否）。
-9. **剩余风险**：旧 completed changes 仍留在 `openspec/changes/`，这是有意保留；后续若要归档，应另轮同步 stable specs 和所有引用。
+1. **包名**：`ARCH-CONVERGENCE-01`
+2. **修改文件列表**：重写 `docs/architecture/system-architecture-convergence.md`，调整 `docs/architecture/README.md` 的入口顺序；更新 `core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、`agents/pipeline/pipeline_manifest.json`、`scripts/run_a_to_a_orchestration_gate_check.py`、`tests/core/test_a_to_a_task_contract.py`、`core/verification/capability_coverage.py`、`scripts/build_capability_map_data.py`、`scripts/run_training_workbench_agent_check.py`、`capability-map.html`、`capability-map-data.js`、`output/validation_runs/capability-lab/cad_capability_coverage.json`、`docs/status/issues.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md` 和 `openspec/changes/unify-system-architecture-canvas/tasks.md`。
+3. **关键设计说明**：本包把 `system-architecture-convergence.md` 收束为七层任务生命周期：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。旧表格、底座、训练、资产、多 Agent、Worker / bridge、截图和工作台全部归位到这些层内；旧表 C / 90.99% 统一改称 `Core Proof Coverage`，只代表底座证据覆盖，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。OpenSpec 仍是单个复杂变更契约，不成为第二套主计划。
+4. **新增/修改测试**：新增文档治理语义测试，阻断活跃状态文档把表 C 写成端到端真实 CAD 能力；新增 OpenSpec tasks 不能宣称全局 backlog 的回归测试；新增 A-to-A manifest 测试，要求仓库级治理任务具备 `system_architecture_canvas` hard gate。
+5. **实际运行的命令和结果**：`scripts/sync_training_workbench.py` -> pass，Agent check 60/60；`scripts/run_a_to_a_orchestration_gate_check.py` -> pass；`tests.core.test_doc_governance tests.core.test_planmd_governance tests.core.test_a_to_a_task_contract tests.core.test_training_workbench_sync tests.core.test_capability_coverage -v` -> 91 OK；`scripts/run_doc_governance_audit.py` -> pass，`finding_count=0`；`openspec.cmd validate --all --strict --json --no-interactive` -> 17/17 valid。
+6. **是否运行真实 CAD**：否。本包是架构、规则、脚本口径和派生工作台显示收口；未连接 AutoCAD、未写 / 保存 DWG、未删除实体、未改正式图层。
+7. **机器可读证据路径**：OpenSpec 契约在 `openspec/changes/unify-system-architecture-canvas/`；派生 coverage 快照为 `output/validation_runs/capability-lab/cad_capability_coverage.json`；工作台派生数据为 `capability-map-data.js`；A-to-A hard gate 来源为 `agents/pipeline/pipeline_manifest.json`。
+8. **结论分类**：架构归并画布、三成熟度口径、工作台表 C 显示口径、文档治理阻断和 A-to-A 仓库级 hard gate 已收口；正式训练仍默认暂缓，除非用户显式覆盖。
+9. **剩余风险**：本包不提升表 C、不证明 Agent 端到端任务成熟、不证明真实项目交付准备度；后续恢复训练前仍需按当前文档确认三口径边界，并对具体训练 / CAD 包单独生成 CAD 证据。
+
 ---
+
+## LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01
+
+1. **包名**：`LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01`
+2. **修改文件列表**：更新 `core/orchestrator/local_live_model_bridge.py`、`core/orchestrator/local_live_model_bridge_state.py`、`core/orchestrator/local_live_model_bridge_diagnostics.py`、`tests/core/test_local_live_model_bridge.py`、`tests/core/test_local_live_model_bridge_flows.py`、`tests/core/test_local_live_model_bridge_diagnostics.py`；同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`README.md`、`agents/pipeline/README.md`、`docs/architecture/README.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、`docs/planning/任务清单.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`；删除原独立本地活体模型桥架构 MD。
+3. **关键设计说明**：本包把上一轮讨论出的偏差收束为 runtime hard gate：未知 `target_stage` 直接失败，同秒 run id 防碰撞，live 阶段未登记 / 能力不匹配 bridge 不能 lease，`submit_result` 校验 lease identity；diagnostics 必须追到 `traceRef` 对应的完整 model trace 包；CAD fake preflight 拆分 `runtimeStatus` 与 `proofStatus`，fake driver 只能 `proofStatus=not_verified`。独立架构 MD 的剩余路线迁入 `CORE_RESTRUCTURE_PLAN.md` §3.1，避免形成第二套主计划。
+4. **新增/修改测试**：新增 / 更新本地 live bridge、flows 和 diagnostics 测试，覆盖未知阶段、run id 碰撞、bridge registration / capability gate、submit identity、trace missing / bad route / missing codex exec、fake CAD proof 状态。
+5. **实际运行的命令和结果**：红灯先失败于未知阶段未阻断、run id 碰撞、submit identity 缺口、trace 证据未校验、fake CAD proof 状态缺失和未登记 bridge 仍继续模型调用；实现后 `tests.core.test_local_live_model_bridge tests.core.test_local_live_model_bridge_diagnostics tests.core.test_local_live_model_bridge_flows` -> 18 OK；相邻回归 `tests.core.test_local_live_model_bridge tests.core.test_local_live_model_bridge_diagnostics tests.core.test_local_live_model_bridge_flows tests.core.test_model_prompt_library tests.core.test_model_review` -> 49 OK；`py_compile core/orchestrator/local_live_model_bridge*.py scripts/diagnose_local_live_model_bridge.py scripts/probe_codex_cli_model_review.py` -> OK；旧 MD 文件名扫描 -> 无残留；`scripts/run_doc_governance_audit.py --fail-on-findings` pass；`openspec.cmd validate --all --strict --json --no-interactive` -> 16/16 pass；`git diff --check` 仅报告既有 Windows 行尾提示，无 whitespace error；严格 diagnostics 对最新真实 `single_agent_live` run 返回 `status=pass`。
+6. **是否运行真实 CAD**：否。本包未新开真实 CAD；fake driver 仍只证明编排和 preview-only 安全边界，不证明真实 CAD 几何。
+7. **机器可读证据路径**：最新真实 `single_agent_live` 证据为 `output/model_reviews/local_live_model_bridge_runtime_smoke_fresh_usable_20260606/run_20260606073718_single_agent_live_1a45fb4a/worker_run_state.json`，trace 包在同目录 `model_traces/pipeline_design_director/pipeline-design-director/`；沙箱网络阻断样本为 `output/model_reviews/local_live_model_bridge_runtime_smoke_fresh_20260606/run_20260606073443_single_agent_live_129a671e/`；业务证据不足导致 trace review blocked 的反例为 `output/model_reviews/local_live_model_bridge_runtime_smoke_fresh_approved_20260606/run_20260606073558_single_agent_live_84582a6a/`。
+8. **结论分类**：本地 runtime / diagnostics 加固与独立 MD 收口已完成；最新 `single_agent_live` 真实 provider smoke 通过严格 diagnostics。未运行真实 CAD，不提升表 C，不声明真实 CAD preview verified。
+9. **剩余风险**：Cloudflare Worker / Durable Object / Queue 迁移、bridge-owned Codex config、真实 `single_agent_live` / `multi_agent_live` 复验和真实 CAD-MCP preview-only handles readback 仍需后续单独包证明。
+
+---
+
+## LOCAL-LIVE-MODEL-BRIDGE-RUNTIME-GATES-01
+
+1. **包名**：`LOCAL-LIVE-MODEL-BRIDGE-RUNTIME-GATES-01`
+2. **修改文件列表**：新增 / 更新 `core/orchestrator/local_live_model_bridge.py`、`core/orchestrator/local_live_model_bridge_state.py`、`core/orchestrator/local_live_model_bridge_diagnostics.py`、`scripts/diagnose_local_live_model_bridge.py`、`tests/core/test_local_live_model_bridge.py`、`tests/core/test_local_live_model_bridge_flows.py`、`tests/core/test_local_live_model_bridge_diagnostics.py`；同步 `CORE_RESTRUCTURE_PLAN.md`、`docs/status/changelog.md`。
+3. **关键设计说明**：本包把 Worker-first MVP 从架构口径推进为本地可测试骨架：run state、task envelope、bridge 注册 / lease / heartbeat / submit、idempotency、timeout / retry、circuit breaker、security gate、single-agent live、multi-agent live、CAD preview-only Tool Contract 和分层诊断入口均已落地。`worker_run_state` 增加 `featureGates`，默认只放行 `worker_orchestration_ready`；真实 bridge、GPT-5.5、多 Agent、CAD preview 和保存授权都必须按目标阶段 / 显式条件逐层启用。
+4. **新增/修改测试**：新增本地 live bridge 编排、flows 和 diagnostics 测试，覆盖 W1-W5 fixture 行为、feature gates 默认关闭、bridge 离线定位、fake CAD 不冒充真实几何、CLI `--fail-on-blocked`。
+5. **实际运行的命令和结果**：`tests.core.test_local_live_model_bridge_diagnostics tests.core.test_local_live_model_bridge tests.core.test_local_live_model_bridge_flows tests.core.test_model_prompt_library` -> 20 OK；`py_compile core/orchestrator/local_live_model_bridge*.py scripts/diagnose_local_live_model_bridge.py scripts/probe_codex_cli_model_review.py` -> OK；`scripts/diagnose_local_live_model_bridge.py --run-dir output/model_reviews/local_live_model_bridge_runtime_smoke/run_20260606064624_single_agent_live` -> `status=pass`、`single_agent_live` 通过、后续层 `not_enabled`；bridge 离线样本 `scripts/diagnose_local_live_model_bridge.py --run-dir output/model_reviews/local_live_model_bridge_diagnostics_smoke/run_20260606070743_single_agent_live` -> `firstBlockedAt=local_bridge_connected`、`nextAction=start_or_register_local_bridge`；同一样本加 `--fail-on-blocked` 返回预期 exit code 1；`scripts/run_doc_governance_audit.py --fail-on-findings` pass；`scripts/run_repo_audit.py --max-python-lines 500 --fail-on-severity medium` 无 medium/high 阻断；`openspec.cmd validate --all --strict --json --no-interactive` -> 16/16 pass。
+6. **是否运行真实 CAD**：否。本包未新开真实 CAD；上一轮尝试 `autocad_existing` 因本机无活动 `AutoCAD.Application` COM 实例而正确 blocked。fake driver 只证明编排和 preview-only 安全边界，不证明真实 CAD 几何。
+7. **机器可读证据路径**：`output/model_reviews/local_live_model_bridge_runtime_smoke/run_20260606064624_single_agent_live/worker_run_state.json`；`output/model_reviews/local_live_model_bridge_runtime_smoke/diagnostic_latest.json`；`output/model_reviews/local_live_model_bridge_diagnostics_smoke/diagnostic_bridge_offline.json`；真实 CAD 阻断报告为 `output/runs/model-agent-live-collab-proof-20260606-064743/cad_reports/cad_preview_tool_report.json`。
+8. **结论分类**：Worker-first 系统骨架、分层 feature gate、运行诊断脚本和 fixture 验证已落地；`single_agent_live` 有历史真实 provider smoke 证据；`cad_mcp_preview_live` 只到 fake-driver / blocked-diagnostic 边界，不提升表 C。
+9. **剩余风险**：真实 CAD-MCP preview 仍需在有 AutoCAD / CAD-MCP 的环境中单独触发；后续若接 Cloudflare Worker 真实部署，还需把本地 stand-in 状态机迁移到 Worker / Durable Object / Queue，并保留同一分层 gate 语义。
+
+---
+
+## LOCAL-LIVE-MODEL-BRIDGE-ARCHITECTURE-01
+
+1. **包名**：`LOCAL-LIVE-MODEL-BRIDGE-ARCHITECTURE-01`
+2. **修改文件列表**：曾新增独立本地活体模型桥架构 MD，并同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`README.md`、`agents/pipeline/README.md`、`docs/architecture/README.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、`docs/planning/任务清单.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`；该独立 MD 已在 `LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01` 中迁移后删除。
+3. **关键设计说明**：本包把“长期先接 Cloudflare Worker 编排层，再用本地 bridge 执行 Codex CLI / GPT-5.5”沉淀为架构路线：Worker 产品分工、API 最小端点、`task_envelope` / `agent_output` / `run_state` 数据合同、Worker 侧系统角色、模型型 Agent Prompt 合同、队列 / 依赖 / 状态机规则、超时 / 熔断 / retry / DLQ / backpressure / kill switch、安全与数据边界，以及 W0-W5 执行目标计划。完成声明分为 `worker_orchestration_ready`、`local_bridge_connected`、`single_agent_live`、`multi_agent_live`、`cad_mcp_preview_live` 和 `formal_training_integrated`；这些剩余路线当前维护在 `CORE_RESTRUCTURE_PLAN.md` §3.1。
+4. **新增/修改测试**：未新增测试；这是架构文档与状态同步包。
+5. **实际运行的命令和结果**：`scripts/run_doc_governance_audit.py --fail-on-findings` pass，`finding_count=0`。
+6. **是否运行真实 CAD**：否。本包不连接 AutoCAD、不写 / 保存 DWG、不删除实体、不改正式图层。
+7. **机器可读证据路径**：当前已迁移到 `CORE_RESTRUCTURE_PLAN.md` §3.1；无新增 CAD evidence、model provider proof 或 coverage JSON。
+8. **结论分类**：Worker 编排 + 本地活体模型桥路线及执行契约已沉淀为主架构记录；它不证明 Worker 已部署、不证明真实模型已再次调用、不证明 CAD 几何、不提升表 C。
+9. **剩余风险**：后续实现时需要分别证明 `worker_orchestration_ready`、`local_bridge_connected` 和 `single_agent_live`；接入 CAD-MCP 前要处理 bridge-owned Codex config 与 MCP 配置边界，避免 `--ignore-user-config` 连带忽略 MCP；Worker 保护机制必须先用 fixture 覆盖超时、熔断、重试耗尽、DLQ、bridge 离线和越权阻断。
+
+---
+
+## CORE-PLANMD-ARCH-ROUTER-01
+1. **包名**：`CORE-PLANMD-ARCH-ROUTER-01`
+2. **修改文件列表**：重写 `CORE_RESTRUCTURE_PLAN.md`；同步 `docs/status/changelog.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md`。
+3. **关键设计说明**：主 PlanMD 从旧包过程墙改为系统宪章 / 架构路由器，只保留主架构链路、不可破坏边界、事实源地图、未来开发路由、Decision Gates、执行入口和完成声明标准；训练内容只保留 `Visual-First` / `visual_parts` 边界和事实源链接。
+4. **新增/修改测试**：未新增测试；复用现有文档治理、PlanMD、self_check 与 Core 重构回归。
+5. **实际运行的命令和结果**：`scripts/run_doc_governance_audit.py --fail-on-findings` pass；`tests.core.test_doc_governance tests.core.test_planmd_governance tests.core.test_self_check tests.core.test_core_restructure -v` -> 48 OK。
+6. **是否运行真实 CAD**：否。本包只做文档 / 架构治理；未连接 AutoCAD、未写 / 保存 DWG、未删除实体、未改正式图层。
+7. **机器可读证据路径**：`CORE_RESTRUCTURE_PLAN.md`；验证输出来自本轮终端命令；无新增 CAD evidence 或 coverage JSON。
+8. **结论分类**：唯一主 PlanMD 已收束为系统宪章 / 架构路由器（文档治理 pass，训练事实源、系统资产 registry、表 C 均未改）。
+9. **剩余风险**：后续若新增具体开发包，仍需写入 `docs/planning/任务清单.md` 或对应 OpenSpec；本文不再承载单次训练流水、对象试点长证据或 completed change 任务清单。
+---
+## OBJECT-FAMILY-SOFA-REPLAY-RCAD-01
+1. **包名**：`OBJECT-FAMILY-SOFA-REPLAY-RCAD-01`
+2. **修改文件列表**：新增 `core/assets/object_family_cad_replay.py`、`scripts/run_object_family_cad_replay.py`、`tests/core/test_object_family_cad_replay.py`；更新 `core/assets/__init__.py`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、状态、changelog、handoff 和 package index；新增真实证据目录 `output/validation_runs/object-family-sofa-replay-20260605-rcad/`、截图 `output/previews/object-family-sofa-replay-20260605-rcad.png`、closeout 包 `output/runs/object-family-sofa-replay-20260605-rcad-closeout/`。
+3. **关键设计说明**：按主计划 §0.1 为 sofa 对象族补真实 CAD replay。runner 复用 no-CAD trial 的 `draw_symbol_glyph` CAD_PLAN 草案，平移到 replay base point，重新 validate / dry-run，再通过现有 preview-only `execute_plan_file()` 写入 `CODEX_PREVIEW`；几何证明只认 created handles readback、bbox、layer、type count 和 closeout gate。
+4. **新增/修改测试**：新增 `tests/core/test_object_family_cad_replay.py`，覆盖 fake CAD replay 生成 17 个回读实体、bbox / layer / type count / `savedCurrentDwg=false` 合同，以及 CAD 连接失败时返回 `external_blocker`。
+5. **实际运行的命令和结果**：先运行红测，失败于 `ModuleNotFoundError: No module named 'core.assets.object_family_cad_replay'`；实现后 `tests.core.test_object_family_cad_replay` -> 2 OK；相邻回归 `tests.core.test_object_family_cad_replay tests.core.test_object_family_trial tests.core.test_local_asset_rag tests.core.test_asset_promotion_candidates tests.core.test_symbol_glyph_cad_smoke tests.core.test_execute_plan` -> 24 OK；真实 CAD replay 命令返回 `status=geometry_verified`、17/17 handles、bbox / layer / type count 匹配；`render_preview.py --capture-autocad-window --execution-summary ...` 成功生成任务级截图；`run_visual_cad_review.py` -> pass；closeout gate -> `ready_for_delivery`。
+6. **是否运行真实 CAD**：是。外部 COM 连接当前活动文档 `projects/测试文件.dwg`，只写 `CODEX_PREVIEW`，未保存当前 DWG、未改正式图层、未删除实体。
+7. **机器可读证据路径**：`output/validation_runs/object-family-sofa-replay-20260605-rcad/object_family_cad_replay_report.json`、`execution_summary.json`、`readback_entities.json`、`visual-review/visual_review_report.json`；截图 `output/previews/object-family-sofa-replay-20260605-rcad.png`；closeout `output/runs/object-family-sofa-replay-20260605-rcad-closeout/closeout_decision.json`。
+8. **结论分类**：sofa 对象族真实 CAD replay 已落地（code + tests + real CAD + readback + screenshot visual aid + closeout，geometry_verified=是）。
+9. **剩余风险**：这不是系统资产跨 DWG 复用 verified，不包含 precise sourceSpec / reuseReplay，不自动写规则、checker、资产或训练事实源；用户人工视觉验收仍未替代。
+10. **能力证明附加项**：`capability_id=object_family.sofa.replay`；`claim_level=real_cad_replay_geometry_verified`；`geometry_verified=true`；`targetLayer=CODEX_PREVIEW`；`savedCurrentDwg=false`。
+11. **覆盖率 / 表 C 写回**：本包不写 `cad_capability_registry`、不刷新 `cad_capability_coverage.json`、不提升表 C；证据只作为资产智能对象族 replay 的局部能力证明。
+12. **最高触及 Ladder**：对象族 `draw_symbol_glyph` replay / closeout 证据；不声明 L3+ 施工图能力，不声明系统资产复用 verified。
+---
+## ASSET-PROMOTION-CANDIDATES-MVP-01
+1. **包名**：`ASSET-PROMOTION-CANDIDATES-MVP-01`
+2. **修改文件列表**：新增 `core/assets/promotion_candidates.py`、`tests/core/test_asset_promotion_candidates.py`；更新 `core/assets/__init__.py`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、状态、changelog、handoff 和 package index。
+3. **关键设计说明**：按主计划 §0.1 在 sofa 对象族 no-CAD 试点后落地自动晋升候选。`build_asset_intelligence_promotion_candidates()` 从 ready trial 生成 task rule、checker、asset candidate、training item 四类候选，并输出 `promotionGate` 和 `review`，但不直接修改任何长期目标。
+4. **新增/修改测试**：新增 `tests/core/test_asset_promotion_candidates.py`，覆盖 ready sofa trial 生成 review-only 候选、`mutatedTargets=[]`、training source 不更新、task rules / checker 进入 `needs_reviewed_package`，以及 source trial 不 ready 时阻断。
+5. **实际运行的命令和结果**：先运行红测，失败于 `ModuleNotFoundError: No module named 'core.assets.promotion_candidates'`；实现后 `tests.core.test_asset_promotion_candidates` -> 2 OK；相邻回归 `tests.core.test_asset_promotion_candidates tests.core.test_object_family_trial tests.core.test_local_asset_rag tests.core.test_training_learning_promotion tests.core.test_plan_engine` -> 26 OK；真实仓库函数链 `trial -> build_asset_intelligence_promotion_candidates(trial)` -> `review_required 4 [] needs_reviewed_package`。
+6. **是否运行真实 CAD**：否。本包只生成候选和 review gate；未连接 AutoCAD、未写 / 保存 DWG、未删除实体、未改正式图层。
+7. **机器可读证据路径**：`core/assets/promotion_candidates.py`；`tests/core/test_asset_promotion_candidates.py`；运行时输出形态为 `asset_intelligence_promotion_candidates`。
+8. **结论分类**：资产智能自动晋升候选已落地（code + tests + real repo function call，geometry_verified=否）。
+9. **剩余风险**：候选仍需 `pipeline_learning_promoter` / reviewed package 审核；不会自动写规则、checker、资产或训练事实源。主计划下一项是真实 CAD replay 能力证明。
+---
+## OBJECT-FAMILY-SOFA-TRIAL-MVP-01
+1. **包名**：`OBJECT-FAMILY-SOFA-TRIAL-MVP-01`
+2. **修改文件列表**：新增 `core/assets/object_family_trial.py`、`tests/core/test_object_family_trial.py`；更新 `core/assets/__init__.py`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、状态、changelog、handoff 和 package index。
+3. **关键设计说明**：按主计划 §0.1 在小型 RAG 之后落地 sofa 对象族 no-CAD 试点。`build_object_family_trial()` 当前只支持 sofa，先调用 `local_rag`，再生成 3 个设计候选、一个 `draw_symbol_glyph` CAD_PLAN 草案、dry-run 报告、执行计划和 readback 证据要求。非 sofa 请求返回 `unsupported_object_family`，防止 MVP 未审查泛化。
+4. **新增/修改测试**：新增 `tests/core/test_object_family_trial.py`，覆盖 sofa 试点生成 RAG / 候选 / 有效 CAD_PLAN / dry-run / readback 合同，以及非 sofa 请求不生成 CAD_PLAN 完成声明。
+5. **实际运行的命令和结果**：先运行红测，失败于 `ModuleNotFoundError: No module named 'core.assets.object_family_trial'`；实现后 `tests.core.test_object_family_trial` -> 2 OK；相邻回归 `tests.core.test_object_family_trial tests.core.test_local_asset_rag tests.core.test_plan_engine tests.core.test_semantic_asset_rules tests.core.test_system_asset_reuse` -> 32 OK；真实仓库调用 `build_object_family_trial('复用沙发时检查靠背、坐垫和扶手')` -> `cad_plan_draft_ready 3 valid not_executed_no_cad`。
+6. **是否运行真实 CAD**：否。本包只生成 no-CAD 试点包、CAD_PLAN 草案和 dry-run；未连接 AutoCAD、未写 / 保存 DWG、未删除实体、未改正式图层。
+7. **机器可读证据路径**：`core/assets/object_family_trial.py`；`tests/core/test_object_family_trial.py`；运行时输出形态为 `object_family_trial`。
+8. **结论分类**：sofa 对象族 no-CAD 试点已落地（code + tests + real repo function call，geometry_verified=否）。
+9. **剩余风险**：该包证明的是检索到草案和证据口径，不证明真实 CAD replay。主计划下一项是自动晋升候选；最终仍需真实 CAD replay 才能声明对象族能力证明。
+---
+## ASSET-LOCAL-RAG-MVP-01
+1. **包名**：`ASSET-LOCAL-RAG-MVP-01`
+2. **修改文件列表**：新增 `core/assets/local_rag.py`、`tests/core/test_local_asset_rag.py`；更新 `core/assets/__init__.py`、`CORE_RESTRUCTURE_PLAN.md`、状态、changelog、handoff 和 package index。
+3. **关键设计说明**：按主计划 §0.1 先落地小型本地 RAG。`build_local_asset_rag_pack()` 只从系统资产 JSON、语义规则、Agent training memory 和项目失败样本做 lexical 检索，输出 source policy、scanned sources、source summary、引用片段和 evidence boundary。它显式排除 reference asset、外网、raw download 和 embedding index。
+4. **新增/修改测试**：新增 `tests/core/test_local_asset_rag.py`，覆盖只读允许来源、不把 reference manifest 纳入 RAG、空仓库时保持 upstream context / not capability proof 边界。
+5. **实际运行的命令和结果**：先用固定 Python 运行红测，失败于 `ModuleNotFoundError: No module named 'core.assets.local_rag'`；实现后 `tests.core.test_local_asset_rag` -> 2 OK；相邻回归 `tests.core.test_local_asset_rag tests.core.test_semantic_asset_rules tests.core.test_system_asset_reuse tests.core.test_training_learning_promotion` -> 30 OK；真实仓库函数调用 `build_local_asset_rag_pack('复用沙发时检查靠背和坐垫')` -> `ready`，sourceSummary 为 `system_asset=5, semantic_rule=1, training_memory=4, failure_sample=5, reference_asset=0`。
+6. **是否运行真实 CAD**：否。本包只做本地上下文检索，不连接 AutoCAD、不写 / 保存 DWG、不删除实体、不改正式图层。
+7. **机器可读证据路径**：`core/assets/local_rag.py`；`tests/core/test_local_asset_rag.py`；运行时输出形态为 `local_asset_small_rag_pack`。
+8. **结论分类**：资产智能小型本地 RAG 已落地（code + tests，geometry_verified=否）。
+9. **剩余风险**：RAG 结果只说明本地上下文被检索到；下一步仍需对象族试点，把检索结果接到设计候选、`CAD_PLAN`、执行计划和 readback 证据口径。真实 CAD replay 仍未做。
+---
+
+> 历史交接包已移入 `archive/2026-06.md`；当前窗口只保留最近资产智能链路的活跃包。

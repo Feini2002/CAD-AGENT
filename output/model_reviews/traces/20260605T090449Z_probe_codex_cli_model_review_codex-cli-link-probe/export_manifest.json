@@ -1,0 +1,39 @@
+{
+  "agentId": "probe_codex_cli_model_review",
+  "approvalBasis": [
+    "MODEL_DATA_EXPORT_AUTHORIZATION.md#default-allowed-data"
+  ],
+  "blockedArtifacts": [],
+  "blockingReasons": [],
+  "evidenceBoundary": [
+    "manifest pass only proves export boundary, not model quality or CAD geometry",
+    "manifest pass does not prove provider availability or user acceptance"
+  ],
+  "forbiddenScan": {
+    "fullScreenScreenshotRequested": false,
+    "secretLikeCount": 0,
+    "wholeOutputRequested": false,
+    "wholeRepoRequested": false
+  },
+  "route": "codex_cli_local",
+  "schemaVersion": "model-export-manifest/v1",
+  "sentArtifacts": [
+    {
+      "byteCount": 939,
+      "kind": "prompt_text",
+      "path": "",
+      "sha256": "d86e8768cfaea55e3b554619d835bced76bc8d948122ce4a2be102e2222808e4",
+      "status": "inline"
+    },
+    {
+      "byteCount": 12979,
+      "kind": "schema_snapshot",
+      "path": "core/model_review/schemas/visual_acceptance_review.schema.json",
+      "sha256": "1c1a1006729f2a5b5815f3895c4df8d0841b738c47b57a41ddb0e38e3919f0e2",
+      "status": "present"
+    }
+  ],
+  "status": "pass",
+  "traceId": "codex-cli-link-probe",
+  "unexpectedLocalFiles": []
+}

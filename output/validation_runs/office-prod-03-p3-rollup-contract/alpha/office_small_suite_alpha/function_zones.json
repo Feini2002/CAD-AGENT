@@ -1,0 +1,112 @@
+[
+  {
+    "version": "0.1",
+    "zone_id": "zone-shell-office-small-suite-straight_spine-right",
+    "shell_id": "shell-office-small-suite",
+    "name": "Right Function Zone",
+    "purpose": "display",
+    "boundary": {
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        10000.0,
+        1050.0
+      ]
+    },
+    "geometry": {
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        10000.0,
+        1050.0
+      ]
+    },
+    "area": 10500000.0,
+    "depth": 1050.0,
+    "frontage": 10000.0,
+    "side_of_path": "right",
+    "candidate_functions": [
+      "display",
+      "storage",
+      "desk_area",
+      "service",
+      "living"
+    ],
+    "preferred_objects": [
+      "display_unit",
+      "shelf",
+      "cabinet",
+      "desk",
+      "chair",
+      "counter",
+      "sofa",
+      "table"
+    ],
+    "constraints": [
+      "derived_from_circulation:circulation-shell-office-small-suite-straight_spine",
+      "adjacent_to_path:path-straight_spine-main"
+    ],
+    "score": 0.9048,
+    "uncertainties": []
+  },
+  {
+    "version": "0.1",
+    "zone_id": "zone-shell-office-small-suite-straight_spine-left",
+    "shell_id": "shell-office-small-suite",
+    "name": "Left Function Zone",
+    "purpose": "display",
+    "boundary": {
+      "min": [
+        0.0,
+        2150.0
+      ],
+      "max": [
+        5400.0,
+        6500.0
+      ]
+    },
+    "geometry": {
+      "min": [
+        0.0,
+        2150.0
+      ],
+      "max": [
+        5400.0,
+        6500.0
+      ]
+    },
+    "area": 23490000.0,
+    "depth": 4350.0,
+    "frontage": 10000.0,
+    "side_of_path": "left",
+    "candidate_functions": [
+      "display",
+      "storage",
+      "desk_area",
+      "service",
+      "living"
+    ],
+    "preferred_objects": [
+      "display_unit",
+      "shelf",
+      "cabinet",
+      "desk",
+      "chair",
+      "counter",
+      "sofa",
+      "table"
+    ],
+    "constraints": [
+      "derived_from_circulation:circulation-shell-office-small-suite-straight_spine",
+      "adjacent_to_path:path-straight_spine-main"
+    ],
+    "score": 0.714,
+    "uncertainties": [
+      "no_place_zone subtraction returned partial; using largest conservative fragment."
+    ]
+  }
+]

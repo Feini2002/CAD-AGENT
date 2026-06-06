@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "handoff_packet/v1",
+  "fromAgentId": "pipeline_style_generator",
+  "toAgentIds": [
+    "pipeline_design_reviewer"
+  ],
+  "status": "ready",
+  "decisionSummary": "pass pass single",
+  "statePatch": {
+    "phase": "orchestrator_reviewed",
+    "phaseLabelForUser": "模型型 Agent 只读设计链路",
+    "completedEvidence": [
+      "pipeline_orchestrator pass summary available",
+      "pipeline_design_director pass summary available",
+      "rule context confirms read-only style generation boundaries"
+    ],
+    "pendingEvidence": [
+      "cad_plan from downstream pipeline_intent",
+      "validate_plan result",
+      "dry_run result",
+      "preview-only CAD execution result if authorized by CAD policy",
+      "cad_readback evidence",
+      "visual_acceptance_review result"
+    ],
+    "pendingUserAction": "",
+    "blockedReason": "CAD execution is blocked in dispatch because request_kind='draw' requires cad_policy.allow_cad=true; style candidate generation remains read-only and does not execute CAD.",
+    "nextSafeAction": "Pass the single parameterized style candidate to visual_intent or intent generation; downstream must still validate, dry-run, preview, read back, and obtain visual acceptance before delivery claims."
+  },
+  "evidenceRefs": [
+    "user_request.json: 用户请求为让模型型 Agent 协作设计一个茶几符号，并做 preview-only CAD 校验。",
+    "dispatch_plan.json: route=standard_draw, status=blocked, CAD execution not authorized, hard gates include cad_plan_required, validate_plan, dry_run, cad_readback, visual_acceptance_review, closeout_gate.",
+    "pipeline_design_director summary: 室内/家具平面 CAD 符号，茶几 top-view symbol，适合放入平面布置图，不是施工详图、三维渲染或完整产品设计图。",
+    "rule_context_packs/pipeline_style_generator.json: style generator is read-only and cannot execute CAD, save DWG, delete entities, modify formal layers, or substitute for readback."
+  ],
+  "evidenceMissing": [
+    "No semanticDecomposition.designRouting block with explicit candidate count policy was provided.",
+    "No existing drawing units, target block insertion point, formal CAD layer table, plot style table, or viewport scale readback was provided.",
+    "No CAD geometry/readback/screenshot evidence exists for the proposed symbol."
+  ],
+  "openQuestions": [],
+  "downstreamInstructions": [
+    "CAD execution is not authorized: cad_policy.allow_cad=false and dispatch plan is blocked for draw execution.",
+    "No CAD readback or visual acceptance evidence exists, so no verified geometry or delivered drawing claim can be made.",
+    "Downstream visual_intent or intent must convert this candidate into a CAD_PLAN candidate.",
+    "CAD_PLAN must pass validate_plan and dry_run before preview-only execution.",
+    "Preview-only CAD output must be read back with created handles, bbox, layers, and sourceSpec before audit or delivery claims.",
+    "Visual acceptance review is required before final user-facing delivery."
+  ],
+  "allowedClaims": [
+    "A single parameterized style candidate was generated for a top-view tea table CAD symbol.",
+    "No CAD execution, DWG save, entity deletion, formal layer modification, readback verification, or user acceptance is claimed.",
+    "The candidate is suitable for conversion into visual_intent or CAD_PLAN inputs, subject to downstream validation and preview-only gates."
+  ],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "sha256OfSourceOutput": "53f8adc83c289634ae4a11273f599836caba26ee3e9cb3eb2e37e506019b6692"
+}

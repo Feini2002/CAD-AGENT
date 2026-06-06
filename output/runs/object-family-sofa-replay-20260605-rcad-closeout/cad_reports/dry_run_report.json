@@ -1,0 +1,11 @@
+{
+  "status": "pass",
+  "sourceStatus": "valid",
+  "source": "output/validation_runs/object-family-sofa-replay-20260605-rcad/dry_run_report.json",
+  "bbox": [
+    62000.0,
+    36100.0,
+    64200.0,
+    36900.0
+  ]
+}

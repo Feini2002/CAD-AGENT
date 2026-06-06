@@ -708,6 +708,141 @@ class SystemAssetSedimentationTests(unittest.TestCase):
         self.assertIn("A1/A2 visual aisle is too narrow", report["issues"])
         self.assertIn("protected asset proof content is still on CODEX_PREVIEW", report["issues"])
 
+    def test_visual_warehouse_readability_uses_full_layer_counts_without_double_counting(self) -> None:
+        from scripts.layout_system_asset_shelves import _audit_visual_warehouse_readability
+
+        zones = {
+            "A1_LINE_STANDARDS": {"min": [0.0, 0.0], "max": [4000.0, 4000.0]},
+            "A2_ANNOTATION_STYLES": {"min": [6000.0, 0.0], "max": [10000.0, 4000.0]},
+            "B_OBJECT_ASSET_INDEX": {"min": [11500.0, 0.0], "max": [15000.0, 4000.0]},
+        }
+        content_slots = {
+            "A1_LINE_STANDARDS": {"bbox": {"min": [500.0, 500.0], "max": [2500.0, 2500.0]}},
+            "A2_ANNOTATION_STYLES": {"bbox": {"min": [6500.0, 500.0], "max": [8500.0, 2500.0]}},
+        }
+
+        report = _audit_visual_warehouse_readability(
+            zones=zones,
+            content_slots=content_slots,
+            protected_content={
+                "status": "ok",
+                "layerCounts": {"ASSET_PROOF_CONTENT": 229},
+                "clusters": [
+                    {"clusterId": "A1_LINE_STANDARDS", "layerCounts": {"ASSET_PROOF_CONTENT": 179}},
+                    {"clusterId": "A2_ANNOTATION_STYLES", "layerCounts": {"ASSET_PROOF_CONTENT": 50}},
+                ],
+            },
+        )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["metrics"]["protectedContentLayerCounts"]["ASSET_PROOF_CONTENT"], 229)
+
+    def test_clear_all_shelf_layers_ignores_stale_previous_handle_manifest(self) -> None:
+        from scripts.layout_system_asset_shelves import _clear_previous_shelves
+
+        class FakeEntity:
+            def __init__(self, handle: str, layer: str) -> None:
+                self.Handle = handle
+                self.Layer = layer
+                self.deleted = False
+
+            def Delete(self) -> None:
+                self.deleted = True
+
+        class FakeDoc:
+            def __init__(self) -> None:
+                self.entities = [
+                    FakeEntity("old_manifest", "ASSET_LABEL"),
+                    FakeEntity("stale_shelf", "ASSET_RACK_BASE"),
+                    FakeEntity("protected_asset", "ASSET_PROOF_CONTENT"),
+                ]
+                self.ModelSpace = self.entities
+
+            def HandleToObject(self, handle: str) -> FakeEntity:
+                for entity in self.entities:
+                    if entity.Handle == handle:
+                        return entity
+                raise KeyError(handle)
+
+        doc = FakeDoc()
+
+        report = _clear_previous_shelves(
+            doc,
+            previous_handles=["old_manifest"],
+            clear_all_shelf_layers=True,
+        )
+
+        self.assertEqual(report["mode"], "explicit_clear_all_shelf_layers")
+        self.assertEqual(report["deletedCount"], 2)
+        self.assertTrue(doc.entities[0].deleted)
+        self.assertTrue(doc.entities[1].deleted)
+        self.assertFalse(doc.entities[2].deleted)
+
+    def test_preview_layer_residue_purge_is_bbox_scoped_to_requested_zone(self) -> None:
+        from scripts.layout_system_asset_shelves import _purge_forbidden_preview_layer_content
+
+        class FakeEntity:
+            def __init__(self, handle: str, layer: str, bbox: dict[str, list[float]] | None = None) -> None:
+                self.Handle = handle
+                self.Layer = layer
+                self._bbox = bbox
+                self.deleted = False
+
+            def GetBoundingBox(self) -> tuple[list[float], list[float]]:
+                if self._bbox is None:
+                    raise RuntimeError("missing bbox")
+                return (self._bbox["min"], self._bbox["max"])
+
+            def Delete(self) -> None:
+                self.deleted = True
+
+        class FakeDoc:
+            def __init__(self) -> None:
+                self.ModelSpace = [
+                    FakeEntity("a1_preview_table_frame", "CODEX_PREVIEW", {"min": [0.0, 0.0], "max": [100.0, 100.0]}),
+                    FakeEntity("a2_preview_noise", "CODEX_PREVIEW", {"min": [2000.0, 0.0], "max": [2100.0, 100.0]}),
+                    FakeEntity("proof_content", "ASSET_PROOF_CONTENT"),
+                ]
+
+        doc = FakeDoc()
+
+        report = _purge_forbidden_preview_layer_content(
+            doc,
+            scope_bbox={"min": [1500.0, -100.0], "max": [2500.0, 500.0]},
+            scope_name="A2_ANNOTATION_STYLES",
+        )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["deletedCount"], 1)
+        self.assertFalse(doc.ModelSpace[0].deleted)
+        self.assertTrue(doc.ModelSpace[1].deleted)
+        self.assertFalse(doc.ModelSpace[2].deleted)
+        self.assertEqual(report["scope"]["name"], "A2_ANNOTATION_STYLES")
+
+    def test_preview_layer_purge_without_scope_is_noop(self) -> None:
+        from scripts.layout_system_asset_shelves import _purge_forbidden_preview_layer_content
+
+        class FakeEntity:
+            def __init__(self, handle: str, layer: str) -> None:
+                self.Handle = handle
+                self.Layer = layer
+                self.deleted = False
+
+            def Delete(self) -> None:
+                self.deleted = True
+
+        class FakeDoc:
+            def __init__(self) -> None:
+                self.ModelSpace = [FakeEntity("a1_preview_table_frame", "CODEX_PREVIEW")]
+
+        doc = FakeDoc()
+
+        report = _purge_forbidden_preview_layer_content(doc)
+
+        self.assertEqual(report["status"], "not_run")
+        self.assertEqual(report["deletedCount"], 0)
+        self.assertFalse(doc.ModelSpace[0].deleted)
+
     def test_shelf_clearance_audit_rejects_entities_over_existing_asset_content(self) -> None:
         from scripts.layout_system_asset_shelves import _audit_shelf_content_clearance
 

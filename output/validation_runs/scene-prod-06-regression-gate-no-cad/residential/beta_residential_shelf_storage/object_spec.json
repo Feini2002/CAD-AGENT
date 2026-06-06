@@ -1,0 +1,38 @@
+{
+  "version": "0.1",
+  "object_id": "object-shelf-1200x400",
+  "type": "shelf",
+  "name": "Shelf",
+  "style_profile_id": "style-modern",
+  "size": {
+    "width": 1200,
+    "depth": 400,
+    "height": 2000
+  },
+  "components": [
+    {
+      "component_id": "shelf-body",
+      "role": "body",
+      "count": 1
+    },
+    {
+      "component_id": "shelf-uprights",
+      "role": "upright",
+      "count": 2
+    },
+    {
+      "component_id": "shelf-levels",
+      "role": "storage_level",
+      "count": 5
+    },
+    {
+      "component_id": "shelf-back-panel",
+      "role": "back_panel",
+      "count": 1
+    }
+  ],
+  "placement_requirements": [
+    "base point is lower-left plan corner"
+  ],
+  "drawing_intent": "plan_preview"
+}

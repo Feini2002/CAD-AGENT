@@ -1,0 +1,205 @@
+[
+  {
+    "version": "0.1",
+    "circulation_id": "circulation-shell-healthcare-clinic-waiting-along_wall",
+    "shell_id": "shell-healthcare-clinic-waiting",
+    "strategy": "along_wall",
+    "status": "pass",
+    "score": 0.65,
+    "paths": [
+      {
+        "path_id": "path-along_wall-main",
+        "type": "main",
+        "width_mm": 1500.0,
+        "start": [
+          0.0,
+          2750.0
+        ],
+        "end": [
+          11000.0,
+          2750.0
+        ],
+        "polyline": [
+          [
+            0.0,
+            2750.0
+          ],
+          [
+            750.0,
+            2750.0
+          ],
+          [
+            750.0,
+            750.0
+          ],
+          [
+            11000.0,
+            750.0
+          ],
+          [
+            11000.0,
+            2750.0
+          ]
+        ],
+        "connects": [
+          "entry-main",
+          "treatment-wing"
+        ],
+        "path_surface": [
+          {
+            "min": [
+              0.0,
+              2000.0
+            ],
+            "max": [
+              750.0,
+              3500.0
+            ]
+          },
+          {
+            "min": [
+              0.0,
+              750.0
+            ],
+            "max": [
+              1500.0,
+              2750.0
+            ]
+          },
+          {
+            "min": [
+              750.0,
+              0.0
+            ],
+            "max": [
+              11000.0,
+              1500.0
+            ]
+          },
+          {
+            "min": [
+              10250.0,
+              750.0
+            ],
+            "max": [
+              11750.0,
+              2750.0
+            ]
+          }
+        ],
+        "blocked_reasons": [],
+        "score": 0.65
+      }
+    ]
+  },
+  {
+    "version": "0.1",
+    "circulation_id": "circulation-shell-healthcare-clinic-waiting-straight_spine",
+    "shell_id": "shell-healthcare-clinic-waiting",
+    "strategy": "straight_spine",
+    "status": "blocked",
+    "score": 0.432,
+    "paths": [
+      {
+        "path_id": "path-straight_spine-main",
+        "type": "main",
+        "width_mm": 1500.0,
+        "start": [
+          0.0,
+          2750.0
+        ],
+        "end": [
+          11000.0,
+          2750.0
+        ],
+        "polyline": [
+          [
+            0.0,
+            2750.0
+          ],
+          [
+            11000.0,
+            2750.0
+          ]
+        ],
+        "connects": [
+          "entry-main",
+          "deep-shell"
+        ],
+        "path_surface": [
+          {
+            "min": [
+              0.0,
+              2000.0
+            ],
+            "max": [
+              11000.0,
+              3500.0
+            ]
+          }
+        ],
+        "blocked_reasons": [
+          "path overlaps fixed_obstacle:nurse-station-core."
+        ],
+        "score": 0.432
+      }
+    ]
+  },
+  {
+    "version": "0.1",
+    "circulation_id": "circulation-shell-healthcare-clinic-waiting-l_spine",
+    "shell_id": "shell-healthcare-clinic-waiting",
+    "strategy": "l_spine",
+    "status": "blocked",
+    "score": 0.255,
+    "paths": [
+      {
+        "path_id": "path-l_spine-main",
+        "type": "main",
+        "width_mm": 1500.0,
+        "start": [
+          0.0,
+          2750.0
+        ],
+        "end": [
+          11000.0,
+          2750.0
+        ],
+        "polyline": [
+          [
+            0.0,
+            2750.0
+          ],
+          [
+            11000.0,
+            2750.0
+          ],
+          [
+            11000.0,
+            2750.0
+          ]
+        ],
+        "connects": [
+          "entry-main",
+          "treatment-wing"
+        ],
+        "path_surface": [
+          {
+            "min": [
+              0.0,
+              2000.0
+            ],
+            "max": [
+              11000.0,
+              3500.0
+            ]
+          }
+        ],
+        "blocked_reasons": [
+          "path overlaps fixed_obstacle:nurse-station-core."
+        ],
+        "score": 0.255
+      }
+    ]
+  }
+]

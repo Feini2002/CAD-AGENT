@@ -1,0 +1,92 @@
+{
+  "alternativesConsidered": [],
+  "assumptions": [],
+  "blockingReasons": [],
+  "contentMatchesDesignPurpose": true,
+  "contextLeakAudit": {
+    "blocking": false,
+    "schemaVersion": "model-context-leak-audit/v1",
+    "unexpectedProjectContextLoaded": false,
+    "warnings": []
+  },
+  "decision": "pass",
+  "designReview": "fixture style candidates are readable enough for intent drafting",
+  "evidenceMissing": [],
+  "evidenceUsed": [
+    "local_fixture_model",
+    "rule_context_pack",
+    "upstream handoff packets"
+  ],
+  "finalResponseAllowedClaims": [
+    "local fixture agent-chain output only"
+  ],
+  "industryHabitFit": true,
+  "learningCandidate": {
+    "checkerDelta": "",
+    "correctPattern": "",
+    "decision": "not_required",
+    "errorPattern": "",
+    "promptDelta": "",
+    "responsibleAgentIds": [],
+    "retestOriginalTask": false,
+    "trigger": "not_required"
+  },
+  "modelInvoked": true,
+  "modelProviderStatus": {
+    "blocking": false,
+    "errorCategory": "",
+    "modelInvoked": true,
+    "modelUnavailable": false,
+    "provider": "codex_cli",
+    "reason": "",
+    "required": true,
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "allowsImages": true,
+      "externalData": false,
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ],
+      "requiresUserAuthorization": false,
+      "route": "codex_cli_local",
+      "transport": "local_cli"
+    },
+    "schemaValid": true,
+    "status": "schema_valid"
+  },
+  "modelTrace": {
+    "agentId": "pipeline_design_reviewer",
+    "contextLeakAuditPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-fixture-third-check\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\context_leak_audit.json",
+    "exportManifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-fixture-third-check\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\export_manifest.json",
+    "manifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-fixture-third-check\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\trace_manifest.json",
+    "reviewPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-fixture-third-check\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\trace_review.json",
+    "summaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-fixture-third-check\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\trace_summary.md",
+    "taskType": "design_review",
+    "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-fixture-third-check\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer",
+    "traceId": "pipeline-design-reviewer",
+    "traceReviewStatus": "pass"
+  },
+  "modelUnavailable": false,
+  "needsUserChoice": false,
+  "nextRequiredEvidence": [],
+  "professionalDrawingLike": true,
+  "readability": true,
+  "repairOrRegenerateRecommendation": {},
+  "scaleAndProportionFit": true,
+  "schemaValid": true,
+  "statePatch": {
+    "blockedReason": "",
+    "completedEvidence": [
+      "local fixture model output"
+    ],
+    "nextSafeAction": "continue",
+    "pendingEvidence": [],
+    "pendingUserAction": "",
+    "phase": "design_review.schema.json",
+    "phaseLabelForUser": "design_review.schema.json"
+  },
+  "status": "pass",
+  "styleCandidateFit": true,
+  "toolIntent": null
+}

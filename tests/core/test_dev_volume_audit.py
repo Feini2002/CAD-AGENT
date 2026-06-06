@@ -140,6 +140,30 @@ class DevVolumeAuditTests(unittest.TestCase):
         self.assertEqual(report["top_untracked_groups"][0]["group"], "core/training")
         self.assertEqual(report["top_tracked_groups"][0]["group"], "core/training")
 
+    def test_output_only_artifact_growth_is_low_severity(self) -> None:
+        report = build_dev_volume_report(
+            PROJECT_ROOT,
+            thresholds=DevVolumeThresholds(
+                max_changed_files=2,
+                max_insertions=5000,
+                max_untracked_files=1,
+                max_single_file_insertions=1200,
+            ),
+            status_text=(
+                "?? output/test_artifacts/a.json\n"
+                "?? output/test_artifacts/b.json\n"
+                "?? output/previews/c.png\n"
+            ),
+            numstat_text="",
+        )
+
+        self.assertEqual(report["summary"]["changed_file_count"], 3)
+        self.assertEqual(report["summary"]["blocking_finding_count"], 0)
+        findings = {finding["code"]: finding for finding in report["findings"]}
+        self.assertEqual(findings["large_changed_file_count"]["severity"], "low")
+        self.assertEqual(findings["large_untracked_file_count"]["severity"], "low")
+        self.assertEqual(findings["large_changed_file_count"]["artifactOnly"], True)
+
     def test_cli_emits_json_report(self) -> None:
         root = artifact_path("dev_volume_audit", f"cli_case_{uuid.uuid4().hex}")
         root.mkdir(parents=True, exist_ok=True)

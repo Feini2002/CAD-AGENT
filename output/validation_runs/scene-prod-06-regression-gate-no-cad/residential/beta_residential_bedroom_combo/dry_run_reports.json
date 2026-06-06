@@ -1,0 +1,70 @@
+[
+  {
+    "version": "0.1",
+    "status": "valid",
+    "validation_errors": [],
+    "intent": "draw_object",
+    "layer": "CODEX_PREVIEW",
+    "bbox": {
+      "min": [
+        0,
+        0
+      ],
+      "max": [
+        2400,
+        1900
+      ]
+    },
+    "entities": [
+      {
+        "type": "rectangle",
+        "layer": "CODEX_PREVIEW",
+        "bbox": {
+          "min": [
+            0,
+            0
+          ],
+          "max": [
+            2400,
+            1900
+          ]
+        }
+      }
+    ],
+    "human_summary": "CAD_PLAN DRY RUN\n- intent: draw_object\n- object: Area Rug (rug)\n- size: 2400 x 1900 mm\n- placement: absolute at [0, 0, 0]\n- layer: CODEX_PREVIEW"
+  },
+  {
+    "version": "0.1",
+    "status": "valid",
+    "validation_errors": [],
+    "intent": "draw_object",
+    "layer": "CODEX_PREVIEW",
+    "bbox": {
+      "min": [
+        200,
+        200
+      ],
+      "max": [
+        2200,
+        1700
+      ]
+    },
+    "entities": [
+      {
+        "type": "rectangle",
+        "layer": "CODEX_PREVIEW",
+        "bbox": {
+          "min": [
+            200,
+            200
+          ],
+          "max": [
+            2200,
+            1700
+          ]
+        }
+      }
+    ],
+    "human_summary": "CAD_PLAN DRY RUN\n- intent: draw_object\n- object: Bed (bed)\n- size: 2000 x 1500 mm\n- placement: absolute at [200, 200, 0]\n- layer: CODEX_PREVIEW"
+  }
+]

@@ -1,0 +1,489 @@
+{
+  "schemaVersion": 1,
+  "kind": "object_family_trial",
+  "status": "cad_plan_draft_ready",
+  "trialId": "object-family.sofa.20260605T034744Z",
+  "objectFamily": "sofa",
+  "brief": "sofa object family replay",
+  "retrievalPack": {
+    "schemaVersion": 1,
+    "kind": "local_asset_small_rag_pack",
+    "status": "ready",
+    "retrievalId": "local-rag.20260605T034744Z",
+    "retrievalMode": "local_lexical_small_rag",
+    "query": "sofa object family replay",
+    "sourcePolicy": {
+      "allowedSourceKinds": [
+        "system_asset",
+        "semantic_rule",
+        "training_memory",
+        "failure_sample"
+      ],
+      "excludedSourceKinds": [
+        "reference_asset",
+        "external_web",
+        "raw_download",
+        "unreviewed_reference"
+      ],
+      "networkAccess": "forbidden",
+      "embeddingIndex": "not_used"
+    },
+    "scannedSources": [
+      "system_asset_registry",
+      "system_asset_registry:libraries/system_library/**/*.json",
+      "semantic_rules",
+      "semantic_rules:core/assets/semantic_rules.py",
+      "training_memory",
+      "training_memory:agents/**/training_memory.json",
+      "failure_samples",
+      "failure_samples:projects/*/runs/*failure*.json",
+      "failure_samples:projects/*/runs/*learning_promotion.json",
+      "failure_samples:docs/training/training-errors.md"
+    ],
+    "sourceSummary": {
+      "system_asset": 2,
+      "semantic_rule": 0,
+      "training_memory": 0,
+      "failure_sample": 5,
+      "reference_asset": 0
+    },
+    "encodingPreflight": {
+      "status": "pass",
+      "checkedTextCount": 1767,
+      "issueCount": 0,
+      "issues": [],
+      "policy": "fail_before_cad_write_or_asset_contract_write",
+      "scope": "small_rag_system_asset_text",
+      "assetCount": 8
+    },
+    "items": [
+      {
+        "sourceKind": "system_asset",
+        "source": "libraries/system_library/furniture/seating/sofas/assets.json",
+        "title": "sofa_asset_package_seed",
+        "score": 2,
+        "matchedTerms": [
+          "sofa",
+          "object"
+        ],
+        "snippet": "sofa_asset_package_seed 沙发资产包占位 furniture.seating.sofas 沙发 sofa 客厅沙发 furniture seating plan 用户要求绘制或复用沙发平面资产 object_block 沙发 sofa 客厅沙发 用户要求绘制或复用沙发平面资产 furniture seating plan residen",
+        "payload": {
+          "assetId": "sofa_asset_package_seed",
+          "category": "furniture.seating.sofas",
+          "assetKind": "object_block",
+          "verificationStatus": "candidate"
+        }
+      },
+      {
+        "sourceKind": "system_asset",
+        "source": "libraries/system_library/registry.json",
+        "title": "sofa_asset_package_seed",
+        "score": 2,
+        "matchedTerms": [
+          "sofa",
+          "object"
+        ],
+        "snippet": "sofa_asset_package_seed 沙发资产包占位 furniture.seating.sofas 沙发 sofa 客厅沙发 furniture seating plan 用户要求绘制或复用沙发平面资产 object_block 沙发 sofa 客厅沙发 用户要求绘制或复用沙发平面资产 furniture seating plan residen",
+        "payload": {
+          "assetId": "sofa_asset_package_seed",
+          "category": "furniture.seating.sofas",
+          "assetKind": "object_block",
+          "verificationStatus": "metadata_only"
+        }
+      },
+      {
+        "sourceKind": "failure_sample",
+        "source": "docs/training/training-errors.md:11",
+        "title": "training-errors.md",
+        "score": 1,
+        "matchedTerms": [
+          "sofa"
+        ],
+        "snippet": "| 2026-05-28 | `residential_sofa_2seat_20260528` | 1 | 预览层出现跨屏 **巨大青色三角线**；用户验收 fail | 块 `5S03232` 内 `AcDbPolyline` 为 **3D 坐标** `(x,y,z)×n`；`vector_redraw_two_seater.py` 用 `step=2`",
+        "payload": {
+          "line": 11
+        }
+      },
+      {
+        "sourceKind": "failure_sample",
+        "source": "docs/training/training-errors.md:12",
+        "title": "training-errors.md",
+        "score": 1,
+        "matchedTerms": [
+          "sofa"
+        ],
+        "snippet": "| 2026-05-28 | `residential_sofa_2seat_20260528` | 1 | 自检截图里 **Cursor/微信挡住 CAD** | `ImageGrab.grab(bbox=屏幕坐标)` 拍的是桌面像素，前台窗口挡住就会进图 | 改为 `PrintWindow(hwnd)` 只抓 AutoCAD 客户区；仍先置顶+Zoom ",
+        "payload": {
+          "line": 12
+        }
+      },
+      {
+        "sourceKind": "failure_sample",
+        "source": "docs/training/training-errors.md:13",
+        "title": "training-errors.md",
+        "score": 1,
+        "matchedTerms": [
+          "sofa"
+        ],
+        "snippet": "| 2026-05-28 | `residential_sofa_2seat_20260528` | 1 | 右青两座 **只剩外框/角部毛刺**，不像两格沙发 | ① 按中心删中座 → 跨座线丢失；② 裁切坐标仍用错参考系 | **炸开**块副本 → 在 **预览区 WCS** 删中座 X 带 → 右座左移 933mm（`insert_explode_de",
+        "payload": {
+          "line": 13
+        }
+      },
+      {
+        "sourceKind": "failure_sample",
+        "source": "docs/training/training-errors.md:14",
+        "title": "training-errors.md",
+        "score": 1,
+        "matchedTerms": [
+          "sofa"
+        ],
+        "snippet": "| 2026-05-28 | `residential_sofa_2seat_20260528` | 1 | 用户：**少很多线**、多轮截图一样；Agent 未自检 | `wcs_from_block_local` 误用 `ins[0]+lx+(preview_x0-xmn)`，X 落到约 **-15 万**，裁切后几乎全丢（审计仅 **4** 条线）；却",
+        "payload": {
+          "line": 14
+        }
+      },
+      {
+        "sourceKind": "failure_sample",
+        "source": "docs/training/training-errors.md:15",
+        "title": "training-errors.md",
+        "score": 1,
+        "matchedTerms": [
+          "sofa"
+        ],
+        "snippet": "| 2026-05-28 | `residential_sofa_2seat_20260528` | 1 | 目视有两格但仍 **未通过**（用户图：中缝/叠线） | 右座左移后与左座在 **接缝 X** 叠了双层竖线/碎线 | 炸开流程 + **接缝带清理**（`seam_cleanup` 保留最长 2 条） | **round1 第 4 次重跑** |",
+        "payload": {
+          "line": 15
+        }
+      }
+    ],
+    "evidenceBoundary": {
+      "checked": [
+        "local_system_asset_json_lookup",
+        "local_semantic_rule_lookup",
+        "local_training_memory_lookup",
+        "local_failure_sample_lookup"
+      ],
+      "notChecked": [
+        "real_cad_geometry",
+        "created_handles_readback",
+        "user_visual_acceptance",
+        "external_asset_license_for_production_use",
+        "model_reasoning_quality"
+      ],
+      "assumptions": [
+        "lexical_matching_only",
+        "no_embedding_rag",
+        "no_network_search",
+        "local_rag_pack_is_upstream_context_not_capability_proof"
+      ]
+    }
+  },
+  "designCandidates": [
+    {
+      "candidateId": "sofa_symbol_clean_source_first",
+      "label": "clean sofa symbol draft",
+      "route": "draw_symbol_glyph",
+      "score": 0.78,
+      "requiredParts": [
+        "back",
+        "seat",
+        "arm_left",
+        "arm_right",
+        "seat_division"
+      ],
+      "rationale": "Prefer a clean component-readable sofa symbol before any CAD write or asset verified claim.",
+      "constraints": [
+        "CODEX_PREVIEW only",
+        "needs created handles readback",
+        "no dimensions in glyph draft"
+      ]
+    },
+    {
+      "candidateId": "sofa_component_preview",
+      "label": "component preview redraw",
+      "route": "draw_symbol_glyph",
+      "score": 0.68,
+      "requiredParts": [
+        "back",
+        "seat",
+        "arm_left",
+        "arm_right"
+      ],
+      "rationale": "Use when exact asset replay is not yet verified but a readable plan-view sofa is needed.",
+      "constraints": [
+        "component roles must stay separable",
+        "dry-run first"
+      ]
+    },
+    {
+      "candidateId": "sofa_reuse_probe_later",
+      "label": "system asset reuse probe later",
+      "route": "reuse_probe_then_cad_plan",
+      "score": 0.55,
+      "requiredParts": [
+        "sourceSpec",
+        "reuseWorkflowProbe",
+        "readback"
+      ],
+      "rationale": "Only promote to reuse after sourceSpec and readback replay are available.",
+      "constraints": [
+        "must not treat metadata as verified reuse",
+        "requires CAD replay in a later package"
+      ]
+    }
+  ],
+  "selectedCandidate": {
+    "candidateId": "sofa_symbol_clean_source_first",
+    "label": "clean sofa symbol draft",
+    "route": "draw_symbol_glyph",
+    "score": 0.78,
+    "requiredParts": [
+      "back",
+      "seat",
+      "arm_left",
+      "arm_right",
+      "seat_division"
+    ],
+    "rationale": "Prefer a clean component-readable sofa symbol before any CAD write or asset verified claim.",
+    "constraints": [
+      "CODEX_PREVIEW only",
+      "needs created handles readback",
+      "no dimensions in glyph draft"
+    ]
+  },
+  "cadPlanDraft": {
+    "version": "0.1",
+    "domain": "residential",
+    "intent": "draw_symbol_glyph",
+    "object": {
+      "type": "symbol_glyph",
+      "symbol_id": "sofa.object_family_trial.v1",
+      "name": "沙发对象族试点草案",
+      "archetype": "seating",
+      "source_brief": "sofa object family replay",
+      "glyph_primitives": [
+        {
+          "part_id": "back",
+          "kind": "support",
+          "primitive": "rectangle",
+          "corner1": [
+            0,
+            650,
+            0
+          ],
+          "corner2": [
+            2200,
+            900,
+            0
+          ]
+        },
+        {
+          "part_id": "seat",
+          "kind": "seat_surface",
+          "primitive": "rectangle",
+          "corner1": [
+            180,
+            100,
+            0
+          ],
+          "corner2": [
+            2020,
+            650,
+            0
+          ]
+        },
+        {
+          "part_id": "arm_left",
+          "kind": "arm",
+          "primitive": "rectangle",
+          "corner1": [
+            0,
+            100,
+            0
+          ],
+          "corner2": [
+            180,
+            900,
+            0
+          ]
+        },
+        {
+          "part_id": "arm_right",
+          "kind": "arm",
+          "primitive": "rectangle",
+          "corner1": [
+            2020,
+            100,
+            0
+          ],
+          "corner2": [
+            2200,
+            900,
+            0
+          ]
+        },
+        {
+          "part_id": "seat_division",
+          "kind": "inner_detail",
+          "primitive": "line",
+          "start_point": [
+            1100,
+            120,
+            0
+          ],
+          "end_point": [
+            1100,
+            630,
+            0
+          ]
+        }
+      ]
+    },
+    "placement": {
+      "mode": "absolute",
+      "base_point": [
+        0,
+        0,
+        0
+      ],
+      "placement_phrase": "object family trial origin; downstream task must resolve real placement"
+    },
+    "drawing": {
+      "layer": "CODEX_PREVIEW",
+      "include_label": false,
+      "include_dimensions": false
+    },
+    "confidence": 0.66,
+    "needs_confirmation": true
+  },
+  "validationErrors": [],
+  "dryRunReport": {
+    "version": "0.1",
+    "status": "valid",
+    "validation_errors": [],
+    "intent": "draw_symbol_glyph",
+    "layer": "CODEX_PREVIEW",
+    "bbox": [
+      0.0,
+      100.0,
+      2200.0,
+      900.0
+    ],
+    "entities": [
+      {
+        "type": "rectangle",
+        "layer": "CODEX_PREVIEW",
+        "part_id": "back",
+        "kind": "support"
+      },
+      {
+        "type": "rectangle",
+        "layer": "CODEX_PREVIEW",
+        "part_id": "seat",
+        "kind": "seat_surface"
+      },
+      {
+        "type": "rectangle",
+        "layer": "CODEX_PREVIEW",
+        "part_id": "arm_left",
+        "kind": "arm"
+      },
+      {
+        "type": "rectangle",
+        "layer": "CODEX_PREVIEW",
+        "part_id": "arm_right",
+        "kind": "arm"
+      },
+      {
+        "type": "line",
+        "layer": "CODEX_PREVIEW",
+        "part_id": "seat_division",
+        "kind": "inner_detail"
+      }
+    ],
+    "human_summary": "CAD_PLAN DRY RUN\n- intent: draw_symbol_glyph\n- symbol_id: sofa.object_family_trial.v1\n- archetype: seating\n- glyph_primitives: 5\n- placement: absolute at [0, 0, 0]\n- layer: CODEX_PREVIEW",
+    "evidence_state": "deferred_cad_readback_required"
+  },
+  "executionPlan": {
+    "status": "not_executed",
+    "cadWritePolicy": "not_executed_no_cad",
+    "targetLayer": "CODEX_PREVIEW",
+    "saveCurrentDwg": false,
+    "steps": [
+      {
+        "id": "validate_plan",
+        "status": "ready",
+        "cadRequired": false
+      },
+      {
+        "id": "dry_run_plan",
+        "status": "ready",
+        "cadRequired": false
+      },
+      {
+        "id": "execute_to_CODEX_PREVIEW_after_confirmation",
+        "status": "deferred",
+        "cadRequired": true
+      },
+      {
+        "id": "created_handles_readback",
+        "status": "deferred",
+        "cadRequired": true
+      },
+      {
+        "id": "visual_acceptance",
+        "status": "deferred",
+        "cadRequired": false
+      },
+      {
+        "id": "closeout_gate",
+        "status": "deferred",
+        "cadRequired": false
+      }
+    ]
+  },
+  "readbackEvidenceRequirements": {
+    "status": "required_before_geometry_claim",
+    "requiredFields": [
+      "created_handles",
+      "created_handle_count",
+      "readback_entity_count",
+      "bbox",
+      "layer",
+      "entity_types",
+      "savedCurrentDwg",
+      "targetLayer"
+    ],
+    "passCriteria": [
+      "created_handle_count > 0",
+      "readback_entity_count == created_handle_count",
+      "all created entities are on CODEX_PREVIEW",
+      "savedCurrentDwg == false",
+      "bbox covers back, seat, arms, and seat division"
+    ]
+  },
+  "evidenceBoundary": {
+    "checked": [
+      "local_rag_retrieval",
+      "design_candidate_generation",
+      "cad_plan_validation",
+      "dry_run_plan",
+      "no_cad_written",
+      "no_current_dwg_save",
+      "no_formal_layer_mutation"
+    ],
+    "notChecked": [
+      "real_cad_geometry",
+      "created_handles_readback",
+      "user_visual_acceptance",
+      "closeout_gate",
+      "asset_verified_reuse_replay"
+    ],
+    "assumptions": [
+      "object_family_trial_is_no_cad_mvp",
+      "cad_plan_draft_requires_user_or_downstream_confirmation_before_execute",
+      "dry_run_does_not_prove_geometry_accuracy"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "handoff_packet/v1",
+  "fromAgentId": "pipeline_style_generator",
+  "toAgentIds": [
+    "pipeline_design_reviewer"
+  ],
+  "status": "ready",
+  "decisionSummary": "pass pass multiple",
+  "statePatch": {
+    "phase": "style_generation_review.schema.json",
+    "phaseLabelForUser": "style_generation_review.schema.json",
+    "completedEvidence": [
+      "local fixture model output"
+    ],
+    "pendingEvidence": [],
+    "pendingUserAction": "",
+    "blockedReason": "",
+    "nextSafeAction": "continue"
+  },
+  "evidenceRefs": [
+    "local_fixture_model",
+    "rule_context_pack",
+    "upstream handoff packets"
+  ],
+  "evidenceMissing": [],
+  "openQuestions": [],
+  "downstreamInstructions": [],
+  "allowedClaims": [
+    "local fixture agent-chain output only"
+  ],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "sha256OfSourceOutput": "afdd1bb60ed544b85c1580ce1b33aeba78a457a0296cdaefaca5c423b4d7489b"
+}

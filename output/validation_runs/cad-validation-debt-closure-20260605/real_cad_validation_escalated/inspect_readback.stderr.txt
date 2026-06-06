@@ -1,0 +1,1 @@
+readback_report.status='failed'; expected 'geometry_verified'; non_pass_checks=bbox_size:fail, base_point:fail

@@ -18,6 +18,7 @@ MODEL_SCHEMAS = {
     "project_model": "project_model.schema.json",
     "object_spec": "object_spec.schema.json",
     "style_profile": "style_profile.schema.json",
+    "style_candidates": "style_candidates.schema.json",
     "visual_parts": "visual_parts.schema.json",
     "block_library": "block_library.schema.json",
     "layer_preset": "layer_preset.schema.json",
@@ -67,6 +68,10 @@ MODEL_SCHEMAS = {
     "asset_promotion": "asset_promotion.schema.json",
     "asset_evidence_boundary": "asset_evidence_boundary.schema.json",
     "retrieval_pack": "retrieval_pack.schema.json",
+    "model_export_manifest": "model_export_manifest.schema.json",
+    "agent_handoff_packet": "agent_handoff_packet.schema.json",
+    "tool_intent": "tool_intent.schema.json",
+    "tool_trace": "tool_trace.schema.json",
 }
 
 
@@ -94,6 +99,8 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "object_spec"
     if "style_id" in data:
         return "style_profile"
+    if data.get("schemaVersion") == "style-candidates/v1" and "candidates" in data:
+        return "style_candidates"
     if "object" in data and "parts" in data and "layout" in data and "forbidden" in data:
         return "visual_parts"
     if "library_id" in data and "blocks" in data:
@@ -174,6 +181,14 @@ def infer_model_type(data: dict[str, Any]) -> str:
         return "evidence_trend"
     if "retrieval_id" in data and "matched_assets" in data and "evidence_boundary" in data:
         return "retrieval_pack"
+    if data.get("schemaVersion") == "model-export-manifest/v1" and "sentArtifacts" in data:
+        return "model_export_manifest"
+    if data.get("schemaVersion") == "handoff_packet/v1" and "fromAgentId" in data:
+        return "agent_handoff_packet"
+    if "toolIntentId" in data and "orchestratorDecision" in data and "executionStatus" in data:
+        return "tool_trace"
+    if "toolIntentId" in data and "requestedByAgentId" in data and "targetScope" in data:
+        return "tool_intent"
     if "source_type" in data and "usage_boundary" in data and "object_tags" in data:
         return "reference_asset"
     if "asset_type" in data and "validation_status" in data and "source_lineage" in data:

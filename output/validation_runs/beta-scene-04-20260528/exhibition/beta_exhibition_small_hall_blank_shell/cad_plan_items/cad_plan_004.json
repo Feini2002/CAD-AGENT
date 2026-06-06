@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": {
+    "type": "table",
+    "name": "Table",
+    "width": 1200,
+    "depth": 700,
+    "height": 750,
+    "object_spec_id": "object-table-1200x700"
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      4800.0,
+      4200.0,
+      0
+    ]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 0.9,
+  "needs_confirmation": false
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "version": "0.1",
+    "zone_id": "zone-shell-office-mixed-zone-straight_spine-right",
+    "shell_id": "shell-office-mixed-zone",
+    "name": "Right Function Zone",
+    "purpose": "display",
+    "boundary": {
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        14000.0,
+        3950.0
+      ]
+    },
+    "geometry": {
+      "min": [
+        0.0,
+        0.0
+      ],
+      "max": [
+        14000.0,
+        3950.0
+      ]
+    },
+    "area": 55300000.0,
+    "depth": 3950.0,
+    "frontage": 14000.0,
+    "side_of_path": "right",
+    "candidate_functions": [
+      "display",
+      "storage",
+      "desk_area",
+      "service",
+      "living"
+    ],
+    "preferred_objects": [
+      "display_unit",
+      "shelf",
+      "cabinet",
+      "desk",
+      "chair",
+      "counter",
+      "sofa",
+      "table"
+    ],
+    "constraints": [
+      "derived_from_circulation:circulation-shell-office-mixed-zone-straight_spine",
+      "adjacent_to_path:path-straight_spine-main"
+    ],
+    "score": 0.907,
+    "uncertainties": []
+  },
+  {
+    "version": "0.1",
+    "zone_id": "zone-shell-office-mixed-zone-straight_spine-left",
+    "shell_id": "shell-office-mixed-zone",
+    "name": "Left Function Zone",
+    "purpose": "display",
+    "boundary": {
+      "min": [
+        0.0,
+        5050.0
+      ],
+      "max": [
+        14000.0,
+        9000.0
+      ]
+    },
+    "geometry": {
+      "min": [
+        0.0,
+        5050.0
+      ],
+      "max": [
+        14000.0,
+        9000.0
+      ]
+    },
+    "area": 55300000.0,
+    "depth": 3950.0,
+    "frontage": 14000.0,
+    "side_of_path": "left",
+    "candidate_functions": [
+      "display",
+      "storage",
+      "desk_area",
+      "service",
+      "living"
+    ],
+    "preferred_objects": [
+      "display_unit",
+      "shelf",
+      "cabinet",
+      "desk",
+      "chair",
+      "counter",
+      "sofa",
+      "table"
+    ],
+    "constraints": [
+      "derived_from_circulation:circulation-shell-office-mixed-zone-straight_spine",
+      "adjacent_to_path:path-straight_spine-main"
+    ],
+    "score": 0.907,
+    "uncertainties": []
+  }
+]

@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "orchestrator-host-task-contract/v1",
+  "runId": "model-agent-live-collab-proof-rcad-20260605-escalated",
+  "status": "blocked",
+  "route": "standard_draw",
+  "requiredAgents": [
+    "pipeline_context_curator",
+    "pipeline_visual_intent",
+    "pipeline_intent",
+    "pipeline_execute",
+    "pipeline_audit",
+    "pipeline_visual_acceptance_reviewer",
+    "pipeline_delivery"
+  ],
+  "hardGates": [
+    "cad_plan_required",
+    "validate_plan",
+    "dry_run",
+    "cad_readback",
+    "visual_acceptance_review",
+    "closeout_gate"
+  ],
+  "aToATaskContract": {
+    "version": "0.1",
+    "kind": "a_to_a_task_contract",
+    "taskKind": "ordinary_orchestration",
+    "status": "ready",
+    "triggeredSemantics": [
+      "system_asset"
+    ],
+    "semanticDecomposition": {
+      "schemaVersion": "a2a-semantic-decomposition/v1",
+      "requestMode": "actionable_task",
+      "signals": [],
+      "designRouting": {
+        "decision": "no_design_agents",
+        "candidateCountPolicy": "not_applicable",
+        "requestedCandidateCount": null,
+        "candidateLabelPolicy": "not_applicable",
+        "countSignalTerms": [],
+        "creativityPolicy": "contextual_not_forced",
+        "styleHintsAreCommands": false,
+        "confidence": "low",
+        "reason": "style words are contextual hints, not mandatory A/B/C commands"
+      }
+    },
+    "requiredAgents": [],
+    "mainAgentSelfCheck": {
+      "status": "observation",
+      "identity": "pipeline_orchestrator_main_agent",
+      "mission": "classify request, build task contract, dispatch responsible agents, block unsupported completion claims",
+      "taskUnderstanding": {
+        "taskKind": "ordinary_orchestration",
+        "triggeredSemantics": [
+          "system_asset"
+        ],
+        "riskLevel": "normal"
+      },
+      "responsibilityBoundary": {
+        "mayDispatchAgents": true,
+        "mayExecuteCad": false,
+        "mayClaimCompleteWithoutAgentOutputs": false
+      },
+      "knownLimits": [],
+      "decisionBasis": [
+        "request semantics",
+        "pipeline manifest"
+      ]
+    },
+    "dispatchDecision": {
+      "status": "ready",
+      "baseRequiredAgents": [],
+      "registeredAdditionalAgents": [],
+      "effectiveRequiredAgents": [],
+      "additionalAgentRequests": [],
+      "blockedUntilAgentsReport": false,
+      "reviewedPackageRequired": false,
+      "reasoning": [
+        "high-risk semantics require explicit responsibility dispatch",
+        "registered agents may become effective required agents",
+        "unregistered agent needs stay reviewed-package candidates"
+      ]
+    },
+    "hardGates": [],
+    "missingRequiredAgents": [],
+    "failedHardGates": [],
+    "blockingReasons": [],
+    "agentOutputSummary": {},
+    "deliveryBoundary": {
+      "mayClaimComplete": true,
+      "mustReportBlockedAgentGates": false
+    }
+  },
+  "deliveryBoundary": {
+    "mayClaimComplete": false,
+    "mayExecuteCad": false,
+    "mayRequestUserReview": false,
+    "allowedClaim": "已生成主编排分发计划；尚未执行 CAD 或完成验收"
+  }
+}

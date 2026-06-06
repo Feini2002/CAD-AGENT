@@ -1,0 +1,235 @@
+{
+  "version": "0.1",
+  "read_only": true,
+  "source": {
+    "type": "fixture",
+    "path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\drawing_read\\sample_geometry_feature_fixture.json"
+  },
+  "entity_summary_ref": {
+    "version": "0.1",
+    "entity_count": 7
+  },
+  "wall_segment_candidates": [
+    {
+      "candidate_id": "wall-W01",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W01"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          0.0,
+          0.0
+        ],
+        "max": [
+          6000.0,
+          0.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            0.0,
+            0.0
+          ],
+          "end": [
+            6000.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "candidate_id": "wall-W02",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W02"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          6000.0,
+          0.0
+        ],
+        "max": [
+          6000.0,
+          5000.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            6000.0,
+            0.0
+          ],
+          "end": [
+            6000.0,
+            5000.0
+          ]
+        }
+      }
+    },
+    {
+      "candidate_id": "wall-W03",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W03"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          0.0,
+          5000.0
+        ],
+        "max": [
+          6000.0,
+          5000.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            6000.0,
+            5000.0
+          ],
+          "end": [
+            0.0,
+            5000.0
+          ]
+        }
+      }
+    },
+    {
+      "candidate_id": "wall-W04",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W04"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          5000.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            0.0,
+            5000.0
+          ],
+          "end": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  ],
+  "door_opening_candidates": [
+    {
+      "candidate_id": "door-D01",
+      "kind": "door_opening",
+      "source_handles": [
+        "D01"
+      ],
+      "layer": "A-DOOR",
+      "bbox": {
+        "min": [
+          2550,
+          -50
+        ],
+        "max": [
+          3450,
+          50
+        ]
+      },
+      "confidence": 0.95,
+      "detection_rule": "layer_or_block_name_door",
+      "geometry": {
+        "block_name": "DOOR_SINGLE_900",
+        "insertion_point": [
+          3000,
+          0
+        ]
+      }
+    }
+  ],
+  "column_candidates": [
+    {
+      "candidate_id": "column-C01",
+      "kind": "column",
+      "source_handles": [
+        "C01"
+      ],
+      "layer": "A-COLUMN",
+      "bbox": {
+        "min": [
+          1000,
+          3000
+        ],
+        "max": [
+          1400,
+          3400
+        ]
+      },
+      "confidence": 0.95,
+      "detection_rule": "layer_or_block_name_column",
+      "geometry": {
+        "block_name": "COL_400",
+        "insertion_point": [
+          1200,
+          3200
+        ]
+      }
+    }
+  ],
+  "no_place_zone_candidates": [
+    {
+      "candidate_id": "no-place-NP01",
+      "kind": "no_place_zone",
+      "source_handles": [
+        "NP01"
+      ],
+      "layer": "A-NO-PLACE",
+      "bbox": {
+        "min": [
+          800,
+          800
+        ],
+        "max": [
+          2200,
+          1800
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_no_place_geometry",
+      "geometry": {
+        "entity_type": "polyline"
+      }
+    }
+  ],
+  "counts": {
+    "wall_segments": 4,
+    "door_openings": 1,
+    "columns": 1,
+    "no_place_zones": 1
+  },
+  "limitations": [
+    "heuristic layer/block naming only; not architectural inference",
+    "does not emit SHELL_MODEL; human confirmation required (READ-04)"
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "version": "0.1",
+  "read_only": true,
+  "source": {
+    "type": "fixture",
+    "path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\drawing_read\\sample_geometry_walls_only_fixture.json"
+  },
+  "entity_summary_ref": {
+    "version": "0.1",
+    "entity_count": 4
+  },
+  "wall_segment_candidates": [
+    {
+      "candidate_id": "wall-W01",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W01"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          0.0,
+          0.0
+        ],
+        "max": [
+          4000.0,
+          0.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            0.0,
+            0.0
+          ],
+          "end": [
+            4000.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "candidate_id": "wall-W02",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W02"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          4000.0,
+          0.0
+        ],
+        "max": [
+          4000.0,
+          3000.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            4000.0,
+            0.0
+          ],
+          "end": [
+            4000.0,
+            3000.0
+          ]
+        }
+      }
+    },
+    {
+      "candidate_id": "wall-W03",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W03"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          0.0,
+          3000.0
+        ],
+        "max": [
+          4000.0,
+          3000.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            4000.0,
+            3000.0
+          ],
+          "end": [
+            0.0,
+            3000.0
+          ]
+        }
+      }
+    },
+    {
+      "candidate_id": "wall-W04",
+      "kind": "wall_segment",
+      "source_handles": [
+        "W04"
+      ],
+      "layer": "A-WALL",
+      "bbox": {
+        "min": [
+          0.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          3000.0
+        ]
+      },
+      "confidence": 0.9,
+      "detection_rule": "layer_wall_or_dominant_line_layer",
+      "geometry": {
+        "segment": {
+          "start": [
+            0.0,
+            3000.0
+          ],
+          "end": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  ],
+  "door_opening_candidates": [],
+  "column_candidates": [],
+  "no_place_zone_candidates": [],
+  "counts": {
+    "wall_segments": 4,
+    "door_openings": 0,
+    "columns": 0,
+    "no_place_zones": 0
+  },
+  "limitations": [
+    "heuristic layer/block naming only; not architectural inference",
+    "does not emit SHELL_MODEL; human confirmation required (READ-04)"
+  ]
+}

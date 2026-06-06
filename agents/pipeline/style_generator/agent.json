@@ -1,0 +1,70 @@
+{
+  "id": "pipeline_style_generator",
+  "name": "Style Generator Agent",
+  "type": "global_pipeline_agent",
+  "role": "参数化样式 / 尺寸 / 表达方案生成层；根据 design_strategy 决定 waiver、单方案或 2-3 套可比较候选，而不是机械复用固定模板。",
+  "inputs": [
+    "runs/roundN_design_strategy.json",
+    "retrieval_pack",
+    "visual_style_brief",
+    "scene_plugin_rules",
+    "reference_images_or_notes",
+    "previous_feedback"
+  ],
+  "outputs": [
+    "runs/roundN_style_candidates.json",
+    "runs/roundN_selected_style_candidate.json",
+    "runs/roundN_model_style_generation_review.json"
+  ],
+  "modelBridge": {
+    "defaultModel": "gpt-5.5",
+    "promptPackStatus": "ready",
+    "taskType": "style_generation_review",
+    "judgmentScenes": [
+      "new_style_request",
+      "dimension_style_design",
+      "drawing_expression_options",
+      "candidate_comparison",
+      "before_visual_intent"
+    ],
+    "requiredJudgments": [
+      "styleDecision",
+      "candidateCountPolicy",
+      "requestedCandidateCount",
+      "candidateLabelPolicy",
+      "creativityPolicy",
+      "candidateCount",
+      "styleParameters",
+      "dimensionParameters",
+      "textHierarchy",
+      "lineWeightOrSpacing",
+      "colorOrLayerStrategy",
+      "densityControl",
+      "selectionRationale",
+      "userChoiceRequired"
+    ],
+    "learningCandidateRequired": true
+  },
+  "must_check": [
+    "Treat style words as contextual signals: generate multiple candidates only when the user or design_strategy asks for multiple schemes, comparison, or user choice.",
+    "Respect semanticDecomposition: requestedCandidateCount=2 means two options, not A/B/C; creativityPolicy=suppressed_by_user means no creative flourish.",
+    "Use styleDecision=waived when style generation is not needed, styleDecision=single for one auto-selectable option, and styleDecision=multiple for A/B/C or multi-candidate work.",
+    "Each candidate must be parameterized enough for visual_intent / intent / CAD_PLAN: size, proportion, text hierarchy, line spacing, object type, layer/color strategy, and density.",
+    "Mark whether the system can auto-select a candidate or should ask the user to choose A/B/C.",
+    "Keep candidates compatible with validate, dry-run, CODEX_PREVIEW, readback, and later design review."
+  ],
+  "must_not": [
+    "Do not execute CAD.",
+    "Do not output direct CAD commands.",
+    "Do not treat a candidate as verified geometry.",
+    "Do not create a style only by cloning a template without design rationale.",
+    "Do not bypass visual_intent, intent, validate, dry-run, or readback."
+  ],
+  "uses_core": [
+    "model_review",
+    "proposal_engine",
+    "style_engine",
+    "assets.semantic_rules"
+  ],
+  "managed_by": "pipeline_orchestrator"
+}

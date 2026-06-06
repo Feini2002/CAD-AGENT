@@ -1,0 +1,71 @@
+# Training Workbench Sync Report
+
+- status: `pass`
+- generated_at: `2026-06-06T08:38:47+00:00`
+- coverage_status: `pass`
+- learning_promotion: `skipped`
+- data_output: `C:\Users\User\Desktop\CAD-AGENT\capability-map-data.js`
+- agent_check: `pass`
+
+## Agent Check
+
+- `pass` schema_v2: 训练工作台数据必须是 schemaVersion=2。
+- `pass` has_training_programs: trainingPrograms=217
+- `pass` has_agent_profiles: agentProfiles=28
+- `pass` has_prompt_contracts: promptContracts=28
+- `pass` designer_agent_declared: designerAgent.id=cad_designer
+- `pass` growth_stages_declared: growthStages=7
+- `pass` foundation_courses_declared: foundationCourses=7
+- `pass` training_batches_declared: trainingBatches=8
+- `pass` validation_checkers_declared: validationCheckers=10
+- `pass` training_batch_program_refs_exist: missing=[]
+- `pass` training_batch_dependencies_exist: missing=[]
+- `pass` training_batch_checker_refs_exist: missing=[]
+- `pass` responsible_agents_have_profiles: missing=[]
+- `pass` responsible_agents_have_contracts: missing=[]
+- `pass` source_refs_are_concrete: wildcard=[]
+- `pass` source_refs_exist: missing=[]
+- `pass` common_prompt_contract_referenced: missing=[]
+- `pass` screenshot_orchestration_rules_in_common_contract: missing_phrases=[]
+- `pass` system_asset_reuse_rules_in_common_contract: missing_phrases=[]
+- `pass` visual_warehouse_rules_in_common_contract: missing_phrases=[]
+- `pass` model_backed_agent_rules_in_common_contract: missing_phrases=[]
+- `pass` prompt_addenda_do_not_duplicate_common_rules: duplicates=[]
+- `pass` training_sources_declared: trainingSources=30
+- `pass` training_source_paths_exist: missing=[]
+- `pass` training_source_summary_declared: schemaVersion=training-source-summary/v1
+- `pass` training_source_summary_portable_policy_declared: recommendationCode=restore_remote_evidence_before_retraining restorePaths=['output/training_queues/**', 'output/training_learning/**', 'agents/**/training_memory.json', 'agents/**/prompt_addendum.md', 'docs/training/training-sources.json']
+- `pass` accepted_training_sources_registered: missing=[]
+- `pass` accepted_training_uses_fact_sources: derived_used=[]
+- `pass` accepted_training_has_learning_promotion: missing_learning=[]
+- `pass` systemized_training_has_promotion_gate: missing=[]
+- `pass` promotion_gate_decisions_complete: incomplete=[]
+- `pass` accepted_training_has_plain_language_summary: missing_plain=[]
+- `pass` accepted_training_visible_text_hides_backend_paths: raw_path_visible=[]
+- `pass` agent_learning_refs_exist: missing=[]
+- `pass` prompt_contracts_include_learning_refs: missing=[]
+- `pass` coverage_source_exists: output/validation_runs/capability-lab/cad_capability_coverage.json
+- `pass` table_c_headline_matches_coverage: data=90.99, coverage=90.99
+- `pass` table_c_three_maturity_boundary_declared: Core Proof Coverage 机器快照 Core Proof Coverage 旧表 C 这是 registry 和 coverage JSON 的底座证据覆盖机器快照；旧表 C 字段保留兼容，但不代表 Agent Task Maturity 或 Project Delivery Readiness。 Agent Task Maturity Project Delivery Readiness
+- `pass` snapshot_generated_after_coverage: snapshot=2026-06-06T08:38:47+00:00, coverage=2026-06-06T08:38:47Z
+- `pass` sync_boundary_declared: workbenchSync.mode=static_snapshot
+- `pass` sync_command_declared: $py scripts\sync_training_workbench.py
+- `pass` launcher_declared: start_training_workbench.bat
+- `pass` model_trace_viewer_declared: schemaVersion=workbench-trace-viewer/v1
+- `pass` model_trace_viewer_derived_only: derivedOnly=True notProofOf=['does_not_prove_cad_geometry', 'does_not_replace_created_handles_readback', 'does_not_replace_user_visual_acceptance', 'does_not_upgrade_table_c']
+- `pass` model_trace_viewer_truth_sources_declared: truthSources=['output/model_reviews/traces/**', 'output/runs/**']
+- `pass` workbench_v3_declared: schemaVersion=workbench-data-contract/v3-draft
+- `pass` workbench_v3_source_policy_derived_only: derivedOnly=True derivedArtifacts=['capability-map-data.js', 'capability-map.html'] truthSources=['agents/**/prompt_addendum.md', 'agents/**/training_memory.json', 'docs/training/training-sources.json', 'output/runs/**', 'output/validation_runs/capability-lab/cad_capability_coverage.json'] notProofOf=['cad_geometry', 'table_c_promotion', 'training_acceptance', 'user_acceptance']
+- `pass` workbench_v3_source_registry_declared: sourceRegistry=30
+- `pass` workbench_v3_command_center_declared: keys=['agentDispatchSummary', 'derivedBoundary', 'evidenceBoundary', 'gateboard', 'latestRunSummary', 'nextTrainingCandidates', 'sourceHealth', 'summary', 'title']
+- `pass` workbench_v3_next_candidates_declared: nextTrainingCandidates=5
+- `pass` workbench_v3_gateboard_declared: gateboard=8
+- `pass` workbench_v3_agent_graph_declared: nodes=311 edges=1217
+- `pass` workbench_v3_evidence_bundles_declared: evidenceBundles=217
+- `pass` html_sync_panel_present: 页面必须显示同步状态。
+- `pass` html_polling_present: HTTP 启动时页面必须能检测新快照。
+- `pass` html_boundary_copy_present: 页面必须保留 Core Proof Coverage / Agent Task Maturity / Project Delivery Readiness 三口径边界说明。
+- `pass` html_learning_promotion_present: 页面必须显示智能体学习沉淀状态。
+- `pass` html_trace_viewer_present: 页面必须显示模型 Trace 派生视图。
+- `pass` html_flightdeck_overview_present: 页面必须默认提供训练飞控台首屏。
+- `pass` html_training_source_sync_present: 页面必须解释跨电脑训练证据同步状态。

@@ -1,0 +1,132 @@
+{
+  "version": "0.1",
+  "report_id": "cad-validation-debt-closure",
+  "status": "partial",
+  "generated_at": "2026-06-05T03:09:29Z",
+  "summary": {
+    "debt_count": 8,
+    "resolved_or_bounded_count": 5,
+    "blocked_count": 3
+  },
+  "items": [
+    {
+      "id": "table_c_gap",
+      "title": "Table C headline gap",
+      "status": "blocked_batch_debt",
+      "metrics": {
+        "cad_proof_coverage_percent": 90.99,
+        "cad_strength_headline_percent": 90.99,
+        "total_count": 333,
+        "cad_proof_count": 303,
+        "remaining_to_full_count": 30
+      },
+      "action": "Open a dedicated registry/evidence recovery batch; do not claim full Table C from this run.",
+      "evidence": {
+        "coverage_status": "pass"
+      },
+      "boundary": "Refreshing coverage recalculates the gap; it does not close missing evidence."
+    },
+    {
+      "id": "registry_proof_split",
+      "title": "Registry proof level split",
+      "status": "classified",
+      "metrics": {
+        "total_count": 333,
+        "showcase_count": 303,
+        "smoke_count": 25,
+        "deferred_count": 5,
+        "weak_count": 30
+      },
+      "action": "Keep showcase/smoke/deferred separated in reports and delivery language.",
+      "evidence": {},
+      "boundary": "Smoke and deferred rows remain registered but cannot be called geometry proof."
+    },
+    {
+      "id": "smoke_deferred_boundary",
+      "title": "Smoke and deferred proof boundary",
+      "status": "enforced",
+      "metrics": {
+        "smoke_count": 25,
+        "deferred_count": 5
+      },
+      "action": "Treat smoke/deferred rows as guard or backlog only until a readback report exists.",
+      "evidence": {},
+      "boundary": "These rows must not raise cad_proof_count or geometry_verified claims."
+    },
+    {
+      "id": "evidence_report_path_missing",
+      "title": "Missing historical evidence reports",
+      "status": "blocked_batch_debt",
+      "metrics": {
+        "missing_report_path_count": 303,
+        "audit_status": "fail",
+        "data_bloat_status": "blocked"
+      },
+      "action": "Recover real reports, rerun impacted CAD proof, or downgrade stale registry claims.",
+      "evidence": {
+        "audit_failed_count": 303
+      },
+      "boundary": "Do not create empty reports or derived snapshots to satisfy this debt."
+    },
+    {
+      "id": "rcad_scope_boundary",
+      "title": "RCAD smoke versus real capability scope",
+      "status": "bounded_by_real_cad",
+      "metrics": {
+        "geometry_gate_status": "pass",
+        "readback_geometry_verified_count": 2,
+        "cad_capability_verified_count": 1,
+        "block_alpha_geometry_verified": true
+      },
+      "action": "Use this run as representative CAD validation evidence; keep construction drawing claims separate.",
+      "evidence": {},
+      "boundary": "A passing geometry gate does not prove arbitrary construction drawing accuracy."
+    },
+    {
+      "id": "drawing_read_boundary",
+      "title": "Automatic drawing read boundary",
+      "status": "blocked_user_confirmation",
+      "metrics": {
+        "benchmark_status": "not_run",
+        "non_cad_only": true,
+        "readback_geometry_verified_count": 0
+      },
+      "action": "Keep drawing-read output behind human confirmation before CAD execution.",
+      "evidence": {},
+      "boundary": "Shell candidates and non-CAD benchmarks cannot directly write CAD."
+    },
+    {
+      "id": "screenshot_boundary",
+      "title": "Screenshot evidence boundary",
+      "status": "bounded_by_readback",
+      "metrics": {
+        "visual_aid_only_count": 2,
+        "readback_geometry_verified_count": 2,
+        "cad_capability_verified_count": 1
+      },
+      "action": "Require screenshots to accompany, not replace, created-handle readback.",
+      "evidence": {},
+      "boundary": "Screenshot pixels are visual aid only."
+    },
+    {
+      "id": "local_repair_scope",
+      "title": "Local repair and delete scope boundary",
+      "status": "guard_verified",
+      "metrics": {
+        "repair_gate_status": "pass"
+      },
+      "action": "Use target handles / bbox / neighbor protection before update, delete, or redraw.",
+      "evidence": {
+        "repair_gate_command": "python -m unittest tests.core.test_delete_neighbor_gates"
+      },
+      "boundary": "No global cleanup, deletion, formal-layer edits, or save without explicit authorization."
+    }
+  ],
+  "safety": {
+    "writes_cad": false,
+    "saves_current_dwg": false,
+    "deletes_entities": false,
+    "modifies_formal_layers": false,
+    "registry_writeback": false
+  }
+}

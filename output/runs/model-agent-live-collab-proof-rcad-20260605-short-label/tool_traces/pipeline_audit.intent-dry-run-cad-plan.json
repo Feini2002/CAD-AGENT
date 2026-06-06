@@ -1,0 +1,43 @@
+{
+  "blockingReasons": [],
+  "deterministicEntryPoint": "core.orchestrator.tool_contract.deterministic_verifiers.dry_run_plan",
+  "downstreamArtifactPath": "tool_traces/pipeline_audit.intent-dry-run-cad-plan.json",
+  "downstreamReadableSummary": "dry_run_plan is allowlisted; execution and pass/fail remain orchestrator-owned.",
+  "evidenceBoundary": [
+    "tool intent gate only permits orchestrator-owned allowlisted execution",
+    "model requests cannot authorize CAD writes outside controlled CODEX_PREVIEW execution, deletes, saves, registry mutations, or table C claims",
+    "allowed verification or controlled-CAD intent only means the orchestrator may run the relevant gate; the model cannot decide pass/fail"
+  ],
+  "executionStatus": "executed",
+  "expectedEvidence": [
+    "cad_reports/dry_run_report.json"
+  ],
+  "generatedAt": "2026-06-05T07:13:54Z",
+  "orchestratorDecision": "allowed",
+  "permissionClass": "deterministic_verify",
+  "requestedByAgentId": "pipeline_audit",
+  "result": {
+    "dryRunStatus": "valid",
+    "entityCount": 4,
+    "evidenceBoundary": [
+      "dry_run is deterministic pre-CAD planning evidence only",
+      "dry_run pass does not execute CAD, create handles, save DWG, or prove visual acceptance"
+    ],
+    "planPath": "candidate_outputs/cad_plan.candidate.json",
+    "reason": "",
+    "reportPath": "cad_reports/dry_run_report.json",
+    "status": "pass",
+    "toolStage": "stage3_deterministic_verify",
+    "validationErrors": []
+  },
+  "riskLevel": "low",
+  "runId": "model-agent-live-collab-proof-rcad-20260605-short-label",
+  "schemaVersion": "tool-trace/v1",
+  "targetScope": {
+    "scopeType": "run_artifact",
+    "targetPath": "candidate_outputs/cad_plan.candidate.json"
+  },
+  "toolIntentId": "intent-dry-run-cad-plan",
+  "toolName": "dry_run_plan",
+  "toolSchemaVersion": "tool-intent/v1"
+}

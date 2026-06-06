@@ -1,0 +1,136 @@
+{
+  "version": "0.1",
+  "layout_id": "layout-project-blank-shell-layout-blank-shell",
+  "project_id": "project-blank-shell-layout",
+  "candidates": [
+    {
+      "candidate_id": "candidate-blank-shell-zone-placement",
+      "score": 1.0,
+      "placements": [
+        {
+          "object_id": "object-desk-1400x700",
+          "base_point": [
+            0.0,
+            0.0,
+            0
+          ],
+          "rotation": 0,
+          "bbox": {
+            "min": [
+              0.0,
+              0.0
+            ],
+            "max": [
+              1400.0,
+              700.0
+            ]
+          }
+        },
+        {
+          "object_id": "object-chair-500x500",
+          "base_point": [
+            1700.0,
+            0.0,
+            0
+          ],
+          "rotation": 0,
+          "bbox": {
+            "min": [
+              1700.0,
+              0.0
+            ],
+            "max": [
+              2200.0,
+              500.0
+            ]
+          }
+        },
+        {
+          "object_id": "object-table-1200x700",
+          "base_point": [
+            2500.0,
+            0.0,
+            0
+          ],
+          "rotation": 0,
+          "bbox": {
+            "min": [
+              2500.0,
+              0.0
+            ],
+            "max": [
+              3700.0,
+              700.0
+            ]
+          }
+        },
+        {
+          "object_id": "object-cabinet-1800x600",
+          "base_point": [
+            4000.0,
+            0.0,
+            0
+          ],
+          "rotation": 0,
+          "bbox": {
+            "min": [
+              4000.0,
+              0.0
+            ],
+            "max": [
+              5800.0,
+              600.0
+            ]
+          }
+        },
+        {
+          "object_id": "object-computer_desk-7900x3950",
+          "base_point": [
+            6100.0,
+            0.0,
+            0
+          ],
+          "rotation": 0,
+          "bbox": {
+            "min": [
+              6100.0,
+              0.0
+            ],
+            "max": [
+              14000.0,
+              3950.0
+            ]
+          }
+        }
+      ],
+      "checks": [
+        {
+          "name": "placement:desk",
+          "status": "pass",
+          "message": "placed"
+        },
+        {
+          "name": "placement:chair",
+          "status": "pass",
+          "message": "placed"
+        },
+        {
+          "name": "placement:table",
+          "status": "pass",
+          "message": "placed"
+        },
+        {
+          "name": "placement:cabinet",
+          "status": "pass",
+          "message": "placed"
+        },
+        {
+          "name": "placement:computer_desk",
+          "status": "pass",
+          "message": "placed"
+        }
+      ]
+    }
+  ],
+  "uncertainties": []
+}

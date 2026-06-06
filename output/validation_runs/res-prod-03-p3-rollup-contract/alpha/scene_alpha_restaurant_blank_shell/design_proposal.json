@@ -1,0 +1,527 @@
+{
+  "version": "0.1",
+  "proposal_id": "proposal-project-blank-shell-layout",
+  "brief_id": "brief-blank-shell-layout",
+  "project_id": "project-blank-shell-layout",
+  "summary": "Prepare a preview CAD_PLAN for Table on CODEX_PREVIEW.",
+  "decisions": [
+    "Use object spec object-table-1200x700.",
+    "Use layout candidate candidate-blank-shell-zone-placement with score 1.0."
+  ],
+  "evidence": {
+    "from_user": [
+      "Create repeatable non-CAD blank-shell layout options before generating any CAD_PLAN."
+    ],
+    "from_drawing": [
+      "space count: 1"
+    ],
+    "from_shell": [
+      "shell_id: shell-restaurant-small-front"
+    ],
+    "from_library": [
+      "object spec object-table-1200x700",
+      "style profile style-modern"
+    ],
+    "from_algorithm": [
+      "layout candidates: 1",
+      "proposal candidates: 3",
+      "layout recommendation: candidate-blank-shell-zone-placement",
+      "object coverage: 1.0",
+      "failed checks: 0",
+      "circulation continuity: pass",
+      "circulation branches compared: 3"
+    ],
+    "inferred": [
+      "No failed layout checks in the selected candidate."
+    ]
+  },
+  "candidates": [
+    {
+      "candidate_id": "circulation-l_spine",
+      "layout_candidate_id": "circulation-l_spine",
+      "score": 1.0125,
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 1,
+        "base_score": 1.0125,
+        "scene_weight": 0.1,
+        "weighted_score": 1.1125,
+        "weight_source": "blank_shell_pipeline",
+        "components": {
+          "layout_base": 1.0125,
+          "check_penalty": 0.0,
+          "preference_boost": 0.1
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "circulation_status",
+          "message": "Circulation strategy l_spine status=pass score=1.0125.",
+          "component": "layout_base"
+        },
+        {
+          "code": "circulation_branch_selected",
+          "message": "Selected as primary circulation branch (l_spine).",
+          "component": "preference_boost"
+        },
+        {
+          "code": "highest_weighted_score",
+          "message": "Highest circulation branch score among compared strategies.",
+          "component": "weighted_score"
+        },
+        {
+          "code": "zone_placement_best",
+          "message": "Best zone zone-shell-restaurant-small-front-l_spine-right placed 5/5.",
+          "component": "layout_base"
+        }
+      ],
+      "summary": "Circulation l_spine with best zone zone-shell-restaurant-small-front-l_spine-right (5/5 placed).",
+      "strengths": [
+        "Circulation status=pass."
+      ],
+      "risks": [
+        "No placement failures in best zone."
+      ],
+      "failed_checks": [],
+      "applicable_scenarios": [
+        "blank_shell_preview"
+      ],
+      "confirmation_questions": [
+        "Confirm circulation strategy l_spine is acceptable."
+      ]
+    },
+    {
+      "candidate_id": "circulation-straight_spine",
+      "layout_candidate_id": "circulation-straight_spine",
+      "score": 0.8,
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 2,
+        "base_score": 0.8,
+        "scene_weight": 0.0,
+        "weighted_score": 0.8,
+        "weight_source": "blank_shell_pipeline",
+        "components": {
+          "layout_base": 0.8,
+          "check_penalty": 0.0,
+          "preference_boost": 0.0
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "circulation_status",
+          "message": "Circulation strategy straight_spine status=pass score=0.8.",
+          "component": "layout_base"
+        },
+        {
+          "code": "zone_placement_best",
+          "message": "Best zone zone-shell-restaurant-small-front-straight_spine-right placed 5/5.",
+          "component": "layout_base"
+        }
+      ],
+      "summary": "Circulation straight_spine with best zone zone-shell-restaurant-small-front-straight_spine-right (5/5 placed).",
+      "strengths": [
+        "Circulation status=pass."
+      ],
+      "risks": [
+        "No placement failures in best zone."
+      ],
+      "failed_checks": [],
+      "applicable_scenarios": [
+        "blank_shell_preview"
+      ],
+      "confirmation_questions": [
+        "Confirm circulation strategy straight_spine is acceptable."
+      ]
+    },
+    {
+      "candidate_id": "circulation-along_wall",
+      "layout_candidate_id": "circulation-along_wall",
+      "score": 0.5525,
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 3,
+        "base_score": 0.5525,
+        "scene_weight": 0.0,
+        "weighted_score": 0.5525,
+        "weight_source": "blank_shell_pipeline",
+        "components": {
+          "layout_base": 0.5525,
+          "check_penalty": 0.0,
+          "preference_boost": 0.0
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "circulation_status",
+          "message": "Circulation strategy along_wall status=pass score=0.5525.",
+          "component": "layout_base"
+        },
+        {
+          "code": "zone_placement_best",
+          "message": "Best zone zone-shell-restaurant-small-front-along_wall-left placed 5/5.",
+          "component": "layout_base"
+        }
+      ],
+      "summary": "Circulation along_wall with best zone zone-shell-restaurant-small-front-along_wall-left (5/5 placed).",
+      "strengths": [
+        "Circulation status=pass."
+      ],
+      "risks": [
+        "No placement failures in best zone."
+      ],
+      "failed_checks": [],
+      "applicable_scenarios": [
+        "blank_shell_preview"
+      ],
+      "confirmation_questions": [
+        "Confirm circulation strategy along_wall is acceptable."
+      ]
+    }
+  ],
+  "confirmed_candidate_id": "",
+  "comparison_summary": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected l_spine / zone-shell-restaurant-small-front-l_spine-right with object coverage 100%, 0 failed check(s), circulation continuity=pass.",
+  "needs_confirmation": false,
+  "next_cad_plans": [],
+  "comparison_detail": {
+    "version": "0.1",
+    "layout_comparison": {
+      "status": "ok",
+      "errors": [],
+      "layout_id": "layout-project-blank-shell-layout-blank-shell",
+      "recommendation_id": "candidate-blank-shell-zone-placement",
+      "ranked_candidates": [
+        {
+          "rank": 1,
+          "candidate_id": "candidate-blank-shell-zone-placement",
+          "score": 1.0,
+          "scene_weight": 0.0,
+          "weighted_score": 1.0,
+          "weight_source": "default",
+          "failed_checks": [],
+          "tradeoffs": [
+            "No failed layout checks in the current non-CAD model."
+          ],
+          "score_breakdown": {
+            "version": "0.1",
+            "rank": 1,
+            "base_score": 1.0,
+            "scene_weight": 0.0,
+            "weighted_score": 1.0,
+            "weight_source": "default",
+            "components": {
+              "layout_base": 1.0,
+              "check_penalty": 0.0,
+              "preference_boost": 0.0
+            }
+          },
+          "ranking_reasons": [
+            {
+              "code": "highest_weighted_score",
+              "message": "Rank 1 with weighted_score 1.0000.",
+              "component": "weighted_score"
+            },
+            {
+              "code": "no_failed_checks",
+              "message": "No failed layout checks in the current non-CAD model.",
+              "component": "layout_base"
+            }
+          ]
+        }
+      ]
+    },
+    "selected": {
+      "circulation_strategy": "l_spine",
+      "zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+      "layout_candidate_id": "candidate-blank-shell-zone-placement"
+    },
+    "metrics": {
+      "circulation_branch_count": 3,
+      "zone_placement_candidate_count": 5,
+      "object_types_requested": [
+        "table",
+        "chair",
+        "counter",
+        "shelf",
+        "display_unit"
+      ],
+      "object_types_placed": [
+        "chair",
+        "counter",
+        "display_unit",
+        "shelf",
+        "table"
+      ],
+      "object_coverage_rate": 1.0,
+      "placed_count": 5,
+      "placement_count": 5,
+      "failed_check_count": 0,
+      "failed_reason_distribution": {},
+      "selected_failed_reason_distribution": {},
+      "selected_placement_failed_count": 0
+    },
+    "circulation_continuity": {
+      "selected_status": "pass",
+      "continuity": "pass",
+      "blocked_strategies": []
+    },
+    "ranking_reasons": [
+      "Compared circulation strategies: l_spine, straight_spine, along_wall",
+      "Primary selection uses circulation=l_spine zone=zone-shell-restaurant-small-front-l_spine-right.",
+      "Object coverage 5/5 (100%) for requested types ['table', 'chair', 'counter', 'shelf', 'display_unit'].",
+      "Layout failed checks: 0; circulation continuity=pass."
+    ],
+    "ranked_circulation_branches": [
+      {
+        "circulation_candidate_id": "circulation-l_spine",
+        "strategy": "l_spine",
+        "score": 1.0125,
+        "status": "pass",
+        "selected": true,
+        "zone_count": 2,
+        "best_zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+        "placed_count": 5,
+        "failed_count": 0,
+        "placement_count": 5,
+        "object_types_placed": [
+          "chair",
+          "counter",
+          "display_unit",
+          "shelf",
+          "table"
+        ],
+        "rank": 1,
+        "score_breakdown": {
+          "version": "0.1",
+          "rank": 1,
+          "base_score": 1.0125,
+          "scene_weight": 0.1,
+          "weighted_score": 1.1125,
+          "weight_source": "blank_shell_pipeline",
+          "components": {
+            "layout_base": 1.0125,
+            "check_penalty": 0.0,
+            "preference_boost": 0.1
+          }
+        },
+        "ranking_reasons": [
+          {
+            "code": "circulation_status",
+            "message": "Circulation strategy l_spine status=pass score=1.0125.",
+            "component": "layout_base"
+          },
+          {
+            "code": "circulation_branch_selected",
+            "message": "Selected as primary circulation branch (l_spine).",
+            "component": "preference_boost"
+          },
+          {
+            "code": "highest_weighted_score",
+            "message": "Highest circulation branch score among compared strategies.",
+            "component": "weighted_score"
+          },
+          {
+            "code": "zone_placement_best",
+            "message": "Best zone zone-shell-restaurant-small-front-l_spine-right placed 5/5.",
+            "component": "layout_base"
+          }
+        ],
+        "ranking_reason_messages": [
+          "circulation status=pass score=1.0125",
+          "best zone zone-shell-restaurant-small-front-l_spine-right placed 5/5",
+          "selected as primary circulation branch",
+          "selected zone for final layout"
+        ]
+      },
+      {
+        "circulation_candidate_id": "circulation-straight_spine",
+        "strategy": "straight_spine",
+        "score": 0.8,
+        "status": "pass",
+        "selected": false,
+        "zone_count": 2,
+        "best_zone_id": "zone-shell-restaurant-small-front-straight_spine-right",
+        "placed_count": 5,
+        "failed_count": 0,
+        "placement_count": 5,
+        "object_types_placed": [
+          "chair",
+          "counter",
+          "display_unit",
+          "shelf",
+          "table"
+        ],
+        "rank": 2,
+        "score_breakdown": {
+          "version": "0.1",
+          "rank": 2,
+          "base_score": 0.8,
+          "scene_weight": 0.0,
+          "weighted_score": 0.8,
+          "weight_source": "blank_shell_pipeline",
+          "components": {
+            "layout_base": 0.8,
+            "check_penalty": 0.0,
+            "preference_boost": 0.0
+          }
+        },
+        "ranking_reasons": [
+          {
+            "code": "circulation_status",
+            "message": "Circulation strategy straight_spine status=pass score=0.8.",
+            "component": "layout_base"
+          },
+          {
+            "code": "zone_placement_best",
+            "message": "Best zone zone-shell-restaurant-small-front-straight_spine-right placed 5/5.",
+            "component": "layout_base"
+          }
+        ],
+        "ranking_reason_messages": [
+          "circulation status=pass score=0.8",
+          "best zone zone-shell-restaurant-small-front-straight_spine-right placed 5/5"
+        ]
+      },
+      {
+        "circulation_candidate_id": "circulation-along_wall",
+        "strategy": "along_wall",
+        "score": 0.5525,
+        "status": "pass",
+        "selected": false,
+        "zone_count": 1,
+        "best_zone_id": "zone-shell-restaurant-small-front-along_wall-left",
+        "placed_count": 5,
+        "failed_count": 0,
+        "placement_count": 5,
+        "object_types_placed": [
+          "chair",
+          "counter",
+          "display_unit",
+          "shelf",
+          "table"
+        ],
+        "rank": 3,
+        "score_breakdown": {
+          "version": "0.1",
+          "rank": 3,
+          "base_score": 0.5525,
+          "scene_weight": 0.0,
+          "weighted_score": 0.5525,
+          "weight_source": "blank_shell_pipeline",
+          "components": {
+            "layout_base": 0.5525,
+            "check_penalty": 0.0,
+            "preference_boost": 0.0
+          }
+        },
+        "ranking_reasons": [
+          {
+            "code": "circulation_status",
+            "message": "Circulation strategy along_wall status=pass score=0.5525.",
+            "component": "layout_base"
+          },
+          {
+            "code": "zone_placement_best",
+            "message": "Best zone zone-shell-restaurant-small-front-along_wall-left placed 5/5.",
+            "component": "layout_base"
+          }
+        ],
+        "ranking_reason_messages": [
+          "circulation status=pass score=0.5525",
+          "best zone zone-shell-restaurant-small-front-along_wall-left placed 5/5"
+        ]
+      }
+    ],
+    "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected l_spine / zone-shell-restaurant-small-front-l_spine-right with object coverage 100%, 0 failed check(s), circulation continuity=pass.",
+    "proposal_comparison_summary": {
+      "version": "0.1",
+      "object_coverage": {
+        "requested_types": [
+          "table",
+          "chair",
+          "counter",
+          "shelf",
+          "display_unit"
+        ],
+        "placed_types": [
+          "chair",
+          "counter",
+          "display_unit",
+          "shelf",
+          "table"
+        ],
+        "coverage_rate": 1.0,
+        "placed_count": 5,
+        "placement_count": 5
+      },
+      "circulation": {
+        "continuity": "pass",
+        "selected_strategy": "l_spine",
+        "blocked_strategies": [],
+        "branch_count": 3
+      },
+      "conflicts": {
+        "failed_check_count": 0,
+        "layout_failed_checks": [],
+        "placement_failed_count": 0
+      },
+      "failure_reasons": {
+        "all_distribution": {},
+        "selected_distribution": {}
+      },
+      "ranking_reason_codes": [
+        "circulation_status",
+        "circulation_branch_selected",
+        "highest_weighted_score",
+        "zone_placement_best",
+        "no_failed_checks"
+      ],
+      "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected l_spine / zone-shell-restaurant-small-front-l_spine-right with object coverage 100%, 0 failed check(s), circulation continuity=pass."
+    }
+  },
+  "proposal_comparison_summary": {
+    "version": "0.1",
+    "object_coverage": {
+      "requested_types": [
+        "table",
+        "chair",
+        "counter",
+        "shelf",
+        "display_unit"
+      ],
+      "placed_types": [
+        "chair",
+        "counter",
+        "display_unit",
+        "shelf",
+        "table"
+      ],
+      "coverage_rate": 1.0,
+      "placed_count": 5,
+      "placement_count": 5
+    },
+    "circulation": {
+      "continuity": "pass",
+      "selected_strategy": "l_spine",
+      "blocked_strategies": [],
+      "branch_count": 3
+    },
+    "conflicts": {
+      "failed_check_count": 0,
+      "layout_failed_checks": [],
+      "placement_failed_count": 0
+    },
+    "failure_reasons": {
+      "all_distribution": {},
+      "selected_distribution": {}
+    },
+    "ranking_reason_codes": [
+      "circulation_status",
+      "circulation_branch_selected",
+      "highest_weighted_score",
+      "zone_placement_best",
+      "no_failed_checks"
+    ],
+    "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected l_spine / zone-shell-restaurant-small-front-l_spine-right with object coverage 100%, 0 failed check(s), circulation continuity=pass."
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "$defs": {
+    "learningCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "checkerDelta": {
+          "type": "string"
+        },
+        "correctPattern": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "errorPattern": {
+          "type": "string"
+        },
+        "promptDelta": {
+          "type": "string"
+        },
+        "responsibleAgentIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "retestOriginalTask": {
+          "type": "boolean"
+        },
+        "trigger": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision",
+        "trigger",
+        "responsibleAgentIds",
+        "errorPattern",
+        "correctPattern",
+        "promptDelta",
+        "checkerDelta",
+        "retestOriginalTask"
+      ],
+      "type": "object"
+    },
+    "statePatch": {
+      "additionalProperties": false,
+      "properties": {
+        "blockedReason": {
+          "type": "string"
+        },
+        "completedEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "nextSafeAction": {
+          "type": "string"
+        },
+        "pendingEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pendingUserAction": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "phaseLabelForUser": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase",
+        "phaseLabelForUser",
+        "completedEvidence",
+        "pendingEvidence",
+        "pendingUserAction",
+        "blockedReason",
+        "nextSafeAction"
+      ],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "audienceAndUse": {
+      "type": "string"
+    },
+    "constraints": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "designIntent": {
+      "type": "string"
+    },
+    "designStrategy": {
+      "additionalProperties": false,
+      "properties": {
+        "styleCandidatePolicy": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "styleCandidatePolicy"
+      ],
+      "type": "object"
+    },
+    "drawingTypeDecision": {
+      "type": "string"
+    },
+    "evidenceBoundary": {
+      "additionalProperties": false,
+      "properties": {
+        "notProofOf": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "notProofOf"
+      ],
+      "type": "object"
+    },
+    "evidenceMissing": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "evidenceUsed": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "expressionPurpose": {
+      "type": "string"
+    },
+    "finalResponseAllowedClaims": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "learningCandidate": {
+      "$ref": "#/$defs/learningCandidate"
+    },
+    "openQuestions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "requiredChildAgents": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "statePatch": {
+      "$ref": "#/$defs/statePatch"
+    },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "toolIntent": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "status",
+    "designStrategy",
+    "drawingTypeDecision",
+    "expressionPurpose",
+    "designIntent",
+    "audienceAndUse",
+    "constraints",
+    "requiredChildAgents",
+    "openQuestions",
+    "evidenceBoundary",
+    "learningCandidate",
+    "statePatch",
+    "finalResponseAllowedClaims",
+    "evidenceUsed",
+    "evidenceMissing"
+  ],
+  "type": "object"
+}

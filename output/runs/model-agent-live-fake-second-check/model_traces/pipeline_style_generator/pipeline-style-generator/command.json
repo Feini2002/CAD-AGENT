@@ -1,0 +1,14 @@
+{
+  "command": [],
+  "cwd": "C:\\Users\\User\\AppData\\Local\\Temp\\cad-agent-model-bridge\\pipeline-style-generator",
+  "eventsStream": {
+    "path": "events.jsonl",
+    "requested": false,
+    "status": "reserved_for_codex_exec_json"
+  },
+  "sanitized": true,
+  "schemaVersion": 1,
+  "status": "not_built",
+  "stdinRef": "prompt.md",
+  "timeoutSeconds": 120
+}

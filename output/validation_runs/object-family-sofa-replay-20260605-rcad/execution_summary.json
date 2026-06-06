@@ -1,0 +1,81 @@
+{
+  "status": "executed",
+  "plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\object-family-sofa-replay-20260605-rcad\\sofa_object_family_cad_plan.json",
+  "intent": "draw_symbol_glyph",
+  "object_type": "symbol_glyph",
+  "object_name": "沙发对象族试点草案",
+  "symbol_id": "sofa.object_family_trial.v1",
+  "archetype": "seating",
+  "base_point": [
+    62000.0,
+    36000.0,
+    0.0
+  ],
+  "layer": "CODEX_PREVIEW",
+  "semantic_layer": null,
+  "preview_only": true,
+  "geometry_accuracy": "not_verified_without_cad_readback",
+  "glyph_primitive_count": 5,
+  "glyph_primitive_types": {
+    "rectangle": 4,
+    "line": 1
+  },
+  "expected_readback_type_counts": {
+    "line": 17
+  },
+  "entities": {
+    "rectangle": 4,
+    "line": 1
+  },
+  "created_handles": [
+    "E617",
+    "E618",
+    "E619",
+    "E61A",
+    "E61B",
+    "E61C",
+    "E61D",
+    "E61E",
+    "E61F",
+    "E620",
+    "E621",
+    "E622",
+    "E623",
+    "E624",
+    "E625",
+    "E626",
+    "E627"
+  ],
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "allowed_layers": [
+      "CODEX_DIAGNOSTIC",
+      "CODEX_PREVIEW"
+    ],
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false,
+    "writes_only_preview_layer": true,
+    "writes_only_allowed_layers": true,
+    "saves_dwg": false,
+    "deletes_entities": false,
+    "modifies_formal_layers": false
+  },
+  "created_handle_count": 17,
+  "target_bbox": {
+    "min": [
+      62000.0,
+      36100.0
+    ],
+    "max": [
+      64200.0,
+      36900.0
+    ],
+    "size": [
+      2200.0,
+      800.0
+    ]
+  },
+  "savedCurrentDwg": false,
+  "confirmation_override": "preview_only_object_family_replay"
+}

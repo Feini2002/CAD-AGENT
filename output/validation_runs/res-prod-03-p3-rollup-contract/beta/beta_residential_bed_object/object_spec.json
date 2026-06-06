@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "object_id": "object-bed-2000x1500",
+  "type": "bed",
+  "name": "Bed",
+  "style_profile_id": "style-modern",
+  "size": {
+    "width": 2000,
+    "depth": 1500,
+    "height": 600
+  },
+  "components": [
+    {
+      "component_id": "bed-sleep-surface",
+      "role": "sleep_surface",
+      "count": 1
+    },
+    {
+      "component_id": "bed-base",
+      "role": "base",
+      "count": 1
+    }
+  ],
+  "placement_requirements": [
+    "base point is lower-left plan corner"
+  ],
+  "drawing_intent": "plan_preview"
+}

@@ -57,8 +57,26 @@ VISUAL_WAREHOUSE_PHRASES = (
     "sourceProofRolesSeparated",
     "layerSemanticsAcceptable",
     "nonScreenshotEvidenceChecked",
+    "layerCounts",
+    "nativeVisiblePanelEvidence",
+    "reuseWorkflowProbe",
     "ASSET_PROOF_CONTENT",
     "ASSET_SOURCE_BOUNDARY",
+)
+MODEL_BACKED_AGENT_PHRASES = (
+    "模型型复审",
+    "core/model_review",
+    "codex.cmd exec",
+    "modelBackedReview",
+    "modelBackedVisualAcceptance",
+    "modelProviderStatus",
+    "modelUnavailable",
+    "schemaValid",
+    "modelAssistedDecision",
+    "modelBackedRepairPlan",
+    "proposal_only",
+    "repairRecommendation",
+    "blockingReasons",
 )
 
 
@@ -209,6 +227,9 @@ def run_agent_check(
     missing_visual_warehouse_phrases = [
         phrase for phrase in VISUAL_WAREHOUSE_PHRASES if phrase not in common_contract_text
     ]
+    missing_model_backed_agent_phrases = [
+        phrase for phrase in MODEL_BACKED_AGENT_PHRASES if phrase not in common_contract_text
+    ]
     for prompt_path in sorted((root / "agents").glob("**/prompt_addendum.md")):
         text = prompt_path.read_text(encoding="utf-8", errors="replace")
         rel_path = prompt_path.relative_to(root).as_posix()
@@ -245,6 +266,13 @@ def run_agent_check(
     )
     checks.append(
         check(
+            "model_backed_agent_rules_in_common_contract",
+            common_contract_path.is_file() and not missing_model_backed_agent_phrases,
+            f"missing_phrases={missing_model_backed_agent_phrases}",
+        )
+    )
+    checks.append(
+        check(
             "prompt_addenda_do_not_duplicate_common_rules",
             not duplicated_common_rules,
             f"duplicates={duplicated_common_rules}",
@@ -270,6 +298,28 @@ def run_agent_check(
     ]
     checks.append(check("training_sources_declared", bool(training_sources), f"trainingSources={len(training_sources)}"))
     checks.append(check("training_source_paths_exist", not missing_training_sources, f"missing={missing_training_sources}"))
+
+    training_source_summary = data.get("trainingSourceSummary", {})
+    portable_policy = str(training_source_summary.get("portableEvidencePolicy", ""))
+    recommendation_code = str(training_source_summary.get("recommendationCode", ""))
+    restore_paths = training_source_summary.get("restorePaths", [])
+    checks.append(
+        check(
+            "training_source_summary_declared",
+            training_source_summary.get("schemaVersion") == "training-source-summary/v1",
+            f"schemaVersion={training_source_summary.get('schemaVersion')}",
+        )
+    )
+    checks.append(
+        check(
+            "training_source_summary_portable_policy_declared",
+            "不是浏览器缓存" in portable_policy
+            and bool(recommendation_code)
+            and isinstance(restore_paths, list)
+            and "output/training_queues/**" in restore_paths,
+            f"recommendationCode={recommendation_code} restorePaths={restore_paths}",
+        )
+    )
 
     accepted_programs = [program for program in programs if program.get("trainingAcceptance")]
     accepted_sources = sorted(
@@ -420,6 +470,24 @@ def run_agent_check(
             f"data={data_headline}, coverage={coverage_headline}",
         )
     )
+    table_c_boundary_text = " ".join(
+        [
+            str(table_c.get("label", "")),
+            str(table_c.get("metricLabel", "")),
+            str(table_c.get("legacyAlias", "")),
+            str(table_c.get("note", "")),
+            " ".join(str(item) for item in table_c.get("notProofOf", []) if item),
+        ]
+    )
+    checks.append(
+        check(
+            "table_c_three_maturity_boundary_declared",
+            "Core Proof Coverage" in table_c_boundary_text
+            and "Agent Task Maturity" in table_c_boundary_text
+            and "Project Delivery Readiness" in table_c_boundary_text,
+            table_c_boundary_text,
+        )
+    )
 
     generated_at = parse_iso_datetime(data.get("generatedAt", ""))
     coverage_generated_at = parse_iso_datetime(coverage.get("generated_at", ""))
@@ -436,12 +504,161 @@ def run_agent_check(
     checks.append(check("sync_boundary_declared", sync.get("mode") == "static_snapshot", "workbenchSync.mode=static_snapshot"))
     checks.append(check("sync_command_declared", "sync_training_workbench.py" in sync.get("recommendedCommand", ""), sync.get("recommendedCommand", "")))
     checks.append(check("launcher_declared", sync.get("launcher") == "start_training_workbench.bat", sync.get("launcher", "")))
+    trace_viewer = data.get("modelTraceViewer", {})
+    trace_policy = trace_viewer.get("sourcePolicy", {}) if isinstance(trace_viewer, dict) else {}
+    trace_truth_sources = set(trace_policy.get("truthSources", [])) if isinstance(trace_policy, dict) else set()
+    trace_not_proof = set(trace_policy.get("notProofOf", [])) if isinstance(trace_policy, dict) else set()
+    checks.append(
+        check(
+            "model_trace_viewer_declared",
+            trace_viewer.get("schemaVersion") == "workbench-trace-viewer/v1",
+            f"schemaVersion={trace_viewer.get('schemaVersion')}",
+        )
+    )
+    checks.append(
+        check(
+            "model_trace_viewer_derived_only",
+            trace_policy.get("derivedOnly") is True
+            and "does_not_prove_cad_geometry" in trace_not_proof,
+            f"derivedOnly={trace_policy.get('derivedOnly')} notProofOf={sorted(trace_not_proof)}",
+        )
+    )
+    checks.append(
+        check(
+            "model_trace_viewer_truth_sources_declared",
+            {"output/runs/**", "output/model_reviews/traces/**"}.issubset(trace_truth_sources),
+            f"truthSources={sorted(trace_truth_sources)}",
+        )
+    )
+
+    workbench_v3 = data.get("workbenchV3", {})
+    workbench_v3 = workbench_v3 if isinstance(workbench_v3, dict) else {}
+    v3_policy = workbench_v3.get("sourcePolicy", {}) if isinstance(workbench_v3.get("sourcePolicy"), dict) else {}
+    v3_views = workbench_v3.get("views", {}) if isinstance(workbench_v3.get("views"), dict) else {}
+    v3_facts = workbench_v3.get("facts", {}) if isinstance(workbench_v3.get("facts"), dict) else {}
+    command_center = v3_views.get("commandCenter", {}) if isinstance(v3_views.get("commandCenter"), dict) else {}
+    agent_graph = v3_views.get("agentGraph", {}) if isinstance(v3_views.get("agentGraph"), dict) else {}
+    evidence_center = v3_views.get("evidenceCenter", {}) if isinstance(v3_views.get("evidenceCenter"), dict) else {}
+    source_registry = v3_facts.get("sourceRegistry", [])
+    source_registry = source_registry if isinstance(source_registry, list) else []
+    next_candidates = command_center.get("nextTrainingCandidates", [])
+    next_candidates = next_candidates if isinstance(next_candidates, list) else []
+    v3_gateboard = command_center.get("gateboard", [])
+    v3_gateboard = v3_gateboard if isinstance(v3_gateboard, list) else []
+    graph_nodes = agent_graph.get("nodes", [])
+    graph_edges = agent_graph.get("edges", [])
+    graph_nodes = graph_nodes if isinstance(graph_nodes, list) else []
+    graph_edges = graph_edges if isinstance(graph_edges, list) else []
+    evidence_bundles = evidence_center.get("evidenceBundles", [])
+    evidence_bundles = evidence_bundles if isinstance(evidence_bundles, list) else []
+    v3_truth_sources = set(v3_policy.get("truthSources", [])) if isinstance(v3_policy.get("truthSources"), list) else set()
+    v3_not_proof = set(v3_policy.get("notProofOf", [])) if isinstance(v3_policy.get("notProofOf"), list) else set()
+    v3_derived_artifacts = set(v3_policy.get("derivedArtifacts", [])) if isinstance(v3_policy.get("derivedArtifacts"), list) else set()
+
+    checks.append(
+        check(
+            "workbench_v3_declared",
+            workbench_v3.get("schemaVersion") == "workbench-data-contract/v3-draft",
+            f"schemaVersion={workbench_v3.get('schemaVersion')}",
+        )
+    )
+    checks.append(
+        check(
+            "workbench_v3_source_policy_derived_only",
+            v3_policy.get("derivedOnly") is True
+            and {"capability-map-data.js", "capability-map.html"}.issubset(v3_derived_artifacts)
+            and "docs/training/training-sources.json" in v3_truth_sources
+            and "cad_geometry" in v3_not_proof,
+            f"derivedOnly={v3_policy.get('derivedOnly')} derivedArtifacts={sorted(v3_derived_artifacts)} truthSources={sorted(v3_truth_sources)} notProofOf={sorted(v3_not_proof)}",
+        )
+    )
+    checks.append(
+        check(
+            "workbench_v3_source_registry_declared",
+            bool(source_registry)
+            and all(source.get("role") != "derived" or source.get("evidenceUse") == "display_only" for source in source_registry),
+            f"sourceRegistry={len(source_registry)}",
+        )
+    )
+    checks.append(
+        check(
+            "workbench_v3_command_center_declared",
+            bool(command_center.get("evidenceBoundary"))
+            and bool(command_center.get("derivedBoundary"))
+            and isinstance(command_center.get("sourceHealth"), dict),
+            f"keys={sorted(command_center.keys())}",
+        )
+    )
+    checks.append(
+        check(
+            "workbench_v3_next_candidates_declared",
+            bool(next_candidates)
+            and all(
+                {"id", "label", "routeMode", "responsibleAgentIds", "evidenceRequired", "blockingConditions"}.issubset(candidate)
+                for candidate in next_candidates
+            ),
+            f"nextTrainingCandidates={len(next_candidates)}",
+        )
+    )
+    checks.append(
+        check(
+            "workbench_v3_gateboard_declared",
+            {"snapshot_freshness", "source_health", "table_c_boundary"}.issubset({gate.get("id") for gate in v3_gateboard})
+            and all({"id", "label", "status", "detail"}.issubset(gate) for gate in v3_gateboard),
+            f"gateboard={len(v3_gateboard)}",
+        )
+    )
+    checks.append(
+        check(
+            "workbench_v3_agent_graph_declared",
+            agent_graph.get("schemaVersion") == "agent-system-workbench/v1"
+            and any(node.get("id") == "agent:cad_designer" for node in graph_nodes)
+            and any(edge.get("edgeType") == "responsible_for" for edge in graph_edges),
+            f"nodes={len(graph_nodes)} edges={len(graph_edges)}",
+        )
+    )
+    checks.append(
+        check(
+            "workbench_v3_evidence_bundles_declared",
+            bool(evidence_bundles)
+            and all({"programId", "capabilityId", "evidenceTypes", "sourceRefs", "notProven"}.issubset(bundle) for bundle in evidence_bundles)
+            and any("derived_snapshot" in bundle.get("evidenceTypes", []) for bundle in evidence_bundles),
+            f"evidenceBundles={len(evidence_bundles)}",
+        )
+    )
 
     html_text = html_file.read_text(encoding="utf-8") if html_file.exists() else ""
     checks.append(check("html_sync_panel_present", "syncPanel" in html_text, "页面必须显示同步状态。"))
     checks.append(check("html_polling_present", "initSnapshotPolling" in html_text, "HTTP 启动时页面必须能检测新快照。"))
-    checks.append(check("html_boundary_copy_present", "真实 CAD" in html_text and "表 C" in html_text, "页面必须保留真实能力边界说明。"))
+    checks.append(
+        check(
+            "html_boundary_copy_present",
+            "Core Proof Coverage" in html_text
+            and "Agent Task Maturity" in html_text
+            and "Project Delivery Readiness" in html_text,
+            "页面必须保留 Core Proof Coverage / Agent Task Maturity / Project Delivery Readiness 三口径边界说明。",
+        )
+    )
     checks.append(check("html_learning_promotion_present", "learningPromotion" in html_text and "已学习" in html_text, "页面必须显示智能体学习沉淀状态。"))
+    checks.append(check("html_trace_viewer_present", "view-traces" in html_text and "renderTraceViewer" in html_text, "页面必须显示模型 Trace 派生视图。"))
+    checks.append(
+        check(
+            "html_flightdeck_overview_present",
+            'data-tab="overview"' in html_text
+            and 'id="view-overview"' in html_text
+            and "renderCommandCenter" in html_text
+            and "commandCenter" in html_text
+            and "训练飞控台" in html_text,
+            "页面必须默认提供训练飞控台首屏。",
+        )
+    )
+    checks.append(
+        check(
+            "html_training_source_sync_present",
+            "训练证据同步" in html_text and "trainingSourceSummary" in html_text,
+            "页面必须解释跨电脑训练证据同步状态。",
+        )
+    )
 
     failed = [item for item in checks if item["status"] != "pass"]
     return {

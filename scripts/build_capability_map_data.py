@@ -12,12 +12,14 @@ except ModuleNotFoundError:  # Imported as scripts.build_capability_map_data.
 
 ensure_project_root_on_path()
 
+from core.orchestrator.workbench_trace_viewer import build_workbench_trace_viewer_data
 from core.training.learning_promotion import acceptance_report_is_promotable, build_learning_index
 from core.training.source_manifest import (
     DEFAULT_MANIFEST_RELATIVE_PATH,
     display_training_sources,
     training_source_paths,
 )
+from core.training_workbench import build_workbench_v3
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -742,7 +744,7 @@ AGENT_PROMPTS: dict[str, dict[str, Any]] = {
         "outputs": ["本轮应训练的成长阶段", "需要调用的流程 Agent 和资产范围", "基础课程或案例训练的验收边界", "不能声称的能力和下一轮补课目标"],
         "gates": [{"label": "成长路径优先", "value": "先确认当前是基础课程、对象课程、场景组合还是专业表达，再进入具体流水线。"}, {"label": "证据边界", "value": "课程进度、案例 pass、表 C 和真实 CAD 几何证明必须分开。"}],
         "must_not": ["不得绕过 CAD_PLAN / 结构化意图直接落图。", "不得把基础课程通过说成会画施工图。", "不得把其它 Agent 当成并列最终交付主体。"],
-        "calls": ["pipeline_context_curator", "pipeline_asset_retriever", "pipeline_intent", "pipeline_execute", "pipeline_audit", "pipeline_repair", "pipeline_delivery", "pipeline_learning_promoter", "residential"],
+        "calls": ["pipeline_context_curator", "pipeline_design_director", "pipeline_style_generator", "pipeline_asset_retriever", "pipeline_visual_intent", "pipeline_intent", "pipeline_execute", "pipeline_audit", "pipeline_design_reviewer", "pipeline_repair", "pipeline_delivery", "pipeline_learning_promoter", "residential"],
         "tips": ["每轮先判断成长阶段，再选择训练案例或基础课程。", "基础 CAD 操作必须先能被回读和审计，再向对象符号和房间组合扩展。", "用户反馈通过后再判断是否沉淀到场景规则、检查器或系统资产。"],
         "docs": ["agents/cad_designer/agent.json", "agents/cad_designer/rules.md", "docs/training/cad-designer-growth-path.md", "docs/training/cad-designer-training-plan-v2.md"],
     },
@@ -820,6 +822,62 @@ AGENT_PROMPTS: dict[str, dict[str, Any]] = {
         "must_not": ["不得把检索命中说成能力证明。", "不得复制厂商资产几何。", "不得跳过视觉部件契约。"],
         "calls": ["标准图库扫描", "参考资产接收", "对象默认值检索", "历史失败检索"],
     },
+    "pipeline_asset_governor": {
+        "name": "资产库守门智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "系统资产沉淀前的守门契约：判断来源边界、clean source / quarantine、子 Agent 派发和润色加固；可接收模型辅助建议，但规则门禁仍是最终放行条件。",
+        "role": "负责在用户说“沉淀资产 / 通用资产 / 收进资产库”时先做资产库守门：确认来源是否精确、是否能进 clean reusable source、是否需要资产馆员 / DWG 编排 / 复用审计，以及模型建议是否只能作为只读参考。",
+        "inputs": ["资产沉淀请求", "上下文包与检索包", "created_handles / selected_handles / sourceSpec", "system_library registry / assets.json", "可选 modelAssistedDecision"],
+        "outputs": ["asset governance decision", "libraryGovernance", "modelAssistedDecision", "polishHardeningDecision", "需要派发的资产治理子 Agent"],
+        "gates": [{"label": "来源先行", "value": "没有精确 sourceSpec、handles 或 native 证据时，只能进入 metadata_only / quarantine。"}, {"label": "模型只读", "value": "modelAssistedDecision 不能覆盖来源、复用、保存和 verified 门禁。"}],
+        "must_not": ["不得执行 CAD。", "不得保存当前业务 DWG。", "不得把训练面板、证据文字或截图当作 clean source。", "不得让模型建议替代 source boundary / reuse replay。"],
+        "calls": ["core.assets.build_asset_library_governance", "core.assets.build_asset_library_layout_plan", "core.assets.evaluate_asset_library_hardening", "core.model_review.asset_governor_review"],
+        "tips": ["先问来源是否足够精确，再决定 clean source、quarantine 或 metadata_only。", "把模型辅助意见写成 advisory，不要写成执行授权。", "资产 verified 必须等 native 证据或 reuse replay，不靠文字合同。"],
+        "docs": ["agents/pipeline/asset_governor/agent.json", "agents/pipeline/pipeline_manifest.json", "docs/architecture/system-asset-sedimentation-protocol.md"],
+    },
+    "pipeline_asset_librarian": {
+        "name": "资产馆员智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "规则/任务型资产目录契约：负责系统资产分类、命名、去重、检索词、状态流和 registry / assets.json 一致性，不独立调用模型。",
+        "role": "负责把已过守门的资产放进稳定分类与检索结构，处理 asset id 冲突、别名、用途、状态流、版本和资产卡片文本。",
+        "inputs": ["asset governance decision", "registry.json", "分类 assets.json", "asset aliases / use_when / dimensions", "evidence refs"],
+        "outputs": ["asset_catalog_decision", "asset_retrieval_contract", "asset_versioning_decision", "asset_card_metadata"],
+        "gates": [{"label": "目录稳定", "value": "必须记录稳定分类、ID 冲突策略、检索文本、生命周期和证据边界。"}],
+        "must_not": ["不得执行 CAD。", "不得保存 DWG。", "不得静默覆盖冲突 asset id。", "不得把 metadata_only 当 verified。"],
+        "calls": ["core.assets.sediment_system_asset", "core.assets.verify_system_asset_package", "registry / assets.json 写入检查"],
+        "tips": ["分类先稳定，再补别名和检索词。", "重复 asset id 必须显式记录更新、拒绝或变体策略。", "资产卡片文本要服务检索，不塞训练噪声。"],
+        "docs": ["agents/pipeline/asset_librarian/agent.json", "docs/architecture/system-asset-sedimentation-protocol.md"],
+    },
+    "pipeline_asset_dwg_curator": {
+        "name": "资产 DWG 编排智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "规则/任务型资产 DWG 编排契约：规划系统资产 DWG 的目录区、干净资产区、资产卡片区、待复审区和证据索引区，并用 CAD 回读证明写入边界。",
+        "role": "负责系统资产 DWG 的分区、槽位、排版计划、训练污染清洗、保存与回读证据边界；它可调用 CAD 写系统资产 DWG，但不保存用户当前业务 DWG。",
+        "inputs": ["asset governance decision", "asset_layout_plan", "source boundary", "included / excluded handles", "native asset DWG path", "execution summary"],
+        "outputs": ["asset_layout_plan_v2", "native_asset_write_plan", "native_asset_write_report", "asset_dwg_review_snapshot"],
+        "gates": [{"label": "分区清楚", "value": "必须记录 clean source bbox、隔离训练说明、quarantine 和证据区。"}, {"label": "保存边界", "value": "若写系统资产 DWG，需要回读保存状态；当前业务 DWG 必须 savedCurrentDwg=false。"}],
+        "must_not": ["不得复制 whole modelspace。", "不得复制 whole CODEX_PREVIEW。", "不得把训练标题、说明、边框、尺寸线或证据文字放入 clean source。", "不得保存当前业务 DWG。"],
+        "calls": ["core.assets.build_asset_library_layout_plan", "core.assets.evaluate_asset_library_hardening", "system asset DWG write / readback"],
+        "tips": ["先规划分区和槽位，再写 native DWG。", "clean source、preview card、proof/evidence 必须分角色。", "布局可读性不能只靠 overlap=0。"],
+        "docs": ["agents/pipeline/asset_dwg_curator/agent.json", "docs/architecture/system-asset-sedimentation-protocol.md"],
+    },
+    "pipeline_asset_reuse_auditor": {
+        "name": "资产复用审计智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "规则/任务型复用审计契约：判断系统资产是否真的可调用、sourceSpec 是否精确、插入 CODEX_PREVIEW 后是否有 handles / readback，不独立调用模型。",
+        "role": "负责复用回放和 verified 门禁：资产只有在 sourceSpec 精确、created handles 存在、readbackStatus=ok 且未保存当前 DWG 时，才能从可登记走向可验证。",
+        "inputs": ["asset governance decision", "registry.json", "asset_layout_plan_v2", "reuse_plan / reuse_result", "created_handles", "readback_summary"],
+        "outputs": ["asset_reuse_audit.json", "reuseWorkflowProbe", "reuseReplayEvidence", "verification_status_decision"],
+        "gates": [{"label": "真复用", "value": "必须有精确 sourceSpec、created handles、readback ok 和 savedCurrentDwg=false。"}],
+        "must_not": ["不得弱匹配自动复用。", "不得把 metadata_only 当 reused。", "不得保存当前业务 DWG。", "不得缺 handles 就标 verified。"],
+        "calls": ["core.assets.build_system_asset_reuse_workflow", "core.assets.apply_system_asset_reuse_workflow", "core.assets.verify_system_asset_package"],
+        "tips": ["复用前先跑 registry encodingPreflight。", "弱匹配只给候选，不生成 ready 计划。", "verified 只能来自 reuse probe / replay 或 CAD readback 证据。"],
+        "docs": ["agents/pipeline/asset_reuse_auditor/agent.json", "docs/architecture/system-asset-sedimentation-protocol.md"],
+    },
     "pipeline_orchestrator": {
         "name": "流程编排智能体",
         "group": "pipeline",
@@ -832,6 +890,48 @@ AGENT_PROMPTS: dict[str, dict[str, Any]] = {
         "must_not": ["不得把页面状态当成真实通过。", "不得跳过失败归因。"],
         "calls": ["训练阶段判断", "流水线调度", "阻塞判定", "回环策略"],
     },
+    "pipeline_design_director": {
+        "name": "设计判断总监智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "你是设计阶段的判断总监，负责在 CAD_PLAN 之前理解图纸类型、表达目的、设计意图、行业常识和约束，并决定要分发哪些 Agent。",
+        "role": "你负责像专业设计师一样读懂场景 brief：判断这是施工图、深化图、节点图、立面图、家具图、机电点位图、标注样式图还是规则说明；说明本轮表达目的和设计意图，再决定是否需要样式候选、视觉语义、资产检索、CAD_PLAN 或用户补充信息。",
+        "inputs": ["用户 brief / 参考图", "场景规则和行业常识", "历史用户反馈", "可用资产和 Agent 列表", "任务风险与证据边界"],
+        "outputs": ["designStrategy", "drawingTypeDecision", "expressionPurpose", "designIntent", "constraintSummary", "requiredAgents", "blockedOrReadyReason"],
+        "gates": [{"label": "先设计判断", "value": "创造性、样式、专业表达和复杂图纸任务不得从 brief 直接跳到 CAD_PLAN。"}, {"label": "分发有理由", "value": "每个下游 Agent 都要说明为什么需要、输入是什么、产物怎么被下一步消费。"}],
+        "must_not": ["不得执行 CAD。", "不得把风格喜好当成可落图几何。", "不得把缺约束的任务硬推给执行 Agent。", "不得用模板复刻代替设计判断。"],
+        "calls": ["drawing type judgment", "expression purpose analysis", "design constraint summary", "registered agent dispatch decision", "core.model_review design_director_review"],
+        "tips": ["先判断图纸在表达什么，再谈样式。", "A/B/C 是一种可选交互策略，不是所有新样式任务的默认模板。", "模型建议只作为设计判断输入，不能替代 CAD validate / readback。"],
+        "docs": ["agents/pipeline/design_director/agent.json", "agents/pipeline/pipeline_manifest.json", "CORE_RESTRUCTURE_PLAN.md", "agents/COMMON_PROMPT_CONTRACT.md"],
+    },
+    "pipeline_style_generator": {
+        "name": "样式候选生成智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "你是样式候选生成智能体，负责把设计判断拆成 2-3 套可比较、可参数化、可审计的图纸表达候选，而不是只套固定模板。",
+        "role": "你负责根据 designStrategy 生成候选样式方案，明确尺寸、比例、文字层级、线距、颜色、图层层级、图纸密度、对象类型和适用场景，并说明每套候选为什么适合或不适合当前 brief。",
+        "inputs": ["designStrategy", "drawingTypeDecision", "expressionPurpose", "设计约束", "行业习惯", "参考样式或用户偏好"],
+        "outputs": ["styleDecision", "styleCandidates", "selectedStyleCandidate", "styleParameterGrammar", "candidateTradeoffs", "needsUserChoice"],
+        "gates": [{"label": "候选可参数化", "value": "每套候选必须有可被 visual intent / CAD_PLAN 消费的参数，不只写好看或高级。"}, {"label": "数量遵循语义", "value": "按 semanticDecomposition 的 requestedCandidateCount / candidateCountPolicy 决定 waiver、单方案、两套或三套，不强制 A/B/C。"}],
+        "must_not": ["不得执行 CAD。", "不得只列模板名称。", "不得只改颜色不改比例、线距、层级和密度。", "不得把候选通过说成 CAD 已验证。"],
+        "calls": ["style candidate generation", "style parameter grammar", "candidate comparison", "core.model_review style_generation_review"],
+        "tips": ["候选之间要有真实差异，例如信息密度、标注层级、施工友好度或展示感。", "把创造性落到可执行参数上。", "用户没有选择时，给出推荐候选和理由。"],
+        "docs": ["agents/pipeline/style_generator/agent.json", "agents/pipeline/pipeline_manifest.json", "CORE_RESTRUCTURE_PLAN.md", "agents/COMMON_PROMPT_CONTRACT.md"],
+    },
+    "pipeline_design_reviewer": {
+        "name": "设计复核智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "你是设计复核智能体，负责在 CAD readback / 截图 / 机器审计之后，从专业设计师视角判断是否可读、专业、符合表达目的并值得请用户验收。",
+        "role": "你负责把落图结果、readback 摘要、视觉验收和原始 designStrategy 放在一起复核：判断是否像专业图纸、是否符合行业习惯、是否太花、是否可读、比例是否匹配、是否越框、是否需要 A/B/C 选择或继续润色。",
+        "inputs": ["designStrategy", "selectedStyleCandidate", "CAD_PLAN / visual_parts", "readback_summary", "visual acceptance result", "user feedback"],
+        "outputs": ["designReview", "professionalReadable", "expressionPurposeMet", "styleCandidateMatched", "polishRecommendation", "learningCandidate"],
+        "gates": [{"label": "设计闭环", "value": "有可见输出的创造性或样式任务，交付前必须经过设计复核或写明豁免理由。"}, {"label": "沉淀候选", "value": "失败或用户修改意见要形成 learningCandidate，而不是只当一次性口味偏好。"}],
+        "must_not": ["不得执行 CAD。", "不得用模型审美通过替代 CAD readback。", "不得把截图非空当专业可读。", "不得把用户未确认的样式沉淀为通用资产。"],
+        "calls": ["design review", "visual acceptance comparison", "style feedback extraction", "pipeline_learning_promoter", "core.model_review design_review"],
+        "tips": ["先看表达目的是否达成，再看美观。", "发现不专业时给出可执行润色建议。", "用户反馈通过后再考虑进入规则、Prompt 或资产候选。"],
+        "docs": ["agents/pipeline/design_reviewer/agent.json", "agents/pipeline/pipeline_manifest.json", "CORE_RESTRUCTURE_PLAN.md", "agents/COMMON_PROMPT_CONTRACT.md"],
+    },
     "pipeline_visual_intent": {
         "name": "视觉语义智能体",
         "group": "pipeline",
@@ -843,6 +943,34 @@ AGENT_PROMPTS: dict[str, dict[str, Any]] = {
         "gates": [{"label": "部件可追踪", "value": "关键部件要有编号、角色、形状和闭合状态。"}],
         "must_not": ["不得直接执行 CAD。", "不得用外框盒子冒充真实部件。", "不得把修尺寸当成修视觉语义。"],
         "calls": ["参考图语义拆解", "部件契约生成", "方向语义判断", "禁止模式生成"],
+    },
+    "pipeline_visual_layout_reviewer": {
+        "name": "视觉布局复审智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "模型型复审框架入口：对系统资产 DWG / 仓库式布局的截图、readback 摘要和 layout plan 做只读视觉判断，识别乱码、遮挡、过密、通道不清和 source/proof 混淆。",
+        "role": "负责在资产 DWG 仓库布局或高风险视觉布局任务中做只读复审：综合截图、layout plan、readback 和资产摘要，判断可读性、美观度、遮挡裁剪、检索复用路径和证据角色分离。",
+        "inputs": ["a_to_a_task_contract", "user_request", "cad capture / preview", "model_review_request", "asset_layout_plan", "created_handles", "readback_summary", "asset_registry_summary"],
+        "outputs": ["visualLayoutReviewDecision", "layoutReadabilityAcceptable", "aisleClearanceAcceptable", "contentDensityAcceptable", "sourceProofRolesSeparated", "layerSemanticsAcceptable", "modelBackedReview", "visualProblems", "repairRecommendation", "blockingReasons"],
+        "gates": [{"label": "视觉可读", "value": "通道、内容密度、货架 / 分区、文字和证据角色必须能被用户看懂。"}, {"label": "模型报告", "value": "当 modelBackedReviewRequired=true 时，必须有 schema 验证过的 modelBackedReview。"}],
+        "must_not": ["不得执行 CAD 写入。", "不得在模型禁用或未请求时静默调用模型。", "不得把截图非空当通过。", "不得把 modelBackedReview=pass 当 CAD 几何、来源边界或复用证据。"],
+        "calls": ["core.model_review.visual_layout_review", "visual layout schema validation", "A-to-A visual_layout_review hard gate"],
+        "tips": ["优先检查乱码、遮挡、裁剪、贴边、内容过密和检索路径不清。", "模型结论要和 readback / layout plan / registry 摘要一起看。", "失败时输出可修复问题，而不是只给 pass/fail。"],
+        "docs": ["agents/pipeline/visual_layout_reviewer/agent.json", "core/model_review/visual_layout_review.py", "core/model_review/schemas/visual_layout_review.schema.json", "agents/COMMON_PROMPT_CONTRACT.md"],
+    },
+    "pipeline_visual_acceptance_reviewer": {
+        "name": "视觉验收复审智能体",
+        "group": "pipeline",
+        "status": "active",
+        "summary": "模型型复审框架入口：对普通 CAD 训练 / 落图后的截图、readback 摘要、CAD_PLAN 和机器审计做只读视觉验收，识别美观、乱码、遮挡、裁剪、对齐、意图匹配和可复用边界问题。",
+        "role": "负责在交付前做用户可见质量复审：综合截图、CAD_PLAN / visual_parts、readback、机器审计和用户原始意图，判断是否可以请用户验收，或必须回到 repair。",
+        "inputs": ["a_to_a_task_contract", "user_request", "cad_plan / visual_parts", "execution_summary", "geometry_audit", "cad_capture_or_preview", "readback_summary"],
+        "outputs": ["visualAcceptanceDecision", "aestheticAcceptable", "textReadable", "noMojibake", "noSevereOverlap", "noSevereClipping", "alignmentAcceptable", "contentMatchesIntent", "reusableOutputLikely", "evidenceBoundaryRespected", "modelBackedVisualAcceptance", "visualProblems", "repairRecommendation", "blockingReasons"],
+        "gates": [{"label": "用户可见质量", "value": "文字、图形、对齐、裁剪、遮挡和意图匹配必须达到可请用户验收的水平。"}, {"label": "模型报告", "value": "当 modelBackedVisualAcceptanceRequired=true 时，必须有 schema 验证过的 modelBackedVisualAcceptance。"}],
+        "must_not": ["不得执行 CAD 写入。", "不得保存或覆盖 DWG。", "不得把截图非空当通过。", "不得把 modelBackedVisualAcceptance=pass 当 CAD 几何、用户验收或资产复用证据。"],
+        "calls": ["core.model_review.visual_acceptance_review", "visual acceptance schema validation", "A-to-A visual_acceptance_review hard gate"],
+        "tips": ["优先检查乱码、文字可读性、遮挡裁剪、贴边、对齐和视觉不专业。", "把模型结论和 CAD readback / 机器审计一起看，截图只作视觉辅助。", "失败时输出具体 repairRecommendation，而不是笼统说不好看。"],
+        "docs": ["agents/pipeline/visual_acceptance_reviewer/agent.json", "core/model_review/visual_acceptance_review.py", "core/model_review/schemas/visual_acceptance_review.schema.json", "agents/COMMON_PROMPT_CONTRACT.md"],
     },
     "pipeline_intent": {
         "name": "需求拆解智能体",
@@ -999,6 +1127,9 @@ FAILURE_LABELS = {
     "visual_fail_size_only_repair": "视觉失败却只调尺寸",
     "missing_annotation": "标注缺失",
     "formal_layer_write_risk": "正式图层写入风险",
+    "design_stage_skipped": "设计阶段被跳过",
+    "template_style_without_design_reasoning": "套模板但缺设计推理",
+    "design_review_skipped": "设计复核被跳过",
 }
 
 
@@ -1024,6 +1155,9 @@ FAILURE_NOTES = {
     "visual_fail_size_only_repair": "视觉失败时应回到视觉语义智能体。",
     "missing_annotation": "标注训练要明确对象、位置、比例和避让。",
     "formal_layer_write_risk": "训练默认只写 CODEX_PREVIEW，不碰正式图层。",
+    "design_stage_skipped": "创造性、样式或复杂表达任务如果跳过设计判断，会退化成执行固定模板。",
+    "template_style_without_design_reasoning": "样式候选必须说明尺寸、比例、文字层级、线距、颜色、密度和行业理由。",
+    "design_review_skipped": "可见输出缺设计复核时，机器绿也不能说明图纸专业、可读或符合表达目的。",
 }
 
 
@@ -1049,6 +1183,9 @@ FAILURE_WEIGHTS = {
     "visual_fail_size_only_repair": 62,
     "missing_annotation": 52,
     "formal_layer_write_risk": 34,
+    "design_stage_skipped": 88,
+    "template_style_without_design_reasoning": 82,
+    "design_review_skipped": 78,
 }
 
 
@@ -1064,16 +1201,19 @@ FAILURE_AGENTS = {
     "duplicate_shared_edges": ["pipeline_execute", "pipeline_repair", "pipeline_audit"],
     "silent_bbox_fallback": ["pipeline_asset_retriever", "pipeline_intent"],
     "retrieval_hit_as_capability": ["pipeline_asset_retriever", "pipeline_learning_promoter"],
-    "machine_green_delivery": ["pipeline_audit", "pipeline_delivery"],
+    "machine_green_delivery": ["pipeline_audit", "pipeline_visual_acceptance_reviewer", "pipeline_delivery"],
     "clone_reference_fragments": ["pipeline_asset_retriever", "pipeline_visual_intent"],
     "size_only_repair_loop": ["pipeline_repair", "pipeline_audit"],
     "missing_furniture_parts": ["pipeline_visual_intent", "pipeline_execute", "pipeline_audit"],
     "plan_view_role_direction_errors": ["pipeline_visual_intent", "pipeline_intent", "pipeline_audit"],
     "machine_size_drift_only": ["pipeline_audit", "pipeline_repair"],
     "unsupported_or_risky": ["pipeline_asset_retriever", "pipeline_intent"],
-    "visual_fail_size_only_repair": ["pipeline_repair", "pipeline_audit"],
-    "missing_annotation": ["pipeline_delivery", "pipeline_audit"],
+    "visual_fail_size_only_repair": ["pipeline_visual_acceptance_reviewer", "pipeline_repair", "pipeline_audit"],
+    "missing_annotation": ["pipeline_visual_acceptance_reviewer", "pipeline_delivery", "pipeline_audit"],
     "formal_layer_write_risk": ["pipeline_execute", "pipeline_audit"],
+    "design_stage_skipped": ["cad_designer", "pipeline_design_director", "pipeline_orchestrator"],
+    "template_style_without_design_reasoning": ["pipeline_style_generator", "pipeline_design_reviewer", "pipeline_visual_intent"],
+    "design_review_skipped": ["pipeline_design_reviewer", "pipeline_visual_acceptance_reviewer", "pipeline_delivery"],
 }
 
 
@@ -1213,6 +1353,197 @@ def agent_name(agent_id: str) -> str:
     return agent_template(agent_id)["name"]
 
 
+AGENT_EXECUTION_OVERRIDES: dict[str, dict[str, Any]] = {
+    "cad_designer": {
+        "type": "main_session_contract",
+        "label": "主 Agent 会话契约",
+        "shortLabel": "主会话",
+        "modeFamily": "rule",
+        "statusNote": "它依赖当前 Codex / Cursor 等主 Agent 按契约执行，不是仓库内独立后台模型服务。",
+        "sourceSummary": "来源于 CAD Designer 成长路径、rules.md 和 COMMON_PROMPT_CONTRACT。",
+        "triggerRules": [
+            "用户要求 CAD 基础课、对象课程、家装案例或训练反馈时触发。",
+            "先判断成长阶段，再派发场景、资产、需求拆解、执行、审计、修复和沉淀环节。",
+            "课程通过、案例 pass、表 C 和真实 CAD 几何证明必须分开。",
+        ],
+    },
+    "pipeline_asset_governor": {
+        "type": "model_assisted_gate",
+        "label": "模型辅助规则 Agent",
+        "shortLabel": "模型辅助",
+        "modeFamily": "model",
+        "modelAssisted": True,
+        "statusNote": "已登记 modelAssistedDecision / modelAssetGovernorReview 路径；模型只给只读建议，不能替代资产来源、复用和 verified 门禁。",
+        "sourceSummary": "core.model_review.asset_governor_review + asset_governor/agent.json + pipeline manifest。",
+        "triggerRules": [
+            "用户明确说沉淀资产、通用资产、收进资产库时触发。",
+            "先判断 sourceSpec、created/selected handles、clean source / quarantine，再派发资产治理子 Agent。",
+            "模型建议只能写入 advisory 字段，不能授权 CAD 写入、保存或 verified。",
+        ],
+        "backendPromptZh": [
+            "你是只读资产库守门复审模型，负责辅助判断资产是否能进入系统资产库。",
+            "输入包括用户沉淀意图、上下文包、检索包、sourceSpec、created/selected handles、registry / assets.json 摘要和资产证据边界。",
+            "判断重点是来源是否精确、是否应进入 clean reusable source、是否需要 quarantine / metadata_only、是否应派发资产馆员、DWG 编排员和复用审计员。",
+            "输出只能是 modelAssistedDecision / modelAssetGovernorReview 这类建议字段；必须声明规则门禁仍然优先。",
+            "禁止执行 CAD、保存 DWG、覆盖 source boundary、跳过 reuse replay 或把模型建议当 verified 证据。",
+        ],
+        "modelInputs": ["资产治理上下文", "sourceSpec / handles 来源证据", "registry / assets 摘要", "证据边界"],
+        "modelOutputs": ["modelAssistedDecision 模型辅助建议", "来源边界建议", "clean source / quarantine 建议", "子 Agent 派发建议"],
+        "modelHardBoundaries": ["只读建议，不是放行结论", "不能执行 CAD", "不能保存 DWG", "不能覆盖来源、复用和 verified 规则门禁"],
+    },
+    "pipeline_visual_layout_reviewer": {
+        "type": "model_backed_reviewer",
+        "label": "模型型复审 Agent",
+        "shortLabel": "模型型",
+        "modeFamily": "model",
+        "modelBacked": True,
+        "statusNote": "框架已接入 core/model_review；真实模型调用仍受 provider、网络和 schema 校验约束，不能用 pass 替代 CAD 证据。",
+        "sourceSummary": "core.model_review.visual_layout_review + visual_layout_review.schema.json + visual_layout_reviewer/agent.json。",
+        "triggerRules": [
+            "系统资产 DWG 仓库布局、视觉布局复审或 A-to-A 合同要求 visual_layout_review 时触发。",
+            "当 modelBackedReviewRequired=true 时，必须提供 schema 验证通过的 modelBackedReview。",
+            "截图非空、bbox overlap=0 或模型 pass 都不能单独放行。",
+        ],
+        "backendPromptZh": [
+            "你是只读视觉布局复审模型，负责审查 CAD 资产库或仓库式布局是否真正可读、可复用、可检索。",
+            "输入包括截图或局部截图、CAD readback 摘要、layout plan、asset registry 摘要、用户空间隐喻和已有机器审计结果。",
+            "判断维度包括美观度、乱码或 mojibake、文字贴边、遮挡、裁剪、不对齐、内容密度、通道清晰度、货架/分区是否像用户要求的仓库、source/proof 角色是否分离，以及未来资产是否有扩展槽位。",
+            "输出必须符合 visual_layout_review.schema.json：status、layoutReadabilityAcceptable、aisleClearanceAcceptable、contentDensityAcceptable、sourceProofRolesSeparated、visualProblems、blockingReasons、repairRecommendation 等。",
+            "禁止执行 CAD、保存 DWG、修改对象、把截图非空当通过、把 modelBackedReview=pass 当 CAD 几何、来源边界、复用 replay 或用户验收证据。",
+        ],
+        "modelInputs": ["截图或局部截图 cad_capture_or_preview", "CAD 回读摘要 readback_summary", "资产布局计划 asset_layout_plan", "资产注册表摘要 asset_registry_summary", "用户原始空间隐喻和验收关注点"],
+        "modelOutputs": ["模型复审 JSON：modelBackedReview", "可见问题 visualProblems", "阻断原因 blockingReasons", "修复建议 repairRecommendation", "通过 schema 校验的视觉复审结论"],
+        "modelHardBoundaries": ["只读复审", "必须通过 schema 校验", "不能替代 CAD created handles / readback", "不能替代用户验收", "不能只靠截图非空放行"],
+    },
+    "pipeline_visual_acceptance_reviewer": {
+        "type": "model_backed_reviewer",
+        "label": "模型型复审 Agent",
+        "shortLabel": "模型型",
+        "modeFamily": "model",
+        "modelBacked": True,
+        "statusNote": "框架已接入 core/model_review；用于普通 CAD 输出的用户可见质量复审，不能用 pass 替代 CAD 证据或用户验收。",
+        "sourceSummary": "core.model_review.visual_acceptance_review + visual_acceptance_review.schema.json + visual_acceptance_reviewer/agent.json。",
+        "triggerRules": [
+            "普通 CAD 训练、落图、截图验收或用户可见质量任务出现视觉验收语义时触发。",
+            "当 modelBackedVisualAcceptanceRequired=true 时，必须提供 schema 验证通过的 modelBackedVisualAcceptance。",
+            "截图非空、机器审计绿或模型 pass 都不能单独请求用户验收。",
+        ],
+        "backendPromptZh": [
+            "你是只读视觉验收复审模型，负责审查 CAD 输出是否达到可以请用户验收的可见质量。",
+            "输入包括用户原始意图、CAD_PLAN / visual_parts、执行摘要、CAD readback、机器审计、截图或局部截图，以及 checked / not_checked 证据边界。",
+            "判断维度包括整体美观度、中文文字可读性、乱码或 mojibake、严重遮挡、裁剪、贴边、不对齐、图形是否匹配用户意图、沉淀内容是否可复用，以及是否把截图当成了唯一证据。",
+            "输出必须符合 visual_acceptance_review.schema.json：status、aestheticAcceptable、textReadable、noMojibake、noSevereOverlap、noSevereClipping、alignmentAcceptable、contentMatchesIntent、reusableOutputLikely、evidenceBoundaryRespected、visualProblems、blockingReasons、repairRecommendation 等。",
+            "禁止执行 CAD、保存 DWG、删除对象、把 modelBackedVisualAcceptance=pass 当用户验收、CAD 几何证明、资产 sourceSpec / reuse replay 或表 C 证据。",
+        ],
+        "modelInputs": ["用户原始意图", "CAD_PLAN / visual_parts", "执行摘要和 CAD readback", "机器审计结果", "截图或局部截图"],
+        "modelOutputs": ["模型复审 JSON：modelBackedVisualAcceptance", "可见问题 visualProblems", "阻断原因 blockingReasons", "修复建议 repairRecommendation", "通过 schema 校验的视觉验收结论"],
+        "modelHardBoundaries": ["只读复审", "必须通过 schema 校验", "不能替代 CAD created handles / readback", "不能替代用户验收", "不能只靠截图非空放行"],
+    },
+    "pipeline_repair": {
+        "type": "model_assisted_gate",
+        "label": "模型辅助规则 Agent",
+        "shortLabel": "模型辅助",
+        "modeFamily": "model",
+        "modelAssisted": True,
+        "statusNote": "可接收 modelBackedRepairPlan / repairPlanCandidate；执行策略必须是 proposal_only，不能直接执行模型生成的 CAD 命令。",
+        "sourceSummary": "core.model_review.repair_plan_review + repair/agent.json + COMMON_PROMPT_CONTRACT。",
+        "triggerRules": [
+            "机器审计、视觉复审或用户反馈指出局部错误时触发。",
+            "优先基于 handles / bbox / 图层 / 根因做原位最小修复计划。",
+            "模型修复计划只能给 proposal，不允许授权广域删除、保存 DWG 或修改正式图层。",
+        ],
+        "backendPromptZh": [
+            "你是只读局部修复计划复审模型，负责把审计失败、视觉问题和用户反馈整理成最小修复建议。",
+            "输入包括失败原因、target handles、bbox、图层、原始 CAD_PLAN / visual_parts、用户反馈和禁止改动范围。",
+            "优先判断是否能原位 update、delete_replace 或 add_missing；只有 handles 失效、对象被删除/炸开、局部修会破坏整体结构或全局坐标/比例错误时，才建议整块重画。",
+            "输出只能是 modelBackedRepairPlan / repairPlanCandidate，字段必须说明 target_handles、repair scope、root cause、required re-audit 和 blocked reason。",
+            "禁止输出可直接执行的 CAD 命令、保存当前 DWG、广域删除、正式图层编辑或用尺寸微调掩盖视觉语义错误。",
+        ],
+        "modelInputs": ["几何审计 geometry_audit", "视觉问题 visualProblems", "目标 handles / bbox", "原始 CAD_PLAN / visual_parts", "用户反馈 user_feedback"],
+        "modelOutputs": ["modelBackedRepairPlan 模型修复计划", "repairPlanCandidate 修复候选", "proposal_only 修复范围", "必须复审 / 回归审计的项目"],
+        "modelHardBoundaries": ["只能给 proposal_only 建议", "不能执行 CAD", "不能保存 DWG", "不能广域删除模型空间对象", "修复后必须重新审计"],
+    },
+    "demand_side_roles": {
+        "type": "data_role",
+        "label": "数据/任务角色",
+        "shortLabel": "数据",
+        "modeFamily": "rule",
+        "statusNote": "只生成训练需求和 benchmark 输入，不是执行 Agent，也不是独立模型服务。",
+    },
+}
+
+
+def gate_lines(gates: list[Any]) -> list[str]:
+    lines = []
+    for gate in gates:
+        if isinstance(gate, dict):
+            label = gate.get("label") or "门槛"
+            value = gate.get("value") or ""
+            lines.append(f"{label}：{value}".strip("："))
+        else:
+            lines.append(str(gate))
+    return lines
+
+
+def default_execution_model(agent_id: str, template: dict[str, Any]) -> dict[str, Any]:
+    group = template["group"]
+    if group == "scene":
+        base = {
+            "type": "scene_rule",
+            "label": "场景规则型 Agent",
+            "shortLabel": "场景规则",
+            "statusNote": "提供场景词汇、对象常识和偏好约束；不独立调用模型，也不执行 CAD。",
+            "sourceSummary": "场景 agent.json / rules.md + 用户反馈沉淀。",
+            "triggerRules": [
+                "用户需求进入对应场景，或训练计划需要场景词汇和对象常识时触发。",
+                "只输出场景规则、偏好和约束，交给流水线继续拆解。",
+                "不能替代 CAD_PLAN、执行、审计、模型复审或真实用户验收。",
+            ],
+        }
+    elif group == "demand":
+        base = {
+            "type": "data_role",
+            "label": "数据/任务角色",
+            "shortLabel": "数据",
+            "statusNote": "只生成训练需求和 benchmark 输入，不执行 CAD，也不独立复审。",
+            "sourceSummary": "需求侧角色数据与 benchmark 生成规则。",
+            "triggerRules": ["需要构造训练输入、用户角色口吻或 benchmark 场景时触发。"],
+        }
+    else:
+        base = {
+            "type": "rule_contract",
+            "label": "规则/脚本型任务 Agent",
+            "shortLabel": "规则脚本",
+            "statusNote": "由主 Agent、core/ 或 scripts/ 按契约触发；仓库内没有独立后台模型调用。",
+            "sourceSummary": "agent.json / pipeline manifest / core 与脚本门禁。",
+            "triggerRules": [
+                "上游产物满足本环节输入要求时触发。",
+                "输入不足时必须阻塞、声明缺口或返回上一环节。",
+                "输出必须能被下一环节和机器审计读取。",
+            ],
+        }
+    base["modeFamily"] = base.get("modeFamily", "rule")
+    base["triggerRules"] = unique([*base.get("triggerRules", []), *gate_lines(template.get("gates", []))])
+    return base
+
+
+def agent_execution_model(agent_id: str, template: dict[str, Any]) -> dict[str, Any]:
+    model = default_execution_model(agent_id, template)
+    model.update(AGENT_EXECUTION_OVERRIDES.get(agent_id, {}))
+    model["modelBacked"] = bool(model.get("modelBacked"))
+    model["modelAssisted"] = bool(model.get("modelAssisted"))
+    model["ruleBased"] = not (model["modelBacked"] or model["modelAssisted"])
+    model.setdefault("backendPromptZh", [])
+    model.setdefault("modelInputs", [])
+    model.setdefault("modelOutputs", [])
+    model.setdefault("modelHardBoundaries", [])
+    model.setdefault("editableRefs", template.get("docs", []))
+    model.setdefault("sourceSummary", "维护入口见源文件列表。")
+    model.setdefault("statusNote", "分类状态待补。")
+    model["triggerRules"] = unique([*model.get("triggerRules", []), *gate_lines(template.get("gates", []))])
+    return model
+
+
 def matrix_group(capability: dict[str, Any]) -> str:
     return GROUP_OVERRIDES.get(capability["id"], capability["group"])
 
@@ -1277,6 +1608,90 @@ def training_plan_visibility(programs: list[dict[str, Any]]) -> dict[str, Any]:
         "fullyCompletedCount": len(completed),
         "visibleByDefaultCount": len(programs) - len(completed),
         "completionRule": "只有 trainingAcceptance.status=pass、learningPromotion.status=promoted 且 stageState.id=systemized 时才默认折叠。",
+    }
+
+
+def training_source_summary(programs: list[dict[str, Any]]) -> dict[str, Any]:
+    sources = training_source_rows()
+
+    def count(*, status: str | None = None, kind: str | None = None, role: str | None = None, exists: bool | None = None) -> int:
+        total = 0
+        for source in sources:
+            if status is not None and source.get("status", "active") != status:
+                continue
+            if kind is not None and source.get("kind") != kind:
+                continue
+            if role is not None and source.get("role") != role:
+                continue
+            if exists is not None and bool(source.get("exists")) != exists:
+                continue
+            total += 1
+        return total
+
+    local_accepted = sum(1 for program in programs if program.get("trainingAcceptance", {}).get("status") == "pass")
+    local_fully_complete = sum(1 for program in programs if program.get("isFullyComplete"))
+    archived_training_evidence = [
+        source
+        for source in sources
+        if source.get("status") == "archived"
+        and source.get("kind") in {"training_acceptance_report", "training_queue_state", "training_learning_ledger"}
+    ]
+    active_missing = [
+        source
+        for source in sources
+        if source.get("status", "active") == "active" and source.get("role") == "fact_source" and not source.get("exists")
+    ]
+
+    if local_accepted:
+        recommendation_code = "local_training_evidence_available"
+        recommendation = (
+            f"当前工作区已有 {local_accepted} 个训练验收通过项；换电脑后只要这些 fact_source 和学习沉淀文件跟着仓库走，"
+            "就不需要重新训练。"
+        )
+    elif archived_training_evidence:
+        recommendation_code = "restore_remote_evidence_before_retraining"
+        recommendation = (
+            "当前工作区没有 active 训练验收报告；如果另一台电脑训练过，优先把那台电脑的训练报告、队列状态、"
+            "learning ledger、Agent memory / Prompt addendum 同步回来并重新运行同步脚本。证据恢复后不需要重训；"
+            "只有找不回 created handles/readback/验收报告时，才重跑对应训练项。"
+        )
+    else:
+        recommendation_code = "start_or_continue_training"
+        recommendation = "当前清单没有可恢复的历史训练验收报告；需要按训练计划继续开训，并保留验收报告与学习沉淀。"
+
+    return {
+        "schemaVersion": "training-source-summary/v1",
+        "totalSourceCount": len(sources),
+        "activeSourceCount": count(status="active"),
+        "archivedSourceCount": count(status="archived"),
+        "activeFactSourceMissingCount": len(active_missing),
+        "activeTrainingAcceptanceReportCount": count(status="active", kind="training_acceptance_report"),
+        "archivedTrainingAcceptanceReportCount": count(status="archived", kind="training_acceptance_report"),
+        "activeTrainingQueueStateCount": count(status="active", kind="training_queue_state"),
+        "archivedTrainingQueueStateCount": count(status="archived", kind="training_queue_state"),
+        "activeLearningLedgerCount": count(status="active", kind="training_learning_ledger"),
+        "archivedLearningLedgerCount": count(status="archived", kind="training_learning_ledger"),
+        "localAcceptedTrainingProgramCount": local_accepted,
+        "localFullyCompleteProgramCount": local_fully_complete,
+        "programCount": len(programs),
+        "recommendationCode": recommendation_code,
+        "recommendedAction": recommendation,
+        "portableEvidencePolicy": (
+            "训练状态不是浏览器缓存，也不是换电脑自动丢失；它依赖仓库中的 fact_source、created handles/readback、"
+            "验收报告、learning ledger 和 Agent memory / Prompt addendum。"
+        ),
+        "restorePaths": [
+            "output/training_queues/**",
+            "output/training_learning/**",
+            "agents/**/training_memory.json",
+            "agents/**/prompt_addendum.md",
+            "docs/training/training-sources.json",
+        ],
+        "archivedTrainingEvidenceIds": [str(source.get("id", "")) for source in archived_training_evidence if source.get("id")],
+        "activeMissingFactSourceIds": [str(source.get("id", "")) for source in active_missing if source.get("id")],
+        "evidenceBoundary": (
+            "archived 只表示历史索引，不会让页面声明训练通过；只有 active 且存在的验收报告和学习沉淀才会把训练项标为已完成。"
+        ),
     }
 
 
@@ -1462,6 +1877,7 @@ def agent_profiles(programs: list[dict[str, Any]], learning_index: dict[str, Any
     learning_by_agent = (learning_index or training_learning_index()).get("byAgent", {})
     for agent_id in AGENT_PROMPTS:
         template = agent_template(agent_id)
+        execution_model = agent_execution_model(agent_id, template)
         related = [program for program in programs if agent_id in program["responsibleAgentIds"]]
         learning = learning_by_agent.get(agent_id, {})
         p0_count = sum(1 for program in related if program["priority"] == "P0")
@@ -1484,6 +1900,7 @@ def agent_profiles(programs: list[dict[str, Any]], learning_index: dict[str, Any
             "mustNot": template["must_not"],
             "usesCore": template["calls"],
             "optimizationTips": template["tips"],
+            "executionModel": execution_model,
         }
         profiles.append(
             {
@@ -1496,6 +1913,7 @@ def agent_profiles(programs: list[dict[str, Any]], learning_index: dict[str, Any
                 "statusLabel": AGENT_STATUS_LABELS[template["status"]],
                 "trainingRole": template["role"],
                 "roleSummary": template["summary"],
+                "executionModel": execution_model,
                 "promptContractId": f"contract-{agent_id}",
                 "ownedCapabilities": [
                     {
@@ -1517,7 +1935,7 @@ def agent_profiles(programs: list[dict[str, Any]], learning_index: dict[str, Any
                     }
                     for program in related[:8]
                 ],
-                "promptCompleteness": maturity_metric(100, "已声明 5/5 类 Prompt 契约：角色、输入、输出、硬门槛、禁止事项。", "5/5 类契约已声明", "下一轮可把描述写得更贴近真实训练话术。"),
+                "promptCompleteness": maturity_metric(100, "已声明 5/5 类契约：任务定位、输入、输出、硬门槛、禁止事项。", "5/5 类契约已声明", "下一轮可把模型 Prompt 或触发规则写得更贴近真实执行话术。"),
                 "callMaturity": maturity_metric(call_percent, f"已显式关联 {call_count} 项调用能力；该百分比只表示调用契约成熟度，不表示 CAD 通过率。", f"显式调用 {call_count} 项", "缺口：把调用结果和审计证据继续连起来。"),
                 "trainingCoverage": maturity_metric(coverage_percent, f"关联 {len(related)} 个训练计划项，其中 P0 {p0_count} 个；表示训练表单覆盖度。", f"{len(related)} 个训练计划 / P0 {p0_count} 个", "缺口：继续把训练项和失败类型做点对点对应。"),
                 "evidenceMaturity": maturity_metric(evidence_percent, f"训练状态：{AGENT_STATUS_LABELS[template['status']]}。这不是表 C 真实 CAD 机器指标。", f"训练状态：{AGENT_STATUS_LABELS[template['status']]}", "缺口：需要更多案例证据、用户反馈和可回读产物。"),
@@ -1573,6 +1991,7 @@ def prompt_contracts(learning_index: dict[str, Any] | None = None) -> list[dict[
     rows = []
     for agent_id in AGENT_PROMPTS:
         template = agent_template(agent_id)
+        execution_model = agent_execution_model(agent_id, template)
         source_paths = unique([*template["docs"], COMMON_PROMPT_CONTRACT, *agent_learning_docs(agent_id, learning_index)])
         rows.append(
             {
@@ -1581,6 +2000,8 @@ def prompt_contracts(learning_index: dict[str, Any] | None = None) -> list[dict[
                 "agentName": template["name"],
                 "sourceName": agent_id,
                 "promptSummary": template["summary"],
+                "executionModel": execution_model,
+                "backendPromptZh": execution_model.get("backendPromptZh", []),
                 "roleSetting": template["role"],
                 "responsibilityBoundary": prompt_boundary(agent_id),
                 "inputRequirements": template["inputs"],
@@ -1613,7 +2034,9 @@ def table_c_boundary() -> dict[str, Any]:
     data = read_json(COVERAGE_PATH, {})
     summary = data.get("summary", {})
     return {
-        "label": "表 C 真实 CAD 机器快照",
+        "label": "Core Proof Coverage 机器快照",
+        "metricLabel": "Core Proof Coverage",
+        "legacyAlias": "旧表 C",
         "generatedAt": data.get("generated_at", ""),
         "sourcePath": "output/validation_runs/capability-lab/cad_capability_coverage.json",
         "sourceExists": COVERAGE_PATH.exists(),
@@ -1623,7 +2046,9 @@ def table_c_boundary() -> dict[str, Any]:
         "showcaseReadinessPercent": summary.get("showcase_readiness_percent", 0),
         "headlinePercent": summary.get("cad_strength_headline_percent", 0),
         "highestProvenLadder": summary.get("highest_proven_ladder_level", "unknown"),
-        "note": "这是 registry 和 coverage JSON 的机器指标快照，只能说明表 C 口径；不能和训练计划成熟度、智能体 Prompt 成熟度混算。",
+        "notProofOf": ["Agent Task Maturity", "Project Delivery Readiness"],
+        "semanticLayer": "能力与证据层",
+        "note": "这是 registry 和 coverage JSON 的底座证据覆盖机器快照；旧表 C 字段保留兼容，但不代表 Agent Task Maturity 或 Project Delivery Readiness。",
     }
 
 
@@ -1648,7 +2073,7 @@ def workbench_sync_status(generated_at: str, table_c: dict[str, Any]) -> dict[st
             "mode": "http_polling",
             "description": "通过 bat 启动本地 http.server 后，页面会轮询 capability-map-data.js；检测到新快照时提示刷新。",
         },
-        "evidenceBoundary": "本页由同步脚本生成，只显示训练状态和表 C 快照；真实 CAD 能力仍以 coverage JSON、registry 和 created-handle 回读为准。",
+        "evidenceBoundary": "本页由同步脚本生成，只显示训练状态和 Core Proof Coverage 快照；Agent Task Maturity 与 Project Delivery Readiness 必须另看案例反馈、created-handle 回读、审计和用户验收。",
     }
 
 
@@ -1746,7 +2171,7 @@ def build_data() -> dict[str, Any]:
     programs = training_programs(learning)
     profiles = agent_profiles(programs, learning)
     designer = designer_agent_summary(programs)
-    return {
+    data = {
         "schemaVersion": 2,
         "generatedAt": generated_at,
         "designerAgent": designer,
@@ -1763,6 +2188,8 @@ def build_data() -> dict[str, Any]:
         "promptContracts": prompt_contracts(learning),
         "trainingLearning": learning,
         "trainingSources": training_source_rows(),
+        "trainingSourceSummary": training_source_summary(programs),
+        "modelTraceViewer": build_workbench_trace_viewer_data(ROOT),
         "tableCBoundary": table_c,
         "workbenchSync": workbench_sync_status(generated_at, table_c),
         "failureModes": failure_modes(),
@@ -1776,6 +2203,8 @@ def build_data() -> dict[str, Any]:
             {"id": "execute", "title": "执行审计修复", "desc": "落 CODEX_PREVIEW，审计，失败则修复并沉淀。"},
         ],
     }
+    data["workbenchV3"] = build_workbench_v3(ROOT, data)
+    return data
 
 
 def write_data(output: Path = OUTPUT) -> dict[str, Any]:

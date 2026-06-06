@@ -1,0 +1,43 @@
+{
+  "status": "pass",
+  "readbackStatus": "ok",
+  "created_handles_readback": "ok",
+  "savedCurrentDwg": false,
+  "targetLayer": "CODEX_PREVIEW",
+  "created_handles": [
+    "E617",
+    "E618",
+    "E619",
+    "E61A",
+    "E61B",
+    "E61C",
+    "E61D",
+    "E61E",
+    "E61F",
+    "E620",
+    "E621",
+    "E622",
+    "E623",
+    "E624",
+    "E625",
+    "E626",
+    "E627"
+  ],
+  "created_handle_count": 17,
+  "readbackEntityCount": 17,
+  "bbox": {
+    "min": [
+      62000.0,
+      36100.0
+    ],
+    "max": [
+      64200.0,
+      36900.0
+    ],
+    "size": [
+      2200.0,
+      800.0
+    ]
+  },
+  "source": "output/validation_runs/object-family-sofa-replay-20260605-rcad/object_family_cad_replay_report.json"
+}

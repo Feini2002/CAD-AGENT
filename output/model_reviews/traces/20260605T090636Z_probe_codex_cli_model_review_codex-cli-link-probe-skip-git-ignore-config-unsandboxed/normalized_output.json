@@ -1,0 +1,101 @@
+{
+  "aestheticAcceptable": true,
+  "alignmentAcceptable": true,
+  "alternativesConsidered": [],
+  "assumptions": [
+    "synthetic connectivity probe only"
+  ],
+  "blockingReasons": [],
+  "canAskUserToReview": true,
+  "contentMatchesIntent": true,
+  "contextLeakAudit": {
+    "blocking": false,
+    "schemaVersion": "model-context-leak-audit/v1",
+    "unexpectedProjectContextLoaded": false,
+    "warnings": []
+  },
+  "decision": "pass",
+  "evidenceBoundaryRespected": true,
+  "evidenceMissing": [],
+  "evidenceUsed": [],
+  "finalResponseAllowedClaims": [
+    "synthetic connectivity probe only"
+  ],
+  "learningCandidate": {
+    "checkerDelta": "none",
+    "correctPattern": "none",
+    "decision": "none",
+    "errorPattern": "none",
+    "promptDelta": "none",
+    "responsibleAgentIds": [],
+    "retestOriginalTask": false,
+    "trigger": "synthetic connectivity probe only"
+  },
+  "lookHereFirst": [
+    "synthetic probe only"
+  ],
+  "modelInvoked": true,
+  "modelProviderStatus": {
+    "blocking": false,
+    "errorCategory": "",
+    "modelInvoked": true,
+    "modelUnavailable": false,
+    "provider": "codex_cli",
+    "reason": "",
+    "required": true,
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "allowsImages": true,
+      "externalData": false,
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ],
+      "requiresUserAuthorization": false,
+      "route": "codex_cli_local",
+      "transport": "local_cli"
+    },
+    "schemaValid": true,
+    "status": "schema_valid"
+  },
+  "modelTrace": {
+    "agentId": "probe_codex_cli_model_review",
+    "contextLeakAuditPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\traces\\20260605T090636Z_probe_codex_cli_model_review_codex-cli-link-probe-skip-git-ignore-config-unsandboxed\\context_leak_audit.json",
+    "exportManifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\traces\\20260605T090636Z_probe_codex_cli_model_review_codex-cli-link-probe-skip-git-ignore-config-unsandboxed\\export_manifest.json",
+    "manifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\traces\\20260605T090636Z_probe_codex_cli_model_review_codex-cli-link-probe-skip-git-ignore-config-unsandboxed\\trace_manifest.json",
+    "reviewPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\traces\\20260605T090636Z_probe_codex_cli_model_review_codex-cli-link-probe-skip-git-ignore-config-unsandboxed\\trace_review.json",
+    "summaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\traces\\20260605T090636Z_probe_codex_cli_model_review_codex-cli-link-probe-skip-git-ignore-config-unsandboxed\\trace_summary.md",
+    "taskType": "synthetic_connectivity_probe",
+    "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\traces\\20260605T090636Z_probe_codex_cli_model_review_codex-cli-link-probe-skip-git-ignore-config-unsandboxed",
+    "traceId": "codex-cli-link-probe-skip-git-ignore-config-unsandboxed",
+    "traceReviewStatus": "pass"
+  },
+  "modelUnavailable": false,
+  "nextRequiredEvidence": [],
+  "noMojibake": true,
+  "noSevereClipping": true,
+  "noSevereOverlap": true,
+  "nonScreenshotEvidenceChecked": true,
+  "repairRecommendation": {
+    "mode": "none",
+    "nextChecks": [],
+    "reason": "synthetic connectivity probe only",
+    "targetHandles": [],
+    "targetZone": "none"
+  },
+  "reusableOutputLikely": true,
+  "schemaValid": true,
+  "statePatch": {
+    "blockedReason": "none",
+    "completedEvidence": [],
+    "nextSafeAction": "none",
+    "pendingEvidence": [],
+    "pendingUserAction": "none",
+    "phase": "synthetic_probe",
+    "phaseLabelForUser": "Synthetic probe"
+  },
+  "status": "pass",
+  "textReadable": true,
+  "toolIntent": null,
+  "visualProblems": []
+}

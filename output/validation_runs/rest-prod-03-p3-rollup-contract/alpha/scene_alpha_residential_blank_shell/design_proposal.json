@@ -1,0 +1,543 @@
+{
+  "version": "0.1",
+  "proposal_id": "proposal-project-blank-shell-layout",
+  "brief_id": "brief-blank-shell-layout",
+  "project_id": "project-blank-shell-layout",
+  "summary": "Prepare a preview CAD_PLAN for Sofa on CODEX_PREVIEW.",
+  "decisions": [
+    "Use object spec object-sofa-2200x900.",
+    "Use layout candidate candidate-blank-shell-zone-placement with score 1.0."
+  ],
+  "evidence": {
+    "from_user": [
+      "Create repeatable non-CAD blank-shell layout options before generating any CAD_PLAN."
+    ],
+    "from_drawing": [
+      "space count: 1"
+    ],
+    "from_shell": [
+      "shell_id: shell-residential-living-room"
+    ],
+    "from_library": [
+      "object spec object-sofa-2200x900",
+      "style profile style-modern"
+    ],
+    "from_algorithm": [
+      "layout candidates: 1",
+      "proposal candidates: 3",
+      "layout recommendation: candidate-blank-shell-zone-placement",
+      "object coverage: 1.0",
+      "failed checks: 2",
+      "circulation continuity: degraded",
+      "circulation branches compared: 3"
+    ],
+    "inferred": [
+      "No failed layout checks in the selected candidate."
+    ]
+  },
+  "candidates": [
+    {
+      "candidate_id": "circulation-along_wall",
+      "layout_candidate_id": "circulation-along_wall",
+      "score": 0.91,
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 1,
+        "base_score": 0.91,
+        "scene_weight": 0.1,
+        "weighted_score": 1.01,
+        "weight_source": "blank_shell_pipeline",
+        "components": {
+          "layout_base": 0.91,
+          "check_penalty": 0.0,
+          "preference_boost": 0.1
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "circulation_status",
+          "message": "Circulation strategy along_wall status=pass score=0.91.",
+          "component": "layout_base"
+        },
+        {
+          "code": "circulation_branch_selected",
+          "message": "Selected as primary circulation branch (along_wall).",
+          "component": "preference_boost"
+        },
+        {
+          "code": "highest_weighted_score",
+          "message": "Highest circulation branch score among compared strategies.",
+          "component": "weighted_score"
+        },
+        {
+          "code": "zone_placement_best",
+          "message": "Best zone zone-shell-residential-living-room-along_wall-left placed 5/5.",
+          "component": "layout_base"
+        }
+      ],
+      "summary": "Circulation along_wall with best zone zone-shell-residential-living-room-along_wall-left (5/5 placed).",
+      "strengths": [
+        "Circulation status=pass."
+      ],
+      "risks": [
+        "No placement failures in best zone."
+      ],
+      "failed_checks": [],
+      "applicable_scenarios": [
+        "blank_shell_preview"
+      ],
+      "confirmation_questions": [
+        "Confirm circulation strategy along_wall is acceptable."
+      ]
+    },
+    {
+      "candidate_id": "circulation-l_spine",
+      "layout_candidate_id": "circulation-l_spine",
+      "score": 0.675,
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 2,
+        "base_score": 0.675,
+        "scene_weight": 0.0,
+        "weighted_score": 0.675,
+        "weight_source": "blank_shell_pipeline",
+        "components": {
+          "layout_base": 0.675,
+          "check_penalty": 0.0,
+          "preference_boost": 0.0
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "circulation_status",
+          "message": "Circulation strategy l_spine status=pass score=0.675.",
+          "component": "layout_base"
+        },
+        {
+          "code": "zone_placement_best",
+          "message": "Best zone zone-shell-residential-living-room-l_spine-left placed 5/5.",
+          "component": "layout_base"
+        }
+      ],
+      "summary": "Circulation l_spine with best zone zone-shell-residential-living-room-l_spine-left (5/5 placed).",
+      "strengths": [
+        "Circulation status=pass."
+      ],
+      "risks": [
+        "No placement failures in best zone."
+      ],
+      "failed_checks": [],
+      "applicable_scenarios": [
+        "blank_shell_preview"
+      ],
+      "confirmation_questions": [
+        "Confirm circulation strategy l_spine is acceptable."
+      ]
+    },
+    {
+      "candidate_id": "circulation-straight_spine",
+      "layout_candidate_id": "circulation-straight_spine",
+      "score": 0.32,
+      "score_breakdown": {
+        "version": "0.1",
+        "rank": 3,
+        "base_score": 0.32,
+        "scene_weight": 0.0,
+        "weighted_score": 0.32,
+        "weight_source": "blank_shell_pipeline",
+        "components": {
+          "layout_base": 0.32,
+          "check_penalty": 0.0,
+          "preference_boost": 0.0
+        }
+      },
+      "ranking_reasons": [
+        {
+          "code": "circulation_status",
+          "message": "Circulation strategy straight_spine status=blocked score=0.32.",
+          "component": "layout_base"
+        },
+        {
+          "code": "zone_placement_best",
+          "message": "Best zone zone-shell-residential-living-room-straight_spine-left placed 5/5.",
+          "component": "layout_base"
+        }
+      ],
+      "summary": "Circulation straight_spine with best zone zone-shell-residential-living-room-straight_spine-left (5/5 placed).",
+      "strengths": [
+        "Circulation status=blocked."
+      ],
+      "risks": [
+        "No placement failures in best zone."
+      ],
+      "failed_checks": [],
+      "applicable_scenarios": [
+        "blank_shell_preview"
+      ],
+      "confirmation_questions": [
+        "Confirm circulation strategy straight_spine is acceptable."
+      ]
+    }
+  ],
+  "confirmed_candidate_id": "",
+  "comparison_summary": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected along_wall / zone-shell-residential-living-room-along_wall-left with object coverage 100%, 2 failed check(s), circulation continuity=degraded.",
+  "needs_confirmation": false,
+  "next_cad_plans": [],
+  "comparison_detail": {
+    "version": "0.1",
+    "layout_comparison": {
+      "status": "ok",
+      "errors": [],
+      "layout_id": "layout-project-blank-shell-layout-blank-shell",
+      "recommendation_id": "candidate-blank-shell-zone-placement",
+      "ranked_candidates": [
+        {
+          "rank": 1,
+          "candidate_id": "candidate-blank-shell-zone-placement",
+          "score": 1.0,
+          "scene_weight": 0.0,
+          "weighted_score": 1.0,
+          "weight_source": "default",
+          "failed_checks": [],
+          "tradeoffs": [
+            "No failed layout checks in the current non-CAD model."
+          ],
+          "score_breakdown": {
+            "version": "0.1",
+            "rank": 1,
+            "base_score": 1.0,
+            "scene_weight": 0.0,
+            "weighted_score": 1.0,
+            "weight_source": "default",
+            "components": {
+              "layout_base": 1.0,
+              "check_penalty": 0.0,
+              "preference_boost": 0.0
+            }
+          },
+          "ranking_reasons": [
+            {
+              "code": "highest_weighted_score",
+              "message": "Rank 1 with weighted_score 1.0000.",
+              "component": "weighted_score"
+            },
+            {
+              "code": "no_failed_checks",
+              "message": "No failed layout checks in the current non-CAD model.",
+              "component": "layout_base"
+            }
+          ]
+        }
+      ]
+    },
+    "selected": {
+      "circulation_strategy": "along_wall",
+      "zone_id": "zone-shell-residential-living-room-along_wall-left",
+      "layout_candidate_id": "candidate-blank-shell-zone-placement"
+    },
+    "metrics": {
+      "circulation_branch_count": 3,
+      "zone_placement_candidate_count": 5,
+      "object_types_requested": [
+        "sofa",
+        "table",
+        "shelf",
+        "cabinet",
+        "chair"
+      ],
+      "object_types_placed": [
+        "cabinet",
+        "chair",
+        "shelf",
+        "sofa",
+        "table"
+      ],
+      "object_coverage_rate": 1.0,
+      "placed_count": 5,
+      "placement_count": 5,
+      "failed_check_count": 2,
+      "failed_reason_distribution": {
+        "bbox exceeds zone geometry.": 2,
+        "insufficient remaining zone space for placement.": 2
+      },
+      "selected_failed_reason_distribution": {},
+      "selected_placement_failed_count": 0
+    },
+    "circulation_continuity": {
+      "selected_status": "pass",
+      "continuity": "degraded",
+      "blocked_strategies": [
+        "straight_spine"
+      ]
+    },
+    "ranking_reasons": [
+      "Compared circulation strategies: along_wall, l_spine, straight_spine",
+      "Primary selection uses circulation=along_wall zone=zone-shell-residential-living-room-along_wall-left.",
+      "Object coverage 5/5 (100%) for requested types ['sofa', 'table', 'shelf', 'cabinet', 'chair'].",
+      "Layout failed checks: 2; circulation continuity=degraded.",
+      "Failure reasons across zone placement alternatives: bbox exceeds zone geometry. x2, insufficient remaining zone space for placement. x2"
+    ],
+    "ranked_circulation_branches": [
+      {
+        "circulation_candidate_id": "circulation-along_wall",
+        "strategy": "along_wall",
+        "score": 0.91,
+        "status": "pass",
+        "selected": true,
+        "zone_count": 1,
+        "best_zone_id": "zone-shell-residential-living-room-along_wall-left",
+        "placed_count": 5,
+        "failed_count": 0,
+        "placement_count": 5,
+        "object_types_placed": [
+          "cabinet",
+          "chair",
+          "shelf",
+          "sofa",
+          "table"
+        ],
+        "rank": 1,
+        "score_breakdown": {
+          "version": "0.1",
+          "rank": 1,
+          "base_score": 0.91,
+          "scene_weight": 0.1,
+          "weighted_score": 1.01,
+          "weight_source": "blank_shell_pipeline",
+          "components": {
+            "layout_base": 0.91,
+            "check_penalty": 0.0,
+            "preference_boost": 0.1
+          }
+        },
+        "ranking_reasons": [
+          {
+            "code": "circulation_status",
+            "message": "Circulation strategy along_wall status=pass score=0.91.",
+            "component": "layout_base"
+          },
+          {
+            "code": "circulation_branch_selected",
+            "message": "Selected as primary circulation branch (along_wall).",
+            "component": "preference_boost"
+          },
+          {
+            "code": "highest_weighted_score",
+            "message": "Highest circulation branch score among compared strategies.",
+            "component": "weighted_score"
+          },
+          {
+            "code": "zone_placement_best",
+            "message": "Best zone zone-shell-residential-living-room-along_wall-left placed 5/5.",
+            "component": "layout_base"
+          }
+        ],
+        "ranking_reason_messages": [
+          "circulation status=pass score=0.91",
+          "best zone zone-shell-residential-living-room-along_wall-left placed 5/5",
+          "selected as primary circulation branch",
+          "selected zone for final layout"
+        ]
+      },
+      {
+        "circulation_candidate_id": "circulation-l_spine",
+        "strategy": "l_spine",
+        "score": 0.675,
+        "status": "pass",
+        "selected": false,
+        "zone_count": 2,
+        "best_zone_id": "zone-shell-residential-living-room-l_spine-left",
+        "placed_count": 5,
+        "failed_count": 0,
+        "placement_count": 5,
+        "object_types_placed": [
+          "cabinet",
+          "chair",
+          "shelf",
+          "sofa",
+          "table"
+        ],
+        "rank": 2,
+        "score_breakdown": {
+          "version": "0.1",
+          "rank": 2,
+          "base_score": 0.675,
+          "scene_weight": 0.0,
+          "weighted_score": 0.675,
+          "weight_source": "blank_shell_pipeline",
+          "components": {
+            "layout_base": 0.675,
+            "check_penalty": 0.0,
+            "preference_boost": 0.0
+          }
+        },
+        "ranking_reasons": [
+          {
+            "code": "circulation_status",
+            "message": "Circulation strategy l_spine status=pass score=0.675.",
+            "component": "layout_base"
+          },
+          {
+            "code": "zone_placement_best",
+            "message": "Best zone zone-shell-residential-living-room-l_spine-left placed 5/5.",
+            "component": "layout_base"
+          }
+        ],
+        "ranking_reason_messages": [
+          "circulation status=pass score=0.675",
+          "best zone zone-shell-residential-living-room-l_spine-left placed 5/5"
+        ]
+      },
+      {
+        "circulation_candidate_id": "circulation-straight_spine",
+        "strategy": "straight_spine",
+        "score": 0.32,
+        "status": "blocked",
+        "selected": false,
+        "zone_count": 2,
+        "best_zone_id": "zone-shell-residential-living-room-straight_spine-left",
+        "placed_count": 5,
+        "failed_count": 0,
+        "placement_count": 5,
+        "object_types_placed": [
+          "cabinet",
+          "chair",
+          "shelf",
+          "sofa",
+          "table"
+        ],
+        "rank": 3,
+        "score_breakdown": {
+          "version": "0.1",
+          "rank": 3,
+          "base_score": 0.32,
+          "scene_weight": 0.0,
+          "weighted_score": 0.32,
+          "weight_source": "blank_shell_pipeline",
+          "components": {
+            "layout_base": 0.32,
+            "check_penalty": 0.0,
+            "preference_boost": 0.0
+          }
+        },
+        "ranking_reasons": [
+          {
+            "code": "circulation_status",
+            "message": "Circulation strategy straight_spine status=blocked score=0.32.",
+            "component": "layout_base"
+          },
+          {
+            "code": "zone_placement_best",
+            "message": "Best zone zone-shell-residential-living-room-straight_spine-left placed 5/5.",
+            "component": "layout_base"
+          }
+        ],
+        "ranking_reason_messages": [
+          "circulation status=blocked score=0.32",
+          "best zone zone-shell-residential-living-room-straight_spine-left placed 5/5"
+        ]
+      }
+    ],
+    "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected along_wall / zone-shell-residential-living-room-along_wall-left with object coverage 100%, 2 failed check(s), circulation continuity=degraded.",
+    "proposal_comparison_summary": {
+      "version": "0.1",
+      "object_coverage": {
+        "requested_types": [
+          "sofa",
+          "table",
+          "shelf",
+          "cabinet",
+          "chair"
+        ],
+        "placed_types": [
+          "cabinet",
+          "chair",
+          "shelf",
+          "sofa",
+          "table"
+        ],
+        "coverage_rate": 1.0,
+        "placed_count": 5,
+        "placement_count": 5
+      },
+      "circulation": {
+        "continuity": "degraded",
+        "selected_strategy": "along_wall",
+        "blocked_strategies": [
+          "straight_spine"
+        ],
+        "branch_count": 3
+      },
+      "conflicts": {
+        "failed_check_count": 2,
+        "layout_failed_checks": [],
+        "placement_failed_count": 0
+      },
+      "failure_reasons": {
+        "all_distribution": {
+          "bbox exceeds zone geometry.": 2,
+          "insufficient remaining zone space for placement.": 2
+        },
+        "selected_distribution": {}
+      },
+      "ranking_reason_codes": [
+        "circulation_status",
+        "circulation_branch_selected",
+        "highest_weighted_score",
+        "zone_placement_best",
+        "no_failed_checks"
+      ],
+      "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected along_wall / zone-shell-residential-living-room-along_wall-left with object coverage 100%, 2 failed check(s), circulation continuity=degraded."
+    }
+  },
+  "proposal_comparison_summary": {
+    "version": "0.1",
+    "object_coverage": {
+      "requested_types": [
+        "sofa",
+        "table",
+        "shelf",
+        "cabinet",
+        "chair"
+      ],
+      "placed_types": [
+        "cabinet",
+        "chair",
+        "shelf",
+        "sofa",
+        "table"
+      ],
+      "coverage_rate": 1.0,
+      "placed_count": 5,
+      "placement_count": 5
+    },
+    "circulation": {
+      "continuity": "degraded",
+      "selected_strategy": "along_wall",
+      "blocked_strategies": [
+        "straight_spine"
+      ],
+      "branch_count": 3
+    },
+    "conflicts": {
+      "failed_check_count": 2,
+      "layout_failed_checks": [],
+      "placement_failed_count": 0
+    },
+    "failure_reasons": {
+      "all_distribution": {
+        "bbox exceeds zone geometry.": 2,
+        "insufficient remaining zone space for placement.": 2
+      },
+      "selected_distribution": {}
+    },
+    "ranking_reason_codes": [
+      "circulation_status",
+      "circulation_branch_selected",
+      "highest_weighted_score",
+      "zone_placement_best",
+      "no_failed_checks"
+    ],
+    "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected along_wall / zone-shell-residential-living-room-along_wall-left with object coverage 100%, 2 failed check(s), circulation continuity=degraded."
+  }
+}

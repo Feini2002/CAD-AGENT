@@ -1,0 +1,155 @@
+{
+  "status": "pass",
+  "governorAgentId": "pipeline_asset_governor",
+  "checked": [
+    "agent registered: pipeline_asset_governor",
+    "agent definition exists: pipeline_asset_governor",
+    "agent registered: pipeline_asset_librarian",
+    "agent definition exists: pipeline_asset_librarian",
+    "agent registered: pipeline_asset_dwg_curator",
+    "agent definition exists: pipeline_asset_dwg_curator",
+    "agent registered: pipeline_asset_reuse_auditor",
+    "agent definition exists: pipeline_asset_reuse_auditor",
+    "system_asset_sedimentation flow routes through governor",
+    "asset_governance hard gate",
+    "protocol zone documented: 00_INDEX",
+    "protocol zone documented: 01_CLEAN_ASSETS",
+    "protocol zone documented: 02_PREVIEW_CARDS",
+    "protocol zone documented: 03_REVIEW_QUARANTINE",
+    "protocol zone documented: 99_EVIDENCE_LINKS",
+    "protocol documents polishHardeningDecision",
+    "referenced evidence files exist",
+    "visualRackPlan v2 warehouse audit",
+    "latest shelf layout CAD readback, shelf/content clearance, and warehouse readability audit"
+  ],
+  "issues": [],
+  "visualRackAudit": {
+    "status": "pass",
+    "checked": [
+      "visualRackPlan schemaVersion",
+      "visual warehouse layout mode",
+      "visual warehouse architecture",
+      "visual warehouse acceptance criteria",
+      "base standards rack",
+      "object index rack is never-copy",
+      "expandable rack capacity",
+      "slot ownership metadata",
+      "primary warehouse rack area ratio"
+    ],
+    "issues": [],
+    "metrics": {
+      "primaryWarehouseArea": 502049152.283,
+      "reviewOnlyArea": 71791245.527,
+      "primaryWarehouseAreaRatio": 0.8749,
+      "rackFamilyCount": 2,
+      "ownedSlotCount": 11,
+      "expansionSlotCount": 9,
+      "readbackResolvedHandleCount": 0,
+      "clearanceOverlapCount": 0,
+      "readabilityIssueCount": 0,
+      "modelReviewIssueCount": 0,
+      "protectedContentLayerCounts": {}
+    },
+    "evidenceBoundary": {
+      "checked": [
+        "visualRackPlan v2 structure",
+        "rack family ownership",
+        "copy policy",
+        "zone bbox ratios"
+      ],
+      "notChecked": [
+        "actual CAD entity containment unless a readback report supplies handles and bboxes",
+        "full protected content layer census unless protected content report is supplied",
+        "shelf/content clearance unless a clearance report is supplied",
+        "warehouse visual readability unless a readability report is supplied",
+        "model-backed screenshot visual recognition"
+      ]
+    }
+  },
+  "latestShelfRackAudit": {
+    "status": "pass",
+    "checked": [
+      "visualRackPlan schemaVersion",
+      "visual warehouse layout mode",
+      "visual warehouse architecture",
+      "visual warehouse acceptance criteria",
+      "base standards rack",
+      "object index rack is never-copy",
+      "expandable rack capacity",
+      "slot ownership metadata",
+      "primary warehouse rack area ratio",
+      "created shelf entity readback",
+      "full protected content layer census",
+      "visual shelf/content clearance",
+      "visual warehouse readability"
+    ],
+    "issues": [],
+    "metrics": {
+      "primaryWarehouseArea": 502049152.283,
+      "reviewOnlyArea": 71791245.527,
+      "primaryWarehouseAreaRatio": 0.8749,
+      "rackFamilyCount": 2,
+      "ownedSlotCount": 11,
+      "expansionSlotCount": 9,
+      "readbackResolvedHandleCount": 155,
+      "clearanceOverlapCount": 0,
+      "readabilityIssueCount": 0,
+      "modelReviewIssueCount": 0,
+      "protectedContentLayerCounts": {
+        "ASSET_PROOF_CONTENT": 349
+      }
+    },
+    "evidenceBoundary": {
+      "checked": [
+        "visualRackPlan v2 structure",
+        "rack family ownership",
+        "copy policy",
+        "zone bbox ratios",
+        "full protected content layer census",
+        "shelf/content clearance",
+        "warehouse readability metrics"
+      ],
+      "notChecked": [
+        "actual CAD entity containment unless a readback report supplies handles and bboxes",
+        "model-backed screenshot visual recognition"
+      ]
+    }
+  },
+  "polishHardeningDecision": {
+    "status": "complete_for_current_scope",
+    "categories": [
+      "complete_for_current_scope"
+    ],
+    "nativeCadRelayout": "checked",
+    "reuseReplay": "not_run",
+    "scope": "asset_library_governance_package",
+    "evidenceBoundary": {
+      "checked": [
+        "agent registered: pipeline_asset_governor",
+        "agent definition exists: pipeline_asset_governor",
+        "agent registered: pipeline_asset_librarian",
+        "agent definition exists: pipeline_asset_librarian",
+        "agent registered: pipeline_asset_dwg_curator",
+        "agent definition exists: pipeline_asset_dwg_curator",
+        "agent registered: pipeline_asset_reuse_auditor",
+        "agent definition exists: pipeline_asset_reuse_auditor",
+        "system_asset_sedimentation flow routes through governor",
+        "asset_governance hard gate",
+        "protocol zone documented: 00_INDEX",
+        "protocol zone documented: 01_CLEAN_ASSETS",
+        "protocol zone documented: 02_PREVIEW_CARDS",
+        "protocol zone documented: 03_REVIEW_QUARANTINE",
+        "protocol zone documented: 99_EVIDENCE_LINKS",
+        "protocol documents polishHardeningDecision",
+        "referenced evidence files exist",
+        "visualRackPlan v2 warehouse audit",
+        "latest shelf layout CAD readback, shelf/content clearance, and warehouse readability audit"
+      ],
+      "notChecked": [
+        "real CAD reuse replay"
+      ]
+    }
+  },
+  "wroteCad": false,
+  "savedDwg": false
+}

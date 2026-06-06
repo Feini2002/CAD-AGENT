@@ -1,0 +1,25 @@
+{
+  "status": "pass",
+  "generatedAt": "2026-06-03T15:31:27+00:00",
+  "reason": "missing historical asset evidence refs archived; active refs now point to current A2 warehouse CAD readback, screenshot, and reuse probes",
+  "touchedFiles": [],
+  "replacementRefs": [
+    "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+    "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+    "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+    "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+    "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+  ],
+  "missingRefCount": 0,
+  "archivedMissingRefs": [],
+  "evidenceBoundary": {
+    "checked": [
+      "active evidence refs point to existing current files",
+      "missing historical refs moved to archivedMissingRefs"
+    ],
+    "notChecked": [
+      "historical missing files were not recreated",
+      "CAD geometry is proven only by replacement reports, not by archived refs"
+    ]
+  }
+}

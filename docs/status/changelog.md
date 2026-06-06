@@ -2,7 +2,350 @@
 
 这个文件记录 CAD Agent 测试工作区的结构、规则、Schema、脚本和重要决策变化。
 
+## 2026-06-06
+
+### ARCH-CONVERGENCE-01：架构归并画布与旧指标降级
+
+- **触发**：用户指出当前系统像一张被多轮探索式开发画满的画布：早期表 A/B/C、V-PROOF、RCAD，后续训练、资产、多 Agent、模型桥、Worker 编排和工作台都很充实，但没有统一主构图；旧“真实 CAD 实力 90%”会误导真实训练判断。
+- **决策**：正式对象训练暂缓，先做仓库级架构归并。新增七层画布：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。后续每个模块必须说明自己属于哪一层、输入输出是什么、不能越过哪一层。
+- **口径归并**：旧表 C / 90% 降级为 `Core Proof Coverage`（底座证据覆盖），不得代表 `Agent Task Maturity`（端到端任务成熟度）或 `Project Delivery Readiness`（真实项目交付准备度）。当前 Agent 真实任务成熟度仍按早期看待，需要通过训练案例、用户 feedback、created handles readback、局部修复和资产复用 replay 逐步建立。
+- **文档同步**：新增 `docs/architecture/system-architecture-convergence.md`；新增 OpenSpec change `openspec/changes/unify-system-architecture-canvas/`；同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`AGENTS.md`、`docs/governance/cad-agent-rules.md`、`docs/planning/任务清单.md`、`docs/status/current.md`、`docs/status/issues.md` 和 `docs/training/README.md`。
+- **边界**：本轮只做架构设计、规则和计划同步；不连接 AutoCAD、不写 / 保存 DWG、不删除实体、不提升表 C、不运行正式训练、不改训练事实源或系统资产 registry。后续执行按 OpenSpec tasks 做脚本和派生显示审计。
+
+### LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01：模型桥安全加固与独立 MD 收口
+
+- **实现**：加固 `LocalLiveModelBridgeRuntime`：未知 `target_stage` 直接失败，同秒 run id 增加随机后缀，live 阶段未登记 / 能力不匹配 bridge 不能 lease，`submit_result` 校验 lease identity；CAD fake preflight 拆分 `runtimeStatus` 与 `proofStatus`，避免把编排通过说成真实几何证明。
+- **诊断**：`diagnose_run()` 不再只信 `worker_run_state` 的模型摘要，必须沿 `traceRef` 校验 `trace_review.json`、`trace_manifest.json`、`command.json` 和 `normalized_output.json`，且要求 `modelProviderStatus.route=codex_cli_local` 与 sanitized `codex.cmd exec --model gpt-5.5` 命令证据。
+- **文档收口**：原独立本地活体模型桥架构 MD 的剩余内容迁入 `CORE_RESTRUCTURE_PLAN.md` §3.1，主动入口改为主计划、runtime、diagnostics 和状态 / 交接记录；独立 MD 删除，避免形成第二套主计划。
+- **边界**：本包不新增真实 CAD 证明；fake driver 仍只证明编排和 preview-only 安全边界，真实 `cad_mcp_preview_live` 仍需 AutoCAD / CAD-MCP handles readback。
+
+### LOCAL-LIVE-MODEL-BRIDGE-DIAGNOSTICS-01：分层放行口径与运行诊断脚本
+
+- **触发**：用户补充架构口径：可以一次性搭完整 Worker-first 系统骨架，但运行放行必须按 `worker_orchestration_ready -> local_bridge_connected -> single_agent_live -> multi_agent_live -> cad_mcp_preview_live` 分层启用；默认只证明 Worker 编排，不得一次性无条件打开真实 bridge、GPT-5.5 或 CAD-MCP。
+- **实现**：新增 `core.orchestrator.local_live_model_bridge_diagnostics.diagnose_run()` 和 `scripts/diagnose_local_live_model_bridge.py`，只读 `worker_run_state.json` / `cadPreview` 等运行证据，输出 `local-live-model-bridge-diagnostic/v1`，定位 `firstBlockedAt`、`blockedReasons` 和 `nextAction`。`worker_run_state` 同步写入 `featureGates`，默认关闭真实 bridge / GPT-5.5 / 多 Agent / CAD preview / 保存授权等高风险层；CLI 默认只诊断，`--fail-on-blocked` 可作为门禁失败码。
+- **文档同步**：当时更新独立架构 MD，明确“一次搭完整骨架、feature gates 分层放行”的口径，并把诊断入口写入 W1；后续在 `LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01` 中已迁入 `CORE_RESTRUCTURE_PLAN.md` 并删除独立 MD。
+- **边界**：诊断脚本不会启动 bridge、不会调用 GPT-5.5、不会连接 CAD、不会保存 DWG；fake driver 仍只证明编排，不证明真实 AutoCAD 几何，也不提升表 C。
+
+### LOCAL-LIVE-MODEL-BRIDGE-ARCHITECTURE-01：Worker 编排 + 本地活体 GPT-5.5 模型桥路线
+
+- **触发**：用户最终选择长期发展优先接入 Cloudflare Worker，希望先把远程触发、多状态机、队列、retry、heartbeat 和多 Agent 依赖编排框架打好，再解决本地 bridge 调 Codex CLI / GPT-5.5 的活体问题。
+- **方案**：当时新增独立架构 MD，把路线收束为 Worker 编排 + 本地 bridge 执行：先完成 `worker_orchestration_ready`，再完成 `local_bridge_connected`，最后完成 `single_agent_live`，证明一个 Agent 在 Worker run package 下经本机 `codex.cmd exec --model gpt-5.5` 输出 strict JSON、schema validation、trace 和下游 decision；再扩到 `multi_agent_live`；最后通过 Tool Contract ReAct 接入 CAD-MCP preview-only 闭环。
+- **执行契约扩充**：按用户要求继续扩充同一 MD，补入 Cloudflare 产品分工、Worker API 最小端点、`task_envelope` / `agent_output` / `run_state` 数据合同、Worker 侧系统角色、模型型 Agent Prompt 合同、队列 / 依赖 / 状态机规则、安全与数据边界，以及 W0-W5 后续执行目标计划。随后继续补入超时预算、熔断器、retry / DLQ、backpressure、防重复提交、bridge 离线降级、provider / CAD-MCP 不可用降级、kill switch、观测脱敏和安全认证边界；这些剩余项后续迁入 `CORE_RESTRUCTURE_PLAN.md` §3.1。
+- **同步**：更新 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`docs/status/current.md`、`docs/planning/任务清单.md`、`docs/architecture/README.md`、`docs/architecture/cad-agent-task-chain.md` 和 `agents/pipeline/README.md`，统一“活体 Agent”的机器定义：必须有 Worker run state、`modelInvoked=true`、`modelUnavailable=false`、`schemaValid=true`、provider status、sanitized command 和 trace。
+- **边界**：本轮只整理架构和状态文档；未真实调用模型 provider，未部署 Cloudflare Worker，未连接 AutoCAD，未写 / 保存 DWG，未运行 CAD-MCP，不修改训练事实源、系统资产 registry、Agent memory、Prompt addendum 或表 C。Worker 负责编排和远程触发，不能保存 Codex 登录态、不能直接执行 `codex.cmd`，也不能替代本地 bridge。
+
+## 2026-06-05
+
+### MODEL-AGENT-LOCAL-HARDENING-RECHECK-01：无网络 Agent 链路复校与 fixture live proof
+
+- **触发**：用户要求再次修复校验，确保除后续单独处理的网络 / provider 问题外，Agent 端类层面的整条链路不再卡在本地 fixture、handoff、ToolIntent 或 closeout 报告粗糙点上。
+- **修复**：`scripts/run_model_agent_live_collab_proof.py` 新增 `--fixture-model`，可用本地 schema-shaped 模型输出跑通 `design_director -> style_generator -> design_reviewer -> visual_intent -> intent -> audit -> delivery` 链路；该模式不调用 Codex CLI、不访问模型 provider，并在输出中写入 `localFixtureModel` 和 `localAgentChainProof`。
+- **报告收口**：`core.orchestrator.closeout_gate` 将状态机 `missingEvidence` 与用户可读 `blocking_reasons` 分开，避免把 `created_handles_readback=ok`、`real CAD geometry verified` 这类目标证据标签混入阻断原因；阻断原因现在保持否定性表达。
+- **验证**：新增 `tests.core.test_model_agent_live_collab_cli` 覆盖 CLI fixture proof；新增 closeout 回归防止正向 evidence 标签混入 blocking reasons。本轮最终验证命令和结果见交付回复。
+- **边界**：fixture proof 只证明本地 Agent 链路、schema、handoff、ToolIntent 和 fake-driver 边界；仍不证明真实 OpenAI provider、真实 `gpt-5.5` 判断质量、真实 AutoCAD 几何、截图视觉验收或用户验收。
+
+### MODEL-AGENT-LOCAL-HARDENING-01：模型型 Agent 本地边界与 closeout 链路加固
+
+- **触发**：用户要求执行 `docs/architecture/model-agent-local-hardening-plan.md`，并允许创建辅助 Agent 协作，目标是在网络 / OpenAI provider 不稳定时先把本地模型桥、Agent 交接、工具请求和交付闭环做成可测试状态。
+- **实现**：新增 `model-export-manifest/v1` 与调用前阻断、repo-external Codex CLI cwd、context leak audit、统一错误 taxonomy、visible audit fields、`handoff_packet/v1`、ToolIntent `resultStatus`、closeout state machine，以及无网络 proof 脚本 `scripts/run_model_agent_local_hardening_proof.py`。
+- **链路**：模型桥现在每次 trace 写入 `export_manifest.json` / `context_leak_audit.json`，manifest blocked 时不启动 runner；no-CAD model chain 会写上游 handoff packet 并让下游引用 packet path/hash；closeout gate 由状态机明确区分 CAD evidence missing、visual evidence missing 和 ready for user review。
+- **验证**：本轮最终验证命令和结果见交付回复；本地 proof 输出 `status=pass`、`repoExternalCwd=true`、`unexpectedProjectContextLoaded=false`，并显式列出未证明真实 OpenAI provider、真实 `gpt-5.5` 判断质量、真实 AutoCAD 几何和用户验收。
+- **边界**：本包不联网调用真实模型、不连接 AutoCAD、不写入或保存 DWG、不提升表 C；模型 pass 仍不能替代 UTF-8、schema、validate / dry-run、CAD handles readback、截图辅助、sourceSpec、reuseReplay 或用户验收。
+
+### CORE-PLANMD-ARCH-ROUTER-01：唯一主 PlanMD 改写为系统宪章 / 架构路由器
+- **触发**：用户要求在系统从“无智能 / 底座施工 / 规则型 Agent / 模型型 Agent”多轮演进后，重新讨论主方向，收束主 PlanMD 中已经完成、过细或不再适合当未来路线的内容，同时保留规则、调用边界和证据链。
+- **实现**：将 `CORE_RESTRUCTURE_PLAN.md` 改写为 118 行控制面：只保留本文职责、主架构链路、不可破坏边界、事实源地图、未来开发路由、Decision Gates、执行入口、完成声明标准和历史归档；删除旧包过程、sofa 试点长细节和模型 runtime P7-P10 施工摘要在主计划中的堆叠。
+- **主路线**：未来路线收束为模型型 Agent 活体协作证明、资产智能 verified reuse、高风险 A-to-A hard gate、证据 / 数据治理、真实案例 / 复合任务小闭环、表 C / 真实 CAD 回归和文档治理；训练内容只保留 `Visual-First` / `visual_parts` 边界和事实源链接，不扩写训练项。
+- **边界**：本轮不连接 AutoCAD、不写 / 保存 DWG、不删除 CAD 实体、不改正式图层、不修改训练事实源、系统资产 registry、Agent memory 或 Prompt addendum；表 C 只保持现有机器口径，不刷新、不提升。
+- **验证**：`scripts/run_doc_governance_audit.py --fail-on-findings` pass；相关回归 `tests.core.test_doc_governance tests.core.test_planmd_governance tests.core.test_self_check tests.core.test_core_restructure` 48 OK。
+
+### ARCH-DOC-GOVERNANCE-CONSOLIDATION-02：活跃文档瘦身与旧入口兼容收口
+- **触发**：用户要求在系统从底座施工期转入模型型 Agent / 训练治理期后，先做架构与 MD 治理，删除或整合多余解释，保留规则、调用边界和证据链。
+- **实现**：将 `docs/status/current.md` 压缩为当前状态入口，只保留主方向、有效包、风险和入口；把旧流水继续放 `docs/status/changelog.md` / `docs/handoffs/archive/**`。`docs/handoffs/current.md` 只保留最近资产智能链路活跃包，旧 current 窗口已迁入 `docs/handoffs/archive/2026-06.md`；`docs/handoffs/package-index.md` 改为当前窗口 + 月归档索引。同步压缩 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md` 的重复说明，并修正 `docs/ROADMAP.md` / `docs/roadmap/README.md` 对已删除中文 stub 的描述。
+- **治理同步**：`core.verification.self_check` 不再要求已按迁移表删除的根 stub；`tests/core/test_doc_governance.py` 与 `tests/core/test_planmd_governance.py` 改为检查当前事实源路径。
+- **验证**：`scripts/run_doc_governance_audit.py --fail-on-findings` pass；相关回归 `tests.core.test_doc_governance tests.core.test_planmd_governance tests.core.test_self_check tests.core.test_core_restructure` 48 OK；`scripts/self_check.py` pass；`git diff --check` 仅 Windows 换行提示。
+- **边界**：本轮不连接 AutoCAD、不写 / 保存 DWG、不删除 CAD 实体、不改正式图层、不提升表 C；没有清理 `output/validation_runs/**`、训练事实源、系统资产 registry、Agent memory 或 Prompt addendum。
+
+### MODEL-AGENT-RUNTIME-TOOL-CONTRACT-REACT-P10-01：Stage 4 受控 CAD 工具收束
+- **触发**：用户要求把 `docs/architecture/model-agent-runtime-dispatch-plan.md` 剩余部分一口气执行完，自行校验，确认执行完成后删除该专项 MD，并把记录同步回主 PlanMD 与规则 / 架构文档。
+- **实现**：`core.orchestrator.tool_contract` 新增 Stage 4 controlled-CAD 工具 `preview_cad_execute` / `execute_cad_plan_preview`。受控执行必须先看到同一 CAD_PLAN 的 `validate_plan` 与 `dry_run_plan` pass 报告，只允许 preview-only 写 `CODEX_PREVIEW`，写出 `cad_reports/execution_summary.json`、`cad_reports/readback_summary.json` 和 `cad_reports/cad_preview_tool_report.json`，保持 `savedCurrentDwg=false`；fake-driver preflight 只证明编排并标 `cadGeometryVerified=false`，真实 AutoCAD / COM / handle readback 不可用时 trace 只能 blocked / not_verified。
+- **文档收束**：删除 `docs/architecture/model-agent-runtime-dispatch-plan.md`，将模型型 Agent runtime / Tool Contract ReAct 的当前口径同步到 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/governance/cad-agent-rules.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/architecture/README.md`、`docs/planning/README.md`、`agents/pipeline/README.md` 和 `docs/status/current.md`。
+- **边界**：本包不保存当前 DWG、不改正式图层、不删除实体、不提升表 C；截图仍是 `visual_aid_only`，不能替代 created handles readback、closeout gate 或用户验收。
+- **验证**：新增 / 更新 `tests.core.test_tool_contract_react` 覆盖缺 Stage 3 报告阻断、fake-driver no-CAD 预检边界和正式图层阻断；本轮最终验证命令和结果见交付回复。
+
+### MODEL-AGENT-RUNTIME-DISPATCH-CLOSEOUT-DOC-SYNC-01：P9 后架构收束与主文档同步
+- **触发**：用户要求到 P9 为止做收束校验，把 `docs/architecture/model-agent-runtime-dispatch-plan.md` 未完成内容再次整合精简，并写入主 PlanMD 与规则 / 架构文档。
+- **实现**：将 `model-agent-runtime-dispatch-plan.md` 从施工型长计划压缩为模型型 Agent runtime / Tool Contract ReAct 架构快照：P0-P9 统一标记为已落地 Core 入口，P10 Stage 4 受控 CAD 工具保留为下一步且未开始。同步更新 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/governance/cad-agent-rules.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/architecture/README.md`、`docs/status/current.md` 和 `agents/pipeline/README.md` 的系统架构口径。
+- **边界**：本包只做文档 / 架构同步和 no-CAD 收束校验；不连接 AutoCAD、不写 / 保存 DWG、不删除实体、不改正式图层、不提升表 C。Stage 3 验证 pass 仍不能替代 CAD write、created handles readback、用户验收或表 C。
+- **验证**：本轮收束校验命令和结果见交付回复。
+
+### MODEL-AGENT-TOOL-CONTRACT-REACT-P9-01：确定性验证工具接入
+- **触发**：继续执行 `docs/architecture/model-agent-runtime-dispatch-plan.md`，在 P8 Stage 1/2 工具执行后推进 P9。
+- **实现**：`core.orchestrator.tool_contract.run_tool_intent()` 新增 Stage 3 deterministic verify tools。`validate_plan` 写 `cad_reports/validation_report.json`，`dry_run` / `dry_run_plan` 写 `cad_reports/dry_run_report.json`，`preview_only_audit` 写 `cad_reports/preview_only_audit.json`，`closeout_gate` 调用现有 closeout gate 写 `closeout_decision.json`。
+- **链路**：no-CAD model chain 会执行允许的 `permissionClass=deterministic_verify` 工具请求，并把 tool trace 的 `resultStatus`、`reportPath` 和摘要写入下游 `evidenceBundle.upstreamOutputs`，供后续 audit / delivery 输出读取。模型型 Agent 只能请求验证，不能决定 pass/fail；工具返回 fail 或 `needs_more_evidence` 时 trace 和链路进入 blocked。
+- **边界**：本包仍不连接 AutoCAD、不写 / 保存 DWG、不删除实体、不改正式图层、不提升表 C。Stage 3 pass 只证明确定性 JSON gate 通过，不证明 CAD geometry、created handles readback、截图视觉验收、用户接受或系统资产复用 verified。
+- **验证**：新增 / 更新 `tests.core.test_tool_contract_react` 与 `tests.core.test_model_agent_chain_runtime` 覆盖 validate pass/fail、dry-run 状态归一、preview-only audit fail、closeout evidence missing blocked、以及 candidate CAD_PLAN -> validate_plan -> evidenceBundle 传递；本轮验证命令和结果见交付回复。
+
+### MODEL-AGENT-TOOL-CONTRACT-REACT-P8-01：只读工具与安全生成工具接入
+- **触发**：继续执行 `docs/architecture/model-agent-runtime-dispatch-plan.md`，在 P7 tool intent / trace contract 后推进 P8。
+- **实现**：`core.orchestrator.tool_contract` 新增 `run_tool_intent()`。Stage 1 allowlisted read-only tools 支持读取 run package、rule context、schema、上游 agent output 和 trace summary；Stage 2 safe generation tools 只写当前 run 的 `candidate_outputs/`，用于候选 `agent_outputs`、draft intent、CAD_PLAN candidate 和 learningCandidate。
+- **链路**：`run_no_cad_model_agent_chain()` 现在会执行允许的 Stage 1/2 `toolIntent`，写 `tool_traces/<agent>.<intent>.json`，并把 tool trace 路径/摘要/hash 放入后续 Agent 的 upstream evidence refs。provider unavailable 时保持 deterministic blocked，不生成伪造 tool trace 或 candidate output。
+- **边界**：本包仍不连接 AutoCAD、不写 / 保存 DWG、不删除实体、不改正式图层、不运行 validate / dry-run、不提升表 C；Stage 2 候选输出不改 registry、training source 或系统资产 verified 状态。P9 才接入确定性验证工具，P10 才试点受控 CAD 工具。
+- **验证**：新增 / 更新 `tests.core.test_tool_contract_react` 与 `tests.core.test_model_agent_chain_runtime` 覆盖 Stage 1、Stage 2、trace 传递和 provider unavailable 边界；本轮验证命令和结果见交付回复。
+
+### MODEL-AGENT-TOOL-CONTRACT-REACT-P7-01：Tool Contract ReAct schema 与执行前门禁
+- **触发**：用户要求按 `docs/architecture/model-agent-runtime-dispatch-plan.md` 一步一步执行，并先执行当前应做的第一步；P0-P6 已有落地状态，因此本轮执行 P7。
+- **实现**：新增 `core.orchestrator.tool_contract`，定义模型型 Agent 的 `toolIntent` 执行前门禁；新增 `core/schemas/tool_intent.schema.json` 与 `core/schemas/tool_trace.schema.json`，并登记到 schema registry。模型型输出 schema 增加可选 `toolIntent`，no-CAD model chain 会把 intent 写成 `tool_traces/<agent>.<intent>.json`，下游可读但不代表工具已执行。
+- **门禁**：allowlisted read-only 工具可返回 `allowed_not_executed`；高风险工具缺 `targetScope`、模型直接请求保存当前 DWG、删除实体或修改正式图层会在执行前 `blocked`；其它非只读 intent 默认 `needs_more_evidence`，等待 P8-P10 明确工具合同。
+- **验证**：新增 `tests.core.test_tool_contract_react` 和运行时 trace 覆盖；本轮验证命令和结果见交付回复。
+- **边界**：本包不连接 AutoCAD、不写 / 保存 DWG、不删除实体、不改正式图层、不提升表 C；只是把模型“请求工具”和 Orchestrator “是否允许/阻断/待证据”分离并可追溯。
+
+### MODEL-AGENT-RUNTIME-DISPATCH-IMPLEMENTATION-01：规则上下文包与 no-CAD 多 Agent 活体链路
+- **触发**：用户要求一口气执行 `model-agent-runtime-dispatch-plan.md`，把模型型多 Agent 真实调用体系从专项计划推进到可测试 Core 入口。
+- **实现**：新增 `core.orchestrator.rule_context_pack`，生成 `rule-context-pack/v1`，覆盖 L0/L1/L2/L3 本地规则检索、`sourceRefs`、`ruleDigest`、`hardGates`、`forbiddenActions`、`missingContext`、`contextBudget` 和派生快照排除。Orchestrator Host 现在写 `rule_context_pack.json` 与 `model_trigger_decision.json`，并把二者放入模型 payload；普通状态 / 进度查询即使模型开关打开也不调模型。
+- **链路**：新增 `core.orchestrator.model_agent_chain_runtime.run_no_cad_model_agent_chain()`，串起 `pipeline_orchestrator -> pipeline_design_director -> pipeline_style_generator -> pipeline_design_reviewer -> pipeline_intent -> pipeline_audit -> pipeline_delivery.chain`。下游 payload / prompt 带上游 `agent_outputs/*.json` 路径、摘要和 hash；全链固定 `cadExecutionAuthorized=false`、`savedCurrentDwg=false`。
+- **learning / closeout 边界**：no-CAD 链路会对每个模型输出补 `learningCandidate` 或 `not_required`；provider unavailable、schema invalid 或 gate blocked 时进入 `review_required`，但只作为候选，不静默改规则、checker 或训练事实源。
+- **验证**：新增红灯测试后实现并转绿：`tests.core.test_rule_context_pack`、`tests.core.test_model_agent_chain_runtime`、`tests.core.test_orchestrator_host_runtime`。相邻模型运行时回归 `tests.core.test_rule_context_pack tests.core.test_model_agent_chain_runtime tests.core.test_model_prompt_library tests.core.test_model_review tests.core.test_orchestrator_host_runtime tests.core.test_a_to_a_task_contract tests.core.test_workflow_dispatch tests.core.test_run_package_state tests.core.test_closeout_gate tests.core.test_reviewer_host_runtime tests.core.test_training_learning_promotion tests.core.test_training_workbench_sync tests.core.test_workbench_trace_viewer` 为 111 OK；`scripts/run_a_to_a_orchestration_gate_check.py` pass；`compileall core/orchestrator core/model_review ...` OK；`scripts/run_doc_governance_audit.py` 仍返回 6 条既有 active doc size findings。
+- **边界**：本包未连接 AutoCAD、未写 / 保存 DWG、不提升表 C；模型链只生成 CAD 写入前的上游设计 / intent / audit 证据，真实 CAD 仍需 validate -> dry-run -> `CODEX_PREVIEW` -> created handles readback -> screenshot visual aid -> closeout。
+
+### MODEL-RUNTIME-SPECIAL-PLAN-02：模型型多 Agent 调用体系专项计划抽离
+- **触发**：用户要求把主 PlanMD 中关于模型型 Agent 真实调用、上下文控制、规则熟悉度、RAG / IG 检索和调度体系的内容先挪成专门 MD，便于人工润色后再回写主计划。
+- **实现**：新增 `docs/architecture/model-agent-runtime-dispatch-plan.md`，把 `rule_context_pack`、规则事实源层级、本地规则检索 / IG、模型触发策略、`model_dispatch_runner`、首条 no-CAD 多 Agent 链、P0-P6 实施计划、硬门禁和用户手改后的回写协议集中到专项文档。
+- **主计划收束**：`CORE_RESTRUCTURE_PLAN.md` 的 §0.1 收缩为入口引用，只保留当前 next 和关键边界；避免模型 runtime 细节继续挤在唯一 PlanMD 里，也避免形成第二套主计划。
+- **入口同步**：更新 `docs/architecture/README.md`、`docs/planning/README.md` 和 `CORE_CONTEXT_BRIEF.md`，让后续接手优先读专项文档，再回到主 PlanMD。
+- **边界**：本轮只做文档抽离和计划润色；未真实调用 `gpt-5.5`，未连接 AutoCAD，未写 / 保存 DWG，不提升表 C。
+
+### MODEL-DISPATCH-RUNNER-FUTURE-PLAN-01：5.5 多 Agent 活体协作改造计划收束
+- **触发**：用户根据截图要求继续整理未来改造计划，重点从“规则 / 合同已搭好”推进到“关键 Agent 真实调用 5.5 思考并上下游互读”。
+- **计划收束**：`CORE_RESTRUCTURE_PLAN.md` 将下一步明确为“模型调用版 dispatch runner / GPT-5.5 多 Agent 活体协作 MVP”，并拆为 P0 runner、P1 第一条 no-CAD 链路、P2 触发路由、P3 closeout / learning、P4 CAD 前置集成。
+- **架构同步**：`agents/pipeline/README.md` 新增模型调用触发策略和 Dispatch Runner MVP；`docs/architecture/cad-agent-task-chain.md` 补充触发条件、`--invoke-model` runner、`modelProviderStatus=unavailable` 和不能伪装模型思考的边界。
+- **边界**：本轮是未来计划和架构文档收束；未真实调用 `gpt-5.5`，未连接 AutoCAD，未写 / 保存 DWG，不提升表 C。
+
+### MAIN-ARCH-DOC-CONSOLIDATION-01：主架构文档与根目录入口收束
+- **触发**：用户要求在系统升级到主 Agent / 多 Agent 真实调动方向后，扫一遍代码和文档，把 README、规则文档和无关紧要 Markdown 入口整理清楚，并列出后续加固方向。
+- **实现**：更新 `README.md`、`docs/architecture/README.md`、`docs/architecture/cad-agent-task-chain.md`、`agents/pipeline/README.md`、`docs/governance/cad-agent-rules.md`、`CORE_CONTEXT_BRIEF.md` 和 `docs/README.md`，把主链路统一为“白话 -> request context / run package -> semantic route -> Orchestrator Host / A-to-A contract -> required agents + hard gates -> 结构化执行路径 -> verification / closeout -> Reviewer Host -> promotion / sync”。同步把 Prompt Pack ready 数量统一为 9 个，并明确多 Agent 活体协作必须证明下游读取上游 `agent_outputs/*.json`。
+- **文档清理**：删除 10 个根目录旧 Stub 入口：`当前状态入口.md`、`变更记录入口.md`、`问题风险入口.md`、`长期规则入口.md`、`路线图入口.md`、`训练错误记录入口.md`、`视觉优先训练计划入口.md`、`CAD自动验证入口.md`、`CAD符号语法入口.md`、`CAD卡壳排障入口.md`；对应入口合并到根 `README.md` 和 `docs/README.md`。
+- **治理同步**：更新 `core.maintenance.doc_governance` 和 `tests/core/test_doc_governance.py`，让审计规则接受“已在 `docs/README.md` 记录迁移对照的 Stub 删除”，并把架构 hardening 检查从旧单行链路升级到 run package / Orchestrator / Reviewer 链路。
+- **验证**：`tests.core.test_doc_governance` 4 个针对性测试通过；`tests.core.test_doc_governance.DocGovernanceTests.test_cli_emits_aggregate_report` 通过；`scripts/run_doc_governance_audit.py` 返回 0，root Stub、architecture hardening、links、source_of_truth、table_c、handoff、training_context、output_policy、openspec_contracts、data_bloat_governance 均 pass。剩余 6 条为既有 active doc size 预算提醒。
+- **边界**：本轮是文档治理和架构口径收束，不连接 AutoCAD、不写 / 保存 DWG、不提升表 C；代码层发现的运行包 trace viewer 状态文件口径等问题列入后续加固，而不是在本包静默扩大范围。
+
+### DESIGN-SEMANTIC-DECOMPOSITION-SMARTER-02：语义合同二次智能加固
+- **触发**：用户要求再次加固上一轮逻辑，让系统不要只做到“不是死命令”，还要更智能地区分问题、分析、执行、候选数量和否定语义。
+- **实现**：`semanticDecomposition` 新增 `semantic_question`、`semantic_analysis_only`、`requestedCandidateCount`、`candidateLabelPolicy`、`countSignalTerms`、`creativityPolicy` 和 `confidence`。语义问题和规则提醒不触发执行型设计 Agent；只分析语义且明确不要落图 / 不生成方案时保持 ordinary orchestration；两个方案会提取为 `requestedCandidateCount=2`，不被改成 A/B/C；否定创造性时输出 `creativityPolicy=suppressed_by_user`。
+- **模型输出 gate**：`style_generation_review.schema.json`、`_design_agent_failures()` 和 Prompt / Agent JSON 同步要求 style generator 回填 `candidateCountPolicy`、`requestedCandidateCount`、`candidateLabelPolicy`、`creativityPolicy`、`semanticRoutingConfidence`，让模型不能只给候选而不说明数量与语义来源。
+- **验证**：红测先失败于旧逻辑误触发、无法识别只分析、无法提取两个方案和创造性否定；实现后 `tests.core.test_a_to_a_task_contract` -> 21 OK，`tests.core.test_a_to_a_task_contract tests.core.test_model_prompt_library` -> 27 OK，相邻回归 45 OK，`scripts/run_a_to_a_orchestration_gate_check.py` pass，`compileall core/orchestrator core/model_review core/training scripts/run_a_to_a_orchestration_gate_check.py scripts/build_capability_map_data.py` OK，`scripts/sync_training_workbench.py --skip-coverage` pass / Agent check 50/50。
+- **边界**：本包只改语义合同、Prompt/schema gate 和派生快照；未连接 AutoCAD、未写 / 保存 DWG、不提升表 C。
+
+### DESIGN-SEMANTIC-DECOMPOSITION-CONTEXTUAL-01：A-to-A 语义信号上下文化
+- **触发**：用户提醒“新样式、创造性表达、A/B/C、发后选”不能被当作死命令；平常在对话框 / CLI 层发指令时，系统应先做语义拆解，再决定是否触发设计 Agent、是否生成多候选、是否请用户选择。
+- **实现**：`core.orchestrator.a_to_a_task_contract` 新增 `semanticDecomposition`，输出 `requestMode`、软 / 硬语义信号和 `designRouting`。规则提醒类消息进入 `ordinary_orchestration`；明确多方案 / 候选比较 / 请用户选择才进入 `style_candidate_generation`；单方案或用户说“不用多方案 / 不用 A/B/C”时进入 `design_stage`，默认只要求 `pipeline_design_director`。
+- **样式合同**：`style_generation_review.schema.json` 增加 `styleDecision=waived|single|multiple` 和 `styleWaiverReason`，允许 style generator 明确不生成候选、生成单方案或生成 2-3 套候选。同步 `pipeline_style_generator` prompt / boundary / negative examples、Agent JSON、pipeline manifest、工作台生成源和 `agents/COMMON_PROMPT_CONTRACT.md`。
+- **验证**：先写红测确认旧逻辑把“不要当做死命令”的提醒误判为 `style_candidate_generation`，并强制 `styleCandidates` 2-3 个；实现后 `tests.core.test_a_to_a_task_contract tests.core.test_model_prompt_library` -> 23 OK，相邻回归 41 OK，`scripts/run_a_to_a_orchestration_gate_check.py` pass，`compileall core/orchestrator core/model_review core/training scripts/run_a_to_a_orchestration_gate_check.py scripts/build_capability_map_data.py` OK，`scripts/sync_training_workbench.py --skip-coverage` pass / Agent check 50/50。
+- **边界**：本包只改语义合同、Prompt 合同和派生快照；未连接 AutoCAD、未写 / 保存 DWG、不提升表 C。
+
+### DESIGN-STYLE-PROMPT-PACK-ABC-TRAINING-01：设计三 Agent Prompt Pack 与 A/B/C 样式候选训练
+- **触发**：用户要求继续优化：把 `design_director` / `style_generator` / `design_reviewer` 从 `plannedPacks` 升级为真实 Prompt Pack；A-to-A contract 自动识别设计 / 样式语义；给 `style_candidates.json` 定 schema 并由 CAD 执行器消费；跑一个不复刻旧样式的新场景 A/B/C 尺寸样式训练案例。
+- **实现**：新增三套 Prompt Pack 和 strict schema：`pipeline_design_director`、`pipeline_style_generator`、`pipeline_design_reviewer`；更新 prompt manifest、Agent JSON 与 pipeline manifest。`a_to_a_task_contract` 新增 `design_stage`、`style_candidate_generation`、`design_review` 三类 task kind 和 `design_intelligence` hard gate，遇到“新样式 / 创造性表达 / 方案候选 / A/B/C / 尺寸样式”等语义会要求三位设计 Agent 输出并阻断缺字段输出。
+- **样式候选执行**：新增 `core/schemas/style_candidates.schema.json` 与 `core.execution.style_candidate_execute`，执行器会验证 `style_candidates.json`，把每个候选转为只写 `CODEX_PREVIEW` 的 `CAD_PLAN`，再调用现有执行链路生成 execution summary。新增 `core.training.style_candidate_training` 和 `scripts/run_style_candidate_training.py`，生成“小户型玄关鞋柜”A/B/C 三套尺寸样式候选，并检查未复用旧 10 个尺寸样式。
+- **训练证据**：fake-CAD 训练输出位于 `output/training_queues/style-candidate-abc-new-scene/`，结果为 `status=needs_user_choice`、`styleCandidateIds=["A","B","C"]`、`readbackStatus=pass`、`designReviewStatus=pass`、`savedCurrentDwg=false`，请用户后续从 A/B/C 中选择或混合方向。
+- **验证**：`scripts/run_a_to_a_orchestration_gate_check.py` pass；相邻单测 `tests.core.test_model_prompt_library tests.core.test_a_to_a_task_contract tests.core.test_style_candidates_execution tests.core.test_style_candidate_training tests.core.test_orchestrator_host_runtime tests.core.test_workflow_dispatch` -> 38 OK；`compileall core/model_review core/orchestrator core/execution core/training scripts/run_style_candidate_training.py` OK；`scripts/run_style_candidate_training.py --fake-cad --summary-only` pass。
+- **边界**：真实 CAD replay 当前为 `external_blocker/cad_connection_failed`：本机能看到 `acad` 进程，但 `GetActiveObject` 取不到活动 `AutoCAD.Application`；未保存当前业务 DWG、不改正式图层、不提升表 C。fake-CAD 只能证明 contract / executor / training loop，不证明真实 CAD 几何。
+
+### OBJECT-FAMILY-SOFA-REPLAY-RCAD-01：sofa 对象族真实 CAD replay 能力证明
+- **触发**：主计划 §0.1 在小型 RAG、sofa no-CAD trial 和自动晋升候选之后，要求至少为对象族补一次真实 CAD replay：created handles、bbox、图层、readback、截图辅助和 closeout 全链路通过。
+- **实现**：新增 `core/assets/object_family_cad_replay.py` 与 `scripts/run_object_family_cad_replay.py`，公开 `run_object_family_cad_replay()`。runner 会复用 `build_object_family_trial()` 的 CAD_PLAN 草案，按 replay base point 平移 glyph primitives，重新 `validate_plan()` / dry-run，再通过 `execute_plan_file(..., preview_only=True, allow_unconfirmed=True)` 只写 `CODEX_PREVIEW`。
+- **真实 CAD 证据**：外部 COM 连接当前活动文档 `projects/测试文件.dwg` 后执行 `scripts/run_object_family_cad_replay.py --output-dir output/validation_runs/object-family-sofa-replay-20260605-rcad --base-x 62000 --base-y 36000`，报告 `object_family_cad_replay_report.json` 为 `geometry_verified`：created handles 17 个，readback hit 17 / miss 0，bbox `[62000.0, 36100.0]` 到 `[64200.0, 36900.0]`，type count `line=17`，layer count `CODEX_PREVIEW=17`，`savedCurrentDwg=false`。
+- **截图 / closeout**：`scripts/render_preview.py --capture-autocad-window --execution-summary ...` 生成 `output/previews/object-family-sofa-replay-20260605-rcad.png`，截图为 `visual_aid_only`；`scripts/run_visual_cad_review.py` 输出 `visual-review/visual_review_report.json`，status pass；最小 run package `output/runs/object-family-sofa-replay-20260605-rcad-closeout/` 运行 `closeout_gate` 后 `closeout_decision.json` 为 `ready_for_delivery`、`can_deliver=true`。
+- **验证**：先写红测确认模块缺失；实现后 `tests.core.test_object_family_cad_replay` 2 OK；相邻回归 `tests.core.test_object_family_cad_replay tests.core.test_object_family_trial tests.core.test_local_asset_rag tests.core.test_asset_promotion_candidates tests.core.test_symbol_glyph_cad_smoke tests.core.test_execute_plan` 24 OK；修复 readback report 契约后 visual review pass。
+- **边界**：本包不保存当前 DWG、不改正式图层、不删除实体、不提升表 C。它证明 sofa 对象族 `draw_symbol_glyph` replay，而不是系统资产跨 DWG 复用 verified、precise sourceSpec/reuseReplay、规则 / checker 自动晋升或用户人工验收。
+
+### ASSET-PROMOTION-CANDIDATES-MVP-01：资产智能自动晋升候选
+- **触发**：主计划 §0.1 在对象族试点之后要求做自动晋升候选；Agent 只能提出规则 / 检查器 / 资产 / 训练项候选，由 `pipeline_learning_promoter` 审核写入，不能静默修改长期事实源。
+- **实现**：新增 `core/assets/promotion_candidates.py`，公开 `build_asset_intelligence_promotion_candidates()`。它从 ready 的 sofa object-family trial 生成 task rule、checker、asset candidate、training item 四类候选，并附 promotion gate / review payload。
+- **审查边界**：输出固定 `review.requiredAgentId=pipeline_learning_promoter`、`mutatedTargets=[]`。`updateTaskRules`、`updateChecker`、`updateAgentCalibration` 是 `needs_reviewed_package`；`updateTrainingSource=not_required`，因为 no-CAD 试点不是正式训练验收报告。asset candidate 在 precise sourceSpec、real CAD replay 和 reuse probe / replay 前不能晋升为 verified。
+- **验证**：先写红测确认模块缺失；实现后 `tests.core.test_asset_promotion_candidates` 2 OK；相邻回归 `tests.core.test_asset_promotion_candidates tests.core.test_object_family_trial tests.core.test_local_asset_rag tests.core.test_training_learning_promotion tests.core.test_plan_engine` 26 OK；真实仓库函数链返回 `review_required 4 [] needs_reviewed_package`。
+- **边界**：本包未连接 AutoCAD、未写 / 保存 DWG、不提升表 C。主计划下一步转入真实 CAD replay 能力证明。
+
+### OBJECT-FAMILY-SOFA-TRIAL-MVP-01：sofa 对象族 no-CAD 试点
+- **触发**：主计划 §0.1 在小型 RAG 之后要求选一个对象族试点，优先 sofa 或 dimension style，跑通检索 -> 设计候选 -> `CAD_PLAN` -> 执行计划 -> readback 证据口径。
+- **实现**：新增 `core/assets/object_family_trial.py`，公开 `build_object_family_trial()`。当前 MVP 只支持 sofa；非 sofa 请求返回 `unsupported_object_family`，避免试点未审查就泛化。sofa 试点会调用 `build_local_asset_rag_pack()`，生成 3 个设计候选，选择 component-readable 的 `draw_symbol_glyph` 草案，并用现有 `validate_plan()` / `create_dry_run_report()` 验证草案。
+- **CAD_PLAN 草案**：输出 `intent=draw_symbol_glyph`、`object.type=symbol_glyph`、`drawing.layer=CODEX_PREVIEW`、`needs_confirmation=true`，用 back / seat / arm_left / arm_right / seat_division 五个 primitive 表达沙发构件。
+- **执行 / readback 口径**：`executionPlan.cadWritePolicy=not_executed_no_cad`；后续真实 CAD replay 才能检查 created handles、bbox、layer、entity types、readback entity count 和 `savedCurrentDwg=false`。dry-run 只证明计划可校验，不证明几何准确。
+- **验证**：先写红测确认模块缺失；实现后 `tests.core.test_object_family_trial` 2 OK；相邻回归 `tests.core.test_object_family_trial tests.core.test_local_asset_rag tests.core.test_plan_engine tests.core.test_semantic_asset_rules tests.core.test_system_asset_reuse` 32 OK；真实仓库调用返回 `cad_plan_draft_ready 3 valid not_executed_no_cad`。
+- **边界**：本包未连接 AutoCAD、未写 / 保存 DWG、不提升表 C。主计划下一步转入自动晋升候选；真实 CAD 能力证明仍需另包 replay。
+
+### ASSET-LOCAL-RAG-MVP-01：资产智能小型本地 RAG
+- **触发**：`CORE_RESTRUCTURE_PLAN.md` §0.1 要求资产智能后四项按轻量顺序推进，第一步是小型 RAG，只检索系统资产、规则、训练记忆和失败样本，不铺大知识库。
+- **实现**：新增 `core/assets/local_rag.py`，公开 `build_local_asset_rag_pack()` / `write_local_asset_rag_pack()`。输出 `local_asset_small_rag_pack`，包含 `sourcePolicy`、`scannedSources`、`sourceSummary`、`encodingPreflight`、分 source kind 的引用条目、matched terms、snippet 和 evidence boundary。
+- **来源边界**：允许来源固定为 `system_asset`、`semantic_rule`、`training_memory`、`failure_sample`；显式排除 `reference_asset`、外网、raw download 和 embedding index。该包只做 lexical local context，不证明真实 CAD 几何、created handles、用户视觉验收、模型判断质量或资产 verified 晋升。
+- **验证**：先写红测确认模块缺失；实现后 `tests.core.test_local_asset_rag` 2 OK，相邻回归 `tests.core.test_local_asset_rag tests.core.test_semantic_asset_rules tests.core.test_system_asset_reuse tests.core.test_training_learning_promotion` 30 OK。
+- **边界**：本包未连接 AutoCAD、未写 / 保存 DWG、不提升表 C。主计划下一步转入 sofa 或 dimension style 对象族试点。
+
+### DESIGN-STAGE-MODEL-BRIDGE-CLOSEOUT-01：设计阶段 5.5 模型桥补齐
+- **触发**：用户补充图片指出，上一波 5.5 扩展更多覆盖执行、回读、审计、资产沉淀和交付复核，但真正弱点在 CAD_PLAN 之前的设计判断、样式生成和设计复核；主 Agent 应模拟专业设计师，先构思并分发，而不是只做任务路由。
+- **实现**：新增 `pipeline_design_director`、`pipeline_style_generator`、`pipeline_design_reviewer` 三个 Agent 合同，分别负责图纸类型 / 表达目的 / 设计意图 / 约束判断、2-3 套参数化样式候选生成、CAD readback 后的专业设计复核。`CORE_RESTRUCTURE_PLAN.md` 与 `agents/pipeline/pipeline_manifest.json` 已记录“设计智能链路”，把 `brief -> design_director -> style_generator -> visual_intent / intent -> execute -> readback / audit -> design_reviewer -> learning_promoter` 固定为创造性样式任务的默认闭环。
+- **机器登记**：`agents/pipeline/pipeline_manifest.json` 新增 `design_intelligence` hard gate、三类设计 task kind、设计 Agent artifacts 和 forbidden patterns；`core/model_review/prompt_packs/manifest.json` 新增三个 planned Prompt Pack；`scripts/build_capability_map_data.py` 新增三张工作台 Agent / Prompt 卡片、设计失败模式归因，并把 `cad_designer` callable list 接到设计链。
+- **Prompt / 规则同步**：`core/training/learning_promotion.py` 和生成结果 `agents/COMMON_PROMPT_CONTRACT.md` 新增“设计智能与创造性样式规则”；同步 `AGENTS.md`、`CORE_RESTRUCTURE_PLAN.md`、`agents/pipeline/README.md`、`docs/governance/cad-agent-rules.md` 和 `docs/status/current.md`。
+- **验证**：`scripts/sync_training_workbench.py --skip-coverage` pass，Agent check 50/50 pass，工作台现在为 `agentProfiles=28`、`promptContracts=28`；后续验证还包括 JSON 加载、A-to-A 门禁、Prompt / workbench 回归和 diff check。
+- **边界**：本包只补规则、合同、生成源和计划；未真实调用 `gpt-5.5` provider，未连接 AutoCAD，未写 / 保存 DWG，不提升表 C。设计模型输出仍只读，不能替代 CAD validate / dry-run / readback、用户验收或资产 verified 晋升。
+
+### MODEL-5-5-AGENT-EXPANSION-RULES-01：5.5 模型桥扩大判断节点与自动成长规则
+- **触发**：用户明确表示不在意额度，不需要复杂额度控制，希望系统以理想化准确性为目标扩大 `gpt-5.5` 模型桥使用，并要求所有使用模型桥的 Agent 能持续记录错误、总结正确经验、自动成长。
+- **实现**：5.5 扩展顺序、全部 pipeline Agent / 主训练 Agent / 场景插件的模型判断场景、初步 Prompt 规范和验证口径已收口到 `CORE_RESTRUCTURE_PLAN.md` 与 `agents/pipeline/pipeline_manifest.json`；`agents/pipeline/pipeline_manifest.json` 新增 `model_bridge_expansion` 机器登记，记录 `defaultModel=gpt-5.5`、`accuracy_first_no_quota_partition`、自动成长合同、19 个 pipeline Agent 的 `agentJudgmentNodes`、场景训练节点和新增模型 review artifact 名称；`core/model_review/prompt_packs/manifest.json` 新增 `plannedPacks`，为后续逐个补 Prompt Pack 保留队列。
+- **Prompt 合同**：更新 `core/training/learning_promotion.py` 的共享 Prompt 生成源，并通过工作台同步刷新 `agents/COMMON_PROMPT_CONTRACT.md`。新规则要求模型桥 Agent 输出 `learningCandidate` / `not_required`，记录 `errorPattern`、`correctPattern`、`promptDelta`、`checkerDelta`、`retestOriginalTask` 和 `responsibleAgentIds`，由 `pipeline_learning_promoter` 写回 Agent memory / prompt addendum。
+- **同步范围**：同步 `AGENTS.md`、`CORE_RESTRUCTURE_PLAN.md`、`agents/pipeline/README.md` 与 `docs/governance/cad-agent-rules.md`，明确模型桥只读、不能执行 CAD、不能保存 / 删除 / 改正式图层、不能替代 CAD readback / sourceSpec / reuseReplay / 表 C / 用户验收。
+- **验证**：`scripts/sync_training_workbench.py --skip-coverage` -> pass，Agent check 50/50 pass；`agents/COMMON_PROMPT_CONTRACT.md` 已由生成源刷新，包含 `CORE_RESTRUCTURE_PLAN.md`、`learningCandidate` 和自动升级条款。
+- **边界**：本轮只写规则、Prompt 规范和机器登记；未真实调用 `gpt-5.5` provider，未连接 AutoCAD，未写 / 保存 DWG，不提升表 C；P1/P2/P3 planned Prompt Pack 后续仍需逐个实现 schema / prompt / converter / trace / test。
+
+### TRAINING-EVIDENCE-GITIGNORE-PORTABILITY-01：训练证据 Git 迁移放行
+- **触发**：用户准备下次直接用另一台电脑的仓库覆盖本机，并担心 `.gitignore` 导致训练文件没有随 Git / 仓库迁移，进而让工作台误以为需要重训。
+- **实现**：`.gitignore` 从只放行少量训练报告，改为默认放行可迁移证据目录：`output/training_queues/**`、`output/training_learning/**`、`output/validation_runs/**`、`output/previews/**`、`output/runs/**` 和 `output/model_reviews/**`。仍忽略 `output/debug/`、`output/test_artifacts/`、`.env`、虚拟环境、Python 缓存、日志和 CAD 锁文件。
+- **边界**：私人仓库可以保留完整训练证据，但仍不建议删除 `.gitignore`；本机缓存、密钥、虚拟环境和锁文件不应进入迁移事实源。
+- **验证**：`git check-ignore` 确认训练 / learning / validation / preview / run package / model trace 路径未被忽略，debug / test artifacts / env / venv / pycache / dwl 仍被忽略。
+
+## 2026-06-04
+
+### WORKBENCH-TRAINING-EVIDENCE-PORTABILITY-01：工作台跨电脑训练证据口径
+- **触发**：用户看到训练工作台显示 `217` 个训练计划、`0` 个已结束训练，询问是否因为换电脑缓存丢失而必须重训。
+- **实现**：`scripts/build_capability_map_data.py` 新增 `trainingSourceSummary`，统计 active / archived 训练事实源、本机验收通过项、archived 验收报告和建议恢复路径；`capability-map.html` 顶部同步栏新增“训练证据同步”，明确训练状态不是浏览器缓存，换电脑后应优先同步旧电脑的 `output/training_queues/**`、`output/training_learning/**`、Agent memory / Prompt addendum 和 `docs/training/training-sources.json`。
+- **当前判断**：本机 `localAcceptedTrainingProgramCount=0`、active 训练验收报告 0、archived 训练验收报告 4、缺失 active fact source 0；因此不应直接判定“需要全部重训”，而应先恢复另一台电脑的训练证据。只有找不回 created handles/readback/验收报告时，才重跑对应训练项。
+- **验证**：新增红测后 `tests.core.test_training_workbench_sync` -> 19 OK；`sync_training_workbench.py --skip-coverage` -> pass，Agent check 50/50 pass；`node --check capability-map-data.js` -> OK。
+- **边界**：本包只同步工作台页面口径和派生快照；未连接 AutoCAD、未写 / 保存 DWG、不提升表 C。
+
+### REVIEWER-HOST-CLOSEOUT-RUNTIME-01：Reviewer Host 交付收口运行时
+- **触发**：用户要求把临时文档里除真实 CAD 人工校验以外的内容全部实施并优化，然后删除临时 MD。
+- **实现**：新增 / 收口 `core.orchestrator.reviewer_host_runtime`，读取 run package 的 `closeout_decision.json`、CAD reports、visual acceptance 和状态文件，写出 `agent_outputs/pipeline_delivery.json`、`final_report.md` 与 `reviewer_host_closeout_result.json`。
+- **门禁**：缺 `created_handles_readback`、`savedCurrentDwg=false`、`targetLayer=CODEX_PREVIEW`、visual acceptance 或邻区保护时，交付口径固定为 `not_verified`，`finalResponseAllowedClaims=[]`，run state 推进到 `blocked`；截图只作为视觉辅助。
+- **验证**：先写红测确认模块缺失；实现后 `python -m unittest tests.core.test_reviewer_host_runtime` -> 3 OK。
+- **边界**：本包未连接 AutoCAD、未写 / 保存 DWG、未删除实体、未真实调用模型 provider、不提升表 C。
+
+### WORKBENCH-TRACE-VIEWER-01：工作台模型 Trace 派生视图
+- **触发**：临时计划要求训练工作台能查看模型型 Agent 调用、gate 决策、closeout、delete scope 和 neighbor protection，但不能把 JS 当事实源。
+- **实现**：新增 `core.orchestrator.workbench_trace_viewer`，只读扫描 `output/runs/**` 与 `output/model_reviews/traces/**`，生成 `modelTraceViewer` 派生快照；`scripts/build_capability_map_data.py` 接入该字段；`capability-map.html` 新增“模型 Trace”页签；`scripts/run_training_workbench_agent_check.py` 新增派生边界、truth sources 和 HTML 视图检查。
+- **验证**：先写红测确认模块缺失；实现后 `python -m unittest tests.core.test_workbench_trace_viewer` -> 2 OK；`scripts/build_capability_map_data.py` 写出快照；`scripts/run_training_workbench_agent_check.py` -> pass，47/47 checks。
+- **边界**：`capability-map-data.js` / HTML 只显示派生视图，不证明 Agent 调用真实发生、不证明 CAD 几何、不替代 source JSON、created handles readback、表 C 或用户验收。
+
+### MODEL-BACKED-TEMP-PLAN-CLOSEOUT-01：临时计划卡迁移与删除
+- **触发**：除真实 CAD 人工校验以外的临时计划均已实施，需要把长期记录压入主计划、README、状态和交接文档后删除临时 MD。
+- **迁移**：`CORE_RESTRUCTURE_PLAN.md` 新增“模型型 Agent Runtime 收口”，保留已落地清单和真实 CAD 人工校验路线；`README.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`docs/planning/任务清单.md`、`agents/pipeline/README.md`、状态页和交接索引同步。
+- **删除**：临时 MD 不再作为恢复入口；后续模型型 Agent 方向以 `CORE_RESTRUCTURE_PLAN.md` 与 pipeline README 为准。
+- **边界**：真实 CAD 校验方法只是后续人工验收路线；本轮未连接 AutoCAD、未写 / 保存 DWG、未真实调用模型、不提升表 C。
+
+### ORCHESTRATOR-HOST-RUNTIME-01：主编排 Host 运行时
+
+- **触发**：用户要求继续实施临时计划中未执行的下一包，并说明真实 CAD 可在打开后自行校验；本包先落地 no-CAD / no-provider 的主编排 Host runtime。
+- **实现**：新增 `core.orchestrator.orchestrator_host_runtime`，读取 `output/runs/<run_id>/user_request.json` 与 `context_pack.json`，结合 `agents/pipeline/pipeline_manifest.json`、Prompt Pack manifest、`build_a_to_a_task_contract()` 和语义资产路由，写出 `dispatch_plan.json`、`task_contract.json`、`required_agents.json`、`risk_assessment.json`。
+- **分发规则**：普通可见 CAD 交付自动要求 `pipeline_visual_acceptance_reviewer` / `visual_acceptance_review` / `cad_readback`；删除 / 清理自动要求 `delete_scope_gate` 和 victim set preview；旁边 / 相邻放置自动要求 `neighbor_protection` 和 occupied bbox；系统资产沉淀自动要求 asset governor、librarian、DWG curator、reuse auditor 和 data-bloat gate；未登记 Agent 只能进入 `additionalAgentRequests`，不能进入 effective required agents。
+- **模型边界**：默认 `CodexCliReviewConfig(enabled=False)`，`modelInvoked=false`，只生成确定性分发计划；以后显式授权模型调用时，同一入口可调用 `pipeline_orchestrator` Prompt Pack 写 trace，但模型结果仍不能执行 CAD 或替代 readback / closeout。
+- **验证**：先写红测确认 `core.orchestrator.orchestrator_host_runtime` 缺失；实现后 `tests.core.test_orchestrator_host_runtime` 6 OK，相邻回归 `tests.core.test_orchestrator_host_runtime tests.core.test_model_prompt_library tests.core.test_model_review tests.core.test_run_package_state tests.core.test_closeout_gate tests.core.test_delete_neighbor_gates tests.core.test_a_to_a_task_contract` 59 OK；`compileall core/orchestrator/orchestrator_host_runtime.py core/orchestrator/__init__.py` OK。
+- **边界**：本包未连接 AutoCAD、未写 / 保存 DWG、未删除实体、未真实调用模型 provider、不提升表 C。Reviewer Host closeout runtime 已由后续包补上。
+
+### MODEL-BACKED-TEMP-PLAN-COMPRESSION-02：临时计划卡二次压缩与真实 CAD 校验方法
+
+- **触发**：用户要求继续压缩模型型 Agent 临时计划卡，只留下尚未实施计划，并补充后续用真实 CAD 校验模型型 Agent 链路的方法。
+- **压缩**：临时计划卡已移除已完成包表格和长验收快照；该记录写入时剩余三包为 `orchestrator-host-runtime` / `reviewer-host-closeout-runtime` / `workbench-trace-viewer`。当前 `orchestrator-host-runtime` 已由 `ORCHESTRATOR-HOST-RUNTIME-01` 完成，临时卡只剩后两包。
+- **真实 CAD 校验方法**：新增环境与编码预检、Prompt Pack no-CAD dry-run、代表性可见 CAD 交付链路、删除 / 局部修复链路、系统资产沉淀 / 复用链路和最终声明口径。默认只写 `CODEX_PREVIEW`，不保存当前业务 DWG，不改正式图层，不把截图或模型 pass 当几何证明。
+- **同步**：同步 `README.md`、`agents/pipeline/README.md`、`docs/planning/任务清单.md`、`docs/status/current.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md` 和 `CORE_CONTEXT_BRIEF.md`，避免后续接手误以为已完成包仍在待办里。
+- **验证**：`git diff --check` exit 0（仅 CRLF warning）；`scripts/run_doc_governance_audit.py` exit 0，status=`findings`，仍为 5 个 active doc size findings，其余 source-of-truth / handoff / links / Table C / OpenSpec / data-bloat governance 检查通过。
+- **边界**：本轮只做文档治理；未连接 AutoCAD、未写 / 保存 DWG、未删除实体、未真实调用模型 provider、不提升表 C。
+
+### MODEL-AGENT-PROMPT-LIBRARY-01：模型型 Agent 真实 Prompt Pack 库
+
+- **触发**：用户要求继续下一包，把模型型 Agent 从“角色契约 / 规则门禁”推进到真实 Prompt、边界规定、任务分发字段、状态机口径和可校验输出，重点让主 Agent 与辅助 Agent 的职责真正可调用、可追踪、可阻断。
+- **实现**：新增 `core.model_review.prompt_library` 和 `core/model_review/prompt_packs/manifest.json`；落地 6 个 Prompt Pack：`pipeline_visual_acceptance_reviewer`、`pipeline_repair`、`pipeline_asset_governor`、`pipeline_visual_layout_reviewer`、`pipeline_orchestrator`、`pipeline_delivery`。每个包都有 `prompt.md`、`boundary_rules.md`、`negative_examples.md`、`input_schema.json`，并引用 `core/model_review/schemas/*.schema.json` 作为 strict output schema。
+- **Prompt 合同**：模型输出统一要求 `statePatch`、`finalResponseAllowedClaims`、`evidenceUsed`、`evidenceMissing`；视觉验收补 `canAskUserToReview` / `lookHereFirst`；修复补 `rootCause`、`repairMode`、`protectedNeighbors`、`requiresUserPermission`、局部修复 / 禁止全量重画说明；资产守门补 `assetLifecycleDecision`、`sourceBoundaryDecision`、`requiredChildAgents`、`nativeVisibleEvidenceRequired`、`reuseProofRequired`。
+- **运行入口**：`run_prompt_pack_review()` 通过现有 `run_codex_cli_review()` 写 trace，并把 `prompt_pack_context.json` 写入 `output/runs/<run_id>/model_traces/<agent_id>/<trace_id>/`；视觉验收输出仍写 `agent_outputs/pipeline_visual_acceptance_reviewer.json`，供 closeout gate 读取。`scripts/probe_codex_cli_model_review.py` 新增 `--prompt-pack` / `--agent-id` dry-run 入口，默认不触发真实模型。
+- **验证**：先写红灯测试覆盖 manifest、prompt 渲染、repair schema 对齐、fake runner trace/converted output、probe dry-run 和角色专属 schema 字段；实现后 `tests.core.test_model_prompt_library` 6 OK，`tests.core.test_model_review` 20 OK，整体回归 `tests.core.test_model_prompt_library tests.core.test_model_review tests.core.test_run_package_state tests.core.test_closeout_gate tests.core.test_delete_neighbor_gates tests.core.test_a_to_a_task_contract` 53 OK；`compileall core/model_review scripts/probe_codex_cli_model_review.py` OK；synthetic probe 与 `--prompt-pack pipeline_repair` dry-run OK。
+- **边界**：本包不连接 AutoCAD、不写 / 保存 DWG、不删除 / 移动实体、不真实调用模型 provider、不提升表 C。Prompt Pack 只提供只读模型复审 / 分发 / 建议合同，不能替代 CAD readback、validate / dry-run、sourceSpec、reuse replay、delete scope、neighbor protection、closeout gate 或用户验收。
+
+### MODEL-BACKED-TEMP-PLAN-COMPRESSION-01：已实施包整体校验与临时计划卡瘦身
+
+- **触发**：前四个模型型 Agent 升级包已落地，需要先做整体回归校验，再把模型型 Agent 临时计划卡从实施流水压缩成控制面，只保留剩余待实施计划。
+- **校验**：整体回归 `tests.core.test_model_review tests.core.test_run_package_state tests.core.test_closeout_gate tests.core.test_delete_neighbor_gates tests.core.test_a_to_a_task_contract` 47 OK；`compileall core/model_review core/orchestrator scripts/probe_codex_cli_model_review.py` OK；`scripts/probe_codex_cli_model_review.py` dry-run OK，`wouldInvoke=true`、`modelInvoked=false`。
+- **压缩**：临时 MD 现只保留当前结论、整体验收快照、已完成包压缩记录、当前硬边界、剩余待实施计划和推荐下一包；已完成包详情改查 `docs/status/changelog.md`、`docs/status/current.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`。
+- **剩余计划**：该包压缩时曾推荐 `model-agent-prompt-library`；该推荐已由 `MODEL-AGENT-PROMPT-LIBRARY-01` 完成，后续 `orchestrator-host-runtime`、`reviewer-host-closeout-runtime` 和 `workbench-trace-viewer` 均已补齐。当前只保留真实 CAD / 真实模型链路验收边界。
+- **边界**：本轮未连接 AutoCAD、未写入 / 保存 DWG、未删除实体、未真实调用模型 provider、不提升表 C。
+
+### DELETE-SCOPE-NEIGHBOR-PROTECTION-GATE-01：删除范围与邻区保护报告生成器
+
+- **触发**：临时方案推荐顺序第 4 项要求把误删问题前移到执行前阻断，而不是等视觉 reviewer 事后发现；closeout gate 已要求 `neighbor_protection=pass`，删除任务还要求 `delete_scope_gate=pass`。
+- **实现**：新增 `core.orchestrator.delete_neighbor_gates`，提供 `build_delete_scope_gate()`、`write_delete_scope_gate()`、`build_neighbor_protection_gate()`、`write_neighbor_protection_gate()`；writer 固定输出 `cad_reports/delete_scope_gate.json` 和 `cad_reports/neighbor_protection.json`，供 run package / closeout gate 读取。
+- **门禁**：`delete`、`purge`、`delete_replace`、`cleanup`、`clear_previous` 必须声明 `targetHandles` 或 `scopeBbox`，并提供 victim set preview；目标层必须是 `CODEX_PREVIEW`；`whole_modelspace`、`whole_codex_preview`、`global_preview_bbox`、`all_visible`、`training_panel`、`current_screen` 默认 hard fail，除非用户显式授权且任务本身就是全局清理。
+- **邻区保护**：旁边 / adjacent / nearby 放置必须先有 occupied bbox 检查；target bbox 与已占用对象碰撞会 fail；执行后可用 `neighborBefore` / `neighborAfter` 比对邻区 handles 和 bbox，A2 局部修复误删 A1 frame 会被阻断。
+- **验证**：先写红测确认模块不存在；实现后 `tests.core.test_delete_neighbor_gates` 7 OK，覆盖无范围 cleanup、全局来源、victim preview、protected zone、occupied bbox、collision、neighbor diff 和 writer；相邻回归 `tests.core.test_delete_neighbor_gates tests.core.test_closeout_gate tests.core.test_run_package_state tests.core.test_model_review tests.core.test_a_to_a_task_contract` 47 OK。
+- **边界**：本包不连接 AutoCAD、不写 / 保存 DWG、不删除 / 移动实体、不真实调用模型 provider、不提升表 C；它只生成执行前 / 执行后可审计 JSON 报告，不能替代 CAD readback、视觉验收或用户验收。
+
+### VISUAL-ACCEPTANCE-CLOSEOUT-GATE-01：可见 CAD 交付 closeout 门禁
+
+- **触发**：临时方案推荐顺序第 3 项要求解决“视觉 Agent 存在但没进场”的问题；可见 CAD 交付前必须有独立 closeout 决策，不能由主编排自己给自己放行。
+- **实现**：新增 `core.orchestrator.closeout_gate`，提供 `build_closeout_decision()` 与 `run_closeout_gate()`；从 `output/runs/<run_id>/` 读取 `dispatch_plan.json`、`task_contract.json`、`cad_reports/validation_report.json`、`cad_reports/dry_run_report.json`、`cad_reports/readback_summary.json`、`agent_outputs/visual_acceptance_output.json`、`cad_reports/neighbor_protection.json` 和按需的 `delete_scope_gate.json` / `asset_source_boundary.json`。
+- **门禁**：只有 `validate_plan=pass`、`dry_run=pass`、`created_handles_readback=ok`、`savedCurrentDwg=false`、`targetLayer=CODEX_PREVIEW`、`visual_acceptance_review=pass`、`neighbor_protection=pass` 及按需 delete / asset gate 全部通过时，才写 `status=ready_for_delivery`、`can_deliver=true`；否则写 `status=not_verified`、阻断原因和建议修复，并推进运行包 `state.json` 到 `blocked`。
+- **证据边界**：`screenshots/` 只登记为 `visual_aid_only`，不能替代 created handles readback 或 visual acceptance；`final_response_allowed_claims` 不允许声明用户已验收或几何全图无误。
+- **验证**：先写红测确认 `core.orchestrator.closeout_gate` 不存在；实现后 `tests.core.test_closeout_gate` 4 OK，覆盖 pass、缺视觉验收、截图不能替代 readback、删除 / 资产任务缺对应 gate 阻断。
+- **边界**：本包不调用真实模型 provider、不连接 AutoCAD、不写 / 保存 DWG、不提升表 C；它是 Reviewer Host runtime 前的确定性 closeout hard gate。
+
+### RUN-PACKAGE-STATE-MACHINE-01：模型型 Agent 运行包状态机
+
+- **触发**：临时方案第 2 包要求每次任务都有独立 `output/runs/<run_id>/` 运行包，不能靠聊天上下文记忆上一轮做过什么。
+- **实现**：新增 `core.orchestrator.run_package_state`，提供 `create_run_package()`、`load_run_state()`、`advance_run_state()`；创建时写入 `user_request.json`、`context_pack.json`、`task_contract.json`、`dispatch_plan.json`、`state.json`、`final_report.md` 和 `agent_outputs/`、`cad_reports/`、`screenshots/`、`model_traces/`。
+- **状态机**：`state.json` 固定登记 `created`、`context_collected`、`orchestrator_reviewed`、`dispatch_ready`、`cad_executed`、`visual_reviewed`、`repair_needed`、`blocked`、`ready_for_delivery`、`delivered`；每个阶段都有 `inputFiles`、`outputFiles`、`status`、`blockingReason`，中断后可直接从文件恢复。进入 `blocked` 必须写明阻断原因。
+- **验证**：先写红测确认模块不存在；实现后 `tests.core.test_run_package_state` 4 OK，覆盖运行包结构、路径收束、阶段 IO、状态恢复、阻断原因和非法阶段拒绝。
+- **边界**：本包不调用真实模型 provider、不连接 AutoCAD、不写 / 保存 DWG、不提升表 C；它只提供 Host runtime / closeout gate 后续可复用的文件化事实源。
+
+### MODEL-REVIEW-TRACE-OBSERVABILITY-01：模型复审 Trace 可观测层
+
+- **触发**：临时方案要求先解决模型型 Agent 调用黑箱问题，再继续补 Prompt / Host runtime；用户补充要求 trace 不能只留给人手读，Agent / trace reviewer 也要能自动复盘并给出白话摘要。
+- **实现**：`run_codex_cli_review()` 新增 `agent_id`、`task_type`、`trace_id`、`trace_dir` 和输入摘要引用，默认为每次调用写入 `output/model_reviews/traces/<timestamp>_<agentId>_<traceId>/`；trace 包含 `prompt.md`、schema 快照、sanitized `command.json`、stdout/stderr、预留 `events.jsonl`、`last_message.json`、`normalized_output.json`、`gate_decision.json` 和 `trace_manifest.json`。
+- **自动复盘**：新增 `core.model_review.trace_review`，从本次 trace 生成机器可读 `trace_review.json` 和给用户看的 `trace_summary.md`，总结模型是否真的进场、输入是否足够、schema 输出是否可信、gate 为什么通过或阻断、下一步应修哪里。
+- **验收修复**：修复 trace gate 只看 provider / schema 而忽略模型自报 `status=fail`、`blockingReasons` 或 `issues` 的假绿问题；阻断原因聚合也加固为不会把字符串拆成单字符。
+- **验证**：`tests.core.test_model_review` 20 OK，覆盖成功调用、禁用未调用、非零退出、模型自报 fail 时 trace / summary 阻断。
+- **边界**：本包不调用真实模型 provider、不连接 AutoCAD、不写 / 保存 DWG、不提升表 C；trace review 只用于调试和交付说明，不能替代 schema 校验、CAD readback、A-to-A hard gate 或用户验收。
+
+### SYSTEM-ASSET-A1-REPAIR-SCOPE-GUARD-01：A2 修复越界误删 A1 框线的回滚加固
+
+- **触发**：用户指出上一轮只授权修改 A2，但 A1 线型 / 图层 / 填充标准表格的线框被误删，属于非常错误的越界修改。
+- **根因**：`scripts/layout_system_asset_shelves.py` 新增的 `CODEX_PREVIEW` 清理函数没有目标 bbox / handles 约束，常规 layout 运行时全图删除该层实体；A1 表格框线当时也在 `CODEX_PREVIEW` 上，因此被一起清掉。
+- **代码修复**：`_purge_forbidden_preview_layer_content()` 改为显式 `scope_bbox` 才执行；无范围时返回 `not_run`，避免再次全局删除。新增回归测试覆盖 A2 范围清理不影响 A1、无范围不执行。
+- **真实 CAD 修复**：在 `libraries/system_library/drawing_standards/basic/standard_assets.dwg` 原位恢复 A1 线型表边框、列线、行线和分组线，新增 191 条 `ASSET_PROOF_CONTENT` 线实体，不删除现有实体，不保存当前业务 DWG。
+- **证据**：修复报告 `output/validation_runs/system-assets/asset-library-shelves/a1_linetype_frame_repair_report.json`；视觉辅助截图 `output/previews/system-asset-a1-restored-a2-cleaned.png`；A1 回读显示 `ASSET_PROOF_CONTENT|AcDbLine=199`、`CODEX_PREVIEW=0`。
+
 ## 2026-06-03
+
+### MODEL-BACKED-VISUAL-ACCEPTANCE-REVIEWER-P4：通用视觉验收模型型复审 Agent
+
+- **触发**：用户指出 A2 截图中的核心失败不是框线本身，而是框内文字像乱码、内容不对、左侧贴边冲突、不美观且不可复用；系统需要先把“用户可见验收”的模型型 reviewer 框架接入，而不是立刻铺开所有 prompt 教学。
+- **实现**：新增 `pipeline_visual_acceptance_reviewer`、`core/model_review/visual_acceptance_review.py` 和 `visual_acceptance_review.schema.json`，把美观度、文字可读性、乱码、遮挡、裁剪、对齐、意图匹配、可复用边界和非截图证据纳入只读模型复审字段。
+- **门禁**：`visual_acceptance_review` 已接入 `a_to_a_task_contract` 和 `pipeline_manifest`；资产 DWG 仓库布局现在同时要求专用 `visual_layout_review` 与通用 `visual_acceptance_review`。模型输出只能进入 `modelBackedVisualAcceptance`，不能执行 CAD、保存 DWG、删除实体、替代用户验收、CAD readback、sourceSpec / reuse replay 或表 C 证据。
+- **二次加固**：模型自称 `status=pass` 但任一关键视觉布尔字段为 false 时，转换输出仍为 fail 并写入 `blockingReasons`；英文触发词从宽泛 `acceptance` 收窄为 `user acceptance` / `acceptance review` / `acceptance gate`，避免普通 acceptance report 误触发视觉验收 Agent。
+- **三次加固**：新增 `core/model_review/provider_status.py`，所有模型 reviewer 输出统一 `modelProviderStatus`，包含 `modelInvoked`、`modelUnavailable`、`schemaValid`、`route`、`required` 和 `blocking`；路线策略登记 `codex_cli_local`、`local_model`、`remote_summary_only`、`remote_full_visual`，远端 summary / 截图 / 报告路线必须先有用户授权。
+- **同步与验证**：`capability-map-data.js` 已同步为 `agentProfiles=25`、`promptContracts=25`；模型型复审 Agent 为 `pipeline_visual_layout_reviewer` 和 `pipeline_visual_acceptance_reviewer`。验证覆盖 `tests.core.test_model_review`、`tests.core.test_a_to_a_task_contract`、`tests.core.test_training_workbench_sync`、`scripts/run_a_to_a_orchestration_gate_check.py` 和 `scripts/sync_training_workbench.py`。
+- **边界**：本包未真实调用远端 / 本地模型，未连接 AutoCAD，未写入 / 保存 DWG，不提升表 C；A2 当前图仍需后续单独做真实局部修复和人工复审。
+
+### A2-ASSET-WAREHOUSE-EVIDENCE-CLOSURE-REALCAD-01：A2 仓库真实 CAD 修复与证据闭合
+
+- **触发**：前序模型型 reviewer / 仓库治理包已经让 missing evidence refs 与 latest shelf layout report 缺失正确暴露为 fail；用户要求做“证据闭合 / A2 仓库真实 CAD 修复包”，并校验临时 MD 仍有无未解决事项。
+- **实现**：新增 `core/assets/asset_evidence_closure.py` 和 `scripts/close_system_asset_evidence_refs.py`，把 active evidence refs 指向本轮 current shelf report、聚焦截图、dimension / linetype reuse plan-only probe，并把历史缺失引用作为闭合边界记录；不创建空 stub 伪造历史证据。
+- **真实 CAD**：重新运行 `scripts/layout_system_asset_shelves.py`，打开 / 激活 / 保存 `libraries/system_library/drawing_standards/basic/standard_assets.dwg`。本轮 `protectedContentReadback.entityCount=349`，A1 受保护内容 179 个实体，A2 受保护内容 170 个实体；新建仓库脚手架 `createdHandleCount=219`，`createdEntityReadback.status=ok`，`visualClearanceAudit.status=pass`，`visualReadabilityAudit.status=pass`。
+- **证据**：shelf report 位于 `output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json`；治理决策位于 `output/validation_runs/system-assets/library-governance/final_hardening_decision.json`；聚焦截图位于 `output/previews/system-asset-warehouse-evidence-closure-a2-focused.png`；闭合报告位于 `output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json`。
+- **验证**：`run_asset_library_governance_check.py` pass，`sediment_system_asset.py --verify --category drawing_standards.basic` pass，`tests.core.test_asset_evidence_closure tests.core.test_asset_library_governance tests.core.test_system_asset_sedimentation` 共 32 OK，Python compile pass，`sync_training_workbench.py` pass / Agent check 43/43 pass。
+- **边界**：本轮只保存系统资产 DWG，不保存当前业务 DWG；没有真实调用 `gpt-5.5`；截图是视觉辅助，用户人工视觉复审仍待确认；`run_data_bloat_audit.py --summary-only` 仍因表 C coverage 历史 `report_path_missing=303` blocked，需要单独恢复 / 重跑表 C 证据或审查降级 claims。
+
+### MODEL-BACKED-ASSET-GOVERNOR-REPAIR-P3：资产守门员模型辅助与 repair proposal 边界
+
+- **触发**：用户要求继续把当前偏规则 / 契约型的 pipeline Agent 向“少数模型型评审 + 强规则门禁”推进，但不希望模型直接拥有删除、保存或 CAD 执行权限。
+- **实现**：新增 `core/model_review/asset_governor_review.py` 与 `repair_plan_review.py` 及对应 schema。资产守门员可读取模型辅助分类、来源边界和 clean source 建议并生成 `modelAssistedDecision`；修复 Agent 可读取 `modelBackedRepairPlan` / `repairPlanCandidate`，但必须保持 `executionPolicy=proposal_only`。
+- **门禁**：模型建议不能覆盖 `sourceBoundaryDecision`、CAD readback、reuse probe、保存边界或 verified 晋升；repair plan 模型候选不能带 `cadCommands`、广域删除、保存当前 DWG、正式图层编辑或执行授权。
+- **同步**：更新 `pipeline_asset_governor`、`pipeline_repair`、manifest、共享 Prompt 生成源和 Agent check；`scripts/sync_training_workbench.py` 现在每次刷新 `agents/COMMON_PROMPT_CONTRACT.md`，避免没有新训练验收报告时共享规则漂移。
+- **验证**：P3 相关单测 57 OK；`scripts/run_a_to_a_orchestration_gate_check.py` pass；`scripts/sync_training_workbench.py --skip-coverage` pass，Agent check 43/43 pass；Python compile 与 5 个 Agent / schema JSON 加载通过。`run_asset_library_governance_check.py` 仍因既有 referenced evidence 文件和 latest shelf layout report 缺失 fail。
+- **边界**：未真实调用 `gpt-5.5`，未连接 AutoCAD，未写入 / 保存 DWG，不提升表 C，不修复 A2 当前仓库排版。
+
+### DATA-BLOAT-EVIDENCE-CLOSURE-01：训练事实源缺失路径归档与工作台同步恢复
+
+- **触发**：`capability-map-data.js` 瘦身后，工作台同步仍因 13 个 active training `fact_source` 指向不存在的历史 output 路径而失败；用户要求修复治理验收中“证据路径缺失”的问题，并确认这属于小修而非重构。
+- **修复**：审查 `docs/training/training-sources.json` 中 13 个当前工作区不可达的历史训练 / 资产事实源，将其从 `active` 改为 `archived`，保留原路径并写入 `archiveReason`，避免用空 stub、派生快照或 sync report 伪造证据。
+- **测试加固**：`tests/core/test_training_workbench_sync.py` 不再依赖真实 manifest 处于坏状态；同步通过用例改为要求当前 manifest 闭合，负例改成测试内注入缺失 fact source。
+- **验证**：先跑单测确认 sync 仍失败形成红测；修复后 `scripts/sync_training_workbench.py` pass，Agent check 43/43 pass，`training_source_paths_exist` pass；`tests.core.test_training_workbench_sync tests.core.test_data_bloat_audit` 21 OK；`scripts/run_training_workbench_agent_check.py` pass。
+- **边界**：`scripts/run_data_bloat_audit.py --summary-only` 仍返回 blocked，但只剩 coverage `report_path_missing=303`。这 303 条来自表 C registry 历史 showcase 证据路径缺失，需要恢复 / 重跑 Table C 证据或审查降级 claim，不能用本轮小修清零。
 
 ### DATA-BLOAT-GOVERNANCE-BEFORE-TRAINING-01：训练前数据防膨胀与 A-to-A 共识收尾
 
@@ -2854,3 +3197,22 @@
 - **审计**：`core.maintenance.doc_governance` 新增 `architecture_hardening` 子报告，并补 `tests.core.test_doc_governance` 回归，缺链路 / 门禁 / 模块 token 会进入 findings。
 - **验证**：`python -m unittest tests.core.test_doc_governance -v` 27 OK；`scripts/run_doc_governance_audit.py` status=`pass`、`finding_count=0`、`architecture_hardening.checked_file_count=3`。
 - **边界**：本轮只做文档架构和审计入口加固；未改 CAD 执行、未连接 AutoCAD、未保存 DWG、不提升表 C。
+
+### MODEL-BACKED-AGENT-REVIEWERS-P1：Codex CLI 模型复审桥与视觉 reviewer MVP
+
+- **触发**：用户追问系统里的 Agent 是否只是规则型“假智能体”、能否不用 API key 而改用 Codex CLI 调用 5.5 模型，并要求先把方案写成临时 MD 后执行第一包。
+- **方案**：当时新增模型型 Agent 临时计划卡，并明确主 `PlanMD` 仍是 `CORE_RESTRUCTURE_PLAN.md`；该临时卡现已迁入主计划并删除。模型型 Agent 只作为少数高风险 reviewer，规则型门禁继续负责 CAD 证据。
+- **实现**：新增 `core/model_review/`，封装 `codex.cmd exec` 的只读模型复审桥，支持 `--model`、`--image`、`--output-schema`、`--output-last-message`、`--sandbox read-only` 和 `--ephemeral`；默认 `enabled=false`，单测用 fake runner，不静默消耗模型额度。
+- **视觉门禁**：新增视觉仓库复审 schema 和转换器；A-to-A `visual_layout_review` 支持 `modelBackedReviewRequired`，模型缺失、schema fail、`modelInvoked=false` 或 blocking 时阻断；`audit_visual_rack_plan()` 和 `run_asset_library_governance_check.py` 可读取 `modelVisualReview`。
+- **认知规则**：`pipeline_visual_layout_reviewer`、pipeline manifest、`agents/COMMON_PROMPT_CONTRACT.md`、`agents/pipeline/README.md` 和治理规则已写明契约型 / 规则型 / 模型型 Agent 边界：模型 pass 不替代编码、handles、bbox、图层、sourceSpec、reuse replay、保存状态或用户复审。
+- **验证**：`tests.core.test_model_review` 5 OK，`tests.core.test_a_to_a_task_contract` 11 OK，`tests.core.test_training_workbench_sync` 18 OK，`tests.core.test_system_asset_sedimentation` 27 OK；`scripts/run_a_to_a_orchestration_gate_check.py` pass；`codex.cmd exec --help` pass。`scripts/run_asset_library_governance_check.py` 仍因既有 latest shelf layout report 缺失 fail；该包当时暴露的 13 个 active fact source 缺失已由后续 `DATA-BLOAT-EVIDENCE-CLOSURE-01` 归档修复。
+- **边界**：本包未真实调用 `gpt-5.5`，未连接 AutoCAD，未写入 / 保存 DWG，未修复 A2 当前仓库排版和 `CODEX_PREVIEW` 遗留污染，不提升表 C。
+
+### SYSTEM-ASSET-WAREHOUSE-GOVERNANCE-P2：仓库治理 full layer census 与证据文件门禁
+
+- **触发**：继续执行临时方案第二包，针对 A2 仓库总览“像乱码”的根因补硬门禁：旧报告只采样 `layerSamples`，可能漏掉 A1/A2 内真实 `CODEX_PREVIEW` 污染；资产合同引用的证据文件缺失也曾被 verify / governance 弱放行。
+- **实现**：`layout_system_asset_shelves.py` 的 protected content readback 现在输出全量 `layers` / `layerCounts`；`audit_visual_rack_plan()` 新增 `protected_content_report`，sample-only fail，full census 中出现 `CODEX_PREVIEW` 或 `ASSET_SOURCE_BOUNDARY` 即 fail。
+- **治理脚本**：`scripts/run_asset_library_governance_check.py` 会把 latest shelf report 的 `protectedContentReadback` 传入 Core audit，并递归检查 `evidenceRefs`、`evidenceLinks.refs`、`nativeVisiblePanelEvidence`、`reuseWorkflowProbe` 等白名单字段引用的本地证据文件是否存在。
+- **Agent / Prompt**：`pipeline_visual_layout_reviewer`、共用 Prompt 合同、Prompt 生成源、工作台 Agent check 和治理规则已补 full layer census 与 evidence file exists 边界。
+- **验证**：先写红灯测试后实现；`tests.core.test_asset_library_governance` 3 OK；`tests.core.test_system_asset_sedimentation` 27 OK；`tests.core.test_model_review tests.core.test_a_to_a_task_contract` 16 OK；`tests.core.test_training_workbench_sync` 18 OK。真实 `scripts/run_asset_library_governance_check.py` 现在 fail，暴露多个 referenced evidence 文件缺失和 latest shelf layout report 缺失；该包当时暴露的 13 个 active fact source 缺失已由后续 `DATA-BLOAT-EVIDENCE-CLOSURE-01` 归档修复，visual warehouse / model-backed 规则检查均 pass。
+- **边界**：本包只加治理门禁和报告字段，不连接 AutoCAD、不重排 / 保存 `standard_assets.dwg`、不恢复缺失历史证据、不提升表 C。

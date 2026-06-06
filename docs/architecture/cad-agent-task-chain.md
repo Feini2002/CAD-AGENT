@@ -1,6 +1,6 @@
 # CAD Agent 系统任务链路
 
-最后更新：2026-06-02
+最后更新：2026-06-06（接入 ARCH-CONVERGENCE-01 七层架构归并画布）
 
 ## 目标
 
@@ -11,6 +11,8 @@
 
 两条链路互相补充。执行链路保证当轮任务不从白话直接跳 CAD；训练链路保证失败和新能力不会只停留在一次对话、截图或临时脚本里。
 
+本链路现在归入 `docs/architecture/system-architecture-convergence.md` 的七层画布：输入分流属于系统入口层；语义拆分和单一子任务属于任务对象层；Orchestrator / A-to-A / Worker / bridge 属于决策编排层；registry、表 A/B/C、训练事实源和资产 evidence 属于能力与证据层；`CAD_PLAN`、validate、dry-run、Tool Contract、`CODEX_PREVIEW` 和 readback 属于执行工具层；audit / repair / closeout 属于审计修复层；learning promotion、资产、工作台和 changelog 属于沉淀成长层。旧表 C 只能作为能力与证据层的 `Core Proof Coverage`，不得越层代表执行结果或训练成熟度。
+
 ## 总链路
 
 ```text
@@ -18,7 +20,8 @@
   -> 0. 输入分流
   -> 1. 语义拆分
   -> 2. 复杂任务拆成单一子任务
-  -> 3. 按规则分发给责任 Agent / Core 入口
+  -> 3. 主 Agent / Orchestrator Host 分发
+  -> 3.5 optional toolIntent / Tool Contract ReAct
   -> 4. 执行前门禁
   -> 5. CAD / 资产 / 文档执行
   -> 6. 机器回读 + 视觉辅助审计
@@ -77,14 +80,19 @@
 
 | 责任层 | 主要职责 |
 | --- | --- |
-| Orchestrator | 分流、拆任务、收敛状态，禁止跳过结构化意图直接落 CAD |
+| Orchestrator Host / 主 Agent | 分流、拆任务、生成 run package / `a_to_a_task_contract`、动态加派已登记 Agent、收敛状态，禁止跳过结构化意图直接落 CAD |
 | Intent Agent | 白话、截图、场景词汇和约束拆成 intent / `CAD_PLAN` |
 | Asset Agent | 查 `libraries/system_library/registry.json`，处理候选、来源门禁和跨 DWG 复用 |
+| Design Agent | 在 CAD_PLAN 前判断图纸类型、设计意图、样式策略、候选数量和用户反馈需求 |
 | Execute Agent / Core | 只读结构化输入，写 `CODEX_PREVIEW` 或授权的系统资产 DWG |
 | Audit Agent | 对照 intent / CAD_PLAN / handles / readback 做机器审计和视觉辅助复核 |
 | Repair Agent | 生成 `repair_plan`，优先原位局部修复 |
 | Learning Agent | 判断是否晋升为训练项、规则、检查器或 Agent memory |
-| Delivery Agent | 只汇报已证明内容、未证明边界和用户应复审点 |
+| Reviewer / Delivery Agent | 读取 closeout 证据，只汇报已证明内容、未证明边界和用户应复审点 |
+
+模型型 Agent 通过 `core/model_review` 调用本地 Codex CLI 或未来 SDK 桥时，必须保持只读；它们可以判断、分发、复审、生成建议和修复候选，但不能直接执行 CAD、删除、保存、改正式图层或提升表 C。真实模型协作必须带 `rule_context_pack`，留下 trace、strict JSON、schema 校验、`modelProviderStatus` 和上游证据引用。
+
+模型型 Agent 需要工具时只能输出 `toolIntent`。Orchestrator 通过 `core.orchestrator.tool_contract` 校验权限、风险、target scope 和 forbidden effects，再执行白名单工具并写 `tool_traces/<agent>.<intent>.json`。当前允许 Stage 1 只读、Stage 2 当前 run 候选写入、Stage 3 确定性验证和 Stage 4 受控 CAD 预览执行；Stage 3 的 `validate_plan`、`dry_run_plan`、`preview_only_audit`、`closeout_gate` 只产生 JSON 证据，不能被说成 CAD 已写入或用户已验收。Stage 4 只有 `preview_cad_execute` / `execute_cad_plan_preview` 可经 Orchestrator 执行，并且必须先有同一 CAD_PLAN 的 validate + dry-run pass 报告，只写 `CODEX_PREVIEW`、回读 created handles / bbox / layer / type count，保持 `savedCurrentDwg=false`；fake-driver 预检不证明真实 CAD，真实 readback 不可用只能 blocked / not_verified。
 
 ## 4. 执行前门禁
 
@@ -164,6 +172,35 @@ A-to-A 校准不是一句“已学习”。它必须说明每个责任 Agent 以
 高风险合同还必须写入 `mainAgentSelfCheck` 和 `dispatchDecision`。这里的“主 Agent 有意识”不是模拟对话人格，而是机器可读的工程自我模型：主 Agent 必须声明自己是 `pipeline_orchestrator_main_agent`，职责是识别任务、生成合同、加派已登记责任 Agent、收证据并阻断不可靠完成声明；同时声明自己不能亲自替代 CAD readback、视觉布局复审、资产守门员或复用审计。
 
 `dispatchDecision` 只允许把 `agents/pipeline/pipeline_manifest.json` 中已登记的 Agent 加入 `effectiveRequiredAgents`，并必须写明加派原因和对应 hard gate。未登记的新 Agent 只能进入 `additionalAgentRequests`，状态为 `needs_reviewed_package` 或 `needs_openspec_change`；不得临场激活，也不得放入本轮 `effectiveRequiredAgents` 后声称已经生效。若 `mainAgentSelfCheck` 失败、加派理由缺失、未登记 Agent 被强行生效，或仍缺必需 Agent 输出，合同必须追加 `main_agent_dispatch_awareness` gate 并阻断交付完成口吻。
+
+### 7.1.2 GPT-5.5 多 Agent 活体协作
+
+当前长期优先路线按 `CORE_RESTRUCTURE_PLAN.md` §3 / §3.1 与 `core/orchestrator/local_live_model_bridge*.py` 建立 **Worker 编排 + 本地活体模型桥**：先用本地 stand-in 固定 `run_id`、`task envelope`、状态机、bridge lease / heartbeat / submit、trace diagnostics 和 feature gates；再迁移到 Cloudflare Worker / Durable Object / Queue；随后由本地 bridge 领取或接收任务，把指定 Agent 的 Prompt Pack、`rule_context_pack`、上游 evidence refs 和 output schema 交给本机 `codex.cmd exec --model gpt-5.5`，读回 strict JSON 后写入 `agent_outputs/<agent_id>.json` 和 trace。最低声明层级依次是 `worker_orchestration_ready`、`local_bridge_connected`、`single_agent_live`；只有 `single_agent_live` 才表示一个 Agent 有 `modelInvoked=true`、`modelUnavailable=false`、`schemaValid=true` 和可审计命令 / 输出。
+
+Worker 解决的是长期远程触发、状态机、队列和多 Agent 编排问题；本地 bridge 解决的是“模型型 Agent 是否真实吃到 prompt 并返回判断”的问题。CAD-MCP 仍只能在后续 `cad_mcp_preview_live` 层通过 Tool Contract ReAct 进入 `validate -> dry-run -> CODEX_PREVIEW -> readback -> closeout`，不能因为模型可用就跳过 CAD 证据。Cloudflare Worker / Tunnel 不能保存 Codex 登录态、不能直接执行 `codex.cmd`，也不能成为任意 shell 代理。
+
+下一阶段的关键不是再堆规则，而是验证“多个有思考力的 Agent 是否真的互相读取、互相约束、互相补位”。推荐第一条 no-CAD / no-save 链路为：
+
+```text
+pipeline_orchestrator
+  -> pipeline_design_director
+  -> pipeline_style_generator
+  -> pipeline_design_reviewer
+  -> pipeline_intent
+  -> pipeline_audit / pipeline_delivery
+```
+
+这条链路的最低证据门槛：
+
+1. 至少 4-6 个 Agent 的 trace 写明 `modelInvoked=true`、prompt、schema、normalized output 和 `modelProviderStatus`。
+2. 下游 Agent 的 prompt / payload 必须显式引用上游 `agent_outputs/*.json`，不能各自独立凭同一段用户白话输出意见。
+3. `style_generator` 应按 `design_director` 的判断选择 waiver、单方案或 2-3 套参数化候选；“A/B/C”是语义信号，不是死规则。
+4. 最终只能产出可执行但尚未写 CAD 的 `CAD_PLAN` 或结构化执行计划；CAD 写入仍由执行器和真实 CAD 门禁处理。
+5. 任一模型 fail、schema invalid、证据不足或互审不一致时，任务状态必须停在 `blocked` / `needs_more_evidence`，不得继续进入完成口吻。
+
+模型触发不是全量开关。`input routing` 先用规则层判断是否真的需要主观思考；只有语义模糊、设计判断、创意 / 风格取舍、多候选必要性、用户主观质量反馈、机器绿但视觉 / 专业性可能不对、交付前“能说什么 / 不能说什么”等情况，才调用模型型 Agent。确定性门禁继续由规则执行，包括编码、schema、registry、validate、dry-run、created handles readback、bbox、layer、overlap、sourceSpec 和 reuse replay。
+
+实现上已有等价 Core 入口：`core.model_review.prompt_library.run_prompt_pack_review()` 按 Prompt Pack 调用 `codex.cmd exec` / 后续 SDK 桥，`core.orchestrator.orchestrator_host_runtime` 写 `rule_context_pack.json` 和 `model_trigger_decision.json`，`core.orchestrator.model_agent_chain_runtime` 串起首条 no-CAD 设计链。它们写入 agent output、trace、schema 校验、`modelInvoked`、`modelProviderStatus`、stdout / stderr、normalized JSON、失败原因和 `learningCandidate`。如果 Codex CLI、`gpt-5.5` provider、网络或权限不可用，系统返回 `modelProviderStatus=unavailable` 并阻断对应模型型判断；不能假装已经完成模型思考。
 
 ## 7.2 Promotion Gate
 

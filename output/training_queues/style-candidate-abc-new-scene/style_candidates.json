@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "style-candidates/v1",
+  "caseId": "style-candidate-abc-new-scene",
+  "scenario": {
+    "domain": "residential",
+    "drawingType": "dimension_style_showcase",
+    "expressionPurpose": "为小户型玄关鞋柜生成三套尺寸表达，让用户选择偏好的图面风格。"
+  },
+  "styleIntent": "新场景参数化生成 A/B/C 三套尺寸样式；不要复刻旧 10 个 canonical 尺寸样式。",
+  "generationMethod": "parameterized_new_scene",
+  "selection": {
+    "selectedCandidateId": "",
+    "needsUserChoice": true,
+    "autoSelectPolicy": "ask_user"
+  },
+  "candidates": [
+    {
+      "candidateId": "A",
+      "label": "A 紧凑",
+      "summary": "紧凑尺寸表达，标注贴近对象，适合小图面快速扫读。",
+      "parameters": {
+        "objectType": "shoe_cabinet",
+        "objectName": "玄关鞋柜 A",
+        "width": 1200,
+        "depth": 350,
+        "basePoint": [
+          72000,
+          42000,
+          0
+        ],
+        "styleToken": "furniture.visible.medium",
+        "includeLabel": true,
+        "includeDimensions": true,
+        "textHierarchy": "compact",
+        "lineSpacing": 90,
+        "density": "high",
+        "layerStrategy": "preview_semantic_furniture"
+      },
+      "rationale": "用更短标注间距和更小对象宽度表达紧凑收纳。",
+      "tradeoffs": [
+        "信息密度高",
+        "适合小空间",
+        "需要用户确认是否过挤"
+      ]
+    },
+    {
+      "candidateId": "B",
+      "label": "B 均衡",
+      "summary": "均衡尺寸表达，标注距离和对象比例较稳，默认推荐。",
+      "parameters": {
+        "objectType": "shoe_cabinet",
+        "objectName": "玄关鞋柜 B",
+        "width": 1400,
+        "depth": 380,
+        "basePoint": [
+          74200,
+          42000,
+          0
+        ],
+        "styleToken": "furniture.visible.medium",
+        "includeLabel": true,
+        "includeDimensions": true,
+        "textHierarchy": "balanced",
+        "lineSpacing": 140,
+        "density": "medium",
+        "layerStrategy": "preview_semantic_furniture"
+      },
+      "rationale": "在图面占用和尺寸可读之间保持平衡。",
+      "tradeoffs": [
+        "默认可读性更稳",
+        "图面占用适中",
+        "视觉个性较弱"
+      ]
+    },
+    {
+      "candidateId": "C",
+      "label": "C 展示",
+      "summary": "展示型尺寸表达，留白更大，适合请用户目视挑选。",
+      "parameters": {
+        "objectType": "shoe_cabinet",
+        "objectName": "玄关鞋柜 C",
+        "width": 1600,
+        "depth": 420,
+        "basePoint": [
+          76700,
+          42000,
+          0
+        ],
+        "styleToken": "furniture.visible.medium",
+        "includeLabel": true,
+        "includeDimensions": true,
+        "textHierarchy": "presentation",
+        "lineSpacing": 190,
+        "density": "low",
+        "layerStrategy": "preview_semantic_furniture"
+      },
+      "rationale": "扩大对象和标注留白，让候选更便于用户比较。",
+      "tradeoffs": [
+        "图面最舒展",
+        "占用最多",
+        "适合方案展示"
+      ]
+    }
+  ],
+  "evidenceBoundary": {
+    "checked": [
+      "schema",
+      "candidate_count",
+      "preview_plan_generation",
+      "created_handles_readback"
+    ],
+    "notChecked": [
+      "user_choice",
+      "plot_output",
+      "formal_sheet_layout"
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Users\User\Desktop\CAD-AGENT\core\cad_io\autocad_com.py", line 108, in __init__
+    raise RuntimeError(f"No active AutoCAD.Application instance is available. COM detail: {detail}")
+RuntimeError: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None)

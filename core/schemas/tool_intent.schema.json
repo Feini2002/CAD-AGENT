@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "toolIntentId",
+    "requestedByAgentId",
+    "toolName",
+    "purpose",
+    "inputs",
+    "targetScope",
+    "riskLevel",
+    "permissionClass",
+    "expectedEvidence",
+    "forbiddenEffects"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "toolIntentId": { "type": "string" },
+    "requestedByAgentId": { "type": "string" },
+    "toolName": { "type": "string" },
+    "purpose": { "type": "string" },
+    "inputs": { "type": "object" },
+    "targetScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scopeType"],
+      "properties": {
+        "scopeType": { "type": "string" },
+        "targetLayer": { "type": "string" },
+        "targetHandles": { "type": "array", "items": { "type": "string" } },
+        "targetPath": { "type": "string" },
+        "scopeRef": { "type": "string" },
+        "bbox": { "type": "array", "items": { "type": "number" } },
+        "previewOnly": { "type": "boolean" },
+        "savedCurrentDwg": { "type": "boolean" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "riskLevel": { "type": "string", "enum": ["info", "low", "medium", "high", "critical"] },
+    "permissionClass": {
+      "type": "string",
+      "enum": [
+        "read_only",
+        "safe_generate",
+        "deterministic_verify",
+        "cad_preview",
+        "cad_write",
+        "delete_or_replace",
+        "save_current_dwg"
+      ]
+    },
+    "expectedEvidence": { "type": "array", "items": { "type": "string" } },
+    "forbiddenEffects": { "type": "array", "items": { "type": "string" } },
+    "requestedEffects": { "type": "array", "items": { "type": "string" } }
+  }
+}

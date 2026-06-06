@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "closeout-decision/v1",
+  "status": "ready_for_delivery",
+  "can_deliver": true,
+  "blocking_reasons": [],
+  "required_repairs": [],
+  "evidence_boundary": {
+    "checked": [
+      "validate_plan=pass",
+      "dry_run=pass",
+      "created_handles_readback=ok",
+      "savedCurrentDwg=false",
+      "targetLayer=CODEX_PREVIEW",
+      "visual_acceptance_review=pass",
+      "neighbor_protection=pass"
+    ],
+    "not_checked": [],
+    "screenshots": {
+      "role": "visual_aid_only",
+      "count": 1,
+      "files": [
+        "screenshots/preview.png"
+      ],
+      "cannotReplace": [
+        "created_handles_readback",
+        "visual_acceptance_review"
+      ]
+    },
+    "notProven": [
+      "user acceptance",
+      "geometry outside the reported created handles/readback",
+      "future edits after this closeout decision"
+    ]
+  },
+  "final_response_allowed_claims": [
+    "closeout gates passed for the recorded run package evidence",
+    "visible CAD delivery is ready for user review",
+    "savedCurrentDwg=false",
+    "targetLayer=CODEX_PREVIEW"
+  ],
+  "input_files": [
+    "agent_outputs/visual_acceptance_output.json",
+    "cad_reports/dry_run_report.json",
+    "cad_reports/neighbor_protection.json",
+    "cad_reports/readback_summary.json",
+    "cad_reports/validation_report.json",
+    "dispatch_plan.json",
+    "state.json",
+    "task_contract.json"
+  ],
+  "output_files": [
+    "closeout_decision.json"
+  ],
+  "generatedAt": "2026-06-05T07:51:31Z",
+  "writer": "core.orchestrator.closeout_gate"
+}

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "handoff_packet/v1",
+  "fromAgentId": "pipeline_style_generator",
+  "toAgentIds": [
+    "pipeline_design_reviewer"
+  ],
+  "status": "ready",
+  "decisionSummary": "pass pass single",
+  "statePatch": {
+    "phase": "orchestrator_reviewed",
+    "phaseLabelForUser": "模型型 Agent 只读设计链路",
+    "completedEvidence": [
+      "Read explicit input payload, dispatch plan summary, rule context pack, upstream orchestrator/design director summaries."
+    ],
+    "pendingEvidence": [
+      "CAD_PLAN from downstream intent agent",
+      "validate_plan result",
+      "dry-run result",
+      "CODEX_PREVIEW result",
+      "CAD readback handles/bbox/layers",
+      "visual acceptance review"
+    ],
+    "pendingUserAction": "",
+    "blockedReason": "CAD execution is not authorized in this style generation review; dispatch plan is blocked for request_kind='draw' because cad_policy.allow_cad=false.",
+    "nextSafeAction": "Pass the selected style candidate to pipeline_visual_intent or pipeline_intent as preview-only design intent, then continue through validate, dry-run, preview, readback, and visual acceptance gates."
+  },
+  "evidenceRefs": [
+    "user_request.json: user asks for model agents to design a coffee table symbol and perform preview-only CAD validation.",
+    "dispatch_plan.json: request_kind='draw' is blocked before execution because cad_policy.allow_cad=false; route is standard_draw with required downstream gates.",
+    "rule_context_packs/pipeline_style_generator.json: model may only perform read-only judgment and must not execute CAD, save DWG, delete entities, or replace readback.",
+    "agent_outputs/pipeline_design_director.json summary: target is CAD furniture plan symbol / coffee table top-view block symbol, preview-only, not construction detail or true 3D modeling."
+  ],
+  "evidenceMissing": [
+    "No semanticDecomposition.designRouting object was provided, so candidate count policy was inferred from the explicit user request and rule instructions.",
+    "No CAD_PLAN exists in the evidence bundle.",
+    "No CAD readback, screenshot, handles, bbox, layer audit, dry-run, or visual acceptance evidence exists."
+  ],
+  "openQuestions": [],
+  "downstreamInstructions": [
+    "CAD execution is outside this agent's authority.",
+    "Dispatch plan is blocked before execution because request_kind='draw' requires cad_policy.allow_cad=true.",
+    "Generated candidate cannot prove geometry, style attributes, plot output, or user acceptance without downstream CAD gates.",
+    "Downstream CAD_PLAN or visual_intent that consumes selectedStyleCandidate.",
+    "validate_plan result for entity schema, layers, dimensions, and preview-only scope.",
+    "dry-run result before CAD write/preview.",
+    "CODEX_PREVIEW output if available.",
+    "CAD readback evidence including created handles, bbox, layers, colors, linetypes, and sourceSpec.",
+    "Visual acceptance review before delivery."
+  ],
+  "allowedClaims": [
+    "A single preview-only style candidate was generated for a CAD furniture plan coffee-table symbol.",
+    "The candidate is not CAD execution, not a DWG modification, and not verification of geometry or plotting.",
+    "No user choice is required because the request did not explicitly ask for multiple alternatives or comparison.",
+    "Downstream agents still need CAD_PLAN generation, validation, dry-run, preview, readback, and visual acceptance before delivery claims."
+  ],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "sha256OfSourceOutput": "1e1bfc071952b06c202e04fc89f090020e82cdce400450b465776a089725b016"
+}

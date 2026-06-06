@@ -1,0 +1,209 @@
+{
+  "version": "0.1",
+  "report_id": "cad-validation-trend-index",
+  "status": "pass",
+  "generated_at": "2026-06-05T11:04:27",
+  "vocabulary": {
+    "evidence_states": [
+      "cad_capability_verified",
+      "readback_geometry_verified",
+      "deferred_cad_readback_required",
+      "benchmark_pass_non_cad",
+      "blocked_expected_non_cad",
+      "dry_run_valid_plan_only",
+      "invalid_configuration",
+      "negative_guard_verified"
+    ],
+    "geometry_accuracy_values": [
+      "not_verified_by_screenshot",
+      "not_verified_without_cad_readback",
+      "verified_by_cad_capability_readback",
+      "verified_by_cad_readback"
+    ],
+    "screenshot_role_values": [
+      "not_applicable",
+      "visual_aid_only"
+    ],
+    "geometry_verified_evidence_states": [
+      "cad_capability_verified",
+      "readback_geometry_verified"
+    ],
+    "guard_only_evidence_states": [
+      "negative_guard_verified"
+    ]
+  },
+  "snapshots": [
+    {
+      "snapshot_id": "real_cad_validation",
+      "series_id": "cad_validation",
+      "source_kind": "cad_validation",
+      "source_path": "output/validation_runs/cad-validation-debt-closure-20260605/real_cad_validation/report.json",
+      "snapshot_at": "2026-06-05T10:54:51",
+      "evidence_state_counts": {
+        "cad_capability_verified": 0,
+        "readback_geometry_verified": 0,
+        "deferred_cad_readback_required": 0,
+        "benchmark_pass_non_cad": 0,
+        "blocked_expected_non_cad": 0,
+        "dry_run_valid_plan_only": 0,
+        "invalid_configuration": 0,
+        "negative_guard_verified": 0
+      },
+      "geometry_accuracy_counts": {
+        "not_verified_by_screenshot": 0,
+        "not_verified_without_cad_readback": 0,
+        "verified_by_cad_capability_readback": 0,
+        "verified_by_cad_readback": 0
+      },
+      "screenshot_role_counts": {
+        "not_applicable": 0,
+        "visual_aid_only": 0
+      },
+      "summary": {
+        "total_count": 0,
+        "geometry_verified_count": 0,
+        "cad_proof_state_count": 0,
+        "guard_only_count": 0,
+        "blocked_or_invalid_count": 0,
+        "deferred_count": 0,
+        "non_cad_only": true,
+        "benchmark_pass_non_cad_count": 0,
+        "blocked_expected_non_cad_count": 0,
+        "invalid_configuration_count": 0,
+        "readback_geometry_verified_count": 0,
+        "cad_capability_verified_count": 0,
+        "deferred_cad_readback_count": 0,
+        "dry_run_valid_plan_only_count": 0
+      },
+      "metrics": {
+        "status": "fail",
+        "legacy_status": "fail",
+        "include_cad": true,
+        "block_alpha_only": false,
+        "geometry_gate_mode": false
+      }
+    },
+    {
+      "snapshot_id": "real_cad_validation_escalated",
+      "series_id": "cad_validation",
+      "source_kind": "cad_validation",
+      "source_path": "output/validation_runs/cad-validation-debt-closure-20260605/real_cad_validation_escalated/report.json",
+      "snapshot_at": "2026-06-05T10:57:56",
+      "evidence_state_counts": {
+        "cad_capability_verified": 0,
+        "readback_geometry_verified": 1,
+        "deferred_cad_readback_required": 2,
+        "benchmark_pass_non_cad": 0,
+        "blocked_expected_non_cad": 0,
+        "dry_run_valid_plan_only": 0,
+        "invalid_configuration": 0,
+        "negative_guard_verified": 0
+      },
+      "geometry_accuracy_counts": {
+        "not_verified_by_screenshot": 0,
+        "not_verified_without_cad_readback": 2,
+        "verified_by_cad_capability_readback": 0,
+        "verified_by_cad_readback": 1
+      },
+      "screenshot_role_counts": {
+        "not_applicable": 1,
+        "visual_aid_only": 2
+      },
+      "summary": {
+        "total_count": 3,
+        "geometry_verified_count": 1,
+        "cad_proof_state_count": 1,
+        "guard_only_count": 0,
+        "blocked_or_invalid_count": 0,
+        "deferred_count": 2,
+        "non_cad_only": false,
+        "benchmark_pass_non_cad_count": 0,
+        "blocked_expected_non_cad_count": 0,
+        "invalid_configuration_count": 0,
+        "readback_geometry_verified_count": 1,
+        "cad_capability_verified_count": 0,
+        "deferred_cad_readback_count": 2,
+        "dry_run_valid_plan_only_count": 0
+      },
+      "metrics": {
+        "status": "fail",
+        "legacy_status": "fail",
+        "include_cad": true,
+        "block_alpha_only": false,
+        "geometry_gate_mode": false
+      }
+    },
+    {
+      "snapshot_id": "real_cad_validation_after_fix",
+      "series_id": "cad_validation",
+      "source_kind": "cad_validation",
+      "source_path": "output/validation_runs/cad-validation-debt-closure-20260605/real_cad_validation_after_fix/report.json",
+      "snapshot_at": "2026-06-05T11:04:27",
+      "evidence_state_counts": {
+        "cad_capability_verified": 1,
+        "readback_geometry_verified": 2,
+        "deferred_cad_readback_required": 0,
+        "benchmark_pass_non_cad": 0,
+        "blocked_expected_non_cad": 0,
+        "dry_run_valid_plan_only": 0,
+        "invalid_configuration": 0,
+        "negative_guard_verified": 0
+      },
+      "geometry_accuracy_counts": {
+        "not_verified_by_screenshot": 0,
+        "not_verified_without_cad_readback": 0,
+        "verified_by_cad_capability_readback": 1,
+        "verified_by_cad_readback": 2
+      },
+      "screenshot_role_counts": {
+        "not_applicable": 1,
+        "visual_aid_only": 2
+      },
+      "summary": {
+        "total_count": 3,
+        "geometry_verified_count": 3,
+        "cad_proof_state_count": 3,
+        "guard_only_count": 0,
+        "blocked_or_invalid_count": 0,
+        "deferred_count": 0,
+        "non_cad_only": false,
+        "benchmark_pass_non_cad_count": 0,
+        "blocked_expected_non_cad_count": 0,
+        "invalid_configuration_count": 0,
+        "readback_geometry_verified_count": 2,
+        "cad_capability_verified_count": 1,
+        "deferred_cad_readback_count": 0,
+        "dry_run_valid_plan_only_count": 0
+      },
+      "metrics": {
+        "status": "pass",
+        "legacy_status": "fail",
+        "include_cad": true,
+        "block_alpha_only": false,
+        "geometry_gate_mode": true
+      }
+    }
+  ],
+  "summary": {
+    "total_count": 6,
+    "geometry_verified_count": 4,
+    "cad_proof_state_count": 4,
+    "guard_only_count": 0,
+    "blocked_or_invalid_count": 0,
+    "deferred_count": 2,
+    "non_cad_only": false,
+    "benchmark_pass_non_cad_count": 0,
+    "blocked_expected_non_cad_count": 0,
+    "invalid_configuration_count": 0,
+    "readback_geometry_verified_count": 3,
+    "cad_capability_verified_count": 1,
+    "deferred_cad_readback_count": 2,
+    "dry_run_valid_plan_only_count": 0,
+    "snapshot_count": 3,
+    "series_count": 1
+  },
+  "notes": [
+    "LCAD-11.3 cad validation trend index.",
+    "This index is machine-readable evidence history; deferred/no-CAD snapshots do not add geometry_verified evidence."
+  ]
+}

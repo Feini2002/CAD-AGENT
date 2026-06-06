@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "deterministic-live-collab-audit/v1",
+  "status": "fail",
+  "agentId": "pipeline_audit",
+  "evidenceBundle": {
+    "upstreamOutputs": [
+      {
+        "agentId": "pipeline_design_director",
+        "path": "agent_outputs/pipeline_design_director.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "b01cc704b60200a9f27e7edda68fa7ec3e143e2dcf7e8b237e48399cf63be214",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_style_generator",
+        "path": "agent_outputs/pipeline_style_generator.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "dfbf7976631ac74e465d3fd26401cd21f2908ff8d2951fdef38411069cd750e0",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_design_reviewer",
+        "path": "agent_outputs/pipeline_design_reviewer.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "bd7bc6266ea140d046f15050a6346dc657793eb8089ac8b10055e61f5c26dca5",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_visual_intent",
+        "path": "agent_outputs/pipeline_visual_intent.json",
+        "status": "blocked",
+        "summary": "blocked",
+        "sha256": "f73380c03e314110815ce0833066ebe3c28cdcfad41f92701c82ccc95e9fe858",
+        "modelInvoked": false,
+        "schemaValid": true,
+        "modelUnavailable": null
+      },
+      {
+        "agentId": "pipeline_intent",
+        "path": "agent_outputs/pipeline_intent.json",
+        "status": "blocked",
+        "summary": "blocked",
+        "sha256": "15a0edf647d041504a80fafd3766e558d8c01a96fdb8e633c0886c9636db3711",
+        "modelInvoked": false,
+        "schemaValid": true,
+        "modelUnavailable": null
+      },
+      {
+        "agentId": "pipeline_audit:toolIntent",
+        "path": "tool_traces/pipeline_audit.intent-validate-cad-plan.json",
+        "status": "allowed",
+        "summary": "validate_plan is allowlisted; execution and pass/fail remain orchestrator-owned.",
+        "sha256": "",
+        "toolName": "validate_plan",
+        "executionStatus": "executed",
+        "resultStatus": "pass",
+        "reportPath": "cad_reports/validation_report.json"
+      },
+      {
+        "agentId": "pipeline_audit:toolIntent",
+        "path": "tool_traces/pipeline_audit.intent-dry-run-cad-plan.json",
+        "status": "allowed",
+        "summary": "dry_run_plan is allowlisted; execution and pass/fail remain orchestrator-owned.",
+        "sha256": "",
+        "toolName": "dry_run_plan",
+        "executionStatus": "executed",
+        "resultStatus": "pass",
+        "reportPath": "cad_reports/dry_run_report.json"
+      },
+      {
+        "agentId": "pipeline_intent:toolIntent",
+        "path": "tool_traces/pipeline_intent.intent-preview-cad-execute.json",
+        "status": "allowed",
+        "summary": "preview_cad_execute is allowlisted; execution and pass/fail remain orchestrator-owned.",
+        "sha256": "",
+        "toolName": "preview_cad_execute",
+        "executionStatus": "executed",
+        "resultStatus": "pass",
+        "reportPath": "cad_reports/cad_preview_tool_report.json"
+      }
+    ]
+  },
+  "checked": [
+    "downstream agents referenced upstream agent_outputs JSON",
+    "validate_plan and dry_run_plan ran before preview CAD execution",
+    "controlled CAD execution stayed under CODEX_PREVIEW contract",
+    "savedCurrentDwg=false is delegated to CAD preview tool report/readback"
+  ],
+  "conflictHandling": {
+    "status": "fail",
+    "checked": [
+      "model outputs have pass-like status",
+      "style selected candidate is present when candidates are declared",
+      "model agent outputs did not authorize CAD or save DWG"
+    ],
+    "conflicts": [
+      "pipeline_design_director did not pass",
+      "pipeline_style_generator did not pass"
+    ]
+  },
+  "blockingReasons": [
+    "pipeline_design_director did not pass",
+    "pipeline_style_generator did not pass"
+  ],
+  "learningCandidate": {
+    "decision": "review_required"
+  },
+  "modelProviderStatus": {
+    "modelInvoked": false,
+    "route": "deterministic_downstream_agent",
+    "schemaValid": true,
+    "blocking": true
+  }
+}

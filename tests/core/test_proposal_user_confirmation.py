@@ -110,6 +110,64 @@ class ProposalUserConfirmationTests(unittest.TestCase):
         errors = validate_confirmation_document(invalid)
         self.assertTrue(errors)
 
+    def test_confirmation_rejects_unknown_selected_candidate_but_allows_object_offsets(self) -> None:
+        proposal = create_design_proposal(
+            brief=load_example("examples/design_briefs/minimal_cabinet_brief.json"),
+            project_model=load_example("examples/project_models/minimal_cabinet_project.json"),
+            object_spec=load_example("examples/object_specs/minimal_cabinet_object.json"),
+            layout_proposal=multi_layout(),
+        )
+        confirmation = {
+            "version": "0.1",
+            "confirmation_id": "confirm-unknown-candidate",
+            "proposal_id": proposal["proposal_id"],
+            "action": "accept",
+            "selected_candidate_id": "candidate-missing",
+            "rejected_candidates": [],
+            "local_preferences": {
+                "candidate_weights": {"candidate-missing": 2.0},
+                "weight_source": "user_confirmation",
+                "placement_offsets": {"candidate-missing": [10, 0, 0]},
+                "notes": [],
+            },
+            "confirmed_by": "user",
+        }
+
+        errors = validate_confirmation_against_proposal(confirmation, proposal)
+
+        self.assertIn("selected_candidate_id not in proposal candidates: 'candidate-missing'", errors)
+        self.assertIn("local_preferences.candidate_weights unknown candidate: 'candidate-missing'", errors)
+        self.assertNotIn("local_preferences.placement_offsets unknown candidate: 'candidate-missing'", errors)
+
+    def test_confirmation_rejects_malformed_placement_offsets(self) -> None:
+        proposal = create_design_proposal(
+            brief=load_example("examples/design_briefs/minimal_cabinet_brief.json"),
+            project_model=load_example("examples/project_models/minimal_cabinet_project.json"),
+            object_spec=load_example("examples/object_specs/minimal_cabinet_object.json"),
+            layout_proposal=multi_layout(),
+        )
+        confirmation = {
+            "version": "0.1",
+            "confirmation_id": "confirm-bad-offset",
+            "proposal_id": proposal["proposal_id"],
+            "action": "accept",
+            "selected_candidate_id": proposal["candidates"][0]["candidate_id"],
+            "rejected_candidates": [],
+            "local_preferences": {
+                "candidate_weights": {},
+                "weight_source": "user_confirmation",
+                "placement_offsets": {"": [10, 0, 0], "object-bad": ["x", 0], "object-bool": [True, 0]},
+                "notes": [],
+            },
+            "confirmed_by": "user",
+        }
+
+        errors = validate_confirmation_against_proposal(confirmation, proposal)
+
+        self.assertIn("local_preferences.placement_offsets key must be non-empty", errors)
+        self.assertIn("local_preferences.placement_offsets non-numeric value for 'object-bad'", errors)
+        self.assertIn("local_preferences.placement_offsets non-numeric value for 'object-bool'", errors)
+
 
 if __name__ == "__main__":
     unittest.main()

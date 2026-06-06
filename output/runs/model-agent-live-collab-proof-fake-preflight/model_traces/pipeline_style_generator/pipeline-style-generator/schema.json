@@ -1,0 +1,252 @@
+{
+  "$defs": {
+    "learningCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "checkerDelta": {
+          "type": "string"
+        },
+        "correctPattern": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "errorPattern": {
+          "type": "string"
+        },
+        "promptDelta": {
+          "type": "string"
+        },
+        "responsibleAgentIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "retestOriginalTask": {
+          "type": "boolean"
+        },
+        "trigger": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision",
+        "trigger",
+        "responsibleAgentIds",
+        "errorPattern",
+        "correctPattern",
+        "promptDelta",
+        "checkerDelta",
+        "retestOriginalTask"
+      ],
+      "type": "object"
+    },
+    "statePatch": {
+      "additionalProperties": false,
+      "properties": {
+        "blockedReason": {
+          "type": "string"
+        },
+        "completedEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "nextSafeAction": {
+          "type": "string"
+        },
+        "pendingEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pendingUserAction": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "phaseLabelForUser": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase",
+        "phaseLabelForUser",
+        "completedEvidence",
+        "pendingEvidence",
+        "pendingUserAction",
+        "blockedReason",
+        "nextSafeAction"
+      ],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "candidateCountPolicy": {
+      "enum": [
+        "not_applicable",
+        "contextual_not_forced",
+        "single_or_auto_selected_allowed",
+        "respect_user_request",
+        "explicit_multi_candidate",
+        "explicit_count"
+      ],
+      "type": "string"
+    },
+    "candidateLabelPolicy": {
+      "enum": [
+        "not_applicable",
+        "abc",
+        "numeric_or_named_options"
+      ],
+      "type": "string"
+    },
+    "candidateTradeoffs": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tradeoff": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tradeoff"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "creativityPolicy": {
+      "enum": [
+        "contextual_not_forced",
+        "suppressed_by_user"
+      ],
+      "type": "string"
+    },
+    "evidenceMissing": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "evidenceUsed": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "finalResponseAllowedClaims": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "learningCandidate": {
+      "$ref": "#/$defs/learningCandidate"
+    },
+    "needsUserChoice": {
+      "type": "boolean"
+    },
+    "requestedCandidateCount": {
+      "maximum": 3,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "selectedStyleCandidate": {
+      "type": "string"
+    },
+    "semanticRoutingConfidence": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "type": "string"
+    },
+    "statePatch": {
+      "$ref": "#/$defs/statePatch"
+    },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "styleCandidates": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "maxItems": 3,
+      "minItems": 0,
+      "type": "array"
+    },
+    "styleDecision": {
+      "enum": [
+        "waived",
+        "single",
+        "multiple"
+      ],
+      "type": "string"
+    },
+    "styleParameterGrammar": {
+      "additionalProperties": false,
+      "properties": {
+        "scale": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "scale"
+      ],
+      "type": "object"
+    },
+    "styleWaiverReason": {
+      "type": "string"
+    },
+    "toolIntent": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "status",
+    "styleDecision",
+    "styleCandidates",
+    "selectedStyleCandidate",
+    "styleParameterGrammar",
+    "candidateTradeoffs",
+    "needsUserChoice",
+    "styleWaiverReason",
+    "candidateCountPolicy",
+    "requestedCandidateCount",
+    "candidateLabelPolicy",
+    "creativityPolicy",
+    "semanticRoutingConfidence",
+    "learningCandidate",
+    "statePatch",
+    "finalResponseAllowedClaims",
+    "evidenceUsed",
+    "evidenceMissing"
+  ],
+  "type": "object"
+}

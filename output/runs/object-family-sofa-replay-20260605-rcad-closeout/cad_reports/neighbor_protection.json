@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "reason": "single isolated replay target; no neighbor edit/delete operation requested",
+  "targetLayer": "CODEX_PREVIEW",
+  "targetBBox": {
+    "min": [
+      62000.0,
+      36100.0
+    ],
+    "max": [
+      64200.0,
+      36900.0
+    ],
+    "size": [
+      2200.0,
+      800.0
+    ]
+  }
+}

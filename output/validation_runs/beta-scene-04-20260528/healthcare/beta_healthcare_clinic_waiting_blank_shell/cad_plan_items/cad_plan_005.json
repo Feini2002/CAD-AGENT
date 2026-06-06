@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": {
+    "type": "shelf",
+    "name": "Shelf",
+    "width": 900,
+    "depth": 350,
+    "height": 2000,
+    "object_spec_id": "object-shelf-900x350"
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      6100.0,
+      0.0,
+      0
+    ]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 0.9,
+  "needs_confirmation": false
+}

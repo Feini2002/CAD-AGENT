@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "orchestrator-host-risk-assessment/v1",
+  "runId": "model-agent-live-collab-proof-20260606-064743",
+  "status": "blocked",
+  "route": "standard_draw",
+  "riskLevel": "normal",
+  "riskFlags": {
+    "visibleCadOutput": true,
+    "deleteOrCleanup": false,
+    "nearbyPlacement": false,
+    "systemAsset": false,
+    "modelOnly": true
+  },
+  "requiredBeforeCad": [
+    "validate_plan",
+    "dry_run",
+    "created_handles_readback"
+  ],
+  "mustNotDo": [
+    "do not write CAD from orchestrator host",
+    "do not save current business DWG",
+    "do not modify formal layers",
+    "do not activate unregistered agents",
+    "do not claim geometry verified from model or screenshot alone"
+  ]
+}

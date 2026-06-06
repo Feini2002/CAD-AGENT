@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "handoff_packet/v1",
+  "fromAgentId": "pipeline_design_reviewer",
+  "toAgentIds": [
+    "pipeline_intent",
+    "pipeline_audit",
+    "pipeline_delivery"
+  ],
+  "status": "blocked",
+  "decisionSummary": "unavailable unavailable 无法完成专业设计复核：当前证据包显示 standard_draw 路由在 CAD 执行前已被阻断，且 evidenceBundle 中 cadPlan、readback、screenshot 均为 null。现有上游摘要只能证明设计意图为“室内/家具平面 CAD 符号：茶几 top-view symbol”，以及 style_generator 为 single 候选；不能证明最终 CAD 输出存在、图元 handles/bbox/layer/sourceSpec 正确、比例可读、视觉验收通过或用户已接受。",
+  "statePatch": {
+    "phase": "orchestrator_reviewed",
+    "phaseLabelForUser": "模型型 Agent 只读设计链路",
+    "completedEvidence": [
+      "upstream orchestrator summary",
+      "design director intent summary",
+      "style generator single-candidate summary",
+      "dispatch blocked status"
+    ],
+    "pendingEvidence": [
+      "CAD_PLAN content",
+      "validated preview-only execution result",
+      "CAD readback handles/bbox/layers/sourceSpec",
+      "visual acceptance review",
+      "user acceptance or explicit A/B/C choice if multiple candidates are generated"
+    ],
+    "pendingUserAction": "",
+    "blockedReason": "request_kind='draw' requires cad_policy.allow_cad=true; no CAD output/readback/visual evidence is present for design review",
+    "nextSafeAction": "Return to gated pipeline step to produce or provide CAD_PLAN/readback/visual acceptance evidence without authorizing this reviewer to write CAD."
+  },
+  "evidenceRefs": [
+    "dispatchPlan.status=blocked",
+    "dispatchPlan.blockingReasons=request_kind='draw' requires cad_policy.allow_cad=true",
+    "ruleContextPack.evidenceBundle.cadPlan=null",
+    "ruleContextPack.evidenceBundle.readback=null",
+    "ruleContextPack.evidenceBundle.screenshot=null",
+    "pipeline_design_director.summary=茶几 top-view symbol for interior/furniture plan",
+    "pipeline_style_generator.summary=pass single",
+    "ruleDigest: 截图不能替代 handles、bbox、layer、sourceSpec 或用户验收",
+    "ruleDigest: 自然语言必须先形成 CAD_PLAN 并经过 validate、dry-run 和证据门禁"
+  ],
+  "evidenceMissing": [
+    "CAD_PLAN contents and selectedStyleCandidate details",
+    "preview-only CAD execution result",
+    "readback handles, bbox, layers, sourceSpec, and reuse/replay evidence",
+    "visual acceptance reviewer output or screenshot evidence",
+    "final CAD output evidence suitable for comparing against designStrategy/styleCandidates/CAD_PLAN",
+    "user choice evidence if multiple candidates are later generated"
+  ],
+  "openQuestions": [],
+  "downstreamInstructions": [
+    "Dispatch plan is blocked before CAD execution.",
+    "cadExecutionAuthorized=false and savedCurrentDwg=false.",
+    "cadPlan/readback/screenshot are null in the evidence bundle.",
+    "Professional drawing quality, readability, industry convention fit, proportion, and purpose match cannot be evaluated without final output evidence.",
+    "Provide the actual CAD_PLAN and selectedStyleCandidate/styleCandidates.",
+    "Run authorized preview-only CAD validation through the proper execute/audit gates, not through this reviewer.",
+    "Provide readback summary with handles, bbox, layers, sourceSpec, and any reuse/replay evidence.",
+    "Provide visual acceptance review evidence; screenshot may assist but cannot replace readback.",
+    "If multiple style candidates are generated, ask the user to choose A/B/C before accepting one as final."
+  ],
+  "allowedClaims": [
+    "当前只能声明设计复核不可用，原因是缺少 CAD_PLAN、readback 和视觉验收证据。",
+    "可以声明上游设计意图摘要为茶几 top-view CAD 符号，适合室内/家具平面布置图。",
+    "可以声明 style_generator 摘要显示 single 候选，因此当前没有 A/B/C 用户选择证据。",
+    "不得声明最终 CAD 图纸专业、可读、比例正确、行业习惯匹配或可交付。"
+  ],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "sha256OfSourceOutput": "30fc6dfebd97821abcd1e81b38756bc1c6d0001864185813267c7baf9b02bd1c"
+}

@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "model-agent-live-collab-proof-result/v1",
+  "status": "not_verified",
+  "runId": "model-agent-live-fixture-third-check",
+  "modelChainStatus": "ready",
+  "agentOutputChain": [
+    {
+      "agentId": "pipeline_design_director",
+      "path": "agent_outputs/pipeline_design_director.json",
+      "status": "pass",
+      "summary": "pass presentation_preview",
+      "sha256": "6f3577b9da25a6221aab3e18794aae5e6e635d5ceec38c22e67e606750ba7ede",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false,
+      "handoffPath": "agent_outputs/pipeline_design_director.handoff.json",
+      "handoffSha256": "0a89dac10693ac07d91ff0c378fadb241657fc0c01bab29f9565f8f244b9ace7"
+    },
+    {
+      "agentId": "pipeline_style_generator",
+      "path": "agent_outputs/pipeline_style_generator.json",
+      "status": "pass",
+      "summary": "pass multiple",
+      "sha256": "afdd1bb60ed544b85c1580ce1b33aeba78a457a0296cdaefaca5c423b4d7489b",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false,
+      "handoffPath": "agent_outputs/pipeline_style_generator.handoff.json",
+      "handoffSha256": "85aaba94b744656db242cccea1f9cba5cadbba3cc1ba46128cd3bcf016a276d9"
+    },
+    {
+      "agentId": "pipeline_design_reviewer",
+      "path": "agent_outputs/pipeline_design_reviewer.json",
+      "status": "pass",
+      "summary": "pass",
+      "sha256": "43bbce2cbe629079aae97d145f280465cf450c4cd4a4da5085c98f59690abf4c",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false,
+      "handoffPath": "agent_outputs/pipeline_design_reviewer.handoff.json",
+      "handoffSha256": "ab77205273d8a95f25327d1b9a4d4ab40f349aae15a1c3359f8f3586697ed95b"
+    },
+    {
+      "agentId": "pipeline_visual_intent",
+      "path": "agent_outputs/pipeline_visual_intent.json",
+      "status": "ready",
+      "summary": "ready",
+      "sha256": "b167c6230167387cc75dceacb6503d6fd8ce33a384345db159fd8339485dc92a",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    },
+    {
+      "agentId": "pipeline_intent",
+      "path": "agent_outputs/pipeline_intent.json",
+      "status": "ready",
+      "summary": "ready",
+      "sha256": "d25bc2d0b7560075e418cd7717f69ced75e99189af3df09a913f6dd5955b5522",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    },
+    {
+      "agentId": "pipeline_audit",
+      "path": "agent_outputs/pipeline_audit.json",
+      "status": "pass",
+      "summary": "pass",
+      "sha256": "40be68537ea3c1154329e6b2590611a9c1e04ffe5a0bb5975f017cae6e1130ad",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    },
+    {
+      "agentId": "pipeline_delivery",
+      "path": "agent_outputs/pipeline_delivery.json",
+      "status": "fail",
+      "summary": "fail not_verified",
+      "sha256": "a8807aa096366704aee8836c2b096e13635597f4370d5d4b33905d55389df78f",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    }
+  ],
+  "cadProof": {
+    "status": "pass",
+    "resultStatus": "not_verified",
+    "driverMode": "fake_driver_preflight",
+    "createdHandleCount": 7,
+    "readbackStatus": "not_verified",
+    "readbackEntityCount": 7,
+    "cadGeometryVerified": false,
+    "savedCurrentDwg": false,
+    "reportPath": "cad_reports/cad_preview_tool_report.json"
+  },
+  "encodingPreflight": {
+    "status": "pass",
+    "checkedTextCount": 28,
+    "issueCount": 0,
+    "issues": [],
+    "policy": "fail_before_cad_write_or_asset_contract_write"
+  },
+  "conflictHandling": {
+    "status": "pass",
+    "checked": [
+      "model outputs have pass-like status",
+      "style selected candidate is present when candidates are declared",
+      "model agent outputs did not authorize CAD or save DWG"
+    ],
+    "conflicts": []
+  },
+  "cadContinuationPolicy": {
+    "mode": "normal_after_model_chain_pass",
+    "modelBlockingReasons": [],
+    "cadToolsRan": true
+  },
+  "closeoutEvidence": {
+    "status": "not_verified",
+    "canDeliver": false,
+    "blockingReasons": [
+      "created_handles_readback not ok",
+      "visual_acceptance_review missing",
+      "neighbor_protection missing",
+      "real CAD geometry not verified",
+      "visual_acceptance_review missing or not pass",
+      "neighbor_protection missing or not pass"
+    ],
+    "evidenceBoundary": {
+      "checked": [
+        "validate_plan=pass",
+        "dry_run=pass",
+        "savedCurrentDwg=false",
+        "targetLayer=CODEX_PREVIEW"
+      ],
+      "not_checked": [
+        "created_handles_readback",
+        "created_handles_readback=ok",
+        "neighbor_protection",
+        "neighbor_protection=pass",
+        "real CAD geometry verified",
+        "visual_acceptance_review",
+        "visual_acceptance_review=pass"
+      ],
+      "screenshots": {
+        "role": "visual_aid_only",
+        "count": 0,
+        "files": [],
+        "cannotReplace": [
+          "created_handles_readback",
+          "visual_acceptance_review"
+        ]
+      },
+      "notProven": [
+        "user acceptance",
+        "geometry outside the reported created handles/readback",
+        "future edits after this closeout decision"
+      ]
+    }
+  },
+  "writtenFiles": [
+    "model_agent_chain_result.json",
+    "agent_outputs/pipeline_visual_intent.json",
+    "agent_outputs/pipeline_intent.json",
+    "agent_outputs/pipeline_audit.json",
+    "agent_outputs/pipeline_delivery.json",
+    "candidate_outputs/cad_plan.candidate.json",
+    "cad_reports/validation_report.json",
+    "cad_reports/dry_run_report.json",
+    "cad_reports/cad_preview_tool_report.json",
+    "cad_reports/execution_summary.json",
+    "cad_reports/readback_summary.json",
+    "closeout_decision.json",
+    "final_report.md",
+    "model_agent_live_collab_completion_audit.json"
+  ],
+  "evidenceBoundary": [
+    "design_director/style_generator/design_reviewer are model-backed when modelProviderStatus.modelInvoked=true",
+    "pipeline_visual_intent/pipeline_intent/pipeline_audit are deterministic downstream agents in this proof",
+    "CAD execution is controlled by tool_contract, not by model output",
+    "savedCurrentDwg=false is required; user acceptance and table C increase are not proven"
+  ],
+  "generatedAt": "2026-06-05T08:58:33Z",
+  "completionAudit": {
+    "path": "model_agent_live_collab_completion_audit.json",
+    "status": "not_complete",
+    "blockingRequirements": [
+      "closeoutDeliveryClaim",
+      "realCadPreviewValidation",
+      "screenshotVisualAid"
+    ]
+  }
+}

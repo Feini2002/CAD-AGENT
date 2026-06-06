@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "local-visual-acceptance-output/v1",
+  "status": "pass",
+  "visualAcceptanceDecision": "pass",
+  "reviewer": "codex_local_visual_sanity_check",
+  "screenshot": "screenshots/preview.png",
+  "readbackSummary": "cad_reports/readback_summary.json",
+  "blockingReasons": [],
+  "visualProblems": [],
+  "lookHereFirst": [
+    "table outline",
+    "short Chinese label",
+    "dimension lines"
+  ],
+  "checked": [
+    "screenshot is non-empty and focused on execution_summary.created_handles",
+    "short Chinese label is visually readable inside the object area",
+    "CAD readback remains the geometry authority",
+    "non-screenshot evidence checked through readback_summary.json"
+  ],
+  "evidenceBoundary": {
+    "checked": [
+      "screenshot visual sanity",
+      "created handles readback referenced",
+      "non screenshot evidence checked"
+    ],
+    "notProven": [
+      "user acceptance",
+      "GPT-5.5 visual review",
+      "live model-agent invocation",
+      "geometry outside created handles"
+    ]
+  },
+  "modelProviderStatus": {
+    "modelInvoked": false,
+    "route": "local_visual_sanity_check",
+    "schemaValid": true,
+    "blocking": false
+  }
+}

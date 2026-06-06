@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "worker_run_state/v1",
+  "runId": "run_20260606070743_single_agent_live",
+  "runDir": "output\\model_reviews\\local_live_model_bridge_diagnostics_smoke\\run_20260606070743_single_agent_live",
+  "workspaceId": "cad-agent-core-lab",
+  "requestedBy": "codex_chat",
+  "state": "waiting_for_bridge",
+  "currentStage": "single_agent_live",
+  "completionClaim": "single_agent_live",
+  "featureGates": {
+    "worker_orchestration_ready": {
+      "enabled": true,
+      "enabledBy": "target_stage:single_agent_live",
+      "nextAction": ""
+    },
+    "local_bridge_connected": {
+      "enabled": true,
+      "enabledBy": "target_stage:single_agent_live",
+      "nextAction": ""
+    },
+    "single_agent_live": {
+      "enabled": true,
+      "enabledBy": "target_stage:single_agent_live",
+      "nextAction": ""
+    },
+    "multi_agent_live": {
+      "enabled": false,
+      "enabledBy": "default_closed",
+      "nextAction": "enable_multi_agent_live_chain"
+    },
+    "cad_mcp_preview_live": {
+      "enabled": false,
+      "enabledBy": "default_closed",
+      "nextAction": "enable_cad_preview_after_validate_and_dry_run"
+    },
+    "current_dwg_save": {
+      "enabled": false,
+      "enabledBy": "default_closed",
+      "nextAction": "requires_explicit_save_authorization"
+    }
+  },
+  "requestSummary": "plain language requires live model but bridge is offline",
+  "tasks": [
+    {
+      "taskId": "task_pipeline_design_director_001",
+      "agentId": "pipeline_design_director",
+      "state": "pending",
+      "dependsOn": [],
+      "attempt": 0,
+      "retryCount": 0,
+      "maxAttempts": 1,
+      "timeoutSeconds": 30,
+      "leasedBy": "",
+      "leaseExpiresAt": "",
+      "heartbeatAt": "",
+      "blockedReason": "",
+      "allowedTools": [
+        "codex_cli_model_review"
+      ],
+      "forbiddenActions": [
+        "shell_arbitrary",
+        "save_current_dwg",
+        "delete_unscoped_entities",
+        "upload_full_repo"
+      ],
+      "envelope": {
+        "schemaVersion": "worker_task_envelope/v1",
+        "runId": "run_20260606070743_single_agent_live",
+        "taskId": "task_pipeline_design_director_001",
+        "workspaceId": "cad-agent-core-lab",
+        "requestedBy": "codex_chat",
+        "stage": "single_agent_live",
+        "agentId": "pipeline_design_director",
+        "promptPackId": "pipeline_design_director",
+        "inputRefs": [],
+        "allowedTools": [
+          "codex_cli_model_review"
+        ],
+        "forbiddenActions": [
+          "shell_arbitrary",
+          "save_current_dwg",
+          "delete_unscoped_entities",
+          "upload_full_repo"
+        ],
+        "outputSchema": "agent_output/pipeline_design_director/v1",
+        "timeoutSeconds": 30,
+        "idempotencyKey": "run_20260606070743_single_agent_live:task_pipeline_design_director_001:attempt"
+      }
+    }
+  ],
+  "modelInvoked": false,
+  "modelUnavailable": false,
+  "schemaValid": false,
+  "cadGeometryVerified": false,
+  "retryCount": 0,
+  "timeoutCount": 0,
+  "dlqCount": 0,
+  "securityBlocks": [],
+  "blockedReasons": [
+    "bridge process is not running"
+  ],
+  "acceptedIdempotencyKeys": [],
+  "circuitBreakers": {
+    "local_bridge": {
+      "state": "open",
+      "reason": "bridge process is not running",
+      "openedAt": ""
+    },
+    "codex_cli_model_review": {
+      "state": "closed",
+      "reason": "",
+      "openedAt": ""
+    },
+    "cad_mcp_preview": {
+      "state": "closed",
+      "reason": "",
+      "openedAt": ""
+    },
+    "worker_queue": {
+      "state": "closed",
+      "reason": "",
+      "openedAt": ""
+    },
+    "security_gate": {
+      "state": "closed",
+      "reason": "",
+      "openedAt": ""
+    }
+  },
+  "auditEvents": [
+    {
+      "schemaVersion": "worker_audit_event/v1",
+      "eventType": "run_created",
+      "runId": "run_20260606070743_single_agent_live",
+      "taskId": "",
+      "summary": "created 1 worker task(s)",
+      "at": "2026-06-06T07:07:43Z"
+    },
+    {
+      "schemaVersion": "worker_audit_event/v1",
+      "eventType": "bridge_unavailable",
+      "runId": "run_20260606070743_single_agent_live",
+      "taskId": "",
+      "summary": "bridge_user_pc_001: bridge process is not running",
+      "at": "2026-06-06T07:07:43Z"
+    }
+  ],
+  "createdAt": "2026-06-06T07:07:43Z",
+  "updatedAt": "2026-06-06T07:07:43Z"
+}

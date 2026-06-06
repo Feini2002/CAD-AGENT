@@ -1,0 +1,177 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "additionalAgentRequests": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "agentId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "needs_reviewed_package",
+              "needs_openspec_change"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "agentId",
+          "reason",
+          "status"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "blockedBeforeExecution": {
+      "type": "boolean"
+    },
+    "blockingReasons": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "dispatchRationale": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "agentId": {
+            "type": "string"
+          },
+          "gate": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agentId",
+          "reason",
+          "gate"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "evidenceMissing": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "evidenceUsed": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "finalResponseAllowedClaims": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "hardGates": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "needsUserConfirmation": {
+      "type": "boolean"
+    },
+    "requiredAgents": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "route": {
+      "type": "string"
+    },
+    "statePatch": {
+      "additionalProperties": false,
+      "properties": {
+        "blockedReason": {
+          "type": "string"
+        },
+        "completedEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "nextSafeAction": {
+          "type": "string"
+        },
+        "pendingEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pendingUserAction": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "phaseLabelForUser": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase",
+        "phaseLabelForUser",
+        "completedEvidence",
+        "pendingEvidence",
+        "pendingUserAction",
+        "blockedReason",
+        "nextSafeAction"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "taskKind": {
+      "type": "string"
+    },
+    "toolIntent": {
+      "type": "object"
+    },
+    "userIntentSummary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "route",
+    "taskKind",
+    "userIntentSummary",
+    "requiredAgents",
+    "dispatchRationale",
+    "hardGates",
+    "needsUserConfirmation",
+    "blockedBeforeExecution",
+    "blockingReasons",
+    "additionalAgentRequests",
+    "statePatch",
+    "finalResponseAllowedClaims",
+    "evidenceUsed",
+    "evidenceMissing"
+  ],
+  "type": "object"
+}

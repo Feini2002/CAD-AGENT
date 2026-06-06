@@ -1,0 +1,103 @@
+{
+  "version": "0.1",
+  "composition_id": "cabinet_pullback_conflict",
+  "name": "Cabinet Pullback Conflict",
+  "domain": "office",
+  "persona_role": "healthcare_planner",
+  "request_text": "诊区收纳与椅后净空冲突（预期 blocked）",
+  "objects": [
+    {
+      "instance_id": "desk-01",
+      "type": "desk",
+      "name": "Office Desk",
+      "role": "work_surface",
+      "base_point": [
+        0,
+        700,
+        0
+      ],
+      "size": {
+        "width": 1400,
+        "depth": 700,
+        "height": 750
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "chair-01",
+      "type": "chair",
+      "name": "Task Chair",
+      "role": "seating_for_desk",
+      "base_point": [
+        450,
+        0,
+        0
+      ],
+      "size": {
+        "width": 500,
+        "depth": 500,
+        "height": 850
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "cabinet-01",
+      "type": "cabinet",
+      "name": "Back Cabinet",
+      "role": "general_storage",
+      "base_point": [
+        200,
+        750,
+        0
+      ],
+      "size": {
+        "width": 1800,
+        "depth": 600,
+        "height": 2400
+      },
+      "include_dimensions": false
+    }
+  ],
+  "bbox": {
+    "min": [
+      0,
+      0
+    ],
+    "max": [
+      2000,
+      1400
+    ]
+  },
+  "evidence": {
+    "geometry_accuracy": "not_verified_without_cad_readback",
+    "screenshot_role": "visual_aid_only"
+  },
+  "bindings": [
+    {
+      "from_instance_id": "chair-01",
+      "to_instance_id": "desk-01",
+      "relation": "seating_for_desk"
+    },
+    {
+      "from_instance_id": "cabinet-01",
+      "to_instance_id": "desk-01",
+      "relation": "storage_behind_desk"
+    }
+  ],
+  "clearance_refs": [
+    {
+      "role": "chair_pullback_clearance",
+      "bound_to": "chair-01",
+      "behind_depth_mm": 800,
+      "side_margin_mm": 150
+    },
+    {
+      "role": "cabinet_front_clearance",
+      "bound_to": "cabinet-01",
+      "front_depth_mm": 800
+    }
+  ],
+  "layout_notes": [
+    "chair_pullback_and_cabinet_front_clearance_intentionally_overlap"
+  ]
+}

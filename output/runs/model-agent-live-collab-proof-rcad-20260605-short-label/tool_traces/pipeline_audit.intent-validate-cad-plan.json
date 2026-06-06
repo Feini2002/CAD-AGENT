@@ -1,0 +1,41 @@
+{
+  "blockingReasons": [],
+  "deterministicEntryPoint": "core.orchestrator.tool_contract.deterministic_verifiers.validate_plan",
+  "downstreamArtifactPath": "tool_traces/pipeline_audit.intent-validate-cad-plan.json",
+  "downstreamReadableSummary": "validate_plan is allowlisted; execution and pass/fail remain orchestrator-owned.",
+  "evidenceBoundary": [
+    "tool intent gate only permits orchestrator-owned allowlisted execution",
+    "model requests cannot authorize CAD writes outside controlled CODEX_PREVIEW execution, deletes, saves, registry mutations, or table C claims",
+    "allowed verification or controlled-CAD intent only means the orchestrator may run the relevant gate; the model cannot decide pass/fail"
+  ],
+  "executionStatus": "executed",
+  "expectedEvidence": [
+    "cad_reports/validation_report.json"
+  ],
+  "generatedAt": "2026-06-05T07:13:54Z",
+  "orchestratorDecision": "allowed",
+  "permissionClass": "deterministic_verify",
+  "requestedByAgentId": "pipeline_audit",
+  "result": {
+    "evidenceBoundary": [
+      "validate_plan is deterministic JSON validation only",
+      "validation pass does not prove CAD geometry, CAD write, readback, screenshot, or user acceptance"
+    ],
+    "planPath": "candidate_outputs/cad_plan.candidate.json",
+    "reason": "",
+    "reportPath": "cad_reports/validation_report.json",
+    "status": "pass",
+    "toolStage": "stage3_deterministic_verify",
+    "validationErrors": []
+  },
+  "riskLevel": "low",
+  "runId": "model-agent-live-collab-proof-rcad-20260605-short-label",
+  "schemaVersion": "tool-trace/v1",
+  "targetScope": {
+    "scopeType": "run_artifact",
+    "targetPath": "candidate_outputs/cad_plan.candidate.json"
+  },
+  "toolIntentId": "intent-validate-cad-plan",
+  "toolName": "validate_plan",
+  "toolSchemaVersion": "tool-intent/v1"
+}

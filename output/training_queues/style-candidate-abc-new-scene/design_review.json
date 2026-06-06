@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "designReview": "A/B/C 三套候选均已落成预览对象；本轮目标是请用户选方向，而不是自动替用户定稿。",
+  "professionalDrawingLike": "pass",
+  "readability": "pass",
+  "industryHabitFit": "pass",
+  "scaleAndProportionFit": "pass",
+  "styleCandidateFit": "pass",
+  "contentMatchesDesignPurpose": "pass",
+  "needsUserChoice": true,
+  "repairOrRegenerateRecommendation": {
+    "mode": "ask_user_choice",
+    "reason": "三个候选服务于不同密度和展示目的，需要用户选择 A/B/C。"
+  },
+  "learningCandidate": {
+    "status": "not_required",
+    "reason": "fake/real readback pass 后等待用户偏好，不做长期晋升。"
+  }
+}

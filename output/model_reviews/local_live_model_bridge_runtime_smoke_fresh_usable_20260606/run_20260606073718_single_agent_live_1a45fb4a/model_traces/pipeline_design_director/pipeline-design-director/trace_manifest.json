@@ -1,0 +1,106 @@
+{
+  "agentId": "pipeline_design_director",
+  "createdAt": "2026-06-06T07:37:18Z",
+  "files": {
+    "command": "command.json",
+    "contextLeakAudit": "context_leak_audit.json",
+    "events": "events.jsonl",
+    "exportManifest": "export_manifest.json",
+    "gateDecision": "gate_decision.json",
+    "lastMessage": "last_message.json",
+    "normalizedOutput": "normalized_output.json",
+    "prompt": "prompt.md",
+    "schemaSnapshot": "schema.json",
+    "stderr": "stderr.txt",
+    "stdout": "stdout.txt",
+    "traceReview": "trace_review.json",
+    "traceSummary": "trace_summary.md"
+  },
+  "gateDecision": {
+    "blocking": false,
+    "blockingReasons": [],
+    "contextLeakAudit": {
+      "blocking": false,
+      "schemaVersion": "model-context-leak-audit/v1",
+      "unexpectedProjectContextLoaded": false,
+      "warnings": []
+    },
+    "evidenceBoundary": [
+      "model gate decision does not prove CAD geometry",
+      "model gate decision does not authorize CAD writes, deletes, saves, or verified capability claims"
+    ],
+    "modelProviderStatus": {
+      "blocking": false,
+      "errorCategory": "",
+      "modelInvoked": true,
+      "modelUnavailable": false,
+      "provider": "codex_cli",
+      "reason": "",
+      "required": true,
+      "route": "codex_cli_local",
+      "routePolicy": {
+        "allowsImages": true,
+        "externalData": false,
+        "label": "本机 Codex CLI / GPT-5.5 Medium",
+        "notes": [
+          "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+        ],
+        "requiresUserAuthorization": false,
+        "route": "codex_cli_local",
+        "transport": "local_cli"
+      },
+      "schemaValid": true,
+      "status": "schema_valid"
+    },
+    "schemaValidation": {
+      "issues": [],
+      "missingFields": [],
+      "status": "pass"
+    },
+    "schemaVersion": 1,
+    "status": "pass"
+  },
+  "inputs": {
+    "imagePaths": [],
+    "outputPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\local_live_model_bridge_runtime_smoke_fresh_usable_20260606\\run_20260606073718_single_agent_live_1a45fb4a\\agent_outputs\\pipeline_design_director.raw_model_review.json",
+    "schemaPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\core\\model_review\\schemas\\design_director_review.schema.json",
+    "summaryRefs": []
+  },
+  "modelProviderStatus": {
+    "blocking": false,
+    "errorCategory": "",
+    "modelInvoked": true,
+    "modelUnavailable": false,
+    "provider": "codex_cli",
+    "reason": "",
+    "required": true,
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "allowsImages": true,
+      "externalData": false,
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ],
+      "requiresUserAuthorization": false,
+      "route": "codex_cli_local",
+      "transport": "local_cli"
+    },
+    "schemaValid": true,
+    "status": "schema_valid"
+  },
+  "modelStrategy": {
+    "ignoreRules": true,
+    "ignoreUserConfig": true,
+    "model": "gpt-5.5",
+    "reasoningEffort": "medium",
+    "sandbox": "read-only",
+    "skipGitRepoCheck": true
+  },
+  "provider": "codex_cli",
+  "route": "codex_cli_local",
+  "schemaVersion": 1,
+  "taskType": "design_director_review",
+  "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\local_live_model_bridge_runtime_smoke_fresh_usable_20260606\\run_20260606073718_single_agent_live_1a45fb4a\\model_traces\\pipeline_design_director\\pipeline-design-director",
+  "traceId": "pipeline-design-director"
+}

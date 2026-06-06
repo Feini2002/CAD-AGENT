@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "no-cad-chain-delivery/v1",
+  "status": "blocked",
+  "deliveryDecision": "not_verified",
+  "evidenceBundle": {
+    "upstreamOutputs": [
+      {
+        "agentId": "pipeline_design_director",
+        "path": "agent_outputs/pipeline_design_director.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "0d4547a0509862dff6b86669e9a894dad2efc6855e6de1951751c36de0995968",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true,
+        "handoffPath": "agent_outputs/pipeline_design_director.handoff.json",
+        "handoffSha256": "3985cfb161b3431e92290b469dba8d7201de723878a342f6b4cacdbba3a039d9"
+      },
+      {
+        "agentId": "pipeline_style_generator",
+        "path": "agent_outputs/pipeline_style_generator.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "33372c439fb0d0b36d2a0eaf61a306d25975ac9e0460e051eb84b6d56475af73",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true,
+        "handoffPath": "agent_outputs/pipeline_style_generator.handoff.json",
+        "handoffSha256": "17e7654ceed645580d6a19e10244c42351d573bff5ee71f644d988ea0bee6b2c"
+      },
+      {
+        "agentId": "pipeline_design_reviewer",
+        "path": "agent_outputs/pipeline_design_reviewer.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "8631f5a0f041e0d5132b7a8ab7f9764e908c9a80fc6b55643e9641bf3eba7c13",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true,
+        "handoffPath": "agent_outputs/pipeline_design_reviewer.handoff.json",
+        "handoffSha256": "cf170ac009075ae4891996db0a1ca0489ebc8d5bba428cc32733149e76c07a2c"
+      }
+    ]
+  },
+  "allowedClaims": [],
+  "blockingReasons": [
+    "pipeline_design_director model output not pass",
+    "pipeline_style_generator model output not pass",
+    "pipeline_design_reviewer model output not pass"
+  ],
+  "cadExecutionAuthorized": false,
+  "savedCurrentDwg": false,
+  "evidenceDoesNotProve": [
+    "CAD geometry",
+    "created handles readback",
+    "user acceptance",
+    "table C capability increase"
+  ]
+}

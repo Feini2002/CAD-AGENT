@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "reviewer-host-delivery-review/v1",
+  "status": "pass",
+  "deliveryDecision": "ready_to_ask_user_review",
+  "openingLine": "可验收",
+  "whatChanged": [
+    "Reviewer Host 已读取 run package 证据并生成交付口径"
+  ],
+  "evidenceProves": [
+    "validate_plan=pass",
+    "dry_run=pass",
+    "created_handles_readback=ok",
+    "savedCurrentDwg=false",
+    "targetLayer=CODEX_PREVIEW",
+    "visual_acceptance_review=pass",
+    "neighbor_protection=pass"
+  ],
+  "evidenceDoesNotProve": [
+    "截图只作视觉辅助",
+    "模型 pass 不等于 CAD 几何证明",
+    "closeout pass 不等于用户已验收"
+  ],
+  "lookHereFirst": [
+    "主要对象位置",
+    "中文文字是否可读",
+    "遮挡 / 裁剪 / 贴边",
+    "本轮 created handles 范围"
+  ],
+  "usefulUserFeedback": "请直接指出不对的对象、位置或文字；如果只是局部错误，我会按 handles / bbox 原位修。",
+  "blockingReasons": [],
+  "statePatch": {
+    "phase": "ready_for_delivery",
+    "phaseLabelForUser": "交付复审通过",
+    "completedEvidence": [
+      "validate_plan=pass",
+      "dry_run=pass",
+      "created_handles_readback=ok",
+      "savedCurrentDwg=false",
+      "targetLayer=CODEX_PREVIEW",
+      "visual_acceptance_review=pass",
+      "neighbor_protection=pass"
+    ],
+    "pendingEvidence": [
+      "用户目视验收"
+    ],
+    "pendingUserAction": "请你打开 CAD 后目视验收",
+    "blockedReason": "",
+    "nextSafeAction": "ask_user_review"
+  },
+  "finalResponseAllowedClaims": [
+    "closeout gates passed for the recorded run package evidence",
+    "visible CAD delivery is ready for user review",
+    "savedCurrentDwg=false",
+    "targetLayer=CODEX_PREVIEW"
+  ],
+  "evidenceUsed": [
+    "agent_outputs/visual_acceptance_output.json",
+    "cad_reports/dry_run_report.json",
+    "cad_reports/neighbor_protection.json",
+    "cad_reports/readback_summary.json",
+    "cad_reports/validation_report.json",
+    "dispatch_plan.json",
+    "state.json",
+    "task_contract.json"
+  ],
+  "evidenceMissing": [],
+  "screenshotEvidence": {
+    "role": "visual_aid_only",
+    "count": 1
+  },
+  "modelProviderStatus": {
+    "modelInvoked": false,
+    "route": "deterministic_reviewer_host",
+    "schemaValid": true,
+    "blocking": false
+  }
+}

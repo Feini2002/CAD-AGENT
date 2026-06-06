@@ -54,6 +54,25 @@ class DocGovernanceTests(unittest.TestCase):
         self.assertIn("openspec/tasks.md", paths)
         self.assertNotIn("openspec/changes/archive/old-claim/proposal.md", paths)
 
+    def test_openspec_contract_check_flags_change_tasks_as_global_backlog(self) -> None:
+        root = artifact_path("doc_governance", "openspec_change_tasks_backlog")
+        (root / "openspec" / "changes" / "global-next").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "config.yaml").write_text(
+            "schema: spec-driven\ncontext: CORE_RESTRUCTURE_PLAN.md remains primary.\n",
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "global-next" / "tasks.md").write_text(
+            "这里承载全局 next 和总 backlog。\n",
+            encoding="utf-8",
+        )
+
+        report = doc_governance.check_openspec_contracts(root)
+
+        codes = {finding["code"] for finding in report["findings"]}
+        paths = {finding["path"] for finding in report["findings"]}
+        self.assertIn("openspec_change_tasks_claims_global_backlog", codes)
+        self.assertIn("openspec/changes/global-next/tasks.md", paths)
+
     def test_openspec_contract_check_requires_planmd_boundary_in_config(self) -> None:
         root = artifact_path("doc_governance", "openspec_contract_config")
         (root / "openspec").mkdir(parents=True, exist_ok=True)
@@ -375,8 +394,30 @@ class DocGovernanceTests(unittest.TestCase):
 
         self.assertEqual(report["status"], "findings")
         codes = {finding["code"] for finding in report["findings"]}
-        self.assertIn("missing_root_migration_stub", codes)
+        self.assertIn("undocumented_root_migration_stub_deletion", codes)
         self.assertIn("broken_root_migration_target", codes)
+
+    def test_root_migration_stub_check_allows_documented_deletion(self) -> None:
+        root = artifact_path("doc_governance", "root_stubs_deleted")
+        (root / "docs").mkdir(parents=True, exist_ok=True)
+        for target in doc_governance.ROOT_MIGRATION_STUB_TARGETS.values():
+            target_path = root / target
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            target_path.write_text("# target\n", encoding="utf-8")
+        rows = ["# Docs", "", "| 旧入口 | 目标 |", "| --- | --- |"]
+        rows.extend(
+            f"| `{stub}` | `{target}` |"
+            for stub, target in sorted(doc_governance.ROOT_MIGRATION_STUB_TARGETS.items())
+        )
+        (root / "docs" / "README.md").write_text("\n".join(rows), encoding="utf-8")
+
+        report = check_root_migration_stubs(root)
+
+        self.assertEqual(report["status"], "pass", report["findings"])
+        self.assertEqual(
+            report["summary"]["documented_deleted_stub_count"],
+            len(doc_governance.ROOT_MIGRATION_STUB_TARGETS),
+        )
 
     def test_active_doc_size_budget_flags_overgrown_control_file(self) -> None:
         root = artifact_path("doc_governance", "active_doc_budget")
@@ -406,7 +447,8 @@ class DocGovernanceTests(unittest.TestCase):
             "highest_proven_ladder_level": "L4",
         }
         (root / "coverage.json").write_text(json.dumps(coverage), encoding="utf-8")
-        (root / "当前状态入口.md").write_text(
+        (root / "docs" / "status").mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "status" / "current.md").write_text(
             "真实 CAD 实力 | 约 4.35%，最高 L3\n", encoding="utf-8"
         )
         (root / "docs" / "history" / "old.md").write_text(
@@ -419,7 +461,7 @@ class DocGovernanceTests(unittest.TestCase):
         findings = report["findings"]
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0]["code"], "stale_table_c_headline")
-        self.assertEqual(findings[0]["path"], "当前状态入口.md")
+        self.assertEqual(findings[0]["path"], "docs/status/current.md")
 
     def test_table_c_check_ignores_templates_and_unrelated_percentages(self) -> None:
         root = artifact_path("doc_governance", "table_c_template")
@@ -444,6 +486,46 @@ class DocGovernanceTests(unittest.TestCase):
         report = check_table_c_values(root, coverage_path=root / "coverage.json")
 
         self.assertEqual(report["status"], "pass", report["findings"])
+
+    def test_doc_governance_flags_table_c_as_end_to_end_claim(self) -> None:
+        root = artifact_path("doc_governance", "table_c_semantic_bad")
+        (root / "docs" / "status").mkdir(parents=True, exist_ok=True)
+        (root / "coverage.json").write_text(
+            json.dumps({"cad_strength_headline_percent": 90.99}),
+            encoding="utf-8",
+        )
+        (root / "docs" / "status" / "current.md").write_text(
+            "表 C 90.99% 证明端到端真实 CAD 能力已经具备，可以交付真实项目。\n",
+            encoding="utf-8",
+        )
+
+        report = build_doc_governance_report(root, coverage_path=root / "coverage.json")
+
+        semantic = report.get("table_c_semantic_boundary", {})
+        codes = {finding["code"] for finding in semantic.get("findings", [])}
+        self.assertIn("table_c_end_to_end_claim", codes)
+
+    def test_doc_governance_accepts_table_c_three_maturity_boundary(self) -> None:
+        root = artifact_path("doc_governance", "table_c_semantic_good")
+        (root / "docs" / "status").mkdir(parents=True, exist_ok=True)
+        (root / "coverage.json").write_text(
+            json.dumps({"cad_strength_headline_percent": 90.99}),
+            encoding="utf-8",
+        )
+        (root / "docs" / "status" / "current.md").write_text(
+            "\n".join(
+                [
+                    "表 C 现在是 Core Proof Coverage。",
+                    "它不代表 Agent Task Maturity，也不代表 Project Delivery Readiness。",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        report = build_doc_governance_report(root, coverage_path=root / "coverage.json")
+
+        semantic = report.get("table_c_semantic_boundary", {})
+        self.assertEqual(semantic.get("status"), "pass", semantic.get("findings"))
 
     def test_table_c_check_accepts_zero_headline_value(self) -> None:
         root = artifact_path("doc_governance", "table_c_zero")

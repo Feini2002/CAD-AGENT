@@ -1,0 +1,110 @@
+{
+  "agentId": "pipeline_orchestrator",
+  "createdAt": "2026-06-06T06:48:23Z",
+  "files": {
+    "command": "command.json",
+    "contextLeakAudit": "context_leak_audit.json",
+    "events": "events.jsonl",
+    "exportManifest": "export_manifest.json",
+    "gateDecision": "gate_decision.json",
+    "lastMessage": "last_message.json",
+    "normalizedOutput": "normalized_output.json",
+    "prompt": "prompt.md",
+    "schemaSnapshot": "schema.json",
+    "stderr": "stderr.txt",
+    "stdout": "stdout.txt",
+    "traceReview": "trace_review.json",
+    "traceSummary": "trace_summary.md"
+  },
+  "gateDecision": {
+    "blocking": true,
+    "blockingReasons": [
+      "request_kind='draw' requires cad_policy.allow_cad=true",
+      "orchestrator host runtime is read-only and cannot execute CAD",
+      "dispatch plan does not prove CAD geometry or user acceptance"
+    ],
+    "contextLeakAudit": {
+      "blocking": false,
+      "schemaVersion": "model-context-leak-audit/v1",
+      "unexpectedProjectContextLoaded": false,
+      "warnings": []
+    },
+    "evidenceBoundary": [
+      "model gate decision does not prove CAD geometry",
+      "model gate decision does not authorize CAD writes, deletes, saves, or verified capability claims"
+    ],
+    "modelProviderStatus": {
+      "blocking": false,
+      "errorCategory": "",
+      "modelInvoked": true,
+      "modelUnavailable": false,
+      "provider": "codex_cli",
+      "reason": "",
+      "required": true,
+      "route": "codex_cli_local",
+      "routePolicy": {
+        "allowsImages": true,
+        "externalData": false,
+        "label": "本机 Codex CLI / GPT-5.5 Medium",
+        "notes": [
+          "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+        ],
+        "requiresUserAuthorization": false,
+        "route": "codex_cli_local",
+        "transport": "local_cli"
+      },
+      "schemaValid": true,
+      "status": "schema_valid"
+    },
+    "schemaValidation": {
+      "issues": [],
+      "missingFields": [],
+      "status": "pass"
+    },
+    "schemaVersion": 1,
+    "status": "blocked"
+  },
+  "inputs": {
+    "imagePaths": [],
+    "outputPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-064823\\agent_outputs\\pipeline_orchestrator.raw_model_review.json",
+    "schemaPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\core\\model_review\\schemas\\orchestrator_dispatch_review.schema.json",
+    "summaryRefs": []
+  },
+  "modelProviderStatus": {
+    "blocking": false,
+    "errorCategory": "",
+    "modelInvoked": true,
+    "modelUnavailable": false,
+    "provider": "codex_cli",
+    "reason": "",
+    "required": true,
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "allowsImages": true,
+      "externalData": false,
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ],
+      "requiresUserAuthorization": false,
+      "route": "codex_cli_local",
+      "transport": "local_cli"
+    },
+    "schemaValid": true,
+    "status": "schema_valid"
+  },
+  "modelStrategy": {
+    "ignoreRules": true,
+    "ignoreUserConfig": true,
+    "model": "gpt-5.5",
+    "reasoningEffort": "medium",
+    "sandbox": "read-only",
+    "skipGitRepoCheck": true
+  },
+  "provider": "codex_cli",
+  "route": "codex_cli_local",
+  "schemaVersion": 1,
+  "taskType": "orchestrator_dispatch_review",
+  "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-064823\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch",
+  "traceId": "orchestrator-dispatch"
+}

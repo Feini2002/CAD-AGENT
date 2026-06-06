@@ -1,0 +1,133 @@
+{
+  "version": "cad_session_guard_v1",
+  "status": "consistent",
+  "before_connect": {
+    "version": "cad_session_guard_v1",
+    "phase": "before_connect",
+    "status": "blocked",
+    "blocked_reason": "cad_not_connected",
+    "preview_layer": "CODEX_PREVIEW",
+    "document": {
+      "name": "",
+      "full_name": "",
+      "fingerprint": ""
+    },
+    "preview_layer_entity_count": 0,
+    "modelspace_summary": {
+      "entity_count": 0,
+      "type_counts": {},
+      "layer_counts": {},
+      "fingerprint": ""
+    },
+    "open_document_count": null
+  },
+  "after_connect": {
+    "version": "cad_session_guard_v1",
+    "phase": "after_connect",
+    "status": "captured",
+    "blocked_reason": "",
+    "preview_layer": "CODEX_PREVIEW",
+    "document": {
+      "name": "测试文件.dwg",
+      "full_name": "C:\\Users\\User\\Desktop\\CAD-AGENT\\projects\\测试文件.dwg",
+      "fingerprint": "e8cecdede07b336f"
+    },
+    "preview_layer_entity_count": 1184,
+    "modelspace_summary": {
+      "entity_count": 1189,
+      "type_counts": {
+        "arc": 33,
+        "block_reference": 2,
+        "circle": 37,
+        "dimension": 96,
+        "line": 677,
+        "polyline": 5,
+        "text": 339
+      },
+      "layer_counts": {
+        "0": 1,
+        "CODEX_DIAGNOSTIC": 3,
+        "CODEX_PREVIEW": 1184,
+        "产品图框": 1
+      },
+      "fingerprint": "dadf379c1d5f6cb2"
+    },
+    "open_document_count": 1
+  },
+  "after_write": {
+    "version": "cad_session_guard_v1",
+    "phase": "after_write",
+    "status": "captured",
+    "blocked_reason": "",
+    "preview_layer": "CODEX_PREVIEW",
+    "document": {
+      "name": "测试文件.dwg",
+      "full_name": "C:\\Users\\User\\Desktop\\CAD-AGENT\\projects\\测试文件.dwg",
+      "fingerprint": "e8cecdede07b336f"
+    },
+    "preview_layer_entity_count": 1184,
+    "modelspace_summary": {
+      "entity_count": 1189,
+      "type_counts": {
+        "arc": 33,
+        "block_reference": 2,
+        "circle": 37,
+        "dimension": 96,
+        "line": 677,
+        "polyline": 5,
+        "text": 339
+      },
+      "layer_counts": {
+        "0": 1,
+        "CODEX_DIAGNOSTIC": 3,
+        "CODEX_PREVIEW": 1184,
+        "产品图框": 1
+      },
+      "fingerprint": "dadf379c1d5f6cb2"
+    },
+    "open_document_count": 1
+  },
+  "comparison": {
+    "status": "consistent",
+    "checks": [
+      {
+        "name": "active_document_identity_stable",
+        "status": "pass",
+        "message": "before=测试文件.dwg after=测试文件.dwg"
+      },
+      {
+        "name": "preview_layer_entity_delta",
+        "status": "pass",
+        "message": "before=1184 after=1184 delta=0"
+      },
+      {
+        "name": "modelspace_summary_changed",
+        "status": "warn",
+        "message": "before=dadf379c1d5f6cb2 after=dadf379c1d5f6cb2"
+      }
+    ],
+    "preview_layer_entity_delta": 0
+  },
+  "checks": [
+    {
+      "name": "after_connect_snapshot",
+      "status": "pass",
+      "message": "ActiveDocument snapshot captured after connect."
+    },
+    {
+      "name": "active_document_identity_stable",
+      "status": "pass",
+      "message": "before=测试文件.dwg after=测试文件.dwg"
+    },
+    {
+      "name": "preview_layer_entity_delta",
+      "status": "pass",
+      "message": "before=1184 after=1184 delta=0"
+    },
+    {
+      "name": "modelspace_summary_changed",
+      "status": "warn",
+      "message": "before=dadf379c1d5f6cb2 after=dadf379c1d5f6cb2"
+    }
+  ]
+}

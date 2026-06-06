@@ -1,0 +1,48 @@
+{
+  "version": "0.1",
+  "object_coverage": {
+    "requested_types": [
+      "cabinet",
+      "chair",
+      "desk",
+      "table",
+      "shelf"
+    ],
+    "placed_types": [
+      "cabinet",
+      "chair",
+      "desk",
+      "shelf",
+      "table"
+    ],
+    "coverage_rate": 1.0,
+    "placed_count": 5,
+    "placement_count": 5
+  },
+  "circulation": {
+    "continuity": "blocked",
+    "selected_strategy": "straight_spine",
+    "blocked_strategies": [
+      "straight_spine",
+      "l_spine"
+    ],
+    "branch_count": 3
+  },
+  "conflicts": {
+    "failed_check_count": 0,
+    "layout_failed_checks": [],
+    "placement_failed_count": 0
+  },
+  "failure_reasons": {
+    "all_distribution": {},
+    "selected_distribution": {}
+  },
+  "ranking_reason_codes": [
+    "circulation_status",
+    "highest_weighted_score",
+    "zone_placement_best",
+    "circulation_branch_selected",
+    "no_failed_checks"
+  ],
+  "narrative": "Compared 3 circulation branch(es) and 5 zone placement alternative(s). Selected straight_spine / zone-shell-healthcare-clinic-waiting-straight_spine-right with object coverage 100%, 0 failed check(s), circulation continuity=blocked."
+}

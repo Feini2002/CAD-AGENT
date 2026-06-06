@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "run-package-task-contract/v1",
+  "runId": "object-family-sofa-replay-20260605-rcad-closeout",
+  "status": "ready",
+  "targetLayer": "CODEX_PREVIEW",
+  "savedCurrentDwg": false,
+  "hardGates": [
+    "validate_plan",
+    "dry_run",
+    "created_handles_readback",
+    "visual_acceptance_review",
+    "neighbor_protection"
+  ]
+}

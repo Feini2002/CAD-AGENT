@@ -1,0 +1,109 @@
+{
+  "status": "unavailable",
+  "designReview": "无法完成专业设计复核：当前证据包只有 orchestrator、design_director 和 style_generator 的上游摘要，且 dispatchPlan 已因 cad_policy.allow_cad=false 阻断；没有 CAD_PLAN、selectedStyleCandidate 的具体几何/线型/标注参数、CAD readback、机器审计结果或截图。因此不能判断最终茶几符号是否像专业图纸、是否可读、比例是否合适、是否符合行业习惯，也不能声称已完成 preview-only CAD 校验。基于已知摘要，只能确认设计方向倾向于“室内家具平面符号 / 顶视图抽象表达”，且 style_generator 为 single candidate，当前不构成 A/B/C 用户选择场景。",
+  "professionalDrawingLike": false,
+  "readability": false,
+  "industryHabitFit": false,
+  "scaleAndProportionFit": false,
+  "styleCandidateFit": false,
+  "contentMatchesDesignPurpose": false,
+  "needsUserChoice": false,
+  "repairOrRegenerateRecommendation": {},
+  "learningCandidate": {
+    "decision": "not_required",
+    "trigger": "design_review_blocked_by_missing_execution_evidence",
+    "responsibleAgentIds": [
+      "pipeline_orchestrator",
+      "pipeline_execute",
+      "pipeline_audit",
+      "pipeline_visual_acceptance_reviewer"
+    ],
+    "errorPattern": "Design reviewer invoked after a blocked no-CAD dispatch without CAD_PLAN/readback/screenshot evidence, so design quality cannot be evaluated.",
+    "correctPattern": "Invoke design review only after concrete CAD_PLAN or style candidate geometry is available, and for final claims require validate/dry-run/readback/audit/visual evidence.",
+    "promptDelta": "",
+    "checkerDelta": "Add a precondition check that marks design_review unavailable when cadPlan, readback, and screenshot are all null for a draw request.",
+    "retestOriginalTask": true
+  },
+  "statePatch": {
+    "phase": "orchestrator_reviewed",
+    "phaseLabelForUser": "模型型 Agent 只读设计链路",
+    "completedEvidence": [
+      "上游模型摘要已读取：pipeline_orchestrator pass、pipeline_design_director pass、pipeline_style_generator pass single",
+      "只读边界已确认：cadExecutionAuthorized=false，savedCurrentDwg=false"
+    ],
+    "pendingEvidence": [
+      "CAD_PLAN 具体内容",
+      "selectedStyleCandidate / styleCandidates 的具体几何、尺寸、图层、线型和标注策略",
+      "validate_plan 结果",
+      "dry_run 结果",
+      "CAD readback handles/bbox/layers/sourceSpec",
+      "机器审计结果",
+      "视觉验收截图或视觉审查输出",
+      "用户验收"
+    ],
+    "pendingUserAction": "",
+    "blockedReason": "dispatchPlan.status=blocked；request_kind='draw' requires cad_policy.allow_cad=true；且复核所需 CAD_PLAN/readback/screenshot 缺失。",
+    "nextSafeAction": "保持只读；由上游先生成具体 CAD_PLAN/候选参数，并在获得授权后走 preview-only validate、dry-run、CAD readback、机器审计和视觉验收，再重新调用 pipeline_design_reviewer。"
+  },
+  "finalResponseAllowedClaims": [
+    "可以声称本轮仅完成只读设计复核前置检查。",
+    "可以声称当前设计方向摘要为室内家具平面茶几符号、顶视图抽象表达。",
+    "可以声称当前没有 CAD readback、机器审计或截图证据，不能证明 CAD 几何或视觉质量。",
+    "可以声称 single candidate 不需要 A/B/C 用户选择。",
+    "不得声称茶几符号已落图、已通过 preview-only CAD 校验、已保存 DWG、已完成用户验收或已具备真实 CAD 几何证明。"
+  ],
+  "evidenceUsed": [
+    "dispatch_plan.json: status=blocked; blockingReasons include request_kind='draw' requires cad_policy.allow_cad=true",
+    "ruleContextPack.evidenceBundle: cadPlan=null, readback=null, screenshot=null",
+    "pipeline_design_director summary: 家具平面符号 / 室内 CAD 预览符号，目标对象为茶几，适合以顶视图抽象表达而非施工详图",
+    "pipeline_style_generator summary: pass single",
+    "Shared hard boundaries: read-only, no CAD write, screenshot cannot replace readback"
+  ],
+  "evidenceMissing": [
+    "CAD_PLAN",
+    "selectedStyleCandidate concrete definition",
+    "styleCandidates concrete definitions if any",
+    "validate_plan result",
+    "dry_run result",
+    "CAD readback handles/bbox/layers/sourceSpec",
+    "machine audit report",
+    "visual acceptance screenshot/review",
+    "user acceptance"
+  ],
+  "toolIntent": null,
+  "modelInvoked": true,
+  "modelProviderStatus": {
+    "status": "unavailable",
+    "provider": "codex_cli",
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "route": "codex_cli_local",
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "transport": "local_cli",
+      "externalData": false,
+      "requiresUserAuthorization": false,
+      "allowsImages": true,
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ]
+    },
+    "required": true,
+    "modelInvoked": true,
+    "modelUnavailable": true,
+    "schemaValid": true,
+    "blocking": true,
+    "reason": ""
+  },
+  "modelUnavailable": true,
+  "schemaValid": true,
+  "modelTrace": {
+    "traceId": "pipeline-design-reviewer",
+    "agentId": "pipeline_design_reviewer",
+    "taskType": "design_review",
+    "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-live-20260605-codex-audit\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer",
+    "manifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-live-20260605-codex-audit\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\trace_manifest.json",
+    "reviewPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-live-20260605-codex-audit\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\trace_review.json",
+    "summaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-live-20260605-codex-audit\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer\\trace_summary.md",
+    "traceReviewStatus": "blocked"
+  }
+}

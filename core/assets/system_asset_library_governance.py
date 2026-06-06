@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from core.model_review.asset_governor_review import model_review_to_asset_governor_assistance
+
 
 LAYOUT_PLAN_SCHEMA_VERSION = 2
 LAYOUT_GRID_COLUMNS = 4
@@ -70,6 +72,8 @@ REQUIRED_VISUAL_ACCEPTANCE_KEYS = (
     "copyPolicy",
     "screenshotBoundary",
 )
+FORBIDDEN_PROTECTED_CONTENT_LAYERS = {"CODEX_PREVIEW"}
+PROOF_ROLE_CONFLICT_LAYERS = {"ASSET_SOURCE_BOUNDARY"}
 
 
 def _unique(values: list[str] | tuple[str, ...] | None) -> list[str]:
@@ -123,6 +127,61 @@ def _bbox_area(bbox: Any) -> float:
     return 0.0
 
 
+def _add_layer_count(layer_counts: dict[str, int], layer: str, count: int = 1) -> None:
+    text = str(layer).strip()
+    if not text:
+        return
+    layer_counts[text] = layer_counts.get(text, 0) + max(0, int(count))
+
+
+def _protected_content_layer_census(protected_content_report: dict[str, Any]) -> tuple[dict[str, int], list[str]]:
+    """Return full protected-content layer counts and census issues.
+
+    `layerSamples` is intentionally insufficient: it caused A1/A2 proof
+    content on CODEX_PREVIEW to disappear from reports when the bad layer was
+    outside the small sample window.
+    """
+
+    issues: list[str] = []
+    layer_counts: dict[str, int] = {}
+    saw_full_census = False
+    saw_sample_only = False
+    top_counts = protected_content_report.get("layerCounts")
+    if isinstance(top_counts, dict) and top_counts:
+        for layer, count in top_counts.items():
+            _add_layer_count(layer_counts, str(layer), int(count or 0))
+        return layer_counts, issues
+    clusters = [cluster for cluster in _list(protected_content_report.get("clusters")) if isinstance(cluster, dict)]
+    if not clusters:
+        issues.append("protected asset content readback missing")
+        return layer_counts, issues
+    for cluster in clusters:
+        cluster_counts = cluster.get("layerCounts")
+        if isinstance(cluster_counts, dict) and cluster_counts:
+            saw_full_census = True
+            for layer, count in cluster_counts.items():
+                _add_layer_count(layer_counts, str(layer), int(count or 0))
+            continue
+        full_layers = cluster.get("layers") or cluster.get("allLayers")
+        if isinstance(full_layers, list) and full_layers:
+            saw_full_census = True
+            for layer in full_layers:
+                _add_layer_count(layer_counts, str(layer), 1)
+            continue
+        if cluster.get("layerSamples"):
+            saw_sample_only = True
+            for layer in _list(cluster.get("layerSamples")):
+                _add_layer_count(layer_counts, str(layer), 1)
+    top_layers = protected_content_report.get("layers") or protected_content_report.get("allLayers")
+    if isinstance(top_layers, list) and top_layers:
+        saw_full_census = True
+        for layer in top_layers:
+            layer_counts.setdefault(str(layer), 0)
+    if saw_sample_only and not saw_full_census:
+        issues.append("protected content layer census missing; layerSamples is not enough")
+    return layer_counts, issues
+
+
 def _rack_families_by_id(visual_rack_plan: dict[str, Any]) -> dict[str, dict[str, Any]]:
     result: dict[str, dict[str, Any]] = {}
     for family in _list(visual_rack_plan.get("rackFamilies")):
@@ -156,8 +215,10 @@ def audit_visual_rack_plan(
     visual_rack_plan: dict[str, Any] | None,
     zones: dict[str, Any] | None = None,
     entity_readback: dict[str, Any] | None = None,
+    protected_content_report: dict[str, Any] | None = None,
     clearance_report: dict[str, Any] | None = None,
     readability_report: dict[str, Any] | None = None,
+    model_review_report: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Audit whether a visual system-asset DWG plan behaves like a warehouse."""
 
@@ -286,6 +347,18 @@ def audit_visual_rack_plan(
         else:
             checked.append("created shelf entity readback")
 
+    protected = _dict(protected_content_report)
+    protected_layer_counts: dict[str, int] = {}
+    if protected:
+        protected_layer_counts, census_issues = _protected_content_layer_census(protected)
+        issues.extend(census_issues)
+        if protected_layer_counts and not census_issues:
+            checked.append("full protected content layer census")
+        if any(layer in FORBIDDEN_PROTECTED_CONTENT_LAYERS for layer in protected_layer_counts):
+            issues.append("protected asset proof content is still on CODEX_PREVIEW")
+        if any(layer in PROOF_ROLE_CONFLICT_LAYERS for layer in protected_layer_counts):
+            issues.append("source boundary layer is mixed into protected proof content")
+
     clearance = _dict(clearance_report)
     clearance_overlap_count = 0
     if clearance:
@@ -304,6 +377,17 @@ def audit_visual_rack_plan(
         else:
             checked.append("visual warehouse readability")
 
+    model_review = _dict(model_review_report)
+    model_review_issue_count = 0
+    if model_review:
+        model_status = str(model_review.get("status") or "").casefold()
+        blocking_reasons = _list(model_review.get("blockingReasons"))
+        model_review_issue_count = len(blocking_reasons)
+        if model_status not in {"pass", "ready", "ok"} or model_review_issue_count:
+            issues.append("model-backed visual layout review failed")
+        else:
+            checked.append("model-backed visual layout review")
+
     status = "pass" if not issues else "fail"
     return {
         "status": status,
@@ -319,6 +403,8 @@ def audit_visual_rack_plan(
             "readbackResolvedHandleCount": readback_resolved_count,
             "clearanceOverlapCount": clearance_overlap_count,
             "readabilityIssueCount": readability_issue_count,
+            "modelReviewIssueCount": model_review_issue_count,
+            "protectedContentLayerCounts": protected_layer_counts,
         },
         "evidenceBoundary": {
             "checked": [
@@ -326,6 +412,11 @@ def audit_visual_rack_plan(
                 "rack family ownership",
                 "copy policy",
                 "zone bbox ratios",
+                *(
+                    ["full protected content layer census"]
+                    if protected and protected_layer_counts
+                    else []
+                ),
                 *(
                     ["shelf/content clearance"]
                     if clearance
@@ -336,12 +427,18 @@ def audit_visual_rack_plan(
                     if readability
                     else []
                 ),
+                *(
+                    ["model-backed visual review"]
+                    if model_review
+                    else []
+                ),
             ],
             "notChecked": [
                 "actual CAD entity containment unless a readback report supplies handles and bboxes",
+                *([] if protected else ["full protected content layer census unless protected content report is supplied"]),
                 *([] if clearance else ["shelf/content clearance unless a clearance report is supplied"]),
                 *([] if readability else ["warehouse visual readability unless a readability report is supplied"]),
-                "screenshot visual recognition",
+                *([] if model_review else ["model-backed screenshot visual recognition"]),
             ],
         },
     }
@@ -492,6 +589,7 @@ def build_asset_library_governance(
     native_dwg_exists: bool,
     lifecycle_status: str,
     verification_status: str = "metadata_only",
+    model_review_report: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build the asset governor decision stored with system asset contracts."""
 
@@ -511,7 +609,12 @@ def build_asset_library_governance(
         lifecycle_status=lifecycle_status,
         verification_status=verification_status,
     )
-    return {
+    model_assisted = (
+        model_review_to_asset_governor_assistance(model_review_report)
+        if isinstance(model_review_report, dict)
+        else None
+    )
+    result = {
         "governorAgentId": "pipeline_asset_governor",
         "managedChildAgents": list(DEFAULT_CHILD_AGENTS),
         "decision": decision,
@@ -538,13 +641,26 @@ def build_asset_library_governance(
             "asset_librarian_catalog",
             "asset_dwg_curator_layout",
             "asset_reuse_auditor_before_verified",
+            *(
+                ["model suggestions are advisory only"]
+                if model_assisted
+                else []
+            ),
         ],
         "forbiddenBehaviors": _unique(
             [
                 *[str(item) for item in anti_contamination.get("checks", []) if item],
                 "do not copy training panels into clean source",
                 "do not invent untracked global agents",
+                *(
+                    ["do not let model suggestions override source boundary, readback, reuse, or save gates"]
+                    if model_assisted
+                    else []
+                ),
             ]
         ),
         "polishHardeningDecision": hardening,
     }
+    if model_assisted:
+        result["modelAssistedDecision"] = model_assisted
+    return result

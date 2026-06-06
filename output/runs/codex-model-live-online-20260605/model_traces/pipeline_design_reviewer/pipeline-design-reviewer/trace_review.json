@@ -1,0 +1,42 @@
+{
+  "agentId": "pipeline_design_reviewer",
+  "blockingReasons": [
+    "gate decision is blocked",
+    "model report status is unavailable",
+    "dispatchPlan.status='blocked' and blockedBeforeExecution=true.",
+    "cad_policy.allow_cad=false while request_kind='draw'.",
+    "cadPlan, readback, and screenshot are all null in the evidence bundle.",
+    "Professional drawing assessment requires comparing final output against designStrategy/styleCandidate/CAD_PLAN/readback, but those final-output artifacts are absent."
+  ],
+  "errorCategory": "model_business_blocked",
+  "evidenceBoundary": [
+    "trace review only summarizes model invocation evidence",
+    "does not replace schema validation",
+    "does not replace CAD handles / bbox / layer readback",
+    "does not replace A-to-A hard gate or user acceptance"
+  ],
+  "gateDecisionStatus": "blocked",
+  "inputSufficient": true,
+  "modelInvocationUsable": true,
+  "modelOutputTrust": "schema_valid",
+  "nextRepairFocus": [
+    "按 gate_decision.json 的阻断原因修复，再重新调用模型 reviewer。"
+  ],
+  "plainSummary": [
+    "trace 可复盘性：可用",
+    "模型调用可用性：可用",
+    "输入充分性：可用",
+    "模型输出可信度：schema_valid",
+    "错误分类：model_business_blocked",
+    "gate 结论：blocked",
+    "导出边界清单：export_manifest.json",
+    "上下文泄漏审计：context_leak_audit.json",
+    "阻断原因：gate decision is blocked；model report status is unavailable；dispatchPlan.status='blocked' and blockedBeforeExecution=true.；cad_policy.allow_cad=false while request_kind='draw'.；cadPlan, readback, and screenshot are all null in the evidence bundle."
+  ],
+  "schemaVersion": 1,
+  "status": "blocked",
+  "taskType": "design_review",
+  "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\codex-model-live-online-20260605\\model_traces\\pipeline_design_reviewer\\pipeline-design-reviewer",
+  "traceId": "pipeline-design-reviewer",
+  "traceUsable": true
+}

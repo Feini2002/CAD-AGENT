@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "no-cad-model-agent-chain-result/v1",
+  "status": "blocked",
+  "runId": "model-agent-live-collab-proof-model-fake-preflight",
+  "route": "standard_draw",
+  "agentsCalled": [
+    "pipeline_design_director",
+    "pipeline_style_generator",
+    "pipeline_design_reviewer"
+  ],
+  "upstreamOutputs": [
+    {
+      "agentId": "pipeline_orchestrator",
+      "path": "agent_outputs/pipeline_orchestrator.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "cb70c5c58ed657774e6326be7bdbea2c57a0778cbb3a5f05d89e602bac8a883c",
+      "modelInvoked": true,
+      "schemaValid": false,
+      "modelUnavailable": true
+    },
+    {
+      "agentId": "pipeline_design_director",
+      "path": "agent_outputs/pipeline_design_director.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "8a91c122d327ccca773928b6d288ef9e6d2a52735310888278edd8a107f4a3ad",
+      "modelInvoked": true,
+      "schemaValid": false,
+      "modelUnavailable": true
+    },
+    {
+      "agentId": "pipeline_style_generator",
+      "path": "agent_outputs/pipeline_style_generator.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "134391add18da061280a0de68d9545163b8222e66d9cc3a55b37c9ddada3afa2",
+      "modelInvoked": true,
+      "schemaValid": false,
+      "modelUnavailable": true
+    },
+    {
+      "agentId": "pipeline_design_reviewer",
+      "path": "agent_outputs/pipeline_design_reviewer.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "b99ab8fd1a5423621a902d73be8bbceea699063fd62b82811218fd00e82440cb",
+      "modelInvoked": true,
+      "schemaValid": false,
+      "modelUnavailable": true
+    }
+  ],
+  "blockingReasons": [
+    "pipeline_design_director model output not pass",
+    "pipeline_style_generator model output not pass",
+    "pipeline_design_reviewer model output not pass"
+  ],
+  "cadExecutionAuthorized": false,
+  "savedCurrentDwg": false,
+  "nextCadPreflight": [
+    "validate_plan",
+    "dry_run",
+    "created_handles_readback"
+  ],
+  "evidenceBoundary": [
+    "model chain is no-CAD and no-save",
+    "model pass does not replace CAD readback",
+    "output can only feed a later CAD_PLAN/intent preflight"
+  ],
+  "writtenFiles": [
+    "dispatch_plan.json",
+    "task_contract.json",
+    "required_agents.json",
+    "risk_assessment.json",
+    "rule_context_pack.json",
+    "rule_context_packs/pipeline_design_director.json",
+    "agent_outputs/pipeline_design_director.json",
+    "rule_context_packs/pipeline_style_generator.json",
+    "agent_outputs/pipeline_style_generator.json",
+    "rule_context_packs/pipeline_design_reviewer.json",
+    "agent_outputs/pipeline_design_reviewer.json",
+    "agent_outputs/pipeline_intent.json",
+    "agent_outputs/pipeline_audit.json",
+    "agent_outputs/pipeline_delivery.chain.json"
+  ],
+  "generatedAt": "2026-06-05T07:09:16Z"
+}

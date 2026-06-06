@@ -1,0 +1,41 @@
+{
+  "agentId": "pipeline_design_director",
+  "blockingReasons": [
+    "gate decision is blocked",
+    "Insufficient design brief for real drawing-type classification.",
+    "No semanticDecomposition provided.",
+    "No registered agent manifest provided.",
+    "No geometry/readback evidence provided."
+  ],
+  "errorCategory": "",
+  "evidenceBoundary": [
+    "trace review only summarizes model invocation evidence",
+    "does not replace schema validation",
+    "does not replace CAD handles / bbox / layer readback",
+    "does not replace A-to-A hard gate or user acceptance"
+  ],
+  "gateDecisionStatus": "blocked",
+  "inputSufficient": true,
+  "modelInvocationUsable": true,
+  "modelOutputTrust": "schema_valid",
+  "nextRepairFocus": [
+    "按 gate_decision.json 的阻断原因修复，再重新调用模型 reviewer。"
+  ],
+  "plainSummary": [
+    "trace 可复盘性：可用",
+    "模型调用可用性：可用",
+    "输入充分性：可用",
+    "模型输出可信度：schema_valid",
+    "错误分类：none",
+    "gate 结论：blocked",
+    "导出边界清单：export_manifest.json",
+    "上下文泄漏审计：context_leak_audit.json",
+    "阻断原因：gate decision is blocked；Insufficient design brief for real drawing-type classification.；No semanticDecomposition provided.；No registered agent manifest provided.；No geometry/readback evidence provided."
+  ],
+  "schemaVersion": 1,
+  "status": "blocked",
+  "taskType": "design_director_review",
+  "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\codex_cli_prompt_pack_probe_run\\model_traces\\pipeline_design_director\\pipeline_design_director-probe",
+  "traceId": "pipeline_design_director-probe",
+  "traceUsable": true
+}

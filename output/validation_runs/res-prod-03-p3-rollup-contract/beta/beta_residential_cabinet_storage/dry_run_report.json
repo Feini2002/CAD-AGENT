@@ -1,0 +1,34 @@
+{
+  "version": "0.1",
+  "status": "valid",
+  "validation_errors": [],
+  "intent": "draw_object",
+  "layer": "CODEX_PREVIEW",
+  "bbox": {
+    "min": [
+      0,
+      0
+    ],
+    "max": [
+      1800,
+      600
+    ]
+  },
+  "entities": [
+    {
+      "type": "rectangle",
+      "layer": "CODEX_PREVIEW",
+      "bbox": {
+        "min": [
+          0,
+          0
+        ],
+        "max": [
+          1800,
+          600
+        ]
+      }
+    }
+  ],
+  "human_summary": "CAD_PLAN DRY RUN\n- intent: draw_object\n- object: Cabinet (cabinet)\n- size: 1800 x 600 mm\n- placement: absolute at [0, 0, 0]\n- layer: CODEX_PREVIEW"
+}

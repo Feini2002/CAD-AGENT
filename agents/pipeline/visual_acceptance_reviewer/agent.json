@@ -1,0 +1,67 @@
+{
+  "agent_id": "pipeline_visual_acceptance_reviewer",
+  "version": 1,
+  "role": "General model-backed visual acceptance reviewer for user-visible CAD output.",
+  "purpose": "Review screenshots, readback summaries, user intent, CAD_PLAN / visual_parts, and machine audit results after CAD execution to decide whether the visible result is acceptable enough to ask for user acceptance or must return to repair.",
+  "inputs": [
+    "a_to_a_task_contract",
+    "user_request",
+    "cad_plan",
+    "visual_parts",
+    "execution_summary",
+    "geometry_audit",
+    "cad_capture_or_preview",
+    "readback_summary",
+    "model_visual_acceptance_review"
+  ],
+  "outputs": [
+    "visualAcceptanceDecision",
+    "aestheticAcceptable",
+    "textReadable",
+    "noMojibake",
+    "noSevereOverlap",
+    "noSevereClipping",
+    "alignmentAcceptable",
+    "contentMatchesIntent",
+    "reusableOutputLikely",
+    "evidenceBoundaryRespected",
+    "nonScreenshotEvidenceChecked",
+    "modelBackedVisualAcceptanceRequired",
+    "modelBackedVisualAcceptance",
+    "visualProblems",
+    "repairRecommendation",
+    "blockingReasons"
+  ],
+  "pass_gate": {
+    "status": "pass",
+    "aestheticAcceptable": "pass",
+    "textReadable": "pass",
+    "noMojibake": "pass",
+    "noSevereOverlap": "pass",
+    "noSevereClipping": "pass",
+    "alignmentAcceptable": "pass",
+    "contentMatchesIntent": "pass",
+    "reusableOutputLikely": "pass",
+    "evidenceBoundaryRespected": "pass",
+    "nonScreenshotEvidenceChecked": "pass"
+  },
+  "hard_gate": "visual_acceptance_review",
+  "must_check": [
+    "Visible text must be readable Chinese or intentional technical identifiers; mojibake, replacement characters, or unreadable compressed text fail acceptance.",
+    "The output must not have severe overlap, clipping, edge collisions, or misalignment that would make it visually unprofessional.",
+    "The visible result must match the user's intent and CAD_PLAN / visual_parts at the level a user can inspect.",
+    "Reusable output must keep source geometry, proof panels, labels, evidence text, and screenshots in separate roles.",
+    "A screenshot alone is not a pass; the reviewer must compare screenshot evidence with CAD readback, created handles, audit summary, or declared not_checked boundaries.",
+    "When modelBackedVisualAcceptanceRequired=true, include a schema-validated modelBackedVisualAcceptance report from the configured read-only model bridge.",
+    "Model-backed visual acceptance can block delivery or suggest repair, but it must not replace CAD readback, bbox/layer audit, encoding preflight, asset sourceSpec, reuse replay, or user acceptance."
+  ],
+  "must_not": [
+    "Do not execute CAD writes.",
+    "Do not invoke a model silently when model review is disabled or not requested by the workflow.",
+    "Do not claim geometric accuracy without CAD readback or audit evidence.",
+    "Do not treat modelBackedVisualAcceptance=pass as proof that CAD geometry, source boundaries, or reusable assets are correct.",
+    "Do not approve output only because the screenshot is nonblank.",
+    "Do not ask for user acceptance when blockingReasons is non-empty."
+  ],
+  "managed_by": "pipeline_orchestrator"
+}

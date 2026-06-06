@@ -1,0 +1,109 @@
+{
+  "aestheticAcceptable": false,
+  "alignmentAcceptable": false,
+  "blockingReasons": [
+    "缺少目标截图，无法判断可见构图、文字可读性、遮挡、裁切和对齐。",
+    "缺少 created handles / CAD readback 摘要，不能把结果推进到用户验收。",
+    "缺少 CAD_PLAN 或可见输出摘要，无法确认内容是否匹配本轮意图。",
+    "当前输入是 synthetic prompt-pack probe，仅能验证审查器阻断行为，不能形成视觉验收结论。"
+  ],
+  "canAskUserToReview": false,
+  "contentMatchesIntent": false,
+  "evidenceBoundaryRespected": true,
+  "evidenceMissing": [
+    "target screenshot",
+    "created handles readback",
+    "CAD_PLAN or structured drawing intent",
+    "machine audit summary",
+    "visible output summary"
+  ],
+  "evidenceUsed": [
+    "taskContext.route=probe_only",
+    "taskContext.targetLayer=CODEX_PREVIEW",
+    "taskContext.taskKind=synthetic_prompt_pack_probe",
+    "statePatchRequest.phase=model_review_probe"
+  ],
+  "finalResponseAllowedClaims": [
+    "模型视觉复审已按缺证据规则阻断。",
+    "当前 probe 不能支持请用户验收。",
+    "需要补齐目标截图、created handles / readback 和 CAD_PLAN / 审计摘要后再复审。"
+  ],
+  "lookHereFirst": [
+    "先补目标截图，检查主要对象是否完整入框且无裁切。",
+    "补 created handles / readback 摘要，确认截图之外的 CAD 输出证据。",
+    "补 CAD_PLAN 或结构化意图，检查可见内容是否对应请求。"
+  ],
+  "modelInvoked": true,
+  "modelProviderStatus": {
+    "blocking": false,
+    "modelInvoked": true,
+    "modelUnavailable": false,
+    "provider": "codex_cli",
+    "reason": "",
+    "required": true,
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "allowsImages": true,
+      "externalData": false,
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ],
+      "requiresUserAuthorization": false,
+      "route": "codex_cli_local",
+      "transport": "local_cli"
+    },
+    "schemaValid": true,
+    "status": "schema_valid"
+  },
+  "modelTrace": {
+    "agentId": "pipeline_visual_acceptance_reviewer",
+    "manifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\codex_cli_prompt_pack_probe_run\\model_traces\\pipeline_visual_acceptance_reviewer\\pipeline_visual_acceptance_reviewer-probe\\trace_manifest.json",
+    "reviewPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\codex_cli_prompt_pack_probe_run\\model_traces\\pipeline_visual_acceptance_reviewer\\pipeline_visual_acceptance_reviewer-probe\\trace_review.json",
+    "summaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\codex_cli_prompt_pack_probe_run\\model_traces\\pipeline_visual_acceptance_reviewer\\pipeline_visual_acceptance_reviewer-probe\\trace_summary.md",
+    "taskType": "visual_acceptance_review",
+    "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\model_reviews\\codex_cli_prompt_pack_probe_run\\model_traces\\pipeline_visual_acceptance_reviewer\\pipeline_visual_acceptance_reviewer-probe",
+    "traceId": "pipeline_visual_acceptance_reviewer-probe",
+    "traceReviewStatus": "blocked"
+  },
+  "modelUnavailable": false,
+  "noMojibake": true,
+  "noSevereClipping": false,
+  "noSevereOverlap": false,
+  "nonScreenshotEvidenceChecked": false,
+  "repairRecommendation": {
+    "mode": "provide_evidence_then_recheck",
+    "nextChecks": [
+      "提供目标截图作为 visual_aid_only。",
+      "提供 created handles / readback 摘要。",
+      "提供 CAD_PLAN / task context 与机器审计摘要。",
+      "重新运行 pipeline_visual_acceptance_reviewer。"
+    ],
+    "reason": "当前缺少视觉和非截图证据，必须回到证据收集链路后再做视觉验收。",
+    "targetHandles": [],
+    "targetZone": "CODEX_PREVIEW target output area"
+  },
+  "reusableOutputLikely": false,
+  "schemaValid": true,
+  "statePatch": {
+    "blockedReason": "缺少截图和非截图 CAD 证据，不能判断本轮输出是否适合请用户验收。",
+    "completedEvidence": [],
+    "nextSafeAction": "回到证据收集或修复链路，补齐截图、readback 和审计摘要。",
+    "pendingEvidence": [
+      "目标截图",
+      "created handles / readback 摘要",
+      "CAD_PLAN 或结构化绘图意图",
+      "机器审计摘要"
+    ],
+    "pendingUserAction": "无需用户验收；请先补齐本地证据后重跑视觉复审。",
+    "phase": "blocked",
+    "phaseLabelForUser": "模型 Prompt Pack 探针阻断"
+  },
+  "status": "fail",
+  "textReadable": false,
+  "toolIntent": null,
+  "visualProblems": [
+    "未提供截图，视觉问题不可判定。",
+    "未提供可见对象、文字、标注或布局证据。"
+  ]
+}

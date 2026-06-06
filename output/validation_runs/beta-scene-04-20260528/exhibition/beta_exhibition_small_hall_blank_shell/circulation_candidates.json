@@ -1,0 +1,205 @@
+[
+  {
+    "version": "0.1",
+    "circulation_id": "circulation-shell-exhibition-small-hall-along_wall",
+    "shell_id": "shell-exhibition-small-hall",
+    "strategy": "along_wall",
+    "status": "pass",
+    "score": 0.8775,
+    "paths": [
+      {
+        "path_id": "path-along_wall-main",
+        "type": "main",
+        "width_mm": 1400.0,
+        "start": [
+          0.0,
+          3500.0
+        ],
+        "end": [
+          12000.0,
+          3500.0
+        ],
+        "polyline": [
+          [
+            0.0,
+            3500.0
+          ],
+          [
+            700.0,
+            3500.0
+          ],
+          [
+            700.0,
+            700.0
+          ],
+          [
+            12000.0,
+            700.0
+          ],
+          [
+            12000.0,
+            3500.0
+          ]
+        ],
+        "connects": [
+          "entry-main",
+          "service-door"
+        ],
+        "path_surface": [
+          {
+            "min": [
+              0.0,
+              2800.0
+            ],
+            "max": [
+              700.0,
+              4200.0
+            ]
+          },
+          {
+            "min": [
+              0.0,
+              700.0
+            ],
+            "max": [
+              1400.0,
+              3500.0
+            ]
+          },
+          {
+            "min": [
+              700.0,
+              0.0
+            ],
+            "max": [
+              12000.0,
+              1400.0
+            ]
+          },
+          {
+            "min": [
+              11300.0,
+              700.0
+            ],
+            "max": [
+              12700.0,
+              3500.0
+            ]
+          }
+        ],
+        "blocked_reasons": [],
+        "score": 0.8775
+      }
+    ]
+  },
+  {
+    "version": "0.1",
+    "circulation_id": "circulation-shell-exhibition-small-hall-l_spine",
+    "shell_id": "shell-exhibition-small-hall",
+    "strategy": "l_spine",
+    "status": "blocked",
+    "score": 0.3,
+    "paths": [
+      {
+        "path_id": "path-l_spine-main",
+        "type": "main",
+        "width_mm": 1400.0,
+        "start": [
+          0.0,
+          3500.0
+        ],
+        "end": [
+          12000.0,
+          3500.0
+        ],
+        "polyline": [
+          [
+            0.0,
+            3500.0
+          ],
+          [
+            12000.0,
+            3500.0
+          ],
+          [
+            12000.0,
+            3500.0
+          ]
+        ],
+        "connects": [
+          "entry-main",
+          "service-door"
+        ],
+        "path_surface": [
+          {
+            "min": [
+              0.0,
+              2800.0
+            ],
+            "max": [
+              12000.0,
+              4200.0
+            ]
+          }
+        ],
+        "blocked_reasons": [
+          "path overlaps fixed_obstacle:structural-column."
+        ],
+        "score": 0.3
+      }
+    ]
+  },
+  {
+    "version": "0.1",
+    "circulation_id": "circulation-shell-exhibition-small-hall-straight_spine",
+    "shell_id": "shell-exhibition-small-hall",
+    "strategy": "straight_spine",
+    "status": "blocked",
+    "score": 0.288,
+    "paths": [
+      {
+        "path_id": "path-straight_spine-main",
+        "type": "main",
+        "width_mm": 1400.0,
+        "start": [
+          0.0,
+          3500.0
+        ],
+        "end": [
+          12000.0,
+          3500.0
+        ],
+        "polyline": [
+          [
+            0.0,
+            3500.0
+          ],
+          [
+            12000.0,
+            3500.0
+          ]
+        ],
+        "connects": [
+          "entry-main",
+          "deep-shell"
+        ],
+        "path_surface": [
+          {
+            "min": [
+              0.0,
+              2800.0
+            ],
+            "max": [
+              12000.0,
+              4200.0
+            ]
+          }
+        ],
+        "blocked_reasons": [
+          "path overlaps fixed_obstacle:structural-column."
+        ],
+        "score": 0.288
+      }
+    ]
+  }
+]

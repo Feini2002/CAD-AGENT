@@ -1,0 +1,109 @@
+{
+  "version": "0.1",
+  "composition_id": "dining_table_set",
+  "name": "Dining Table Set",
+  "domain": "residential",
+  "persona_role": "restaurant_host",
+  "request_text": "堂食桌椅组合",
+  "objects": [
+    {
+      "instance_id": "table-01",
+      "type": "table",
+      "name": "Dining Table",
+      "role": "dining_surface",
+      "base_point": [
+        600,
+        600,
+        0
+      ],
+      "size": {
+        "width": 1600,
+        "depth": 900,
+        "height": 750
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "chair-01",
+      "type": "chair",
+      "name": "Chair",
+      "role": "dining_seat",
+      "base_point": [
+        900,
+        50,
+        0
+      ],
+      "size": {
+        "width": 500,
+        "depth": 500,
+        "height": 850
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "chair-02",
+      "type": "chair",
+      "name": "Chair",
+      "role": "dining_seat",
+      "base_point": [
+        1400,
+        50,
+        0
+      ],
+      "size": {
+        "width": 500,
+        "depth": 500,
+        "height": 850
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "chair-03",
+      "type": "chair",
+      "name": "Chair",
+      "role": "dining_seat",
+      "base_point": [
+        900,
+        1600,
+        0
+      ],
+      "size": {
+        "width": 500,
+        "depth": 500,
+        "height": 850
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "chair-04",
+      "type": "chair",
+      "name": "Chair",
+      "role": "dining_seat",
+      "base_point": [
+        1400,
+        1600,
+        0
+      ],
+      "size": {
+        "width": 500,
+        "depth": 500,
+        "height": 850
+      },
+      "include_dimensions": false
+    }
+  ],
+  "bbox": {
+    "min": [
+      600,
+      50
+    ],
+    "max": [
+      2200,
+      2100
+    ]
+  },
+  "evidence": {
+    "geometry_accuracy": "not_verified_without_cad_readback",
+    "screenshot_role": "visual_aid_only"
+  }
+}

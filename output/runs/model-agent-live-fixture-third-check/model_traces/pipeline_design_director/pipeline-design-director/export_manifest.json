@@ -1,0 +1,39 @@
+{
+  "agentId": "pipeline_design_director",
+  "approvalBasis": [
+    "MODEL_DATA_EXPORT_AUTHORIZATION.md#default-allowed-data"
+  ],
+  "blockedArtifacts": [],
+  "blockingReasons": [],
+  "evidenceBoundary": [
+    "manifest pass only proves export boundary, not model quality or CAD geometry",
+    "manifest pass does not prove provider availability or user acceptance"
+  ],
+  "forbiddenScan": {
+    "fullScreenScreenshotRequested": false,
+    "secretLikeCount": 0,
+    "wholeOutputRequested": false,
+    "wholeRepoRequested": false
+  },
+  "route": "codex_cli_local",
+  "schemaVersion": "model-export-manifest/v1",
+  "sentArtifacts": [
+    {
+      "byteCount": 16440,
+      "kind": "prompt_text",
+      "path": "",
+      "sha256": "31ee25976480b5a5d8cd2630ac269e1223ed95e2957330a0f65789be72b00b37",
+      "status": "inline"
+    },
+    {
+      "byteCount": 12482,
+      "kind": "schema_snapshot",
+      "path": "core/model_review/schemas/design_director_review.schema.json",
+      "sha256": "742c61a09652381db46c816b9cb4ad08d0ae4fa1294dd8b3010d3d04989167eb",
+      "status": "present"
+    }
+  ],
+  "status": "pass",
+  "traceId": "pipeline-design-director",
+  "unexpectedLocalFiles": []
+}

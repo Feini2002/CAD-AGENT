@@ -1,0 +1,33 @@
+{
+  "version": "0.1",
+  "object_id": "object-desk-1400x700",
+  "type": "desk",
+  "name": "Desk",
+  "style_profile_id": "style-modern",
+  "size": {
+    "width": 1400,
+    "depth": 700,
+    "height": 750
+  },
+  "components": [
+    {
+      "component_id": "desk-worktop",
+      "role": "worktop",
+      "count": 1
+    },
+    {
+      "component_id": "desk-supports",
+      "role": "support",
+      "count": 2
+    },
+    {
+      "component_id": "desk-knee-clearance",
+      "role": "clearance_zone",
+      "count": 1
+    }
+  ],
+  "placement_requirements": [
+    "base point is lower-left plan corner"
+  ],
+  "drawing_intent": "plan_preview"
+}

@@ -1,0 +1,64 @@
+[
+  {
+    "version": "0.1",
+    "domain": "residential",
+    "intent": "draw_object",
+    "object": {
+      "type": "rug",
+      "name": "Area Rug",
+      "width": 2400,
+      "depth": 1900,
+      "height": 20,
+      "object_spec_id": "object-rug-2400x1900",
+      "instance_id": "rug-01",
+      "role": "soft_zone",
+      "composition_id": "bedroom_bed_rug"
+    },
+    "placement": {
+      "mode": "absolute",
+      "base_point": [
+        0,
+        0,
+        0
+      ]
+    },
+    "drawing": {
+      "layer": "CODEX_PREVIEW",
+      "include_label": false,
+      "include_dimensions": false
+    },
+    "confidence": 0.9,
+    "needs_confirmation": false
+  },
+  {
+    "version": "0.1",
+    "domain": "residential",
+    "intent": "draw_object",
+    "object": {
+      "type": "bed",
+      "name": "Bed",
+      "width": 2000,
+      "depth": 1500,
+      "height": 600,
+      "object_spec_id": "object-bed-2000x1500",
+      "instance_id": "bed-01",
+      "role": "primary_bed",
+      "composition_id": "bedroom_bed_rug"
+    },
+    "placement": {
+      "mode": "absolute",
+      "base_point": [
+        200,
+        200,
+        0
+      ]
+    },
+    "drawing": {
+      "layer": "CODEX_PREVIEW",
+      "include_label": false,
+      "include_dimensions": false
+    },
+    "confidence": 0.9,
+    "needs_confirmation": false
+  }
+]

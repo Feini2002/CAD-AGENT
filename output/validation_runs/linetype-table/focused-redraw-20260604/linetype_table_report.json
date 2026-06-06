@@ -1,0 +1,7661 @@
+{
+  "status": "pass",
+  "generatedAt": "2026-06-03T17:55:41Z",
+  "targetLayer": "CODEX_PREVIEW",
+  "dryRun": {
+    "status": "pass",
+    "row_count": 42,
+    "groups": [
+      "专业管线语义",
+      "基础图案线型",
+      "复合模拟线型",
+      "工程与家装语义",
+      "边界与控制线"
+    ],
+    "visible_text_validation": {
+      "status": "pass",
+      "row_count": 42,
+      "latin_hits": [],
+      "question_hits": [],
+      "encodingPreflight": {
+        "status": "pass",
+        "checkedTextCount": 174,
+        "issueCount": 0,
+        "issues": [],
+        "policy": "fail_before_cad_write_or_asset_contract_write"
+      }
+    },
+    "payloadTransport": "utf8_file_or_module_only",
+    "layoutPolicy": {
+      "mode": "integrated_dual_panel",
+      "panelCount": 2,
+      "splitStrategy": "balanced_visual_height_shared_outer_frame",
+      "minRowHeight": 200.0,
+      "minHeaderHeight": 250.0,
+      "minGroupHeight": 180.0,
+      "rowHeightStrategy": "adaptive_min_height",
+      "sampleFitStrategy": "fit_to_sample_cell_bbox",
+      "sampleCellMargin": 20.0,
+      "allowSolidFillBackground": false,
+      "solidFillUsed": false,
+      "titleBandMerged": true,
+      "groupRowsMerged": true,
+      "rowNumberStyle": "arabic"
+    },
+    "page_count": 1,
+    "panel_count": 2
+  },
+  "layoutPolicy": {
+    "mode": "integrated_dual_panel",
+    "panelCount": 2,
+    "splitStrategy": "balanced_visual_height_shared_outer_frame",
+    "minRowHeight": 200.0,
+    "minHeaderHeight": 250.0,
+    "minGroupHeight": 180.0,
+    "rowHeightStrategy": "adaptive_min_height",
+    "sampleFitStrategy": "fit_to_sample_cell_bbox",
+    "sampleCellMargin": 20.0,
+    "allowSolidFillBackground": false,
+    "solidFillUsed": false,
+    "titleBandMerged": true,
+    "groupRowsMerged": true,
+    "rowNumberStyle": "arabic"
+  },
+  "layoutChecks": {
+    "solidFillEntityCount": 0,
+    "groupRowVerticalSegmentCount": 0,
+    "singleOuterFrame": true,
+    "separatePageTitleCount": 0,
+    "panelBottomDelta": 152.0,
+    "sampleOutOfCellCount": 0,
+    "sampleOutOfCellRows": []
+  },
+  "pageCount": 1,
+  "panelCount": 2,
+  "panels": [
+    {
+      "panelIndex": 1,
+      "rowIndexStart": 1,
+      "rowIndexEnd": 22,
+      "dataRowCount": 22,
+      "groupCount": 2,
+      "bbox": {
+        "min": [
+          8200.0,
+          1264.0
+        ],
+        "max": [
+          14600.0,
+          6900.0
+        ]
+      },
+      "panelBbox": {
+        "min": [
+          8200.0,
+          1264.0
+        ],
+        "max": [
+          14600.0,
+          6900.0
+        ]
+      },
+      "bottomAlignedToOuterFrame": true,
+      "captureRecommendedPadding": 300
+    },
+    {
+      "panelIndex": 2,
+      "rowIndexStart": 23,
+      "rowIndexEnd": 42,
+      "dataRowCount": 20,
+      "groupCount": 4,
+      "bbox": {
+        "min": [
+          14860.0,
+          1416.0
+        ],
+        "max": [
+          21260.0,
+          6900.0
+        ]
+      },
+      "panelBbox": {
+        "min": [
+          14860.0,
+          1416.0
+        ],
+        "max": [
+          21260.0,
+          6900.0
+        ]
+      },
+      "bottomAlignedToOuterFrame": false,
+      "captureRecommendedPadding": 300
+    }
+  ],
+  "integratedTableBbox": {
+    "min": [
+      8200.0,
+      1264.0
+    ],
+    "max": [
+      21260.0,
+      6900.0
+    ]
+  },
+  "rowHandles": [
+    {
+      "rowIndex": 1,
+      "visibleName": "连续实线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D249",
+        "D24A",
+        "D24B",
+        "D24C",
+        "D24D",
+        "D24E",
+        "D24F",
+        "D250",
+        "D251",
+        "D252"
+      ],
+      "sampleHandles": [
+        "D250"
+      ],
+      "gridAndLabelHandles": [
+        "D249",
+        "D24A",
+        "D24B",
+        "D24C",
+        "D24D",
+        "D24E",
+        "D24F",
+        "D251",
+        "D252"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          5910.0
+        ],
+        "max": [
+          12020.0,
+          6070.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 2,
+      "visibleName": "短虚线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D253",
+        "D254",
+        "D255",
+        "D256",
+        "D257",
+        "D258",
+        "D259",
+        "D25A"
+      ],
+      "sampleHandles": [
+        "D258"
+      ],
+      "gridAndLabelHandles": [
+        "D253",
+        "D254",
+        "D255",
+        "D256",
+        "D257",
+        "D259",
+        "D25A"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          5710.0
+        ],
+        "max": [
+          12020.0,
+          5870.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 3,
+      "visibleName": "隐藏线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D25B",
+        "D25C",
+        "D25D",
+        "D25E",
+        "D25F",
+        "D260",
+        "D261",
+        "D262"
+      ],
+      "sampleHandles": [
+        "D260"
+      ],
+      "gridAndLabelHandles": [
+        "D25B",
+        "D25C",
+        "D25D",
+        "D25E",
+        "D25F",
+        "D261",
+        "D262"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          5510.0
+        ],
+        "max": [
+          12020.0,
+          5670.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 4,
+      "visibleName": "中心线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D263",
+        "D264",
+        "D265",
+        "D266",
+        "D267",
+        "D268",
+        "D269",
+        "D26A"
+      ],
+      "sampleHandles": [
+        "D268"
+      ],
+      "gridAndLabelHandles": [
+        "D263",
+        "D264",
+        "D265",
+        "D266",
+        "D267",
+        "D269",
+        "D26A"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          5310.0
+        ],
+        "max": [
+          12020.0,
+          5470.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 5,
+      "visibleName": "点线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D26B",
+        "D26C",
+        "D26D",
+        "D26E",
+        "D26F",
+        "D270",
+        "D271",
+        "D272"
+      ],
+      "sampleHandles": [
+        "D270"
+      ],
+      "gridAndLabelHandles": [
+        "D26B",
+        "D26C",
+        "D26D",
+        "D26E",
+        "D26F",
+        "D271",
+        "D272"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          5110.0
+        ],
+        "max": [
+          12020.0,
+          5270.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 6,
+      "visibleName": "点划线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D273",
+        "D274",
+        "D275",
+        "D276",
+        "D277",
+        "D278",
+        "D279",
+        "D27A"
+      ],
+      "sampleHandles": [
+        "D278"
+      ],
+      "gridAndLabelHandles": [
+        "D273",
+        "D274",
+        "D275",
+        "D276",
+        "D277",
+        "D279",
+        "D27A"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          4910.0
+        ],
+        "max": [
+          12020.0,
+          5070.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 7,
+      "visibleName": "分割点线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D27B",
+        "D27C",
+        "D27D",
+        "D27E",
+        "D27F",
+        "D280",
+        "D281",
+        "D282"
+      ],
+      "sampleHandles": [
+        "D280"
+      ],
+      "gridAndLabelHandles": [
+        "D27B",
+        "D27C",
+        "D27D",
+        "D27E",
+        "D27F",
+        "D281",
+        "D282"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          4710.0
+        ],
+        "max": [
+          12020.0,
+          4870.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 8,
+      "visibleName": "幻影线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D283",
+        "D284",
+        "D285",
+        "D286",
+        "D287",
+        "D288",
+        "D289",
+        "D28A"
+      ],
+      "sampleHandles": [
+        "D288"
+      ],
+      "gridAndLabelHandles": [
+        "D283",
+        "D284",
+        "D285",
+        "D286",
+        "D287",
+        "D289",
+        "D28A"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          4510.0
+        ],
+        "max": [
+          12020.0,
+          4670.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 9,
+      "visibleName": "边界线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D28B",
+        "D28C",
+        "D28D",
+        "D28E",
+        "D28F",
+        "D290",
+        "D291",
+        "D292"
+      ],
+      "sampleHandles": [
+        "D290"
+      ],
+      "gridAndLabelHandles": [
+        "D28B",
+        "D28C",
+        "D28D",
+        "D28E",
+        "D28F",
+        "D291",
+        "D292"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          4310.0
+        ],
+        "max": [
+          12020.0,
+          4470.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 10,
+      "visibleName": "细虚线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D293",
+        "D294",
+        "D295",
+        "D296",
+        "D297",
+        "D298",
+        "D299",
+        "D29A"
+      ],
+      "sampleHandles": [
+        "D298"
+      ],
+      "gridAndLabelHandles": [
+        "D293",
+        "D294",
+        "D295",
+        "D296",
+        "D297",
+        "D299",
+        "D29A"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          4110.0
+        ],
+        "max": [
+          12020.0,
+          4270.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 11,
+      "visibleName": "长虚线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D29B",
+        "D29C",
+        "D29D",
+        "D29E",
+        "D29F",
+        "D2A0",
+        "D2A1",
+        "D2A2"
+      ],
+      "sampleHandles": [
+        "D2A0"
+      ],
+      "gridAndLabelHandles": [
+        "D29B",
+        "D29C",
+        "D29D",
+        "D29E",
+        "D29F",
+        "D2A1",
+        "D2A2"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          3910.0
+        ],
+        "max": [
+          12020.0,
+          4070.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 12,
+      "visibleName": "稀疏轴线",
+      "group": "基础图案线型",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2A3",
+        "D2A4",
+        "D2A5",
+        "D2A6",
+        "D2A7",
+        "D2A8",
+        "D2A9",
+        "D2AA"
+      ],
+      "sampleHandles": [
+        "D2A8"
+      ],
+      "gridAndLabelHandles": [
+        "D2A3",
+        "D2A4",
+        "D2A5",
+        "D2A6",
+        "D2A7",
+        "D2A9",
+        "D2AA"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          3710.0
+        ],
+        "max": [
+          12020.0,
+          3870.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 13,
+      "visibleName": "墙体粗轮廓",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2AB",
+        "D2AC",
+        "D2AD",
+        "D2AE",
+        "D2AF",
+        "D2B0",
+        "D2B1",
+        "D2B2",
+        "D2B3",
+        "D2B4"
+      ],
+      "sampleHandles": [
+        "D2B2"
+      ],
+      "gridAndLabelHandles": [
+        "D2AB",
+        "D2AC",
+        "D2AD",
+        "D2AE",
+        "D2AF",
+        "D2B0",
+        "D2B1",
+        "D2B3",
+        "D2B4"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          3330.0
+        ],
+        "max": [
+          12020.0,
+          3490.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 14,
+      "visibleName": "家具外轮廓",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2B5",
+        "D2B6",
+        "D2B7",
+        "D2B8",
+        "D2B9",
+        "D2BA",
+        "D2BB",
+        "D2BC"
+      ],
+      "sampleHandles": [
+        "D2BA"
+      ],
+      "gridAndLabelHandles": [
+        "D2B5",
+        "D2B6",
+        "D2B7",
+        "D2B8",
+        "D2B9",
+        "D2BB",
+        "D2BC"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          3130.0
+        ],
+        "max": [
+          12020.0,
+          3290.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 15,
+      "visibleName": "家具内部细节",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2BD",
+        "D2BE",
+        "D2BF",
+        "D2C0",
+        "D2C1",
+        "D2C2",
+        "D2C3",
+        "D2C4"
+      ],
+      "sampleHandles": [
+        "D2C2"
+      ],
+      "gridAndLabelHandles": [
+        "D2BD",
+        "D2BE",
+        "D2BF",
+        "D2C0",
+        "D2C1",
+        "D2C3",
+        "D2C4"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          2930.0
+        ],
+        "max": [
+          12020.0,
+          3090.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 16,
+      "visibleName": "上方投影线",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2C5",
+        "D2C6",
+        "D2C7",
+        "D2C8",
+        "D2C9",
+        "D2CA",
+        "D2CB",
+        "D2CC"
+      ],
+      "sampleHandles": [
+        "D2CA"
+      ],
+      "gridAndLabelHandles": [
+        "D2C5",
+        "D2C6",
+        "D2C7",
+        "D2C8",
+        "D2C9",
+        "D2CB",
+        "D2CC"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          2730.0
+        ],
+        "max": [
+          12020.0,
+          2890.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 17,
+      "visibleName": "隐藏边线",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2CD",
+        "D2CE",
+        "D2CF",
+        "D2D0",
+        "D2D1",
+        "D2D2",
+        "D2D3",
+        "D2D4"
+      ],
+      "sampleHandles": [
+        "D2D2"
+      ],
+      "gridAndLabelHandles": [
+        "D2CD",
+        "D2CE",
+        "D2CF",
+        "D2D0",
+        "D2D1",
+        "D2D3",
+        "D2D4"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          2530.0
+        ],
+        "max": [
+          12020.0,
+          2690.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 18,
+      "visibleName": "标注引线",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2D5",
+        "D2D6",
+        "D2D7",
+        "D2D8",
+        "D2D9",
+        "D2DA",
+        "D2DB",
+        "D2DC"
+      ],
+      "sampleHandles": [
+        "D2DA"
+      ],
+      "gridAndLabelHandles": [
+        "D2D5",
+        "D2D6",
+        "D2D7",
+        "D2D8",
+        "D2D9",
+        "D2DB",
+        "D2DC"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          2330.0
+        ],
+        "max": [
+          12020.0,
+          2490.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 19,
+      "visibleName": "开启范围线",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2DD",
+        "D2DE",
+        "D2DF",
+        "D2E0",
+        "D2E1",
+        "D2E2",
+        "D2E3",
+        "D2E4",
+        "D2E5",
+        "D2E6"
+      ],
+      "sampleHandles": [
+        "D2E2",
+        "D2E3",
+        "D2E4"
+      ],
+      "gridAndLabelHandles": [
+        "D2DD",
+        "D2DE",
+        "D2DF",
+        "D2E0",
+        "D2E1",
+        "D2E5",
+        "D2E6"
+      ],
+      "rowHeight": 316.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          2014.0
+        ],
+        "max": [
+          12020.0,
+          2290.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 20,
+      "visibleName": "材质分界线",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2E7",
+        "D2E8",
+        "D2E9",
+        "D2EA",
+        "D2EB",
+        "D2EC",
+        "D2ED",
+        "D2EE"
+      ],
+      "sampleHandles": [
+        "D2EC"
+      ],
+      "gridAndLabelHandles": [
+        "D2E7",
+        "D2E8",
+        "D2E9",
+        "D2EA",
+        "D2EB",
+        "D2ED",
+        "D2EE"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          1814.0
+        ],
+        "max": [
+          12020.0,
+          1974.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 21,
+      "visibleName": "轴网定位线",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2EF",
+        "D2F0",
+        "D2F1",
+        "D2F2",
+        "D2F3",
+        "D2F4",
+        "D2F5",
+        "D2F6"
+      ],
+      "sampleHandles": [
+        "D2F4"
+      ],
+      "gridAndLabelHandles": [
+        "D2EF",
+        "D2F0",
+        "D2F1",
+        "D2F2",
+        "D2F3",
+        "D2F5",
+        "D2F6"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          1614.0
+        ],
+        "max": [
+          12020.0,
+          1774.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 22,
+      "visibleName": "尺寸线与尺寸界线",
+      "group": "工程与家装语义",
+      "panelIndex": 1,
+      "allCreated": [
+        "D2F7",
+        "D2F8",
+        "D2F9",
+        "D2FA",
+        "D2FB",
+        "D2FC",
+        "D2FD",
+        "D2FE"
+      ],
+      "sampleHandles": [
+        "D2FC"
+      ],
+      "gridAndLabelHandles": [
+        "D2F7",
+        "D2F8",
+        "D2F9",
+        "D2FA",
+        "D2FB",
+        "D2FD",
+        "D2FE"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          9930.0,
+          1414.0
+        ],
+        "max": [
+          12020.0,
+          1574.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 23,
+      "visibleName": "剖切位置线",
+      "group": "工程与家装语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D309",
+        "D30A",
+        "D30B",
+        "D30C",
+        "D30D",
+        "D30E",
+        "D30F",
+        "D310",
+        "D311",
+        "D312",
+        "D313",
+        "D314"
+      ],
+      "sampleHandles": [
+        "D310",
+        "D311",
+        "D312"
+      ],
+      "gridAndLabelHandles": [
+        "D309",
+        "D30A",
+        "D30B",
+        "D30C",
+        "D30D",
+        "D30E",
+        "D30F",
+        "D313",
+        "D314"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          5910.0
+        ],
+        "max": [
+          18680.0,
+          6070.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 24,
+      "visibleName": "拆除构件线",
+      "group": "工程与家装语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D315",
+        "D316",
+        "D317",
+        "D318",
+        "D319",
+        "D31A",
+        "D31B",
+        "D31C",
+        "D31D",
+        "D31E",
+        "D31F",
+        "D320",
+        "D321",
+        "D322",
+        "D323",
+        "D324"
+      ],
+      "sampleHandles": [
+        "D31A",
+        "D31B",
+        "D31C",
+        "D31D",
+        "D31E",
+        "D31F",
+        "D320",
+        "D321",
+        "D322"
+      ],
+      "gridAndLabelHandles": [
+        "D315",
+        "D316",
+        "D317",
+        "D318",
+        "D319",
+        "D323",
+        "D324"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          5710.0
+        ],
+        "max": [
+          18680.0,
+          5870.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 25,
+      "visibleName": "给水管线",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D325",
+        "D326",
+        "D327",
+        "D328",
+        "D329",
+        "D32A",
+        "D32B",
+        "D32C",
+        "D32D",
+        "D32E",
+        "D32F",
+        "D330",
+        "D331",
+        "D332"
+      ],
+      "sampleHandles": [
+        "D32C",
+        "D32D",
+        "D32E",
+        "D32F",
+        "D330"
+      ],
+      "gridAndLabelHandles": [
+        "D325",
+        "D326",
+        "D327",
+        "D328",
+        "D329",
+        "D32A",
+        "D32B",
+        "D331",
+        "D332"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          5330.0
+        ],
+        "max": [
+          18680.0,
+          5490.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 26,
+      "visibleName": "热水管线",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D333",
+        "D334",
+        "D335",
+        "D336",
+        "D337",
+        "D338",
+        "D339",
+        "D33A",
+        "D33B",
+        "D33C",
+        "D33D",
+        "D33E"
+      ],
+      "sampleHandles": [
+        "D338",
+        "D339",
+        "D33A",
+        "D33B",
+        "D33C"
+      ],
+      "gridAndLabelHandles": [
+        "D333",
+        "D334",
+        "D335",
+        "D336",
+        "D337",
+        "D33D",
+        "D33E"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          5130.0
+        ],
+        "max": [
+          18680.0,
+          5290.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 27,
+      "visibleName": "排水管线",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D33F",
+        "D340",
+        "D341",
+        "D342",
+        "D343",
+        "D344",
+        "D345",
+        "D346",
+        "D347",
+        "D348",
+        "D349",
+        "D34A"
+      ],
+      "sampleHandles": [
+        "D344",
+        "D345",
+        "D346",
+        "D347",
+        "D348"
+      ],
+      "gridAndLabelHandles": [
+        "D33F",
+        "D340",
+        "D341",
+        "D342",
+        "D343",
+        "D349",
+        "D34A"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          4930.0
+        ],
+        "max": [
+          18680.0,
+          5090.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 28,
+      "visibleName": "燃气管线",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D34B",
+        "D34C",
+        "D34D",
+        "D34E",
+        "D34F",
+        "D350",
+        "D351",
+        "D352",
+        "D353",
+        "D354",
+        "D355",
+        "D356"
+      ],
+      "sampleHandles": [
+        "D350",
+        "D351",
+        "D352",
+        "D353",
+        "D354"
+      ],
+      "gridAndLabelHandles": [
+        "D34B",
+        "D34C",
+        "D34D",
+        "D34E",
+        "D34F",
+        "D355",
+        "D356"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          4730.0
+        ],
+        "max": [
+          18680.0,
+          4890.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 29,
+      "visibleName": "强电线路",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D357",
+        "D358",
+        "D359",
+        "D35A",
+        "D35B",
+        "D35C",
+        "D35D",
+        "D35E",
+        "D35F",
+        "D360",
+        "D361",
+        "D362"
+      ],
+      "sampleHandles": [
+        "D35C",
+        "D35D",
+        "D35E",
+        "D35F",
+        "D360"
+      ],
+      "gridAndLabelHandles": [
+        "D357",
+        "D358",
+        "D359",
+        "D35A",
+        "D35B",
+        "D361",
+        "D362"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          4530.0
+        ],
+        "max": [
+          18680.0,
+          4690.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 30,
+      "visibleName": "弱电线路",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D363",
+        "D364",
+        "D365",
+        "D366",
+        "D367",
+        "D368",
+        "D369",
+        "D36A",
+        "D36B",
+        "D36C",
+        "D36D",
+        "D36E"
+      ],
+      "sampleHandles": [
+        "D368",
+        "D369",
+        "D36A",
+        "D36B",
+        "D36C"
+      ],
+      "gridAndLabelHandles": [
+        "D363",
+        "D364",
+        "D365",
+        "D366",
+        "D367",
+        "D36D",
+        "D36E"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          4330.0
+        ],
+        "max": [
+          18680.0,
+          4490.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 31,
+      "visibleName": "消防管线",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D36F",
+        "D370",
+        "D371",
+        "D372",
+        "D373",
+        "D374",
+        "D375",
+        "D376",
+        "D377",
+        "D378",
+        "D379",
+        "D37A"
+      ],
+      "sampleHandles": [
+        "D374",
+        "D375",
+        "D376",
+        "D377",
+        "D378"
+      ],
+      "gridAndLabelHandles": [
+        "D36F",
+        "D370",
+        "D371",
+        "D372",
+        "D373",
+        "D379",
+        "D37A"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          4130.0
+        ],
+        "max": [
+          18680.0,
+          4290.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 32,
+      "visibleName": "空调冷媒风管线",
+      "group": "专业管线语义",
+      "panelIndex": 2,
+      "allCreated": [
+        "D37B",
+        "D37C",
+        "D37D",
+        "D37E",
+        "D37F",
+        "D380",
+        "D381",
+        "D382",
+        "D383",
+        "D384",
+        "D385",
+        "D386"
+      ],
+      "sampleHandles": [
+        "D380",
+        "D381",
+        "D382",
+        "D383",
+        "D384"
+      ],
+      "gridAndLabelHandles": [
+        "D37B",
+        "D37C",
+        "D37D",
+        "D37E",
+        "D37F",
+        "D385",
+        "D386"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          3930.0
+        ],
+        "max": [
+          18680.0,
+          4090.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 33,
+      "visibleName": "地界红线",
+      "group": "边界与控制线",
+      "panelIndex": 2,
+      "allCreated": [
+        "D387",
+        "D388",
+        "D389",
+        "D38A",
+        "D38B",
+        "D38C",
+        "D38D",
+        "D38E",
+        "D38F",
+        "D390"
+      ],
+      "sampleHandles": [
+        "D38E"
+      ],
+      "gridAndLabelHandles": [
+        "D387",
+        "D388",
+        "D389",
+        "D38A",
+        "D38B",
+        "D38C",
+        "D38D",
+        "D38F",
+        "D390"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          3550.0
+        ],
+        "max": [
+          18680.0,
+          3710.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 34,
+      "visibleName": "退界控制线",
+      "group": "边界与控制线",
+      "panelIndex": 2,
+      "allCreated": [
+        "D391",
+        "D392",
+        "D393",
+        "D394",
+        "D395",
+        "D396",
+        "D397",
+        "D398"
+      ],
+      "sampleHandles": [
+        "D396"
+      ],
+      "gridAndLabelHandles": [
+        "D391",
+        "D392",
+        "D393",
+        "D394",
+        "D395",
+        "D397",
+        "D398"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          3350.0
+        ],
+        "max": [
+          18680.0,
+          3510.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 35,
+      "visibleName": "规划预留线",
+      "group": "边界与控制线",
+      "panelIndex": 2,
+      "allCreated": [
+        "D399",
+        "D39A",
+        "D39B",
+        "D39C",
+        "D39D",
+        "D39E",
+        "D39F",
+        "D3A0"
+      ],
+      "sampleHandles": [
+        "D39E"
+      ],
+      "gridAndLabelHandles": [
+        "D399",
+        "D39A",
+        "D39B",
+        "D39C",
+        "D39D",
+        "D39F",
+        "D3A0"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          3150.0
+        ],
+        "max": [
+          18680.0,
+          3310.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 36,
+      "visibleName": "安全净距线",
+      "group": "边界与控制线",
+      "panelIndex": 2,
+      "allCreated": [
+        "D3A1",
+        "D3A2",
+        "D3A3",
+        "D3A4",
+        "D3A5",
+        "D3A6",
+        "D3A7",
+        "D3A8"
+      ],
+      "sampleHandles": [
+        "D3A6"
+      ],
+      "gridAndLabelHandles": [
+        "D3A1",
+        "D3A2",
+        "D3A3",
+        "D3A4",
+        "D3A5",
+        "D3A7",
+        "D3A8"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          2950.0
+        ],
+        "max": [
+          18680.0,
+          3110.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 37,
+      "visibleName": "折断线",
+      "group": "复合模拟线型",
+      "panelIndex": 2,
+      "allCreated": [
+        "D3A9",
+        "D3AA",
+        "D3AB",
+        "D3AC",
+        "D3AD",
+        "D3AE",
+        "D3AF",
+        "D3B0",
+        "D3B1",
+        "D3B2"
+      ],
+      "sampleHandles": [
+        "D3B0"
+      ],
+      "gridAndLabelHandles": [
+        "D3A9",
+        "D3AA",
+        "D3AB",
+        "D3AC",
+        "D3AD",
+        "D3AE",
+        "D3AF",
+        "D3B1",
+        "D3B2"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          2570.0
+        ],
+        "max": [
+          18680.0,
+          2730.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 38,
+      "visibleName": "波浪线",
+      "group": "复合模拟线型",
+      "panelIndex": 2,
+      "allCreated": [
+        "D3B3",
+        "D3B4",
+        "D3B5",
+        "D3B6",
+        "D3B7",
+        "D3B8",
+        "D3B9",
+        "D3BA"
+      ],
+      "sampleHandles": [
+        "D3B8"
+      ],
+      "gridAndLabelHandles": [
+        "D3B3",
+        "D3B4",
+        "D3B5",
+        "D3B6",
+        "D3B7",
+        "D3B9",
+        "D3BA"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          2370.0
+        ],
+        "max": [
+          18680.0,
+          2530.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 39,
+      "visibleName": "圆围栏线",
+      "group": "复合模拟线型",
+      "panelIndex": 2,
+      "allCreated": [
+        "D3BB",
+        "D3BC",
+        "D3BD",
+        "D3BE",
+        "D3BF",
+        "D3C0",
+        "D3C1",
+        "D3C2",
+        "D3C3",
+        "D3C4",
+        "D3C5",
+        "D3C6",
+        "D3C7"
+      ],
+      "sampleHandles": [
+        "D3C0",
+        "D3C1",
+        "D3C2",
+        "D3C3",
+        "D3C4",
+        "D3C5"
+      ],
+      "gridAndLabelHandles": [
+        "D3BB",
+        "D3BC",
+        "D3BD",
+        "D3BE",
+        "D3BF",
+        "D3C6",
+        "D3C7"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          2170.0
+        ],
+        "max": [
+          18680.0,
+          2330.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 40,
+      "visibleName": "方围栏线",
+      "group": "复合模拟线型",
+      "panelIndex": 2,
+      "allCreated": [
+        "D3C8",
+        "D3C9",
+        "D3CA",
+        "D3CB",
+        "D3CC",
+        "D3CD",
+        "D3CE",
+        "D3CF",
+        "D3D0",
+        "D3D1",
+        "D3D2",
+        "D3D3",
+        "D3D4",
+        "D3D5",
+        "D3D6",
+        "D3D7",
+        "D3D8",
+        "D3D9",
+        "D3DA",
+        "D3DB",
+        "D3DC",
+        "D3DD",
+        "D3DE",
+        "D3DF",
+        "D3E0",
+        "D3E1",
+        "D3E2",
+        "D3E3"
+      ],
+      "sampleHandles": [
+        "D3CD",
+        "D3CE",
+        "D3CF",
+        "D3D0",
+        "D3D1",
+        "D3D2",
+        "D3D3",
+        "D3D4",
+        "D3D5",
+        "D3D6",
+        "D3D7",
+        "D3D8",
+        "D3D9",
+        "D3DA",
+        "D3DB",
+        "D3DC",
+        "D3DD",
+        "D3DE",
+        "D3DF",
+        "D3E0",
+        "D3E1"
+      ],
+      "gridAndLabelHandles": [
+        "D3C8",
+        "D3C9",
+        "D3CA",
+        "D3CB",
+        "D3CC",
+        "D3E2",
+        "D3E3"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          1970.0
+        ],
+        "max": [
+          18680.0,
+          2130.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 41,
+      "visibleName": "保温棉线",
+      "group": "复合模拟线型",
+      "panelIndex": 2,
+      "allCreated": [
+        "D3E4",
+        "D3E5",
+        "D3E6",
+        "D3E7",
+        "D3E8",
+        "D3E9",
+        "D3EA",
+        "D3EB",
+        "D3EC",
+        "D3ED"
+      ],
+      "sampleHandles": [
+        "D3E9",
+        "D3EA",
+        "D3EB"
+      ],
+      "gridAndLabelHandles": [
+        "D3E4",
+        "D3E5",
+        "D3E6",
+        "D3E7",
+        "D3E8",
+        "D3EC",
+        "D3ED"
+      ],
+      "rowHeight": 204.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          1766.0
+        ],
+        "max": [
+          18680.0,
+          1930.0
+        ]
+      }
+    },
+    {
+      "rowIndex": 42,
+      "visibleName": "文字管线",
+      "group": "复合模拟线型",
+      "panelIndex": 2,
+      "allCreated": [
+        "D3EE",
+        "D3EF",
+        "D3F0",
+        "D3F1",
+        "D3F2",
+        "D3F3",
+        "D3F4",
+        "D3F5",
+        "D3F6",
+        "D3F7",
+        "D3F8",
+        "D3F9"
+      ],
+      "sampleHandles": [
+        "D3F3",
+        "D3F4",
+        "D3F5",
+        "D3F6",
+        "D3F7"
+      ],
+      "gridAndLabelHandles": [
+        "D3EE",
+        "D3EF",
+        "D3F0",
+        "D3F1",
+        "D3F2",
+        "D3F8",
+        "D3F9"
+      ],
+      "rowHeight": 200.0,
+      "sampleCellBbox": {
+        "min": [
+          16590.0,
+          1566.0
+        ],
+        "max": [
+          18680.0,
+          1726.0
+        ]
+      }
+    }
+  ],
+  "drawnRows": [
+    {
+      "group": "基础图案线型",
+      "visibleName": "连续实线",
+      "mode": "linetype",
+      "cadLinetype": "CONTINUOUS",
+      "color": "white",
+      "lineweight": 0.25,
+      "linetypeScale": 1.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "短虚线",
+      "mode": "linetype",
+      "cadLinetype": "DASHED",
+      "color": "yellow",
+      "lineweight": 0.25,
+      "linetypeScale": 35.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "隐藏线",
+      "mode": "linetype",
+      "cadLinetype": "HIDDEN",
+      "color": "magenta",
+      "lineweight": 0.25,
+      "linetypeScale": 35.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "中心线",
+      "mode": "linetype",
+      "cadLinetype": "CENTER",
+      "color": "cyan",
+      "lineweight": 0.25,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "点线",
+      "mode": "linetype",
+      "cadLinetype": "DOT",
+      "color": "green",
+      "lineweight": 0.25,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "点划线",
+      "mode": "linetype",
+      "cadLinetype": "DASHDOT",
+      "color": "blue",
+      "lineweight": 0.25,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "分割点线",
+      "mode": "linetype",
+      "cadLinetype": "DIVIDE",
+      "color": "red",
+      "lineweight": 0.25,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "幻影线",
+      "mode": "linetype",
+      "cadLinetype": "PHANTOM",
+      "color": "magenta",
+      "lineweight": 0.25,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "边界线",
+      "mode": "linetype",
+      "cadLinetype": "BORDER",
+      "color": "yellow",
+      "lineweight": 0.25,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "细虚线",
+      "mode": "linetype",
+      "cadLinetype": "DASHED2",
+      "color": "green",
+      "lineweight": 0.15,
+      "linetypeScale": 35.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "长虚线",
+      "mode": "linetype",
+      "cadLinetype": "HIDDEN2",
+      "color": "blue",
+      "lineweight": 0.25,
+      "linetypeScale": 55.0
+    },
+    {
+      "group": "基础图案线型",
+      "visibleName": "稀疏轴线",
+      "mode": "linetype",
+      "cadLinetype": "CENTER2",
+      "color": "cyan",
+      "lineweight": 0.25,
+      "linetypeScale": 60.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "墙体粗轮廓",
+      "mode": "linetype",
+      "cadLinetype": "CONTINUOUS",
+      "color": "red",
+      "lineweight": 0.5,
+      "linetypeScale": 1.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "家具外轮廓",
+      "mode": "linetype",
+      "cadLinetype": "CONTINUOUS",
+      "color": "cyan",
+      "lineweight": 0.35,
+      "linetypeScale": 1.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "家具内部细节",
+      "mode": "linetype",
+      "cadLinetype": "CONTINUOUS",
+      "color": "white",
+      "lineweight": 0.15,
+      "linetypeScale": 1.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "上方投影线",
+      "mode": "linetype",
+      "cadLinetype": "DASHED",
+      "color": "blue",
+      "lineweight": 0.2,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "隐藏边线",
+      "mode": "linetype",
+      "cadLinetype": "HIDDEN",
+      "color": "magenta",
+      "lineweight": 0.2,
+      "linetypeScale": 35.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "标注引线",
+      "mode": "linetype",
+      "cadLinetype": "CONTINUOUS",
+      "color": "green",
+      "lineweight": 0.15,
+      "linetypeScale": 1.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "开启范围线",
+      "mode": "swing_arc",
+      "cadLinetype": "CENTER",
+      "color": "yellow",
+      "lineweight": 0.2,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "材质分界线",
+      "mode": "linetype",
+      "cadLinetype": "DASHDOT",
+      "color": "red",
+      "lineweight": 0.2,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "轴网定位线",
+      "mode": "linetype",
+      "cadLinetype": "CENTER",
+      "color": "cyan",
+      "lineweight": 0.18,
+      "linetypeScale": 55.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "尺寸线与尺寸界线",
+      "mode": "linetype",
+      "cadLinetype": "BYLAYER",
+      "color": "white",
+      "lineweight": 0.13,
+      "linetypeScale": 1.0
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "剖切位置线",
+      "mode": "section_cut",
+      "cadLinetype": null,
+      "color": "red",
+      "lineweight": 0.35,
+      "linetypeScale": null
+    },
+    {
+      "group": "工程与家装语义",
+      "visibleName": "拆除构件线",
+      "mode": "demolition",
+      "cadLinetype": null,
+      "color": "yellow",
+      "lineweight": 0.25,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "给水管线",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "cyan",
+      "lineweight": 0.2,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "热水管线",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "red",
+      "lineweight": 0.2,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "排水管线",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "green",
+      "lineweight": 0.25,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "燃气管线",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "yellow",
+      "lineweight": 0.25,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "强电线路",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "red",
+      "lineweight": 0.18,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "弱电线路",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "magenta",
+      "lineweight": 0.18,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "消防管线",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "red",
+      "lineweight": 0.25,
+      "linetypeScale": null
+    },
+    {
+      "group": "专业管线语义",
+      "visibleName": "空调冷媒风管线",
+      "mode": "pipe_text",
+      "cadLinetype": null,
+      "color": "blue",
+      "lineweight": 0.2,
+      "linetypeScale": null
+    },
+    {
+      "group": "边界与控制线",
+      "visibleName": "地界红线",
+      "mode": "linetype",
+      "cadLinetype": "PHANTOM",
+      "color": "red",
+      "lineweight": 0.35,
+      "linetypeScale": 60.0
+    },
+    {
+      "group": "边界与控制线",
+      "visibleName": "退界控制线",
+      "mode": "linetype",
+      "cadLinetype": "DASHDOT",
+      "color": "yellow",
+      "lineweight": 0.2,
+      "linetypeScale": 60.0
+    },
+    {
+      "group": "边界与控制线",
+      "visibleName": "规划预留线",
+      "mode": "linetype",
+      "cadLinetype": "PHANTOM",
+      "color": "magenta",
+      "lineweight": 0.2,
+      "linetypeScale": 60.0
+    },
+    {
+      "group": "边界与控制线",
+      "visibleName": "安全净距线",
+      "mode": "linetype",
+      "cadLinetype": "BORDER",
+      "color": "yellow",
+      "lineweight": 0.18,
+      "linetypeScale": 45.0
+    },
+    {
+      "group": "复合模拟线型",
+      "visibleName": "折断线",
+      "mode": "zigzag",
+      "cadLinetype": null,
+      "color": "yellow",
+      "lineweight": 0.25,
+      "linetypeScale": null
+    },
+    {
+      "group": "复合模拟线型",
+      "visibleName": "波浪线",
+      "mode": "wave",
+      "cadLinetype": null,
+      "color": "cyan",
+      "lineweight": 0.25,
+      "linetypeScale": null
+    },
+    {
+      "group": "复合模拟线型",
+      "visibleName": "圆围栏线",
+      "mode": "fence_circle",
+      "cadLinetype": null,
+      "color": "green",
+      "lineweight": 0.2,
+      "linetypeScale": null
+    },
+    {
+      "group": "复合模拟线型",
+      "visibleName": "方围栏线",
+      "mode": "fence_square",
+      "cadLinetype": null,
+      "color": "blue",
+      "lineweight": 0.2,
+      "linetypeScale": null
+    },
+    {
+      "group": "复合模拟线型",
+      "visibleName": "保温棉线",
+      "mode": "batting",
+      "cadLinetype": null,
+      "color": "magenta",
+      "lineweight": 0.2,
+      "linetypeScale": null
+    },
+    {
+      "group": "复合模拟线型",
+      "visibleName": "文字管线",
+      "mode": "text_pipe",
+      "cadLinetype": null,
+      "color": "red",
+      "lineweight": 0.2,
+      "linetypeScale": null
+    }
+  ],
+  "createdHandleCount": 450,
+  "created_handles": [
+    "D238",
+    "D239",
+    "D23A",
+    "D23B",
+    "D23C",
+    "D23D",
+    "D23E",
+    "D23F",
+    "D240",
+    "D241",
+    "D242",
+    "D243",
+    "D244",
+    "D245",
+    "D246",
+    "D247",
+    "D248",
+    "D249",
+    "D24A",
+    "D24B",
+    "D24C",
+    "D24D",
+    "D24E",
+    "D24F",
+    "D250",
+    "D251",
+    "D252",
+    "D253",
+    "D254",
+    "D255",
+    "D256",
+    "D257",
+    "D258",
+    "D259",
+    "D25A",
+    "D25B",
+    "D25C",
+    "D25D",
+    "D25E",
+    "D25F",
+    "D260",
+    "D261",
+    "D262",
+    "D263",
+    "D264",
+    "D265",
+    "D266",
+    "D267",
+    "D268",
+    "D269",
+    "D26A",
+    "D26B",
+    "D26C",
+    "D26D",
+    "D26E",
+    "D26F",
+    "D270",
+    "D271",
+    "D272",
+    "D273",
+    "D274",
+    "D275",
+    "D276",
+    "D277",
+    "D278",
+    "D279",
+    "D27A",
+    "D27B",
+    "D27C",
+    "D27D",
+    "D27E",
+    "D27F",
+    "D280",
+    "D281",
+    "D282",
+    "D283",
+    "D284",
+    "D285",
+    "D286",
+    "D287",
+    "D288",
+    "D289",
+    "D28A",
+    "D28B",
+    "D28C",
+    "D28D",
+    "D28E",
+    "D28F",
+    "D290",
+    "D291",
+    "D292",
+    "D293",
+    "D294",
+    "D295",
+    "D296",
+    "D297",
+    "D298",
+    "D299",
+    "D29A",
+    "D29B",
+    "D29C",
+    "D29D",
+    "D29E",
+    "D29F",
+    "D2A0",
+    "D2A1",
+    "D2A2",
+    "D2A3",
+    "D2A4",
+    "D2A5",
+    "D2A6",
+    "D2A7",
+    "D2A8",
+    "D2A9",
+    "D2AA",
+    "D2AB",
+    "D2AC",
+    "D2AD",
+    "D2AE",
+    "D2AF",
+    "D2B0",
+    "D2B1",
+    "D2B2",
+    "D2B3",
+    "D2B4",
+    "D2B5",
+    "D2B6",
+    "D2B7",
+    "D2B8",
+    "D2B9",
+    "D2BA",
+    "D2BB",
+    "D2BC",
+    "D2BD",
+    "D2BE",
+    "D2BF",
+    "D2C0",
+    "D2C1",
+    "D2C2",
+    "D2C3",
+    "D2C4",
+    "D2C5",
+    "D2C6",
+    "D2C7",
+    "D2C8",
+    "D2C9",
+    "D2CA",
+    "D2CB",
+    "D2CC",
+    "D2CD",
+    "D2CE",
+    "D2CF",
+    "D2D0",
+    "D2D1",
+    "D2D2",
+    "D2D3",
+    "D2D4",
+    "D2D5",
+    "D2D6",
+    "D2D7",
+    "D2D8",
+    "D2D9",
+    "D2DA",
+    "D2DB",
+    "D2DC",
+    "D2DD",
+    "D2DE",
+    "D2DF",
+    "D2E0",
+    "D2E1",
+    "D2E2",
+    "D2E3",
+    "D2E4",
+    "D2E5",
+    "D2E6",
+    "D2E7",
+    "D2E8",
+    "D2E9",
+    "D2EA",
+    "D2EB",
+    "D2EC",
+    "D2ED",
+    "D2EE",
+    "D2EF",
+    "D2F0",
+    "D2F1",
+    "D2F2",
+    "D2F3",
+    "D2F4",
+    "D2F5",
+    "D2F6",
+    "D2F7",
+    "D2F8",
+    "D2F9",
+    "D2FA",
+    "D2FB",
+    "D2FC",
+    "D2FD",
+    "D2FE",
+    "D2FF",
+    "D300",
+    "D301",
+    "D302",
+    "D303",
+    "D304",
+    "D305",
+    "D306",
+    "D307",
+    "D308",
+    "D309",
+    "D30A",
+    "D30B",
+    "D30C",
+    "D30D",
+    "D30E",
+    "D30F",
+    "D310",
+    "D311",
+    "D312",
+    "D313",
+    "D314",
+    "D315",
+    "D316",
+    "D317",
+    "D318",
+    "D319",
+    "D31A",
+    "D31B",
+    "D31C",
+    "D31D",
+    "D31E",
+    "D31F",
+    "D320",
+    "D321",
+    "D322",
+    "D323",
+    "D324",
+    "D325",
+    "D326",
+    "D327",
+    "D328",
+    "D329",
+    "D32A",
+    "D32B",
+    "D32C",
+    "D32D",
+    "D32E",
+    "D32F",
+    "D330",
+    "D331",
+    "D332",
+    "D333",
+    "D334",
+    "D335",
+    "D336",
+    "D337",
+    "D338",
+    "D339",
+    "D33A",
+    "D33B",
+    "D33C",
+    "D33D",
+    "D33E",
+    "D33F",
+    "D340",
+    "D341",
+    "D342",
+    "D343",
+    "D344",
+    "D345",
+    "D346",
+    "D347",
+    "D348",
+    "D349",
+    "D34A",
+    "D34B",
+    "D34C",
+    "D34D",
+    "D34E",
+    "D34F",
+    "D350",
+    "D351",
+    "D352",
+    "D353",
+    "D354",
+    "D355",
+    "D356",
+    "D357",
+    "D358",
+    "D359",
+    "D35A",
+    "D35B",
+    "D35C",
+    "D35D",
+    "D35E",
+    "D35F",
+    "D360",
+    "D361",
+    "D362",
+    "D363",
+    "D364",
+    "D365",
+    "D366",
+    "D367",
+    "D368",
+    "D369",
+    "D36A",
+    "D36B",
+    "D36C",
+    "D36D",
+    "D36E",
+    "D36F",
+    "D370",
+    "D371",
+    "D372",
+    "D373",
+    "D374",
+    "D375",
+    "D376",
+    "D377",
+    "D378",
+    "D379",
+    "D37A",
+    "D37B",
+    "D37C",
+    "D37D",
+    "D37E",
+    "D37F",
+    "D380",
+    "D381",
+    "D382",
+    "D383",
+    "D384",
+    "D385",
+    "D386",
+    "D387",
+    "D388",
+    "D389",
+    "D38A",
+    "D38B",
+    "D38C",
+    "D38D",
+    "D38E",
+    "D38F",
+    "D390",
+    "D391",
+    "D392",
+    "D393",
+    "D394",
+    "D395",
+    "D396",
+    "D397",
+    "D398",
+    "D399",
+    "D39A",
+    "D39B",
+    "D39C",
+    "D39D",
+    "D39E",
+    "D39F",
+    "D3A0",
+    "D3A1",
+    "D3A2",
+    "D3A3",
+    "D3A4",
+    "D3A5",
+    "D3A6",
+    "D3A7",
+    "D3A8",
+    "D3A9",
+    "D3AA",
+    "D3AB",
+    "D3AC",
+    "D3AD",
+    "D3AE",
+    "D3AF",
+    "D3B0",
+    "D3B1",
+    "D3B2",
+    "D3B3",
+    "D3B4",
+    "D3B5",
+    "D3B6",
+    "D3B7",
+    "D3B8",
+    "D3B9",
+    "D3BA",
+    "D3BB",
+    "D3BC",
+    "D3BD",
+    "D3BE",
+    "D3BF",
+    "D3C0",
+    "D3C1",
+    "D3C2",
+    "D3C3",
+    "D3C4",
+    "D3C5",
+    "D3C6",
+    "D3C7",
+    "D3C8",
+    "D3C9",
+    "D3CA",
+    "D3CB",
+    "D3CC",
+    "D3CD",
+    "D3CE",
+    "D3CF",
+    "D3D0",
+    "D3D1",
+    "D3D2",
+    "D3D3",
+    "D3D4",
+    "D3D5",
+    "D3D6",
+    "D3D7",
+    "D3D8",
+    "D3D9",
+    "D3DA",
+    "D3DB",
+    "D3DC",
+    "D3DD",
+    "D3DE",
+    "D3DF",
+    "D3E0",
+    "D3E1",
+    "D3E2",
+    "D3E3",
+    "D3E4",
+    "D3E5",
+    "D3E6",
+    "D3E7",
+    "D3E8",
+    "D3E9",
+    "D3EA",
+    "D3EB",
+    "D3EC",
+    "D3ED",
+    "D3EE",
+    "D3EF",
+    "D3F0",
+    "D3F1",
+    "D3F2",
+    "D3F3",
+    "D3F4",
+    "D3F5",
+    "D3F6",
+    "D3F7",
+    "D3F8",
+    "D3F9"
+  ],
+  "readbackEntityCount": 450,
+  "missingHandles": [],
+  "visibleTextReadback": {
+    "status": "pass",
+    "textCount": 161,
+    "questionTextCount": 0,
+    "latinTextCount": 0,
+    "texts": [
+      "线型样式与颜色归纳表",
+      "整合双栏；预览层测试；颜色、线宽、线型比例已区分；图纸未保存",
+      "序",
+      "线型名称",
+      "样线",
+      "用途与测试点",
+      "基础图案线型",
+      "1",
+      "连续实线",
+      "常规可见边与轮廓",
+      "2",
+      "短虚线",
+      "基础虚线，测试短断续",
+      "3",
+      "隐藏线",
+      "遮挡边与上方物件",
+      "4",
+      "中心线",
+      "轴线、对称线、圆心线",
+      "5",
+      "点线",
+      "点状参考与弱提示",
+      "6",
+      "点划线",
+      "定位线与控制线",
+      "7",
+      "分割点线",
+      "分区边界与分割线",
+      "8",
+      "幻影线",
+      "未来预留或运动范围",
+      "9",
+      "边界线",
+      "范围框与边界提示",
+      "10",
+      "细虚线",
+      "小比例隐藏边测试",
+      "11",
+      "长虚线",
+      "投影或拆除提示",
+      "12",
+      "稀疏轴线",
+      "大尺度中心线测试",
+      "工程与家装语义",
+      "13",
+      "墙体粗轮廓",
+      "剖切墙体与主轮廓",
+      "14",
+      "家具外轮廓",
+      "家具边界与外形识别",
+      "15",
+      "家具内部细节",
+      "柜门缝、坐垫分割",
+      "16",
+      "上方投影线",
+      "吊柜、灯具、顶面投影",
+      "17",
+      "隐藏边线",
+      "柜内搁板与被挡边",
+      "18",
+      "标注引线",
+      "尺寸、索引、说明引出",
+      "19",
+      "开启范围线",
+      "门扇、抽屉、检修空间",
+      "20",
+      "材质分界线",
+      "铺装、饰面、收口分界",
+      "21",
+      "轴网定位线",
+      "建筑轴网、柱网定位",
+      "22",
+      "尺寸线与尺寸界线",
+      "尺寸标注与延伸界线",
+      "序",
+      "线型名称",
+      "样线",
+      "用途与测试点",
+      "工程与家装语义",
+      "23",
+      "剖切位置线",
+      "剖",
+      "剖面切割位置提示",
+      "24",
+      "拆除构件线",
+      "拆墙、拆柜、拆设备",
+      "专业管线语义",
+      "25",
+      "给水管线",
+      "给",
+      "水",
+      "冷水、生活给水路径",
+      "26",
+      "热水管线",
+      "热",
+      "水",
+      "热水路径与回水提示",
+      "27",
+      "排水管线",
+      "排",
+      "水",
+      "排水、污水、废水路径",
+      "28",
+      "燃气管线",
+      "燃",
+      "气",
+      "燃气走向与阀门连接",
+      "29",
+      "强电线路",
+      "强",
+      "电",
+      "插座、照明、电源回路",
+      "30",
+      "弱电线路",
+      "弱",
+      "电",
+      "网络、电视、安防控制",
+      "31",
+      "消防管线",
+      "消",
+      "防",
+      "喷淋、消防给水、报警",
+      "32",
+      "空调冷媒风管线",
+      "空",
+      "调",
+      "空调管路、风管中心",
+      "边界与控制线",
+      "33",
+      "地界红线",
+      "用地边界、控制边线",
+      "34",
+      "退界控制线",
+      "建筑退距、限建范围",
+      "35",
+      "规划预留线",
+      "未来预留设备或洞口",
+      "36",
+      "安全净距线",
+      "检修、消防、通行净距",
+      "复合模拟线型",
+      "37",
+      "折断线",
+      "断开或省略区段",
+      "38",
+      "波浪线",
+      "软性边界或草图边",
+      "39",
+      "圆围栏线",
+      "控制范围与围合边",
+      "40",
+      "方围栏线",
+      "网格围合或安全区",
+      "41",
+      "保温棉线",
+      "保温层、软包层示意",
+      "42",
+      "文字管线",
+      "水",
+      "电",
+      "管线识别与方向提示"
+    ]
+  },
+  "styleVerification": {
+    "status": "pass",
+    "evidenceSource": "autocad_readback",
+    "rowCountExpected": 42,
+    "rowCountChecked": 42,
+    "styleMismatchCount": 0,
+    "rows": [
+      {
+        "rowIndex": 1,
+        "capabilityId": "linetype-table-row-1",
+        "visibleName": "连续实线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D250"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "white",
+          "colorAci": 7,
+          "lineweightMm": 0.25,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D250",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 7,
+            "lineweightMm": 0.25,
+            "linetype": "CONTINUOUS",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                5990.0
+              ],
+              "max": [
+                11790.0,
+                5990.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              5990.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              5990.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 2,
+        "capabilityId": "linetype-table-row-2",
+        "visibleName": "短虚线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D258"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.25,
+          "linetype": "DASHED",
+          "linetypeScale": 35.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D258",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.25,
+            "linetype": "DASHED",
+            "linetypeScale": 35.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                5790.0
+              ],
+              "max": [
+                11790.0,
+                5790.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              5790.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              5790.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 3,
+        "capabilityId": "linetype-table-row-3",
+        "visibleName": "隐藏线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D260"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "magenta",
+          "colorAci": 6,
+          "lineweightMm": 0.25,
+          "linetype": "HIDDEN",
+          "linetypeScale": 35.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D260",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.25,
+            "linetype": "HIDDEN",
+            "linetypeScale": 35.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                5590.0
+              ],
+              "max": [
+                11790.0,
+                5590.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              5590.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              5590.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 4,
+        "capabilityId": "linetype-table-row-4",
+        "visibleName": "中心线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D268"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "cyan",
+          "colorAci": 4,
+          "lineweightMm": 0.25,
+          "linetype": "CENTER",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D268",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.25,
+            "linetype": "CENTER",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                5390.0
+              ],
+              "max": [
+                11790.0,
+                5390.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              5390.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              5390.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 5,
+        "capabilityId": "linetype-table-row-5",
+        "visibleName": "点线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D270"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "green",
+          "colorAci": 3,
+          "lineweightMm": 0.25,
+          "linetype": "DOT",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D270",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.25,
+            "linetype": "DOT",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                5190.0
+              ],
+              "max": [
+                11790.0,
+                5190.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              5190.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              5190.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 6,
+        "capabilityId": "linetype-table-row-6",
+        "visibleName": "点划线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D278"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "blue",
+          "colorAci": 5,
+          "lineweightMm": 0.25,
+          "linetype": "DASHDOT",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D278",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.25,
+            "linetype": "DASHDOT",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                4990.0
+              ],
+              "max": [
+                11790.0,
+                4990.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              4990.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              4990.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 7,
+        "capabilityId": "linetype-table-row-7",
+        "visibleName": "分割点线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D280"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.25,
+          "linetype": "DIVIDE",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D280",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.25,
+            "linetype": "DIVIDE",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                4790.0
+              ],
+              "max": [
+                11790.0,
+                4790.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              4790.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              4790.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 8,
+        "capabilityId": "linetype-table-row-8",
+        "visibleName": "幻影线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D288"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "magenta",
+          "colorAci": 6,
+          "lineweightMm": 0.25,
+          "linetype": "PHANTOM",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D288",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.25,
+            "linetype": "PHANTOM",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                4590.0
+              ],
+              "max": [
+                11790.0,
+                4590.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              4590.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              4590.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 9,
+        "capabilityId": "linetype-table-row-9",
+        "visibleName": "边界线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D290"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.25,
+          "linetype": "BORDER",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D290",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.25,
+            "linetype": "BORDER",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                4390.0
+              ],
+              "max": [
+                11790.0,
+                4390.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              4390.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              4390.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 10,
+        "capabilityId": "linetype-table-row-10",
+        "visibleName": "细虚线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D298"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "green",
+          "colorAci": 3,
+          "lineweightMm": 0.15,
+          "linetype": "DASHED2",
+          "linetypeScale": 35.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D298",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.15,
+            "linetype": "DASHED2",
+            "linetypeScale": 35.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                4190.0
+              ],
+              "max": [
+                11790.0,
+                4190.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              4190.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              4190.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 11,
+        "capabilityId": "linetype-table-row-11",
+        "visibleName": "长虚线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2A0"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "blue",
+          "colorAci": 5,
+          "lineweightMm": 0.25,
+          "linetype": "HIDDEN2",
+          "linetypeScale": 55.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2A0",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.25,
+            "linetype": "HIDDEN2",
+            "linetypeScale": 55.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                3990.0
+              ],
+              "max": [
+                11790.0,
+                3990.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              3990.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              3990.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 12,
+        "capabilityId": "linetype-table-row-12",
+        "visibleName": "稀疏轴线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2A8"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "cyan",
+          "colorAci": 4,
+          "lineweightMm": 0.25,
+          "linetype": "CENTER2",
+          "linetypeScale": 60.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2A8",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.25,
+            "linetype": "CENTER2",
+            "linetypeScale": 60.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                3790.0
+              ],
+              "max": [
+                11790.0,
+                3790.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              3790.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              3790.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 13,
+        "capabilityId": "linetype-table-row-13",
+        "visibleName": "墙体粗轮廓",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2B2"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.5,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2B2",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.5,
+            "linetype": "CONTINUOUS",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                3410.0
+              ],
+              "max": [
+                11790.0,
+                3410.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              3410.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              3410.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 14,
+        "capabilityId": "linetype-table-row-14",
+        "visibleName": "家具外轮廓",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2BA"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "cyan",
+          "colorAci": 4,
+          "lineweightMm": 0.35,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2BA",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.35,
+            "linetype": "CONTINUOUS",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                3210.0
+              ],
+              "max": [
+                11790.0,
+                3210.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              3210.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              3210.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 15,
+        "capabilityId": "linetype-table-row-15",
+        "visibleName": "家具内部细节",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2C2"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "white",
+          "colorAci": 7,
+          "lineweightMm": 0.15,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2C2",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 7,
+            "lineweightMm": 0.15,
+            "linetype": "CONTINUOUS",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                3010.0
+              ],
+              "max": [
+                11790.0,
+                3010.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              3010.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              3010.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 16,
+        "capabilityId": "linetype-table-row-16",
+        "visibleName": "上方投影线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2CA"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "blue",
+          "colorAci": 5,
+          "lineweightMm": 0.2,
+          "linetype": "DASHED",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2CA",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "DASHED",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                2810.0
+              ],
+              "max": [
+                11790.0,
+                2810.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              2810.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              2810.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 17,
+        "capabilityId": "linetype-table-row-17",
+        "visibleName": "隐藏边线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2D2"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "magenta",
+          "colorAci": 6,
+          "lineweightMm": 0.2,
+          "linetype": "HIDDEN",
+          "linetypeScale": 35.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2D2",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.2,
+            "linetype": "HIDDEN",
+            "linetypeScale": 35.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                2610.0
+              ],
+              "max": [
+                11790.0,
+                2610.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              2610.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              2610.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 18,
+        "capabilityId": "linetype-table-row-18",
+        "visibleName": "标注引线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2DA"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "green",
+          "colorAci": 3,
+          "lineweightMm": 0.15,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2DA",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.15,
+            "linetype": "CONTINUOUS",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                2410.0
+              ],
+              "max": [
+                11790.0,
+                2410.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              2410.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              2410.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 19,
+        "capabilityId": "linetype-table-row-19",
+        "visibleName": "开启范围线",
+        "mode": "swing_arc",
+        "sampleHandles": [
+          "D2E2",
+          "D2E3",
+          "D2E4"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "arc",
+            "line"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.2,
+          "linetype": "CENTER",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2E2",
+            "entityType": "arc",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.2,
+            "linetype": "CENTER",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10830.6,
+                2040.2
+              ],
+              "max": [
+                11054.199999999999,
+                2263.8
+              ]
+            },
+            "center": [
+              10942.4,
+              2152.0,
+              0.0
+            ],
+            "radius": 111.8
+          },
+          {
+            "handle": "D2E3",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10942.4,
+                2152.0
+              ],
+              "max": [
+                11054.199999999999,
+                2152.0
+              ]
+            },
+            "start_point": [
+              10942.4,
+              2152.0,
+              0.0
+            ],
+            "end_point": [
+              11054.199999999999,
+              2152.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D2E4",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10942.4,
+                2152.0
+              ],
+              "max": [
+                10942.4,
+                2263.8
+              ]
+            },
+            "start_point": [
+              10942.4,
+              2152.0,
+              0.0
+            ],
+            "end_point": [
+              10942.4,
+              2263.8,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 20,
+        "capabilityId": "linetype-table-row-20",
+        "visibleName": "材质分界线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2EC"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.2,
+          "linetype": "DASHDOT",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2EC",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.2,
+            "linetype": "DASHDOT",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                1894.0
+              ],
+              "max": [
+                11790.0,
+                1894.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              1894.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              1894.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 21,
+        "capabilityId": "linetype-table-row-21",
+        "visibleName": "轴网定位线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2F4"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "cyan",
+          "colorAci": 4,
+          "lineweightMm": 0.18,
+          "linetype": "CENTER",
+          "linetypeScale": 55.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2F4",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.18,
+            "linetype": "CENTER",
+            "linetypeScale": 55.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                1694.0
+              ],
+              "max": [
+                11790.0,
+                1694.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              1694.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              1694.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 22,
+        "capabilityId": "linetype-table-row-22",
+        "visibleName": "尺寸线与尺寸界线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D2FC"
+        ],
+        "expectedStyle": {
+          "styleSource": "by_layer",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "inheritanceMode": "by_layer",
+          "linetype": "BYLAYER",
+          "colorName": "BYLAYER",
+          "lineweightMm": "BYLAYER",
+          "linetypeScale": "BYLAYER"
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D2FC",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 256,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                10160.0,
+                1494.0
+              ],
+              "max": [
+                11790.0,
+                1494.0
+              ]
+            },
+            "start_point": [
+              10160.0,
+              1494.0,
+              0.0
+            ],
+            "end_point": [
+              11790.0,
+              1494.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 23,
+        "capabilityId": "linetype-table-row-23",
+        "visibleName": "剖切位置线",
+        "mode": "section_cut",
+        "sampleHandles": [
+          "D310",
+          "D311",
+          "D312"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "polyline",
+            "text"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.35,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D310",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.35,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                5990.0
+              ],
+              "max": [
+                18270.0,
+                5990.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              5990.0,
+              0.0
+            ],
+            "end_point": [
+              18270.0,
+              5990.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D311",
+            "entityType": "polyline",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.35,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18130.0,
+                5920.0
+              ],
+              "max": [
+                18270.0,
+                6060.0
+              ]
+            }
+          },
+          {
+            "handle": "D312",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "剖",
+            "bbox": {
+              "min": [
+                17340.0,
+                5945.0
+              ],
+              "max": [
+                17340.0,
+                5945.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 24,
+        "capabilityId": "linetype-table-row-24",
+        "visibleName": "拆除构件线",
+        "mode": "demolition",
+        "sampleHandles": [
+          "D31A",
+          "D31B",
+          "D31C",
+          "D31D",
+          "D31E",
+          "D31F",
+          "D320",
+          "D321",
+          "D322"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.25,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D31A",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.25,
+            "linetype": "HIDDEN2",
+            "linetypeScale": 55.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                5790.0
+              ],
+              "max": [
+                18450.0,
+                5790.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              5790.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              5790.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D31B",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17065.0,
+                5735.0
+              ],
+              "max": [
+                17175.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              17065.0,
+              5735.0,
+              0.0
+            ],
+            "end_point": [
+              17175.0,
+              5845.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D31C",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17065.0,
+                5735.0
+              ],
+              "max": [
+                17175.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              17065.0,
+              5845.0,
+              0.0
+            ],
+            "end_point": [
+              17175.0,
+              5735.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D31D",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17475.0,
+                5735.0
+              ],
+              "max": [
+                17585.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              17475.0,
+              5735.0,
+              0.0
+            ],
+            "end_point": [
+              17585.0,
+              5845.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D31E",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17475.0,
+                5735.0
+              ],
+              "max": [
+                17585.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              17475.0,
+              5845.0,
+              0.0
+            ],
+            "end_point": [
+              17585.0,
+              5735.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D31F",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17885.0,
+                5735.0
+              ],
+              "max": [
+                17995.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              17885.0,
+              5735.0,
+              0.0
+            ],
+            "end_point": [
+              17995.0,
+              5845.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D320",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17885.0,
+                5735.0
+              ],
+              "max": [
+                17995.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              17885.0,
+              5845.0,
+              0.0
+            ],
+            "end_point": [
+              17995.0,
+              5735.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D321",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18295.0,
+                5735.0
+              ],
+              "max": [
+                18405.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              18295.0,
+              5735.0,
+              0.0
+            ],
+            "end_point": [
+              18405.0,
+              5845.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D322",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.15,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18295.0,
+                5735.0
+              ],
+              "max": [
+                18405.0,
+                5845.0
+              ]
+            },
+            "start_point": [
+              18295.0,
+              5845.0,
+              0.0
+            ],
+            "end_point": [
+              18405.0,
+              5735.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 25,
+        "capabilityId": "linetype-table-row-25",
+        "visibleName": "给水管线",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D32C",
+          "D32D",
+          "D32E",
+          "D32F",
+          "D330"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "cyan",
+          "colorAci": 4,
+          "lineweightMm": 0.2,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D32C",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                5410.0
+              ],
+              "max": [
+                17150.0,
+                5410.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              5410.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              5410.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D32D",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                5410.0
+              ],
+              "max": [
+                17790.0,
+                5410.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              5410.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              5410.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D32E",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                5410.0
+              ],
+              "max": [
+                18450.0,
+                5410.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              5410.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              5410.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D32F",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "给",
+            "bbox": {
+              "min": [
+                17210.0,
+                5365.0
+              ],
+              "max": [
+                17210.0,
+                5365.0
+              ]
+            }
+          },
+          {
+            "handle": "D330",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "水",
+            "bbox": {
+              "min": [
+                17850.0,
+                5365.0
+              ],
+              "max": [
+                17850.0,
+                5365.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 26,
+        "capabilityId": "linetype-table-row-26",
+        "visibleName": "热水管线",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D338",
+          "D339",
+          "D33A",
+          "D33B",
+          "D33C"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.2,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D338",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                5210.0
+              ],
+              "max": [
+                17150.0,
+                5210.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              5210.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              5210.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D339",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                5210.0
+              ],
+              "max": [
+                17790.0,
+                5210.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              5210.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              5210.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D33A",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                5210.0
+              ],
+              "max": [
+                18450.0,
+                5210.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              5210.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              5210.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D33B",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "热",
+            "bbox": {
+              "min": [
+                17210.0,
+                5165.0
+              ],
+              "max": [
+                17210.0,
+                5165.0
+              ]
+            }
+          },
+          {
+            "handle": "D33C",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "水",
+            "bbox": {
+              "min": [
+                17850.0,
+                5165.0
+              ],
+              "max": [
+                17850.0,
+                5165.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 27,
+        "capabilityId": "linetype-table-row-27",
+        "visibleName": "排水管线",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D344",
+          "D345",
+          "D346",
+          "D347",
+          "D348"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "green",
+          "colorAci": 3,
+          "lineweightMm": 0.25,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D344",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                5010.0
+              ],
+              "max": [
+                17150.0,
+                5010.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              5010.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              5010.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D345",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                5010.0
+              ],
+              "max": [
+                17790.0,
+                5010.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              5010.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              5010.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D346",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                5010.0
+              ],
+              "max": [
+                18450.0,
+                5010.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              5010.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              5010.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D347",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "排",
+            "bbox": {
+              "min": [
+                17210.0,
+                4965.0
+              ],
+              "max": [
+                17210.0,
+                4965.0
+              ]
+            }
+          },
+          {
+            "handle": "D348",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "水",
+            "bbox": {
+              "min": [
+                17850.0,
+                4965.0
+              ],
+              "max": [
+                17850.0,
+                4965.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 28,
+        "capabilityId": "linetype-table-row-28",
+        "visibleName": "燃气管线",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D350",
+          "D351",
+          "D352",
+          "D353",
+          "D354"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.25,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D350",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                4810.0
+              ],
+              "max": [
+                17150.0,
+                4810.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              4810.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              4810.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D351",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                4810.0
+              ],
+              "max": [
+                17790.0,
+                4810.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              4810.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              4810.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D352",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                4810.0
+              ],
+              "max": [
+                18450.0,
+                4810.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              4810.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              4810.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D353",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "燃",
+            "bbox": {
+              "min": [
+                17210.0,
+                4765.0
+              ],
+              "max": [
+                17210.0,
+                4765.0
+              ]
+            }
+          },
+          {
+            "handle": "D354",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "气",
+            "bbox": {
+              "min": [
+                17850.0,
+                4765.0
+              ],
+              "max": [
+                17850.0,
+                4765.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 29,
+        "capabilityId": "linetype-table-row-29",
+        "visibleName": "强电线路",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D35C",
+          "D35D",
+          "D35E",
+          "D35F",
+          "D360"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.18,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D35C",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.18,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                4610.0
+              ],
+              "max": [
+                17150.0,
+                4610.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              4610.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              4610.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D35D",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.18,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                4610.0
+              ],
+              "max": [
+                17790.0,
+                4610.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              4610.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              4610.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D35E",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.18,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                4610.0
+              ],
+              "max": [
+                18450.0,
+                4610.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              4610.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              4610.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D35F",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "强",
+            "bbox": {
+              "min": [
+                17210.0,
+                4565.0
+              ],
+              "max": [
+                17210.0,
+                4565.0
+              ]
+            }
+          },
+          {
+            "handle": "D360",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "电",
+            "bbox": {
+              "min": [
+                17850.0,
+                4565.0
+              ],
+              "max": [
+                17850.0,
+                4565.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 30,
+        "capabilityId": "linetype-table-row-30",
+        "visibleName": "弱电线路",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D368",
+          "D369",
+          "D36A",
+          "D36B",
+          "D36C"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "magenta",
+          "colorAci": 6,
+          "lineweightMm": 0.18,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D368",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.18,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                4410.0
+              ],
+              "max": [
+                17150.0,
+                4410.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              4410.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              4410.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D369",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.18,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                4410.0
+              ],
+              "max": [
+                17790.0,
+                4410.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              4410.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              4410.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D36A",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.18,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                4410.0
+              ],
+              "max": [
+                18450.0,
+                4410.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              4410.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              4410.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D36B",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "弱",
+            "bbox": {
+              "min": [
+                17210.0,
+                4365.0
+              ],
+              "max": [
+                17210.0,
+                4365.0
+              ]
+            }
+          },
+          {
+            "handle": "D36C",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "电",
+            "bbox": {
+              "min": [
+                17850.0,
+                4365.0
+              ],
+              "max": [
+                17850.0,
+                4365.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 31,
+        "capabilityId": "linetype-table-row-31",
+        "visibleName": "消防管线",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D374",
+          "D375",
+          "D376",
+          "D377",
+          "D378"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.25,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D374",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                4210.0
+              ],
+              "max": [
+                17150.0,
+                4210.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              4210.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              4210.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D375",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                4210.0
+              ],
+              "max": [
+                17790.0,
+                4210.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              4210.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              4210.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D376",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                4210.0
+              ],
+              "max": [
+                18450.0,
+                4210.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              4210.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              4210.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D377",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "消",
+            "bbox": {
+              "min": [
+                17210.0,
+                4165.0
+              ],
+              "max": [
+                17210.0,
+                4165.0
+              ]
+            }
+          },
+          {
+            "handle": "D378",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "防",
+            "bbox": {
+              "min": [
+                17850.0,
+                4165.0
+              ],
+              "max": [
+                17850.0,
+                4165.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 32,
+        "capabilityId": "linetype-table-row-32",
+        "visibleName": "空调冷媒风管线",
+        "mode": "pipe_text",
+        "sampleHandles": [
+          "D380",
+          "D381",
+          "D382",
+          "D383",
+          "D384"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "blue",
+          "colorAci": 5,
+          "lineweightMm": 0.2,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D380",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                4010.0
+              ],
+              "max": [
+                17150.0,
+                4010.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              4010.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              4010.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D381",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                4010.0
+              ],
+              "max": [
+                17790.0,
+                4010.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              4010.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              4010.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D382",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                4010.0
+              ],
+              "max": [
+                18450.0,
+                4010.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              4010.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              4010.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D383",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "空",
+            "bbox": {
+              "min": [
+                17210.0,
+                3965.0
+              ],
+              "max": [
+                17210.0,
+                3965.0
+              ]
+            }
+          },
+          {
+            "handle": "D384",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "调",
+            "bbox": {
+              "min": [
+                17850.0,
+                3965.0
+              ],
+              "max": [
+                17850.0,
+                3965.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 33,
+        "capabilityId": "linetype-table-row-33",
+        "visibleName": "地界红线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D38E"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.35,
+          "linetype": "PHANTOM",
+          "linetypeScale": 60.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D38E",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.35,
+            "linetype": "PHANTOM",
+            "linetypeScale": 60.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                3630.0
+              ],
+              "max": [
+                18450.0,
+                3630.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              3630.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              3630.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 34,
+        "capabilityId": "linetype-table-row-34",
+        "visibleName": "退界控制线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D396"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.2,
+          "linetype": "DASHDOT",
+          "linetypeScale": 60.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D396",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.2,
+            "linetype": "DASHDOT",
+            "linetypeScale": 60.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                3430.0
+              ],
+              "max": [
+                18450.0,
+                3430.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              3430.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              3430.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 35,
+        "capabilityId": "linetype-table-row-35",
+        "visibleName": "规划预留线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D39E"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "magenta",
+          "colorAci": 6,
+          "lineweightMm": 0.2,
+          "linetype": "PHANTOM",
+          "linetypeScale": 60.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D39E",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.2,
+            "linetype": "PHANTOM",
+            "linetypeScale": 60.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                3230.0
+              ],
+              "max": [
+                18450.0,
+                3230.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              3230.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              3230.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 36,
+        "capabilityId": "linetype-table-row-36",
+        "visibleName": "安全净距线",
+        "mode": "linetype",
+        "sampleHandles": [
+          "D3A6"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.18,
+          "linetype": "BORDER",
+          "linetypeScale": 45.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D3A6",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.18,
+            "linetype": "BORDER",
+            "linetypeScale": 45.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                3030.0
+              ],
+              "max": [
+                18450.0,
+                3030.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              3030.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              3030.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 37,
+        "capabilityId": "linetype-table-row-37",
+        "visibleName": "折断线",
+        "mode": "zigzag",
+        "sampleHandles": [
+          "D3B0"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "polyline"
+          ],
+          "colorName": "yellow",
+          "colorAci": 2,
+          "lineweightMm": 0.25,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D3B0",
+            "entityType": "polyline",
+            "layer": "CODEX_PREVIEW",
+            "color": 2,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                2605.0
+              ],
+              "max": [
+                18315.0,
+                2695.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 38,
+        "capabilityId": "linetype-table-row-38",
+        "visibleName": "波浪线",
+        "mode": "wave",
+        "sampleHandles": [
+          "D3B8"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "polyline"
+          ],
+          "colorName": "cyan",
+          "colorAci": 4,
+          "lineweightMm": 0.25,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D3B8",
+            "entityType": "polyline",
+            "layer": "CODEX_PREVIEW",
+            "color": 4,
+            "lineweightMm": 0.25,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                2412.577305385536
+              ],
+              "max": [
+                18450.0,
+                2487.422694614464
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 39,
+        "capabilityId": "linetype-table-row-39",
+        "visibleName": "圆围栏线",
+        "mode": "fence_circle",
+        "sampleHandles": [
+          "D3C0",
+          "D3C1",
+          "D3C2",
+          "D3C3",
+          "D3C4",
+          "D3C5"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "circle"
+          ],
+          "colorName": "green",
+          "colorAci": 3,
+          "lineweightMm": 0.2,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D3C0",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                2250.0
+              ],
+              "max": [
+                18450.0,
+                2250.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              2250.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              2250.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3C1",
+            "entityType": "circle",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16985.0,
+                2205.0
+              ],
+              "max": [
+                17075.0,
+                2295.0
+              ]
+            },
+            "center": [
+              17030.0,
+              2250.0,
+              0.0
+            ],
+            "radius": 45.0
+          },
+          {
+            "handle": "D3C2",
+            "entityType": "circle",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17305.0,
+                2205.0
+              ],
+              "max": [
+                17395.0,
+                2295.0
+              ]
+            },
+            "center": [
+              17350.0,
+              2250.0,
+              0.0
+            ],
+            "radius": 45.0
+          },
+          {
+            "handle": "D3C3",
+            "entityType": "circle",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17625.0,
+                2205.0
+              ],
+              "max": [
+                17715.0,
+                2295.0
+              ]
+            },
+            "center": [
+              17670.0,
+              2250.0,
+              0.0
+            ],
+            "radius": 45.0
+          },
+          {
+            "handle": "D3C4",
+            "entityType": "circle",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17945.0,
+                2205.0
+              ],
+              "max": [
+                18035.0,
+                2295.0
+              ]
+            },
+            "center": [
+              17990.0,
+              2250.0,
+              0.0
+            ],
+            "radius": 45.0
+          },
+          {
+            "handle": "D3C5",
+            "entityType": "circle",
+            "layer": "CODEX_PREVIEW",
+            "color": 3,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18265.0,
+                2205.0
+              ],
+              "max": [
+                18355.0,
+                2295.0
+              ]
+            },
+            "center": [
+              18310.0,
+              2250.0,
+              0.0
+            ],
+            "radius": 45.0
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 40,
+        "capabilityId": "linetype-table-row-40",
+        "visibleName": "方围栏线",
+        "mode": "fence_square",
+        "sampleHandles": [
+          "D3CD",
+          "D3CE",
+          "D3CF",
+          "D3D0",
+          "D3D1",
+          "D3D2",
+          "D3D3",
+          "D3D4",
+          "D3D5",
+          "D3D6",
+          "D3D7",
+          "D3D8",
+          "D3D9",
+          "D3DA",
+          "D3DB",
+          "D3DC",
+          "D3DD",
+          "D3DE",
+          "D3DF",
+          "D3E0",
+          "D3E1"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "rectangle_component"
+          ],
+          "colorName": "blue",
+          "colorAci": 5,
+          "lineweightMm": 0.2,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D3CD",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                2050.0
+              ],
+              "max": [
+                18450.0,
+                2050.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              2050.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              2050.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3CE",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16985.0,
+                2005.0
+              ],
+              "max": [
+                17075.0,
+                2005.0
+              ]
+            },
+            "start_point": [
+              16985.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              17075.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3CF",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17075.0,
+                2005.0
+              ],
+              "max": [
+                17075.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17075.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              17075.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D0",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16985.0,
+                2095.0
+              ],
+              "max": [
+                17075.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17075.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              16985.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D1",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16985.0,
+                2005.0
+              ],
+              "max": [
+                16985.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              16985.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              16985.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D2",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17305.0,
+                2005.0
+              ],
+              "max": [
+                17395.0,
+                2005.0
+              ]
+            },
+            "start_point": [
+              17305.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              17395.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D3",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17395.0,
+                2005.0
+              ],
+              "max": [
+                17395.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17395.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              17395.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D4",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17305.0,
+                2095.0
+              ],
+              "max": [
+                17395.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17395.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              17305.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D5",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17305.0,
+                2005.0
+              ],
+              "max": [
+                17305.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17305.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              17305.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D6",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17625.0,
+                2005.0
+              ],
+              "max": [
+                17715.0,
+                2005.0
+              ]
+            },
+            "start_point": [
+              17625.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              17715.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D7",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17715.0,
+                2005.0
+              ],
+              "max": [
+                17715.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17715.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              17715.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D8",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17625.0,
+                2095.0
+              ],
+              "max": [
+                17715.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17715.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              17625.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3D9",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17625.0,
+                2005.0
+              ],
+              "max": [
+                17625.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17625.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              17625.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3DA",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17945.0,
+                2005.0
+              ],
+              "max": [
+                18035.0,
+                2005.0
+              ]
+            },
+            "start_point": [
+              17945.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              18035.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3DB",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18035.0,
+                2005.0
+              ],
+              "max": [
+                18035.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              18035.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              18035.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3DC",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17945.0,
+                2095.0
+              ],
+              "max": [
+                18035.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              18035.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              17945.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3DD",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17945.0,
+                2005.0
+              ],
+              "max": [
+                17945.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              17945.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              17945.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3DE",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18265.0,
+                2005.0
+              ],
+              "max": [
+                18355.0,
+                2005.0
+              ]
+            },
+            "start_point": [
+              18265.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              18355.0,
+              2005.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3DF",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18355.0,
+                2005.0
+              ],
+              "max": [
+                18355.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              18355.0,
+              2005.0,
+              0.0
+            ],
+            "end_point": [
+              18355.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3E0",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18265.0,
+                2095.0
+              ],
+              "max": [
+                18355.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              18355.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              18265.0,
+              2095.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3E1",
+            "entityType": "rectangle_component",
+            "layer": "CODEX_PREVIEW",
+            "color": 5,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18265.0,
+                2005.0
+              ],
+              "max": [
+                18265.0,
+                2095.0
+              ]
+            },
+            "start_point": [
+              18265.0,
+              2095.0,
+              0.0
+            ],
+            "end_point": [
+              18265.0,
+              2005.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 41,
+        "capabilityId": "linetype-table-row-41",
+        "visibleName": "保温棉线",
+        "mode": "batting",
+        "sampleHandles": [
+          "D3E9",
+          "D3EA",
+          "D3EB"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "polyline",
+            "line"
+          ],
+          "colorName": "magenta",
+          "colorAci": 6,
+          "lineweightMm": 0.2,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D3E9",
+            "entityType": "polyline",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                1802.0
+              ],
+              "max": [
+                18450.0,
+                1894.0
+              ]
+            }
+          },
+          {
+            "handle": "D3EA",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.09,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                1780.0
+              ],
+              "max": [
+                18450.0,
+                1780.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              1780.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              1780.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3EB",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 6,
+            "lineweightMm": 0.09,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                1916.0
+              ],
+              "max": [
+                18450.0,
+                1916.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              1916.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              1916.0,
+              0.0
+            ]
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      },
+      {
+        "rowIndex": 42,
+        "capabilityId": "linetype-table-row-42",
+        "visibleName": "文字管线",
+        "mode": "text_pipe",
+        "sampleHandles": [
+          "D3F3",
+          "D3F4",
+          "D3F5",
+          "D3F6",
+          "D3F7"
+        ],
+        "expectedStyle": {
+          "styleSource": "explicit_override",
+          "layer": "CODEX_PREVIEW",
+          "entityTypes": [
+            "line",
+            "text"
+          ],
+          "colorName": "red",
+          "colorAci": 1,
+          "lineweightMm": 0.2,
+          "linetype": "CONTINUOUS",
+          "linetypeScale": 1.0
+        },
+        "componentReadbacks": [
+          {
+            "handle": "D3F3",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                16820.0,
+                1646.0
+              ],
+              "max": [
+                17150.0,
+                1646.0
+              ]
+            },
+            "start_point": [
+              16820.0,
+              1646.0,
+              0.0
+            ],
+            "end_point": [
+              17150.0,
+              1646.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3F4",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                17470.0,
+                1646.0
+              ],
+              "max": [
+                17790.0,
+                1646.0
+              ]
+            },
+            "start_point": [
+              17470.0,
+              1646.0,
+              0.0
+            ],
+            "end_point": [
+              17790.0,
+              1646.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3F5",
+            "entityType": "line",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": 0.2,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": null,
+            "bbox": {
+              "min": [
+                18110.0,
+                1646.0
+              ],
+              "max": [
+                18450.0,
+                1646.0
+              ]
+            },
+            "start_point": [
+              18110.0,
+              1646.0,
+              0.0
+            ],
+            "end_point": [
+              18450.0,
+              1646.0,
+              0.0
+            ]
+          },
+          {
+            "handle": "D3F6",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "水",
+            "bbox": {
+              "min": [
+                17210.0,
+                1601.0
+              ],
+              "max": [
+                17210.0,
+                1601.0
+              ]
+            }
+          },
+          {
+            "handle": "D3F7",
+            "entityType": "text",
+            "layer": "CODEX_PREVIEW",
+            "color": 1,
+            "lineweightMm": -1.0,
+            "linetype": "BYLAYER",
+            "linetypeScale": 1.0,
+            "text": "电",
+            "bbox": {
+              "min": [
+                17850.0,
+                1601.0
+              ],
+              "max": [
+                17850.0,
+                1601.0
+              ]
+            }
+          }
+        ],
+        "mismatch": {
+          "status": "pass",
+          "fields": []
+        }
+      }
+    ]
+  },
+  "byLayerOverrideChecks": {
+    "status": "pass",
+    "explicitOverrideRowCount": 41,
+    "byLayerRowCount": 1,
+    "explicitOverrideRows": [
+      "连续实线",
+      "短虚线",
+      "隐藏线",
+      "中心线",
+      "点线",
+      "点划线",
+      "分割点线",
+      "幻影线",
+      "边界线",
+      "细虚线",
+      "长虚线",
+      "稀疏轴线",
+      "墙体粗轮廓",
+      "家具外轮廓",
+      "家具内部细节",
+      "上方投影线",
+      "隐藏边线",
+      "标注引线",
+      "开启范围线",
+      "材质分界线",
+      "轴网定位线",
+      "剖切位置线",
+      "拆除构件线",
+      "给水管线",
+      "热水管线",
+      "排水管线",
+      "燃气管线",
+      "强电线路",
+      "弱电线路",
+      "消防管线",
+      "空调冷媒风管线",
+      "地界红线",
+      "退界控制线",
+      "规划预留线",
+      "安全净距线",
+      "折断线",
+      "波浪线",
+      "圆围栏线",
+      "方围栏线",
+      "保温棉线",
+      "文字管线"
+    ],
+    "byLayerRows": [
+      "尺寸线与尺寸界线"
+    ],
+    "mismatchCount": 0
+  },
+  "objectTypeCoverage": {
+    "line": {
+      "expectedMin": 1,
+      "created": 67,
+      "readback": 67,
+      "status": "pass"
+    },
+    "polyline": {
+      "expectedMin": 1,
+      "created": 4,
+      "readback": 4,
+      "status": "pass"
+    },
+    "circle": {
+      "expectedMin": 1,
+      "created": 5,
+      "readback": 5,
+      "status": "pass"
+    },
+    "text": {
+      "expectedMin": 1,
+      "created": 19,
+      "readback": 19,
+      "status": "pass"
+    },
+    "arc": {
+      "expectedMin": 1,
+      "created": 1,
+      "readback": 1,
+      "status": "pass"
+    },
+    "rectangle_component": {
+      "expectedMin": 1,
+      "created": 21,
+      "readback": 21,
+      "status": "pass"
+    }
+  },
+  "systemVariableReadback": {
+    "status": "pass",
+    "evidenceSource": "autocad_readback",
+    "scope": "modelspace CODEX_PREVIEW only",
+    "variables": {
+      "LTSCALE": {
+        "status": "pass",
+        "readback": 1.0
+      },
+      "CELTSCALE": {
+        "status": "pass",
+        "readback": 1.0
+      },
+      "PSLTSCALE": {
+        "status": "pass",
+        "readback": 1
+      },
+      "MSLTSCALE": {
+        "status": "pass",
+        "readback": 1
+      }
+    }
+  },
+  "plotEvidenceBoundary": {
+    "status": "not_checked",
+    "reason": "截图只证明视觉预览，不证明 CTB/STB、PDF 或打印输出线型效果",
+    "savedDwg": false,
+    "requiresSavedDwg": false
+  },
+  "bbox": {
+    "min": [
+      8200.0,
+      1264.0
+    ],
+    "max": [
+      21260.0,
+      6900.0
+    ]
+  },
+  "refreshResult": {
+    "status": "pass",
+    "method": "doc.Regen"
+  },
+  "streamingMode": {
+    "enabled": false,
+    "mode": "disabled",
+    "itemDelaySeconds": 0.0,
+    "operationDelaySeconds": 0.0,
+    "operationBudgetPerItem": 0,
+    "zoomEachItem": false,
+    "delayTelemetryBasis": "measured_sleep",
+    "event_count": 0,
+    "operation_delay_count": 0,
+    "item_delay_count": 0,
+    "operationDelaySecondsTotal": 0.0,
+    "itemDelaySecondsTotal": 0.0,
+    "delaySecondsTotal": 0.0,
+    "refresh_count": 0,
+    "events": []
+  },
+  "safety": {
+    "savedDwg": false,
+    "deletedEntities": false,
+    "modifiedFormalLayers": false
+  },
+  "layoutAudit": {
+    "status": "pass",
+    "encodingAudit": {
+      "status": "pass",
+      "encodingPreflight": {
+        "status": "pass",
+        "checkedTextCount": 161,
+        "issueCount": 0,
+        "issues": [],
+        "policy": "fail_before_cad_write_or_asset_contract_write"
+      },
+      "canonicalTerms": [
+        "线型",
+        "样线",
+        "用途与测试点"
+      ],
+      "missingCanonicalTerms": [],
+      "textCount": 161
+    },
+    "noFillAudit": {
+      "status": "pass",
+      "fillEntityCount": 0,
+      "offenders": []
+    },
+    "sampleCellContainmentAudit": {
+      "status": "pass",
+      "sampleOutOfCellCount": 0,
+      "sampleOutOfCellRows": [],
+      "missingSampleHandleCount": 0,
+      "missingSampleHandles": []
+    },
+    "adaptiveLayoutAudit": {
+      "status": "pass",
+      "rowCount": 42,
+      "panelCount": 2,
+      "fixedRowLimitUsed": false,
+      "rowHeightFailureCount": 0,
+      "rowHeightFailures": []
+    },
+    "styleAudit": {
+      "status": "pass",
+      "styleMismatchRowCount": 0,
+      "distinctColorCount": 8,
+      "distinctLineweightCount": 7,
+      "distinctLinetypeCount": 13,
+      "byLayerRowCount": 1
+    },
+    "evidenceBoundary": {
+      "status": "pass",
+      "readbackSource": "autocad_readback",
+      "plotOutputVerified": false,
+      "savedDwg": false,
+      "note": "Audit validates entity/text/layout readback only; it does not prove CTB/STB or printed output."
+    }
+  }
+}

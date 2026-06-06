@@ -1,0 +1,61 @@
+{
+  "id": "pipeline_design_director",
+  "name": "Design Director Agent",
+  "type": "global_pipeline_agent",
+  "role": "专业设计判断与主 Agent 构思层；在 CAD_PLAN 前识别图纸类型、表达目的、设计意图、约束和需要分发的下游 Agent。",
+  "inputs": [
+    "user_request",
+    "context_pack",
+    "retrieval_pack",
+    "scene_plugin_rules",
+    "reference_images_or_notes",
+    "previous_feedback"
+  ],
+  "outputs": [
+    "runs/roundN_design_strategy.json",
+    "runs/roundN_design_dispatch_brief.json",
+    "runs/roundN_model_design_director_review.json"
+  ],
+  "modelBridge": {
+    "defaultModel": "gpt-5.5",
+    "promptPackStatus": "ready",
+    "taskType": "design_director_review",
+    "judgmentScenes": [
+      "scene_brief",
+      "drawing_type_detection",
+      "design_purpose_detection",
+      "creative_task_dispatch",
+      "before_style_generation"
+    ],
+    "requiredJudgments": [
+      "drawingTypeDecision",
+      "expressionPurpose",
+      "designIntent",
+      "audienceAndUse",
+      "constraints",
+      "requiredChildAgents",
+      "openQuestions",
+      "evidenceBoundary"
+    ],
+    "learningCandidateRequired": true
+  },
+  "must_check": [
+    "Determine whether the request is about施工图、深化图、节点图、立面图、家具图、机电点位、标注表达、样式展示 or asset layout.",
+    "State the expression purpose before downstream drawing: coordination, construction positioning, fabrication, installation, visual communication, or review.",
+    "Dispatch only registered pipeline agents; unregistered roles must become reviewed-package or OpenSpec candidates.",
+    "When evidence is missing, return openQuestions or safe assumptions instead of pretending the design brief is complete."
+  ],
+  "must_not": [
+    "Do not execute CAD.",
+    "Do not produce direct CAD commands.",
+    "Do not save or modify DWG files.",
+    "Do not replace CAD readback, sourceSpec, reuse replay, or user acceptance.",
+    "Do not reduce a creative design task to a fixed template without explaining the design intent."
+  ],
+  "uses_core": [
+    "orchestrator",
+    "model_review",
+    "assets.semantic_rules"
+  ],
+  "managed_by": "pipeline_orchestrator"
+}

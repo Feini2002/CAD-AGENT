@@ -206,6 +206,7 @@ def build_dev_volume_report(
     untracked_count = len(untracked_rows)
     changed_file_count = len(status_rows)
     tracked_file_count = changed_file_count - untracked_count
+    artifact_only = bool(status_rows) and all(row["area"] == "evidence_output" for row in status_rows)
     total_insertions = sum(row["additions"] for row in numstat_rows)
     total_deletions = sum(row["deletions"] for row in numstat_rows)
     largest_files = sorted(
@@ -219,7 +220,8 @@ def build_dev_volume_report(
         findings.append(
             {
                 "code": "large_changed_file_count",
-                "severity": "medium",
+                "severity": "low" if artifact_only else "medium",
+                "artifactOnly": artifact_only,
                 "message": f"{changed_file_count} changed files exceeds {thresholds.max_changed_files}.",
             }
         )
@@ -227,7 +229,8 @@ def build_dev_volume_report(
         findings.append(
             {
                 "code": "large_untracked_file_count",
-                "severity": "medium",
+                "severity": "low" if artifact_only else "medium",
+                "artifactOnly": artifact_only,
                 "message": f"{untracked_count} untracked files exceeds {thresholds.max_untracked_files}.",
             }
         )

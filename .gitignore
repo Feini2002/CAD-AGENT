@@ -11,12 +11,33 @@ projects/*/runs/*.log
 # Obsolete generated style targets are not valid Visual-First evidence.
 projects/*/expected/style_target_2seat.png
 
-# Generated preview/output artifacts
+# Generated output artifacts
+#
+# Private-repo migration policy:
+# keep durable CAD / training evidence portable by default, so another
+# computer can restore the workbench without retraining.
+#
+# Still ignore only short-lived debug/test output below.
 output/*
 !output/
 !output/previews/
-output/previews/*
-!output/previews/README.md
+!output/previews/**
+!output/training_queues/
+!output/training_queues/**
+!output/training_learning/
+!output/training_learning/**
+!output/validation_runs/
+!output/validation_runs/**
+!output/runs/
+!output/runs/**
+!output/model_reviews/
+!output/model_reviews/**
+output/debug/
+output/test_artifacts/
+output/**/__pycache__/
+output/**/*.py[cod]
+output/**/*.tmp
+output/**/*.log
 
 # Local CodeGraph index/cache. Rebuild per machine with `codegraph init -i`.
 .codegraph/

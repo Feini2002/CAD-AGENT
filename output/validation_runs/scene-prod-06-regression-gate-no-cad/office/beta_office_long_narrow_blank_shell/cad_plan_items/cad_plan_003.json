@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": {
+    "type": "cabinet",
+    "name": "Cabinet",
+    "width": 1800,
+    "depth": 600,
+    "height": 2400,
+    "object_spec_id": "object-cabinet-1800x600"
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      2500.0,
+      0.0,
+      0
+    ]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 0.9,
+  "needs_confirmation": false
+}

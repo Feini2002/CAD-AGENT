@@ -16,12 +16,6 @@ from core.verification.render_preview import get_preview_capabilities, switch_to
 REQUIRED_FILES = [
     "README.md",
     "AGENTS.md",
-    "当前状态入口.md",
-    "长期规则入口.md",
-    "变更记录入口.md",
-    "问题风险入口.md",
-    "路线图入口.md",
-    "CAD卡壳排障入口.md",
     "docs/ROADMAP.md",
     "docs/roadmap/current.md",
     "docs/status/current.md",

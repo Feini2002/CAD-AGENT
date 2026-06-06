@@ -1,0 +1,39 @@
+{
+  "agentId": "pipeline_style_generator",
+  "approvalBasis": [
+    "MODEL_DATA_EXPORT_AUTHORIZATION.md#default-allowed-data"
+  ],
+  "blockedArtifacts": [],
+  "blockingReasons": [],
+  "evidenceBoundary": [
+    "manifest pass only proves export boundary, not model quality or CAD geometry",
+    "manifest pass does not prove provider availability or user acceptance"
+  ],
+  "forbiddenScan": {
+    "fullScreenScreenshotRequested": false,
+    "secretLikeCount": 0,
+    "wholeOutputRequested": false,
+    "wholeRepoRequested": false
+  },
+  "route": "codex_cli_local",
+  "schemaVersion": "model-export-manifest/v1",
+  "sentArtifacts": [
+    {
+      "byteCount": 18687,
+      "kind": "prompt_text",
+      "path": "",
+      "sha256": "0fb75d270e729d8d6341798c34e373598bfa3f43c492a8a68b43d85759ceb17f",
+      "status": "inline"
+    },
+    {
+      "byteCount": 13630,
+      "kind": "schema_snapshot",
+      "path": "core/model_review/schemas/style_generation_review.schema.json",
+      "sha256": "d86f1702b9d42fbcf6ac1e612e32350391118fa1a8b284de88bdf00ae6f66c9b",
+      "status": "present"
+    }
+  ],
+  "status": "pass",
+  "traceId": "pipeline-style-generator",
+  "unexpectedLocalFiles": []
+}

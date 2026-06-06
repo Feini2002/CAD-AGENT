@@ -1,0 +1,41 @@
+{
+  "status": "unavailable",
+  "modelInvoked": true,
+  "reason": "codex cli review returned non-zero exit",
+  "returnCode": 1,
+  "stderr": "\n2026-06-05T07:45:34.896247Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (1/5 in 219ms)...\nERROR: Reconnecting... 1/5\n2026-06-05T07:45:35.608879Z  WARN codex_core_plugins::startup_remote_sync: skipping startup remote plugin sync because curated marketplace is not ready codex_home=C:\\Users\\CodexSandboxOffline\\.codex\n2026-06-05T07:45:38.271913Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (2/5 in 367ms)...\nERROR: Reconnecting... 2/5\n2026-06-05T07:45:41.727508Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (3/5 in 822ms)...\nERROR: Reconnecting... 3/5\n2026-06-05T07:45:45.556287Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (4/5 in 1.494s)...\nERROR: Reconnecting... 4/5\n2026-06-05T07:45:50.092250Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (5/5 in 3.031s)...\nERROR: Reconnecting... 5/5\nERROR: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/responses)\nERROR: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/responses)\n",
+  "modelProviderStatus": {
+    "status": "unavailable",
+    "provider": "codex_cli",
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "route": "codex_cli_local",
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "transport": "local_cli",
+      "externalData": false,
+      "requiresUserAuthorization": false,
+      "allowsImages": true,
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ]
+    },
+    "required": true,
+    "modelInvoked": true,
+    "modelUnavailable": true,
+    "schemaValid": false,
+    "blocking": true,
+    "reason": "codex cli review returned non-zero exit"
+  },
+  "modelUnavailable": true,
+  "schemaValid": false,
+  "modelTrace": {
+    "traceId": "orchestrator-dispatch",
+    "agentId": "pipeline_orchestrator",
+    "taskType": "orchestrator_dispatch_review",
+    "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-rcad-20260605-live-agent\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch",
+    "manifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-rcad-20260605-live-agent\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\trace_manifest.json",
+    "reviewPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-rcad-20260605-live-agent\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\trace_review.json",
+    "summaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-rcad-20260605-live-agent\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\trace_summary.md",
+    "traceReviewStatus": "blocked"
+  }
+}

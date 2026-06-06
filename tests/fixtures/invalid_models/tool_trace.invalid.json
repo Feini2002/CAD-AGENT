@@ -1,0 +1,24 @@
+{
+  "model_type": "tool_trace",
+  "data": {
+    "schemaVersion": "tool-trace/v1",
+    "runId": "bad-run",
+    "toolIntentId": "bad-trace",
+    "requestedByAgentId": "pipeline_design_reviewer",
+    "toolName": "read_run_package",
+    "toolSchemaVersion": "tool-intent/v1",
+    "riskLevel": "low",
+    "permissionClass": "read_only",
+    "targetScope": {},
+    "orchestratorDecision": "execute_now",
+    "blockingReasons": [],
+    "deterministicEntryPoint": "",
+    "executionStatus": "not_executed",
+    "result": {},
+    "expectedEvidence": [],
+    "evidenceBoundary": [],
+    "downstreamReadableSummary": "invalid decision enum",
+    "downstreamArtifactPath": "",
+    "generatedAt": "2026-06-05T00:00:00Z"
+  }
+}

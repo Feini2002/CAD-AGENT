@@ -1,0 +1,78 @@
+{
+  "package_id": "BETA-SCENE-04",
+  "status": "pass",
+  "exhibition": {
+    "status": "pass",
+    "summary": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "evidence_summary": {
+      "case_count": 7,
+      "evidence_state_counts": {
+        "benchmark_pass_non_cad": 6,
+        "blocked_expected_non_cad": 1
+      },
+      "pipeline_status_counts": {
+        "ok": 6,
+        "blocked": 1
+      },
+      "geometry_accuracy_counts": {
+        "not_verified_without_cad_readback": 7
+      },
+      "screenshot_role_counts": {
+        "visual_aid_only": 7
+      },
+      "failure_category_counts": {
+        "entry_clearance_conflict": 1
+      },
+      "benchmark_pass_non_cad_count": 6,
+      "blocked_expected_non_cad_count": 1,
+      "invalid_configuration_count": 0,
+      "readback_geometry_verified_count": 0,
+      "cad_capability_verified_count": 0,
+      "deferred_cad_readback_count": 0,
+      "dry_run_valid_plan_only_count": 0,
+      "geometry_verified_case_count": 0,
+      "non_cad_only": true
+    }
+  },
+  "healthcare": {
+    "status": "pass",
+    "summary": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "evidence_summary": {
+      "case_count": 6,
+      "evidence_state_counts": {
+        "benchmark_pass_non_cad": 5,
+        "blocked_expected_non_cad": 1
+      },
+      "pipeline_status_counts": {
+        "ok": 5,
+        "blocked": 1
+      },
+      "geometry_accuracy_counts": {
+        "not_verified_without_cad_readback": 6
+      },
+      "screenshot_role_counts": {
+        "visual_aid_only": 6
+      },
+      "failure_category_counts": {
+        "clearance_conflict": 1
+      },
+      "benchmark_pass_non_cad_count": 5,
+      "blocked_expected_non_cad_count": 1,
+      "invalid_configuration_count": 0,
+      "readback_geometry_verified_count": 0,
+      "cad_capability_verified_count": 0,
+      "deferred_cad_readback_count": 0,
+      "dry_run_valid_plan_only_count": 0,
+      "geometry_verified_case_count": 0,
+      "non_cad_only": true
+    }
+  }
+}

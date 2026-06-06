@@ -1,0 +1,23 @@
+{
+  "model_type": "style_candidates",
+  "data": {
+    "schemaVersion": "style-candidates/v1",
+    "caseId": "invalid-style-candidates",
+    "scenario": {
+      "domain": "residential",
+      "drawingType": "dimension_style_showcase",
+      "expressionPurpose": "invalid fixture"
+    },
+    "styleIntent": "missing candidates",
+    "generationMethod": "unit_test",
+    "selection": {
+      "selectedCandidateId": "",
+      "needsUserChoice": true,
+      "autoSelectPolicy": "ask_user"
+    },
+    "evidenceBoundary": {
+      "checked": [],
+      "notChecked": []
+    }
+  }
+}

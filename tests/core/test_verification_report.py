@@ -166,6 +166,37 @@ class VerificationReportTests(unittest.TestCase):
         self.assertEqual(missing_report["status"], "unverified")
         self.assertIn("created_handles_scope", [check["name"] for check in missing_report["checks"]])
 
+    def test_annotation_bboxes_do_not_expand_body_geometry_bbox(self) -> None:
+        entities = [
+            {"handle": "H1", "type": "line", "layer": "CODEX_PREVIEW", "start_point": [0, 0, 0], "end_point": [1800, 0, 0]},
+            {"handle": "H2", "type": "line", "layer": "CODEX_PREVIEW", "start_point": [1800, 0, 0], "end_point": [1800, 600, 0]},
+            {"handle": "H3", "type": "line", "layer": "CODEX_PREVIEW", "start_point": [1800, 600, 0], "end_point": [0, 600, 0]},
+            {"handle": "H4", "type": "line", "layer": "CODEX_PREVIEW", "start_point": [0, 600, 0], "end_point": [0, 0, 0]},
+            {"handle": "H5", "type": "text", "layer": "CODEX_PREVIEW", "text": "测试柜", "position": [900, 300, 0]},
+            {
+                "handle": "H6",
+                "type": "dimension",
+                "layer": "CODEX_PREVIEW",
+                "bbox": {"min": [0, -180], "max": [1800, 0]},
+            },
+            {
+                "handle": "H7",
+                "type": "dimension",
+                "layer": "CODEX_PREVIEW",
+                "bbox": {"min": [-180, 0], "max": [0, 600]},
+            },
+        ]
+
+        report = build_verification_report(
+            plan_path=PROJECT_ROOT / "examples" / "plans" / "draw_test_cabinet.json",
+            entities=entities,
+            created_handles=["H1", "H2", "H3", "H4", "H5", "H6", "H7"],
+        )
+
+        self.assertEqual(report["status"], "geometry_verified")
+        self.assertEqual(report["actual"]["geometry_bbox"], {"min": [0.0, 0.0], "max": [1800.0, 600.0]})
+        self.assertEqual(report["actual"]["bbox"]["min"], [-180.0, -180.0])
+
     def test_missing_screenshot_file_does_not_count_as_screenshot_evidence(self) -> None:
         report = build_verification_report(
             plan_path=PROJECT_ROOT / "examples" / "plans" / "draw_test_cabinet.json",

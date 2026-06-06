@@ -1,0 +1,179 @@
+{
+  "schemaVersion": "model-agent-live-collab-proof-result/v1",
+  "status": "not_verified",
+  "runId": "model-agent-live-collab-proof-live-20260605-codex-audit",
+  "modelChainStatus": "blocked",
+  "agentOutputChain": [
+    {
+      "agentId": "pipeline_design_director",
+      "path": "agent_outputs/pipeline_design_director.json",
+      "status": "pass",
+      "summary": "pass 家具平面符号 / 室内 CAD 预览符号，目标对象为茶几，适合以顶视图抽象表达而非施工详图。",
+      "sha256": "6953aceeef974bda78b79ee228c64c0eb1b98e6999f2f79999d2ba7782d0563b",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false
+    },
+    {
+      "agentId": "pipeline_style_generator",
+      "path": "agent_outputs/pipeline_style_generator.json",
+      "status": "pass",
+      "summary": "pass single",
+      "sha256": "de201b014abaf9f7fe73ded3add9c671cf821259e1d47ef933394b9166373303",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": false
+    },
+    {
+      "agentId": "pipeline_design_reviewer",
+      "path": "agent_outputs/pipeline_design_reviewer.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "9e783607fdee9bc54cc6ec963e2662e029cc99c950e5b76ba39e76adcd3805c4",
+      "modelInvoked": true,
+      "schemaValid": true,
+      "modelUnavailable": true
+    },
+    {
+      "agentId": "pipeline_visual_intent",
+      "path": "agent_outputs/pipeline_visual_intent.json",
+      "status": "ready",
+      "summary": "ready",
+      "sha256": "b167c6230167387cc75dceacb6503d6fd8ce33a384345db159fd8339485dc92a",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    },
+    {
+      "agentId": "pipeline_intent",
+      "path": "agent_outputs/pipeline_intent.json",
+      "status": "ready",
+      "summary": "ready",
+      "sha256": "d25bc2d0b7560075e418cd7717f69ced75e99189af3df09a913f6dd5955b5522",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    },
+    {
+      "agentId": "pipeline_audit",
+      "path": "agent_outputs/pipeline_audit.json",
+      "status": "pass",
+      "summary": "pass",
+      "sha256": "9f53263bbe6f8fadb264cb1ef03c6ff48b617a9476f95e478750f35fac5c7e97",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    },
+    {
+      "agentId": "pipeline_delivery",
+      "path": "agent_outputs/pipeline_delivery.json",
+      "status": "fail",
+      "summary": "fail not_verified",
+      "sha256": "13165cd110b396b5f0cebbd87826fa976380d714bbdd280e940d401055e99ab9",
+      "modelInvoked": false,
+      "schemaValid": true,
+      "modelUnavailable": null
+    }
+  ],
+  "cadProof": {
+    "status": "pass",
+    "resultStatus": "not_verified",
+    "driverMode": "fake_driver_preflight",
+    "createdHandleCount": 7,
+    "readbackStatus": "not_verified",
+    "readbackEntityCount": 7,
+    "cadGeometryVerified": false,
+    "savedCurrentDwg": false,
+    "reportPath": "cad_reports/cad_preview_tool_report.json"
+  },
+  "encodingPreflight": {
+    "status": "pass",
+    "checkedTextCount": 28,
+    "issueCount": 0,
+    "issues": [],
+    "policy": "fail_before_cad_write_or_asset_contract_write"
+  },
+  "conflictHandling": {
+    "status": "pass",
+    "checked": [
+      "model outputs have pass-like status",
+      "style selected candidate is present when candidates are declared",
+      "model agent outputs did not authorize CAD or save DWG"
+    ],
+    "conflicts": []
+  },
+  "cadContinuationPolicy": {
+    "mode": "normal_after_model_chain_pass",
+    "modelBlockingReasons": [],
+    "cadToolsRan": true
+  },
+  "closeoutEvidence": {
+    "status": "not_verified",
+    "canDeliver": false,
+    "blockingReasons": [
+      "created_handles_readback not ok",
+      "visual_acceptance_review missing",
+      "neighbor_protection missing"
+    ],
+    "evidenceBoundary": {
+      "checked": [
+        "validate_plan=pass",
+        "dry_run=pass",
+        "savedCurrentDwg=false",
+        "targetLayer=CODEX_PREVIEW"
+      ],
+      "not_checked": [
+        "created_handles_readback",
+        "neighbor_protection",
+        "visual_acceptance_review"
+      ],
+      "screenshots": {
+        "role": "visual_aid_only",
+        "count": 0,
+        "files": [],
+        "cannotReplace": [
+          "created_handles_readback",
+          "visual_acceptance_review"
+        ]
+      },
+      "notProven": [
+        "user acceptance",
+        "geometry outside the reported created handles/readback",
+        "future edits after this closeout decision"
+      ]
+    }
+  },
+  "writtenFiles": [
+    "model_agent_chain_result.json",
+    "agent_outputs/pipeline_visual_intent.json",
+    "agent_outputs/pipeline_intent.json",
+    "agent_outputs/pipeline_audit.json",
+    "agent_outputs/pipeline_delivery.json",
+    "candidate_outputs/cad_plan.candidate.json",
+    "cad_reports/validation_report.json",
+    "cad_reports/dry_run_report.json",
+    "cad_reports/cad_preview_tool_report.json",
+    "cad_reports/execution_summary.json",
+    "cad_reports/readback_summary.json",
+    "closeout_decision.json",
+    "final_report.md",
+    "model_agent_live_collab_completion_audit.json"
+  ],
+  "evidenceBoundary": [
+    "design_director/style_generator/design_reviewer are model-backed when modelProviderStatus.modelInvoked=true",
+    "pipeline_visual_intent/pipeline_intent/pipeline_audit are deterministic downstream agents in this proof",
+    "CAD execution is controlled by tool_contract, not by model output",
+    "savedCurrentDwg=false is required; user acceptance and table C increase are not proven"
+  ],
+  "generatedAt": "2026-06-05T08:04:52Z",
+  "completionAudit": {
+    "path": "model_agent_live_collab_completion_audit.json",
+    "status": "not_complete",
+    "blockingRequirements": [
+      "closeoutDeliveryClaim",
+      "liveModelAgentInvocation",
+      "realCadPreviewValidation",
+      "screenshotVisualAid"
+    ]
+  }
+}

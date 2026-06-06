@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "no-cad-chain-delivery/v1",
+  "status": "ready",
+  "deliveryDecision": "ready_for_pre_cad_review",
+  "evidenceBundle": {
+    "upstreamOutputs": [
+      {
+        "agentId": "pipeline_orchestrator",
+        "path": "agent_outputs/pipeline_orchestrator.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "cba823dae2d1e46c1959dc35c61f3608b9c8f6e46fa0ce9a1e25b54b1a541d53",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_design_director",
+        "path": "agent_outputs/pipeline_design_director.json",
+        "status": "pass",
+        "summary": "pass presentation_preview",
+        "sha256": "e5c25c43ee241689185eea1eceaeff76309afc5e0662706f27886db0b3b61d04",
+        "modelInvoked": true,
+        "schemaValid": true,
+        "modelUnavailable": false,
+        "handoffPath": "agent_outputs/pipeline_design_director.handoff.json",
+        "handoffSha256": "de626d3b4a536d65533e8b8bc73cd455289a5ca0f3ca498a783c25f9e48e70d4"
+      },
+      {
+        "agentId": "pipeline_style_generator",
+        "path": "agent_outputs/pipeline_style_generator.json",
+        "status": "pass",
+        "summary": "pass multiple",
+        "sha256": "7c448abe4df4b0d3f2d2c6d0349ec9441786ff6301b4c9ccc9b60346c5480443",
+        "modelInvoked": true,
+        "schemaValid": true,
+        "modelUnavailable": false,
+        "handoffPath": "agent_outputs/pipeline_style_generator.handoff.json",
+        "handoffSha256": "34b73d16e3bb1814e31a549e8fbe991b2a796c1e201a457e46a538a8ea554269"
+      },
+      {
+        "agentId": "pipeline_design_reviewer",
+        "path": "agent_outputs/pipeline_design_reviewer.json",
+        "status": "pass",
+        "summary": "pass",
+        "sha256": "5d6d1dc4f3d8c4cb1dd850674361b4d099a237898318ba67eec261e4549b0760",
+        "modelInvoked": true,
+        "schemaValid": true,
+        "modelUnavailable": false,
+        "handoffPath": "agent_outputs/pipeline_design_reviewer.handoff.json",
+        "handoffSha256": "96cb94da5108845cd87e33d9b53a0aa666765143bb7c30ed4964fae54ee13e65"
+      }
+    ]
+  },
+  "allowedClaims": [
+    "no-CAD model agent chain produced upstream design context",
+    "CAD execution has not run"
+  ],
+  "blockingReasons": [],
+  "cadExecutionAuthorized": false,
+  "savedCurrentDwg": false,
+  "evidenceDoesNotProve": [
+    "CAD geometry",
+    "created handles readback",
+    "user acceptance",
+    "table C capability increase"
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "version": "0.1",
+  "domain": "residential",
+  "intent": "draw_symbol_glyph",
+  "object": {
+    "type": "symbol_glyph",
+    "symbol_id": "sofa.object_family_trial.v1",
+    "name": "沙发对象族试点草案",
+    "archetype": "seating",
+    "source_brief": "sofa object family replay",
+    "glyph_primitives": [
+      {
+        "part_id": "back",
+        "kind": "support",
+        "primitive": "rectangle",
+        "corner1": [
+          62000.0,
+          36650.0,
+          0.0
+        ],
+        "corner2": [
+          64200.0,
+          36900.0,
+          0.0
+        ]
+      },
+      {
+        "part_id": "seat",
+        "kind": "seat_surface",
+        "primitive": "rectangle",
+        "corner1": [
+          62180.0,
+          36100.0,
+          0.0
+        ],
+        "corner2": [
+          64020.0,
+          36650.0,
+          0.0
+        ]
+      },
+      {
+        "part_id": "arm_left",
+        "kind": "arm",
+        "primitive": "rectangle",
+        "corner1": [
+          62000.0,
+          36100.0,
+          0.0
+        ],
+        "corner2": [
+          62180.0,
+          36900.0,
+          0.0
+        ]
+      },
+      {
+        "part_id": "arm_right",
+        "kind": "arm",
+        "primitive": "rectangle",
+        "corner1": [
+          64020.0,
+          36100.0,
+          0.0
+        ],
+        "corner2": [
+          64200.0,
+          36900.0,
+          0.0
+        ]
+      },
+      {
+        "part_id": "seat_division",
+        "kind": "inner_detail",
+        "primitive": "line",
+        "start_point": [
+          63100.0,
+          36120.0,
+          0.0
+        ],
+        "end_point": [
+          63100.0,
+          36630.0,
+          0.0
+        ]
+      }
+    ]
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      62000.0,
+      36000.0,
+      0.0
+    ],
+    "placement_phrase": "object family real CAD replay target"
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 0.66,
+  "needs_confirmation": true
+}

@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "deterministic-live-collab-audit/v1",
+  "status": "pass",
+  "agentId": "pipeline_audit",
+  "evidenceBundle": {
+    "upstreamOutputs": [
+      {
+        "agentId": "pipeline_design_director",
+        "path": "agent_outputs/pipeline_design_director.json",
+        "status": "pass",
+        "summary": "pass presentation_preview",
+        "sha256": "0c4f9c7907a0d2bba4053b4b8613ccf6a1ec68a072c51c53158dae249e8aabfc",
+        "modelInvoked": true,
+        "schemaValid": true,
+        "modelUnavailable": false,
+        "handoffPath": "agent_outputs/pipeline_design_director.handoff.json",
+        "handoffSha256": "f4b7ba0712c770b39f3039b97ae690834d08eda1979461819eda8f904d865a94"
+      },
+      {
+        "agentId": "pipeline_style_generator",
+        "path": "agent_outputs/pipeline_style_generator.json",
+        "status": "pass",
+        "summary": "pass multiple",
+        "sha256": "c64d66ecd1f787d318946558dfd56578130dd6b4f7de2479623fcc044ed93f45",
+        "modelInvoked": true,
+        "schemaValid": true,
+        "modelUnavailable": false,
+        "handoffPath": "agent_outputs/pipeline_style_generator.handoff.json",
+        "handoffSha256": "ee433cd3d973acf10eb0eece581ddfe97d5fe77e2337db8f4425fdeda5e82acd"
+      },
+      {
+        "agentId": "pipeline_design_reviewer",
+        "path": "agent_outputs/pipeline_design_reviewer.json",
+        "status": "pass",
+        "summary": "pass",
+        "sha256": "461cb03e97e10ad4d0340e11e6df73407b06710abd81dca8e61f48f4fa133aac",
+        "modelInvoked": true,
+        "schemaValid": true,
+        "modelUnavailable": false,
+        "handoffPath": "agent_outputs/pipeline_design_reviewer.handoff.json",
+        "handoffSha256": "be64a5a1fbf017b321609b8179f3b8b76e087eeb78999a362fddb42169f7d42c"
+      },
+      {
+        "agentId": "pipeline_visual_intent",
+        "path": "agent_outputs/pipeline_visual_intent.json",
+        "status": "ready",
+        "summary": "ready",
+        "sha256": "b167c6230167387cc75dceacb6503d6fd8ce33a384345db159fd8339485dc92a",
+        "modelInvoked": false,
+        "schemaValid": true,
+        "modelUnavailable": null
+      },
+      {
+        "agentId": "pipeline_intent",
+        "path": "agent_outputs/pipeline_intent.json",
+        "status": "ready",
+        "summary": "ready",
+        "sha256": "d25bc2d0b7560075e418cd7717f69ced75e99189af3df09a913f6dd5955b5522",
+        "modelInvoked": false,
+        "schemaValid": true,
+        "modelUnavailable": null
+      },
+      {
+        "agentId": "pipeline_audit:toolIntent",
+        "path": "tool_traces/pipeline_audit.intent-validate-cad-plan.json",
+        "status": "allowed",
+        "summary": "validate_plan is allowlisted; execution and pass/fail remain orchestrator-owned.",
+        "sha256": "",
+        "toolName": "validate_plan",
+        "executionStatus": "executed",
+        "resultStatus": "pass",
+        "reportPath": "cad_reports/validation_report.json"
+      },
+      {
+        "agentId": "pipeline_audit:toolIntent",
+        "path": "tool_traces/pipeline_audit.intent-dry-run-cad-plan.json",
+        "status": "allowed",
+        "summary": "dry_run_plan is allowlisted; execution and pass/fail remain orchestrator-owned.",
+        "sha256": "",
+        "toolName": "dry_run_plan",
+        "executionStatus": "executed",
+        "resultStatus": "pass",
+        "reportPath": "cad_reports/dry_run_report.json"
+      },
+      {
+        "agentId": "pipeline_intent:toolIntent",
+        "path": "tool_traces/pipeline_intent.intent-preview-cad-execute.json",
+        "status": "allowed",
+        "summary": "preview_cad_execute is allowlisted; execution and pass/fail remain orchestrator-owned.",
+        "sha256": "",
+        "toolName": "preview_cad_execute",
+        "executionStatus": "executed",
+        "resultStatus": "pass",
+        "reportPath": "cad_reports/cad_preview_tool_report.json"
+      }
+    ]
+  },
+  "checked": [
+    "downstream agents referenced upstream agent_outputs JSON",
+    "validate_plan and dry_run_plan ran before preview CAD execution",
+    "controlled CAD execution stayed under CODEX_PREVIEW contract",
+    "savedCurrentDwg=false is delegated to CAD preview tool report/readback"
+  ],
+  "conflictHandling": {
+    "status": "pass",
+    "checked": [
+      "model outputs have pass-like status",
+      "style selected candidate is present when candidates are declared",
+      "model agent outputs did not authorize CAD or save DWG"
+    ],
+    "conflicts": []
+  },
+  "blockingReasons": [],
+  "learningCandidate": {
+    "decision": "not_required"
+  },
+  "modelProviderStatus": {
+    "modelInvoked": false,
+    "route": "deterministic_downstream_agent",
+    "schemaValid": true,
+    "blocking": false
+  }
+}

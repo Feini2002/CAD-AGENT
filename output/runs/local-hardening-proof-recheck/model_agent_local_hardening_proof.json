@@ -1,0 +1,47 @@
+{
+  "closeoutStateMachine": "pass",
+  "decisionChainFields": "pass",
+  "details": {
+    "closeoutStateMachine": {
+      "blocked": "cad_evidence_missing",
+      "ready": "ready_for_user_review"
+    },
+    "decisionChainFields": {
+      "missingBySchema": {},
+      "promptInstruction": true
+    },
+    "errorTaxonomy": {
+      "business": "model_business_blocked",
+      "network": "network_unavailable"
+    },
+    "exportManifestGate": {
+      "allowed": "pass",
+      "blocked": "blocked"
+    },
+    "handoffPackets": {
+      "issues": [],
+      "missingFields": [],
+      "status": "pass"
+    },
+    "modelReviewStatus": "pass",
+    "toolIntentFixtures": {
+      "blockedSave": "blocked",
+      "readOnly": "allowed"
+    }
+  },
+  "errorTaxonomy": "pass",
+  "exportManifestGate": "pass",
+  "handoffPackets": "pass",
+  "notProven": [
+    "real OpenAI provider availability",
+    "real gpt-5.5 judgement quality",
+    "real AutoCAD geometry",
+    "user acceptance"
+  ],
+  "repoExternalCwd": true,
+  "reportPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\local-hardening-proof-recheck\\model_agent_local_hardening_proof.json",
+  "schemaVersion": "model-agent-local-hardening-proof/v1",
+  "status": "pass",
+  "toolIntentFixtures": "pass",
+  "unexpectedProjectContextLoaded": false
+}

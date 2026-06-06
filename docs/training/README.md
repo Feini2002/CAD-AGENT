@@ -1,14 +1,21 @@
 # Agent 训练阶段（方案 A）
 
-最后更新：2026-06-01
+最后更新：2026-06-06（ARCH-CONVERGENCE-01：正式对象训练暂缓，先做架构归并画布）
 
-Core Lab 施工已收口。本目录是**默认工作入口**：用 CAD Designer Agent 成长路径和真实/脱敏案例训 Agent「指哪打哪」，而不是再开 V-PROOF / 三轨施工包。
+Core Lab 施工已收口。本目录是训练入口：用 CAD Designer Agent 成长路径和真实/脱敏案例训 Agent「指哪打哪」，而不是再开 V-PROOF / 三轨施工包。
+
+## 架构归并期暂停边界
+
+当前仓库级主线是 `ARCH-CONVERGENCE-01` 架构归并画布工程。正式对象训练、整批训练和新的家装案例轮次默认暂缓，先把旧表 A/B/C、Core proof、训练地图、资产库、多 Agent、Worker / bridge、GPT-5.5 模型桥、工作台和证据治理统一归入七层任务生命周期。总设计见 `../architecture/system-architecture-convergence.md`，执行主线见 `../../CORE_RESTRUCTURE_PLAN.md` §0.2，OpenSpec 契约见 `../../openspec/changes/unify-system-architecture-canvas/`。
+
+这不是取消训练。训练恢复条件是：规则、状态、PlanMD、工作台派生显示和关键脚本口径都已区分 `Core Proof Coverage`、`Agent Task Maturity` 和 `Project Delivery Readiness`。用户明确要求覆盖暂停时，仍按 quick / focused / formal 原有边界执行，并且不得把旧表 C 当作训练成熟度。
 
 ## 30 秒入口边界
 
 - 开基础课：读本节、`cad-designer-growth-path.md` 和 `agents/cad_designer/rules.md` 即可，不默认全文展开旧案例。
 - 开家装案例：再读 `residential-primary.md`、案例 `brief.md` / `feedback.md` 和必要的 `expected/`。
 - 查训练事实源：读 `training-sources.json`；`capability-map-data.js` 与 `capability-map.html` 只是派生快照。查训练前 / 收尾数据体积风险时，先看 data-bloat / retention 诊断报告的 protected / candidate / blocked 摘要，但它们不得当训练事实源。
+- 跨电脑迁移：本私人仓库的 `.gitignore` 默认放行可迁移训练 / 证据目录，包括 `output/training_queues/**`、`output/training_learning/**`、`output/validation_runs/**`、`output/previews/**`、`output/runs/**` 和 `output/model_reviews/**`；仍忽略 `output/debug/`、`output/test_artifacts/`、`.env`、虚拟环境、缓存、日志和 CAD 锁文件。换电脑后先恢复这些事实源并同步工作台，不要因为页面显示 0 个已结束项就直接重训。
 - 查历史方案：`visual-first-agent-plan.md` 等标记为 HISTORY-ONLY 的文件只作背景，不当作当前待执行 Phase。
 
 ## 总训练对象

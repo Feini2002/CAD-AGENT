@@ -8,6 +8,9 @@
     "roundN_retrieval_pack.json",
     "brief.md",
     "execution_summary.json",
+    "roundN_model_asset_governor_review.json",
+    "modelGovernorReview",
+    "modelAssetGovernorReview",
     "created_handles",
     "selected_handles",
     "libraries/system_library/registry.json",
@@ -17,6 +20,7 @@
   "outputs": [
     "roundN_asset_governance_decision.json",
     "libraryGovernance",
+    "modelAssistedDecision",
     "polishHardeningDecision"
   ],
   "managed_child_agents": [
@@ -31,7 +35,8 @@
     "layout_plan_v2_required": true,
     "child_agents_selected": true,
     "polish_hardening_decision_recorded": true,
-    "native_cad_evidence_boundary_preserved": true
+    "native_cad_evidence_boundary_preserved": true,
+    "model_suggestions_advisory_only": true
   },
   "governance_decisions": [
     "ready_for_metadata_contract",
@@ -52,12 +57,15 @@
     "claim_native_asset_verified_without_created_handles_readback",
     "copy_training_panel_to_clean_source",
     "invent_untracked_global_agent",
-    "promote_reference_only_or_raw_library_to_system_asset"
+    "promote_reference_only_or_raw_library_to_system_asset",
+    "let_model_suggestion_override_source_boundary_or_reuse_gate",
+    "execute_cad_or_save_dwg_from_model_suggestion"
   ],
   "uses_core": [
     "core.assets.build_asset_library_governance",
     "core.assets.build_asset_library_layout_plan",
-    "core.assets.evaluate_asset_library_hardening"
+    "core.assets.evaluate_asset_library_hardening",
+    "core.model_review.asset_governor_review"
   ],
   "doc": "docs/architecture/system-asset-sedimentation-protocol.md"
 }

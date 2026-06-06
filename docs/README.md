@@ -17,6 +17,7 @@
 | 全量交接索引 | `handoffs/package-index.md` |
 | 新人或新 Agent 接手 | `onboarding/first-handoff.md` |
 | CAD 验证 / 卡壳流程 | `runbooks/cad-validation.md`、`runbooks/blocker-playbook.md` |
+| 旧根目录入口迁移对照 | 本表和根目录 `README.md` 的“关键入口” |
 
 ## 目录职责
 
@@ -38,3 +39,20 @@
 - 表 C 机器值只看 `../output/validation_runs/capability-lab/cad_capability_coverage.json`。
 - 机器证据只看 `../output/validation_runs/**`。
 - Markdown 可以解释证据，但不能替代 JSON、readback、created handles 或 `geometry_verified`。
+
+## 旧根入口迁移
+
+根目录旧 Stub 入口不再保留；需要对应内容时直接打开目标事实源。
+
+| 旧入口 | 目标 |
+| --- | --- |
+| `当前状态入口.md` | `docs/status/current.md` |
+| `变更记录入口.md` | `docs/status/changelog.md` |
+| `问题风险入口.md` | `docs/status/issues.md` |
+| `长期规则入口.md` | `docs/governance/cad-agent-rules.md` |
+| `路线图入口.md` | `docs/roadmap/current.md` |
+| `训练错误记录入口.md` | `docs/training/training-errors.md` |
+| `视觉优先训练计划入口.md` | `docs/training/visual-first-agent-plan.md` |
+| `CAD自动验证入口.md` | `docs/runbooks/cad-validation.md` |
+| `CAD符号语法入口.md` | `docs/architecture/symbol-grammar.md` |
+| `CAD卡壳排障入口.md` | `docs/runbooks/blocker-playbook.md` |

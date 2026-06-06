@@ -92,6 +92,18 @@ def validate_confirmation_against_proposal(
             for candidate_id in weights:
                 if candidate_id not in candidate_ids:
                     errors.append(f"local_preferences.candidate_weights unknown candidate: {candidate_id!r}")
+        offsets = local_prefs.get("placement_offsets", {})
+        if isinstance(offsets, dict):
+            for object_id, offset in offsets.items():
+                if not str(object_id):
+                    errors.append("local_preferences.placement_offsets key must be non-empty")
+                if not isinstance(offset, list) or len(offset) < 2:
+                    errors.append(f"local_preferences.placement_offsets invalid offset for {object_id!r}")
+                    continue
+                for value in offset[:3]:
+                    if not isinstance(value, (int, float)) or isinstance(value, bool):
+                        errors.append(f"local_preferences.placement_offsets non-numeric value for {object_id!r}")
+                        break
 
     return errors
 

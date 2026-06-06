@@ -1,0 +1,6 @@
+CAD_PLAN DRY RUN
+- intent: draw_object
+- object: 测试柜 (cabinet)
+- size: 1800 x 600 mm
+- placement: absolute at [0, 0, 0]
+- layer: CODEX_PREVIEW

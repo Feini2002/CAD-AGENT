@@ -1,0 +1,46 @@
+{
+  "bbox": {
+    "max": [
+      69200.0,
+      36600.0
+    ],
+    "min": [
+      67820.0,
+      35820.0
+    ]
+  },
+  "cadGeometryVerified": false,
+  "createdHandleCount": 7,
+  "created_handles": [
+    "H101",
+    "H102",
+    "H103",
+    "H104",
+    "H105",
+    "H106",
+    "H107"
+  ],
+  "created_handles_readback": "not_verified",
+  "entityTypeCounts": {
+    "dimension": 2,
+    "line": 4,
+    "text": 1
+  },
+  "evidenceBoundary": [
+    "created handles are read back through snapshot_handles when available",
+    "fake_driver_preflight readback is marked not_verified and cannot prove real CAD geometry",
+    "savedCurrentDwg=false is part of the controlled CAD contract"
+  ],
+  "generatedAt": "2026-06-05T08:04:52Z",
+  "rawReadbackStatus": "ok",
+  "readbackEntityCount": 7,
+  "readbackError": "",
+  "readbackLayers": [
+    "CODEX_PREVIEW"
+  ],
+  "readbackStatus": "not_verified",
+  "savedCurrentDwg": false,
+  "schemaVersion": "controlled-cad-readback-summary/v1",
+  "status": "not_verified",
+  "targetLayer": "CODEX_PREVIEW"
+}

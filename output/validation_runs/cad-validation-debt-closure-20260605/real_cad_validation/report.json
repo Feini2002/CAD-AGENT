@@ -1,0 +1,435 @@
+{
+  "status": "fail",
+  "legacy_status": "fail",
+  "geometry_gate_mode": false,
+  "environment_optional": true,
+  "root": "C:\\Users\\User\\Desktop\\CAD-AGENT",
+  "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation",
+  "include_cad": true,
+  "block_alpha_only": false,
+  "generated_at": "2026-06-05T10:54:51",
+  "steps": [
+    {
+      "id": "python_import_pillow",
+      "title": "Import Pillow",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "-c",
+        "import PIL; print(PIL.__version__)"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\python_import_pillow.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\python_import_pillow.stderr.txt",
+      "stdout_excerpt": "12.2.0\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "python_import_pywin32",
+      "title": "Import pywin32",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "-c",
+        "import win32com.client; print('pywin32 OK')"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\python_import_pywin32.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\python_import_pywin32.stderr.txt",
+      "stdout_excerpt": "pywin32 OK\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "python_import_win32gui",
+      "title": "Import win32gui",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "-c",
+        "import win32gui; print('win32gui OK')"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\python_import_win32gui.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\python_import_win32gui.stderr.txt",
+      "stdout_excerpt": "win32gui OK\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "self_check",
+      "title": "Run repository self check",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/self_check.py"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\self_check.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\self_check.stderr.txt",
+      "stdout_excerpt": "rs\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\previews\\\\preview.png\",\n        \"output_dir\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\previews\",\n        \"output_dir_exists\": true,\n        \"dependencies\": {\n          \"pillow_imagegrab\": true,\n          \"win32gui\": true,\n          \"win32ui\": true\n        },\n        \"capture_modes\": [\n          \"screen\",\n          \"autocad_window\",\n          \"autocad_viewport_or_client\"\n        ],\n        \"autocad_window\": {\n          \"status\": \"ready\",\n          \"hwnd\": 264298,\n          \"title\": \"Autodesk AutoCAD 2026 - [测试文件.dwg]\",\n          \"bbox\": [\n            0,\n            0,\n            2560,\n            1392\n          ]\n        },\n        \"autocad_viewport_or_client\": {\n          \"status\": \"ready_with_execution_summary\",\n          \"basis\": \"AutoCAD window plus optional created_handles bbox focus\"\n        },\n        \"note\": \"AutoCAD capture uses PrintWindow on the client area so IDE overlays are not baked in. Screenshot geometry remains visual aid only; CAD accuracy requires created-handle readback.\",\n        \"desktopSwitch\": {\n          \"status\": \"pass\",\n          \"api\": \"SetThreadDesktop\",\n          \"lastError\": 0\n        }\n      }\n    }\n  ]\n}\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "unit_tests",
+      "title": "Run unit tests",
+      "status": "fail",
+      "failure_category": "repo_regression",
+      "required": true,
+      "cad_required": false,
+      "returncode": 1,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\unit_tests.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\unit_tests.stderr.txt",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "-------------------------------\nTraceback (most recent call last):\n  File \"C:\\Users\\User\\Desktop\\CAD-AGENT\\tests\\core\\test_primitive_matrix.py\", line 15, in test_no_cad_primitive_matrix_passes_on_fake_driver\n    self.assertEqual(report[\"status\"], \"pass\")\nAssertionError: 'fail' != 'pass'\n- fail\n+ pass\n\n\n======================================================================\nFAIL: test_probe_attaches_consistent_session_guard_and_snapshot_artifact (core.test_session_snapshot_capability_probe_boundary.SessionSnapshotCapabilityProbeBoundaryTests.test_probe_attaches_consistent_session_guard_and_snapshot_artifact)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"C:\\Users\\User\\Desktop\\CAD-AGENT\\tests\\core\\test_session_snapshot_capability_probe_boundary.py\", line 19, in test_probe_attaches_consistent_session_guard_and_snapshot_artifact\n    self.assertEqual(report[\"status\"], \"cad_capability_verified\")\nAssertionError: 'failed' != 'cad_capability_verified'\n- failed\n+ cad_capability_verified\n\n\n----------------------------------------------------------------------\nRan 1296 tests in 76.004s\n\nFAILED (failures=11, errors=1, skipped=2)\n"
+    },
+    {
+      "id": "validate_sample_plan",
+      "title": "Validate baseline CAD_PLAN",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/validate_plan.py",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\draw_test_cabinet.json"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\validate_sample_plan.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\validate_sample_plan.stderr.txt",
+      "stdout_excerpt": "VALID CAD_PLAN\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "dry_run_sample_plan",
+      "title": "Dry-run baseline CAD_PLAN",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/dry_run_plan.py",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\draw_test_cabinet.json"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\dry_run_sample_plan.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\dry_run_sample_plan.stderr.txt",
+      "stdout_excerpt": "CAD_PLAN DRY RUN\n- intent: draw_object\n- object: 测试柜 (cabinet)\n- size: 1800 x 600 mm\n- placement: absolute at [0, 0, 0]\n- layer: CODEX_PREVIEW\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "render_preview_check",
+      "title": "Check screenshot capability",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/render_preview.py",
+        "--check"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\render_preview_check.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\render_preview_check.stderr.txt",
+      "stdout_excerpt": "{\n  \"status\": \"ready\",\n  \"output\": \"output\\\\previews\\\\preview.png\",\n  \"output_dir\": \"output\\\\previews\",\n  \"output_dir_exists\": true,\n  \"dependencies\": {\n    \"pillow_imagegrab\": true,\n    \"win32gui\": true,\n    \"win32ui\": true\n  },\n  \"capture_modes\": [\n    \"screen\",\n    \"autocad_window\",\n    \"autocad_viewport_or_client\"\n  ],\n  \"autocad_window\": {\n    \"status\": \"ready\",\n    \"hwnd\": 264298,\n    \"title\": \"Autodesk AutoCAD 2026 - [测试文件.dwg]\",\n    \"bbox\": [\n      0,\n      0,\n      2560,\n      1392\n    ]\n  },\n  \"autocad_viewport_or_client\": {\n    \"status\": \"ready_with_execution_summary\",\n    \"basis\": \"AutoCAD window plus optional created_handles bbox focus\"\n  },\n  \"note\": \"AutoCAD capture uses PrintWindow on the client area so IDE overlays are not baked in. Screenshot geometry remains visual aid only; CAD accuracy requires created-handle readback.\",\n  \"desktopSwitch\": {\n    \"status\": \"pass\",\n    \"api\": \"SetThreadDesktop\",\n    \"lastError\": 6\n  }\n}\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "non_cad_benchmark",
+      "title": "Run non-CAD benchmark",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/run_benchmark_suite.py",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\benchmarks\\non_cad_core_benchmark.json",
+        "--output-root",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\test_artifacts\\benchmarks\\cad_validation"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\non_cad_benchmark.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\non_cad_benchmark.stderr.txt",
+      "stdout_excerpt": "chmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\\\\project_model.json\",\n        \"object_spec\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\test_artifacts\\\\benchmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\\\\object_spec.json\",\n        \"layout_proposal\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\test_artifacts\\\\benchmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\\\\layout_proposal.json\",\n        \"design_proposal\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\test_artifacts\\\\benchmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\\\\design_proposal.json\",\n        \"cad_plan\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\test_artifacts\\\\benchmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\\\\cad_plan.json\",\n        \"dry_run_report\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\test_artifacts\\\\benchmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\\\\dry_run_report.json\",\n        \"verification_report\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\test_artifacts\\\\benchmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\\\\verification_report.json\"\n      },\n      \"output_dir\": \"C:\\\\Users\\\\User\\\\Desktop\\\\CAD-AGENT\\\\output\\\\test_artifacts\\\\benchmarks\\\\cad_validation\\\\minimal-cabinet-non-cad\"\n    }\n  ]\n}\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "block_alpha_validate_plan",
+      "title": "Validate insert_block_alpha CAD_PLAN",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/validate_plan.py",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\insert_block_alpha_test.json"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_validate_plan.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_validate_plan.stderr.txt",
+      "stdout_excerpt": "VALID CAD_PLAN\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "block_alpha_dry_run",
+      "title": "Dry-run insert_block_alpha CAD_PLAN",
+      "status": "pass",
+      "failure_category": "",
+      "required": true,
+      "cad_required": false,
+      "returncode": 0,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/dry_run_plan.py",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\insert_block_alpha_test.json"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_dry_run.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_dry_run.stderr.txt",
+      "stdout_excerpt": "CAD_PLAN DRY RUN\n- intent: insert_block_alpha\n- block_id: controlled-test-block-001\n- block_name: CODEX_TEST_BLOCK_001\n- placement: absolute at [1200, 800, 0], rotation=0, scale=[1, 1, 1]\n- layer: CODEX_PREVIEW\n- layer_role: preview\n- bbox: {'min': [1200.0, 800.0], 'max': [2100.0, 1250.0]}\n- geometry_accuracy: not_verified_without_cad_readback\n",
+      "stderr_excerpt": ""
+    },
+    {
+      "id": "autocad_com_connect",
+      "title": "Connect to active AutoCAD document",
+      "status": "fail",
+      "failure_category": "cad_connection_failed",
+      "required": true,
+      "cad_required": true,
+      "returncode": 1,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "-c",
+        "from core.cad_io.autocad_com import AutoCADComDriver; d=AutoCADComDriver(connect_existing_only=True); print('COM OK:', d.doc.Name)"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\autocad_com_connect.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\autocad_com_connect.stderr.txt",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"C:\\Users\\User\\Desktop\\CAD-AGENT\\core\\cad_io\\autocad_com.py\", line 108, in __init__\n    raise RuntimeError(f\"No active AutoCAD.Application instance is available. COM detail: {detail}\")\nRuntimeError: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None)\n"
+    },
+    {
+      "id": "execute_sample_plan",
+      "title": "Execute baseline CAD_PLAN into CODEX_PREVIEW",
+      "status": "not_run",
+      "failure_category": "",
+      "required": true,
+      "cad_required": true,
+      "returncode": null,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/execute_plan.py",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\draw_test_cabinet.json"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\execute_sample_plan.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\execute_sample_plan.stderr.txt",
+      "stdout_excerpt": "Skipped because prerequisite step `autocad_com_connect` did not pass.\n",
+      "stderr_excerpt": "",
+      "blocked_by": "autocad_com_connect"
+    },
+    {
+      "id": "capture_screen",
+      "title": "Capture CAD window visual checkpoint",
+      "status": "not_run",
+      "failure_category": "",
+      "required": true,
+      "cad_required": true,
+      "returncode": null,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/render_preview.py",
+        "--capture-autocad-window",
+        "--execution-summary",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\execution_summary.json",
+        "--output",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\cad-validation-window.png"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\capture_screen.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\capture_screen.stderr.txt",
+      "stdout_excerpt": "Skipped because prerequisite step `autocad_com_connect` did not pass.\n",
+      "stderr_excerpt": "",
+      "blocked_by": "autocad_com_connect",
+      "screenshot_role": "visual_aid_only",
+      "geometry_accuracy": "not_verified_by_screenshot"
+    },
+    {
+      "id": "inspect_readback",
+      "title": "Inspect CAD entities and build verification report",
+      "status": "not_run",
+      "failure_category": "",
+      "required": true,
+      "cad_required": true,
+      "returncode": null,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/inspect_dwg.py",
+        "--connect-cad",
+        "--plan",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\draw_test_cabinet.json",
+        "--format",
+        "json",
+        "--execution-summary",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\execution_summary.json",
+        "--screenshot",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\cad-validation-window.png"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\inspect_readback.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\inspect_readback.stderr.txt",
+      "stdout_excerpt": "Skipped because prerequisite step `autocad_com_connect` did not pass.\n",
+      "stderr_excerpt": "",
+      "blocked_by": "autocad_com_connect"
+    },
+    {
+      "id": "cad_capability_probe",
+      "title": "Probe AutoCAD COM primitive write and handle readback capability",
+      "status": "not_run",
+      "failure_category": "",
+      "required": true,
+      "cad_required": true,
+      "returncode": null,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/run_cad_capability_probe.py",
+        "--output-dir",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\cad_capability_probe.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\cad_capability_probe.stderr.txt",
+      "stdout_excerpt": "Skipped because prerequisite step `autocad_com_connect` did not pass.\n",
+      "stderr_excerpt": "",
+      "blocked_by": "autocad_com_connect"
+    },
+    {
+      "id": "block_alpha_execute",
+      "title": "Execute insert_block_alpha CAD_PLAN into CODEX_PREVIEW",
+      "status": "not_run",
+      "failure_category": "",
+      "required": true,
+      "cad_required": true,
+      "returncode": null,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/execute_plan.py",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\insert_block_alpha_test.json"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_execute.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_execute.stderr.txt",
+      "stdout_excerpt": "Skipped because prerequisite step `autocad_com_connect` did not pass.\n",
+      "stderr_excerpt": "",
+      "blocked_by": "autocad_com_connect"
+    },
+    {
+      "id": "block_alpha_capture_screen",
+      "title": "Capture AutoCAD window visual aid for block alpha",
+      "status": "not_run",
+      "failure_category": "",
+      "required": true,
+      "cad_required": true,
+      "returncode": null,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/render_preview.py",
+        "--capture-autocad-window",
+        "--execution-summary",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_execution_summary.json",
+        "--output",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block-alpha-window.png"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_capture_screen.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_capture_screen.stderr.txt",
+      "stdout_excerpt": "Skipped because prerequisite step `autocad_com_connect` did not pass.\n",
+      "stderr_excerpt": "",
+      "blocked_by": "autocad_com_connect",
+      "screenshot_role": "visual_aid_only",
+      "geometry_accuracy": "not_verified_by_screenshot"
+    },
+    {
+      "id": "block_alpha_readback",
+      "title": "Inspect block_reference readback for insert_block_alpha",
+      "status": "not_run",
+      "failure_category": "",
+      "required": true,
+      "cad_required": true,
+      "returncode": null,
+      "command": [
+        "C:\\Users\\User\\.codex\\mcp\\CAD-MCP\\.venv\\Scripts\\python.exe",
+        "scripts/run_block_alpha_validation.py",
+        "--connect-cad",
+        "--output-dir",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation",
+        "--plan",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\examples\\plans\\insert_block_alpha_test.json",
+        "--execution-summary",
+        "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_execution_summary.json"
+      ],
+      "stdout_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_readback.stdout.txt",
+      "stderr_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\cad-validation-debt-closure-20260605\\real_cad_validation\\block_alpha_readback.stderr.txt",
+      "stdout_excerpt": "Skipped because prerequisite step `autocad_com_connect` did not pass.\n",
+      "stderr_excerpt": "",
+      "blocked_by": "autocad_com_connect"
+    }
+  ],
+  "geometry_gate": {
+    "status": "pass",
+    "step_count": 9,
+    "failed_required_step_ids": []
+  },
+  "infrastructure_gate": {
+    "status": "fail",
+    "step_count": 10,
+    "failed_required_step_ids": [
+      "unit_tests",
+      "autocad_com_connect"
+    ]
+  },
+  "infrastructure_debt": true,
+  "next_actions": [
+    "CAD validation pass requires block_alpha.geometry_verified when block_alpha_readback ran",
+    "几何门禁已通过，但环境/截图/单测等基础设施步骤仍有失败；请单独修复基础设施后再做完整 baseline。",
+    "打开 AutoCAD 和一张测试 DWG，确认没有授权弹窗阻塞，再重新运行本脚本。",
+    "仓库测试或自检失败。Codex 应先做最小复现和最小修复，再重新运行本脚本。"
+  ],
+  "block_alpha": {
+    "geometry_verified": false,
+    "evidence_state": "deferred_cad_readback_required",
+    "step_id": "block_alpha_readback"
+  },
+  "evidence_summary": {
+    "steps_with_evidence_count": 0,
+    "evidence_state_counts": {},
+    "geometry_accuracy_counts": {},
+    "screenshot_role_counts": {},
+    "include_cad": true,
+    "benchmark_pass_non_cad_count": 0,
+    "blocked_expected_non_cad_count": 0,
+    "invalid_configuration_count": 0,
+    "readback_geometry_verified_count": 0,
+    "cad_capability_verified_count": 0,
+    "deferred_cad_readback_count": 0,
+    "dry_run_valid_plan_only_count": 0,
+    "geometry_verified_case_count": 0,
+    "non_cad_only": true
+  },
+  "evidence_gate_failure": "CAD validation pass requires block_alpha.geometry_verified when block_alpha_readback ran"
+}

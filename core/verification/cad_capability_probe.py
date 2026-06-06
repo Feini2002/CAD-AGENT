@@ -105,6 +105,15 @@ def _bbox_from_entities(entities: list[dict[str, Any]]) -> dict[str, Any] | None
     }
 
 
+def _geometry_bbox_from_entities(entities: list[dict[str, Any]], *, layer: str) -> dict[str, Any] | None:
+    geometry_entities = [
+        entity
+        for entity in entities
+        if entity.get("layer") == layer and str(entity.get("type", "")).lower() not in {"dimension", "text"}
+    ]
+    return _bbox_from_entities(geometry_entities)
+
+
 def _write_report(output_dir: Path | None, report: dict[str, Any]) -> None:
     if output_dir is None:
         return
@@ -382,6 +391,7 @@ def run_cad_capability_probe(
         "preview_type_counts": _type_counts_for_layer(entities, layer),
         "diagnostic_type_counts": _type_counts_for_layer(entities, DIAGNOSTIC_LAYER),
         "bbox": _bbox_from_entities(entities),
+        "geometry_bbox": _geometry_bbox_from_entities(entities, layer=layer),
     }
     report["checks"].append(
         _check(
@@ -410,9 +420,9 @@ def run_cad_capability_probe(
             f"Type counts: {report['actual']['type_counts']}",
         )
     )
-    bbox = report["actual"]["bbox"]
+    bbox = report["actual"]["geometry_bbox"]
     bbox_status = "fail"
-    bbox_message = "No line bbox available."
+    bbox_message = "No preview geometry bbox available."
     if isinstance(bbox, dict):
         size = bbox.get("size")
         if isinstance(size, list) and len(size) == 2:

@@ -31,10 +31,82 @@ REQUIRED_ZONES = (
     "03_REVIEW_QUARANTINE",
     "99_EVIDENCE_LINKS",
 )
+EVIDENCE_LIST_KEYS = {"evidenceRefs", "refs"}
+EVIDENCE_DETAIL_KEYS = {
+    "summary",
+    "report",
+    "screenshot",
+    "focusedScreenshot",
+    "reportPath",
+    "screenshotPath",
+    "preview",
+    "previewPath",
+}
+EVIDENCE_SECTION_KEYS = {
+    "nativeVisiblePanelEvidence",
+    "reuseWorkflowProbe",
+    "reuseReplay",
+    "visiblePanelEvidence",
+    "verification",
+    "evidence",
+    "evidenceLinks",
+}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def _normalize_ref(value: str) -> str:
+    text = str(value).strip().replace("\\", "/")
+    if "#" in text:
+        text = text.split("#", 1)[0]
+    return text
+
+
+def _looks_like_local_evidence_ref(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    text = _normalize_ref(value)
+    if not text or text.startswith(("http://", "https://")):
+        return False
+    if "<" in text or ">" in text:
+        return False
+    suffix = Path(text).suffix.lower()
+    if suffix not in {".json", ".png", ".jpg", ".jpeg", ".md", ".dwg", ".dwt", ".pdf"}:
+        return False
+    return text.startswith(("output/", "projects/", "docs/", "agents/", "libraries/"))
+
+
+def _collect_evidence_refs(value: Any, *, parent_key: str = "") -> list[str]:
+    refs: list[str] = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            key_text = str(key)
+            if key_text in EVIDENCE_LIST_KEYS and isinstance(item, list):
+                refs.extend(_normalize_ref(str(ref)) for ref in item if _looks_like_local_evidence_ref(ref))
+            if key_text in EVIDENCE_DETAIL_KEYS and _looks_like_local_evidence_ref(item):
+                refs.append(_normalize_ref(str(item)))
+            if isinstance(item, (dict, list)):
+                refs.extend(_collect_evidence_refs(item, parent_key=key_text))
+        return refs
+    if isinstance(value, list):
+        for item in value:
+            refs.extend(_collect_evidence_refs(item, parent_key=parent_key))
+    return refs
+
+
+def _missing_evidence_refs(root: Path, package: dict[str, Any]) -> list[str]:
+    refs = _collect_evidence_refs(package)
+    missing: list[str] = []
+    seen: set[str] = set()
+    for ref in refs:
+        if ref in seen:
+            continue
+        seen.add(ref)
+        if not (root / ref).is_file():
+            missing.append(ref)
+    return missing
 
 
 def run_check(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
@@ -86,6 +158,11 @@ def run_check(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     package_path = root / "libraries/system_library/drawing_standards/basic/assets.json"
     if package_path.is_file():
         package = _read_json(package_path)
+        missing_evidence = _missing_evidence_refs(root, package)
+        if missing_evidence:
+            issues.extend(f"referenced evidence file missing: {path}" for path in missing_evidence)
+        else:
+            checked.append("referenced evidence files exist")
         native_layout = package.get("nativeLayout", {}) if isinstance(package.get("nativeLayout"), dict) else {}
         visual_rack_plan = native_layout.get("visualRackPlan")
         visual_rack_audit = audit_visual_rack_plan(visual_rack_plan=visual_rack_plan)
@@ -101,13 +178,16 @@ def run_check(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
         shelf_report = _read_json(shelf_report_path)
         clearance = shelf_report.get("visualClearanceAudit", {}) if isinstance(shelf_report.get("visualClearanceAudit"), dict) else {}
         readability = shelf_report.get("visualReadabilityAudit", {}) if isinstance(shelf_report.get("visualReadabilityAudit"), dict) else {}
+        model_review = shelf_report.get("modelVisualReview", {}) if isinstance(shelf_report.get("modelVisualReview"), dict) else {}
         protected = shelf_report.get("protectedContentReadback", {}) if isinstance(shelf_report.get("protectedContentReadback"), dict) else {}
         created = shelf_report.get("createdEntityReadback", {}) if isinstance(shelf_report.get("createdEntityReadback"), dict) else {}
         latest_shelf_rack_audit = audit_visual_rack_plan(
             visual_rack_plan=shelf_report.get("rackPlan") if isinstance(shelf_report.get("rackPlan"), dict) else None,
             entity_readback=created,
+            protected_content_report=protected,
             clearance_report=clearance,
             readability_report=readability,
+            model_review_report=model_review,
         )
         if (
             shelf_report.get("status") == "pass"
@@ -122,8 +202,11 @@ def run_check(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
             and latest_shelf_rack_audit.get("status") == "pass"
             and isinstance(created.get("entityBboxes"), list)
             and len(created.get("entityBboxes")) > 0
+            and (not model_review or model_review.get("status") == "pass")
         ):
             checked.append("latest shelf layout CAD readback, shelf/content clearance, and warehouse readability audit")
+            if model_review:
+                checked.append("model-backed visual layout review")
             latest_shelf_cad_proof = True
         else:
             issues.append("latest shelf layout report does not prove saved CAD readback with zero shelf/content overlap and readable warehouse layout")

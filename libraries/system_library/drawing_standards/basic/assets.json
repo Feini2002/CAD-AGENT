@@ -5,7 +5,7 @@
   "packagePath": "libraries/system_library/drawing_standards/basic",
   "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
   "nativeDwgExists": true,
-  "updatedAt": "2026-06-03T08:28:22+00:00",
+  "updatedAt": "2026-06-03T17:49:32+00:00",
   "lifecycle": {
     "allowedStatuses": [
       "candidate",
@@ -308,91 +308,91 @@
         "00_INDEX": {
           "min": [
             6750.0,
-            10776.8156424581
+            11180.54748603352
           ],
           "max": [
             45254.86606703911,
-            12876.8156424581
+            13280.54748603352
           ]
         },
         "01_CLEAN_ASSETS": {
           "min": [
             6750.0,
-            -3753.7318435754187
+            -3350.0
           ],
           "max": [
             34054.86606703911,
-            9776.8156424581
+            10180.54748603352
           ]
         },
         "A1_LINE_STANDARDS": {
           "min": [
             6750.0,
-            -3753.7318435754187
+            -3350.0
           ],
           "max": [
             21240.893854748603,
-            9776.8156424581
+            10180.54748603352
           ]
         },
         "A2_ANNOTATION_STYLES": {
           "min": [
             22840.894,
-            -3753.7318435754187
+            -3350.0
           ],
           "max": [
             34054.86606703911,
-            9776.8156424581
+            10180.54748603352
           ]
         },
         "B_OBJECT_ASSET_INDEX": {
           "min": [
             35454.86606703911,
-            -3753.7318435754187
+            -3350.0
           ],
           "max": [
             45254.86606703911,
-            9776.8156424581
+            10180.54748603352
           ]
         },
         "02_PREVIEW_CARDS": {
           "min": [
             6750.0,
-            -6653.731843575419
+            -6250.0
           ],
           "max": [
             19224.955355679704,
-            -4753.731843575419
+            -4350.0
           ]
         },
         "03_REVIEW_QUARANTINE": {
           "min": [
             19584.955355679704,
-            -6653.731843575419
+            -6250.0
           ],
           "max": [
             32059.910711359407,
-            -4753.731843575419
+            -4350.0
           ]
         },
         "99_EVIDENCE_LINKS": {
           "min": [
             32419.910711359407,
-            -6653.731843575419
+            -6250.0
           ],
           "max": [
             45254.86606703911,
-            -4753.731843575419
+            -4350.0
           ]
         },
         "EXPANSION_BAY_A": {
           "min": [
             35454.86606703911,
-            -3753.7318435754187
+            -3350.0
           ],
           "max": [
             45254.86606703911,
-            9776.8156424581
+            10180.54748603352
           ]
         }
       },
@@ -414,11 +414,11 @@
           "bbox": {
             "min": [
               24440.894,
-              -2003.731843575419
+              -1600.0000000000002
             ],
             "max": [
               32454.866067039107,
-              7876.8156424581
+              8280.54748603352
             ]
           },
           "clusterStatus": "clustered_from_existing_content"
@@ -618,8 +618,11 @@
           "evidenceLinks": {
             "zoneId": "99_EVIDENCE_LINKS",
             "refs": [
-              "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json",
-              "output/previews/task22-lineweight-linetype-focused.png"
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
             ],
             "copySourceAllowed": false
           },
@@ -690,8 +693,11 @@
         ]
       },
       "evidenceRefs": [
-        "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json",
-        "output/previews/task22-lineweight-linetype-focused.png"
+        "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+        "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+        "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+        "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+        "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
       ],
       "status": "systemized",
       "lifecycle": {
@@ -804,7 +810,8 @@
           "source_boundary",
           "asset_librarian_catalog",
           "asset_dwg_curator_layout",
-          "asset_reuse_auditor_before_verified"
+          "asset_reuse_auditor_before_verified",
+          "model suggestions are advisory only"
         ],
         "forbiddenBehaviors": [
           "do not export whole modelspace",
@@ -812,7 +819,8 @@
           "do not include labels, borders, dimensions, or training notes unless explicitly included",
           "record includedHandles and excludedHandles before native export",
           "do not copy training panels into clean source",
-          "do not invent untracked global agents"
+          "do not invent untracked global agents",
+          "do not let model suggestions override source boundary, readback, reuse, or save gates"
         ],
         "polishHardeningDecision": {
           "status": "needs_native_cad_relayout",
@@ -832,7 +840,107 @@
               "native DWG save/readback"
             ]
           }
+        },
+        "modelAssistedDecision": {
+          "status": "fail",
+          "modelInvoked": true,
+          "modelProviderStatus": {
+            "status": "schema_invalid",
+            "provider": "model_review",
+            "route": "codex_cli_local",
+            "routePolicy": {
+              "route": "codex_cli_local",
+              "label": "本机 Codex CLI / GPT-5.5 Medium",
+              "transport": "local_cli",
+              "externalData": false,
+              "requiresUserAuthorization": false,
+              "allowsImages": true,
+              "notes": [
+                "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+              ]
+            },
+            "required": true,
+            "modelInvoked": true,
+            "modelUnavailable": false,
+            "schemaValid": false,
+            "blocking": true,
+            "reason": ""
+          },
+          "classificationSuggestion": {},
+          "sourceBoundaryRecommendation": {},
+          "cleanSourceRecommendation": {},
+          "repairPlanRecommendation": {},
+          "blockingReasons": [
+            "missing required model asset governor fields"
+          ],
+          "evidenceRequired": [],
+          "validation": {
+            "status": "fail",
+            "issues": [
+              "missing required model asset governor fields"
+            ],
+            "missingFields": [
+              "status",
+              "classificationSuggestion",
+              "sourceBoundaryRecommendation",
+              "cleanSourceRecommendation",
+              "repairPlanRecommendation",
+              "blockingReasons",
+              "evidenceRequired"
+            ],
+            "checked": []
+          },
+          "executionAuthorized": false,
+          "mayExecuteCad": false,
+          "savedCurrentDwg": false,
+          "deletedEntities": false,
+          "evidenceBoundary": {
+            "checked": [
+              "model asset classification and source-boundary suggestions"
+            ],
+            "notChecked": [
+              "CAD handles/readback",
+              "native DWG save state",
+              "clean source permission",
+              "reuse replay"
+            ]
+          }
         }
+      },
+      "evidenceClosure": {
+        "status": "closed",
+        "reason": "close missing historical drawing_standards.basic evidence refs with current A2 warehouse CAD readback and reuse probes",
+        "archivedMissingRefs": [
+          {
+            "path": "assets[0]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[0]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/task22-lineweight-linetype-focused.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          }
+        ],
+        "activeEvidenceRefs": [
+          "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+          "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+          "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+          "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+          "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+        ]
       }
     },
     {
@@ -1018,19 +1126,12 @@
           "evidenceLinks": {
             "zoneId": "99_EVIDENCE_LINKS",
             "refs": [
-              "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-05-r8/dimension_style_training_report.json",
-              "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-06-r9/dimension_style_training_report.json",
-              "output/training_queues/dimension-style-focused-10/fake-visual-fix-final-r10/dimension_style_training_report.json",
-              "output/previews/dimension-style-05-06-visual-fix-final-r5.png",
-              "output/previews/dimension-style-05-06-visual-fix-final-r5-crop.png",
-              "core/training/dimension_style_training.py",
-              "tests/core/test_dimension_style_training.py",
-              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
               "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
-              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
-              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
-              "output/previews/system-asset-dimension-style-visible-panel-r1.png",
-              "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png"
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
             ],
             "copySourceAllowed": false
           },
@@ -1058,7 +1159,7 @@
         },
         "nativeWriteEvidence": {
           "status": "pass",
-          "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
+          "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
           "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
           "styleCount": 10,
           "textStyle": "CODEX_CN_TEXT",
@@ -1068,10 +1169,10 @@
           "activeDocumentAfterWrite": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
           "visiblePanel": {
             "status": "pass",
-            "summary": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
-            "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
-            "screenshot": "output/previews/system-asset-dimension-style-visible-panel-r1.png",
-            "focusedScreenshot": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
+            "summary": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+            "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+            "screenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+            "focusedScreenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
             "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
             "method": "write_visible_dimension_style_panels_to_standard_assets_dwg_modelspace",
             "createdHandleCount": 325,
@@ -1222,10 +1323,10 @@
         },
         "nativeVisiblePanelEvidence": {
           "status": "pass",
-          "summary": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
-          "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
-          "screenshot": "output/previews/system-asset-dimension-style-visible-panel-r1.png",
-          "focusedScreenshot": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
+          "summary": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+          "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+          "screenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+          "focusedScreenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
           "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
           "method": "write_visible_dimension_style_panels_to_standard_assets_dwg_modelspace",
           "createdHandleCount": 325,
@@ -1418,19 +1519,12 @@
         ]
       },
       "evidenceRefs": [
-        "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-05-r8/dimension_style_training_report.json",
-        "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-06-r9/dimension_style_training_report.json",
-        "output/training_queues/dimension-style-focused-10/fake-visual-fix-final-r10/dimension_style_training_report.json",
-        "output/previews/dimension-style-05-06-visual-fix-final-r5.png",
-        "output/previews/dimension-style-05-06-visual-fix-final-r5-crop.png",
-        "core/training/dimension_style_training.py",
-        "tests/core/test_dimension_style_training.py",
-        "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
         "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
-        "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
-        "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
-        "output/previews/system-asset-dimension-style-visible-panel-r1.png",
-        "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png"
+        "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+        "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+        "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+        "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+        "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
       ],
       "status": "verified",
       "lifecycle": {
@@ -1459,10 +1553,11 @@
             "updatedAt": "2026-06-03T04:53:11+00:00",
             "reason": "补写 standard_assets.dwg 模型空间可见尺寸样式面板，避免只有不可见 DimStyle 定义。",
             "evidenceRefs": [
-              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
-              "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
-              "output/previews/system-asset-dimension-style-visible-panel-r1.png",
-              "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png"
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
             ]
           }
         ]
@@ -1505,10 +1600,10 @@
           "savedCurrentDwg": false,
           "nativeVisiblePanel": {
             "status": "pass",
-            "summary": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
-            "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
-            "screenshot": "output/previews/system-asset-dimension-style-visible-panel-r1.png",
-            "focusedScreenshot": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
+            "summary": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+            "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+            "screenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+            "focusedScreenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
             "nativeDwg": "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
             "method": "write_visible_dimension_style_panels_to_standard_assets_dwg_modelspace",
             "createdHandleCount": 325,
@@ -1658,7 +1753,7 @@
           },
           "reuseWorkflowProbe": {
             "status": "ready",
-            "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_rules_hardening.json",
+            "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
             "readyTaskCount": 1,
             "blockedTaskCount": 0,
             "sourceSpecMode": "style_definition",
@@ -1710,7 +1805,7 @@
       },
       "reuseWorkflowProbe": {
         "status": "ready",
-        "report": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_rules_hardening.json",
+        "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
         "readyTaskCount": 1,
         "blockedTaskCount": 0,
         "sourceSpecMode": "style_definition",
@@ -1748,7 +1843,8 @@
           "source_boundary",
           "asset_librarian_catalog",
           "asset_dwg_curator_layout",
-          "asset_reuse_auditor_before_verified"
+          "asset_reuse_auditor_before_verified",
+          "model suggestions are advisory only"
         ],
         "forbiddenBehaviors": [
           "do not export whole modelspace",
@@ -1756,7 +1852,8 @@
           "do not include labels, borders, dimensions, or training notes unless explicitly included",
           "record includedHandles and excludedHandles before native export",
           "do not copy training panels into clean source",
-          "do not invent untracked global agents"
+          "do not invent untracked global agents",
+          "do not let model suggestions override source boundary, readback, reuse, or save gates"
         ],
         "polishHardeningDecision": {
           "status": "complete_for_current_scope",
@@ -1773,7 +1870,203 @@
             ],
             "notChecked": []
           }
+        },
+        "modelAssistedDecision": {
+          "status": "fail",
+          "modelInvoked": true,
+          "modelProviderStatus": {
+            "status": "schema_invalid",
+            "provider": "model_review",
+            "route": "codex_cli_local",
+            "routePolicy": {
+              "route": "codex_cli_local",
+              "label": "本机 Codex CLI / GPT-5.5 Medium",
+              "transport": "local_cli",
+              "externalData": false,
+              "requiresUserAuthorization": false,
+              "allowsImages": true,
+              "notes": [
+                "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+              ]
+            },
+            "required": true,
+            "modelInvoked": true,
+            "modelUnavailable": false,
+            "schemaValid": false,
+            "blocking": true,
+            "reason": ""
+          },
+          "classificationSuggestion": {},
+          "sourceBoundaryRecommendation": {},
+          "cleanSourceRecommendation": {},
+          "repairPlanRecommendation": {},
+          "blockingReasons": [
+            "missing required model asset governor fields"
+          ],
+          "evidenceRequired": [],
+          "validation": {
+            "status": "fail",
+            "issues": [
+              "missing required model asset governor fields"
+            ],
+            "missingFields": [
+              "status",
+              "classificationSuggestion",
+              "sourceBoundaryRecommendation",
+              "cleanSourceRecommendation",
+              "repairPlanRecommendation",
+              "blockingReasons",
+              "evidenceRequired"
+            ],
+            "checked": []
+          },
+          "executionAuthorized": false,
+          "mayExecuteCad": false,
+          "savedCurrentDwg": false,
+          "deletedEntities": false,
+          "evidenceBoundary": {
+            "checked": [
+              "model asset classification and source-boundary suggestions"
+            ],
+            "notChecked": [
+              "CAD handles/readback",
+              "native DWG save state",
+              "clean source permission",
+              "reuse replay"
+            ]
+          }
         }
+      },
+      "evidenceClosure": {
+        "status": "closed",
+        "reason": "close missing historical drawing_standards.basic evidence refs with current A2 warehouse CAD readback and reuse probes",
+        "archivedMissingRefs": [
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-05-r8/dimension_style_training_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/training_queues/dimension-style-focused-10/real-cad-visual-fix-06-r9/dimension_style_training_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/training_queues/dimension-style-focused-10/fake-visual-fix-final-r10/dimension_style_training_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/dimension-style-05-06-visual-fix-final-r5.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/dimension-style-05-06-visual-fix-final-r5-crop.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/dimension_style_training_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/system-asset-dimension-style-visible-panel-r1.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[1]/verification/evidence/reuseWorkflowProbe/report",
+            "oldRef": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_rules_hardening.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json"
+            ]
+          }
+        ],
+        "activeEvidenceRefs": [
+          "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+          "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+          "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+          "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+          "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+        ]
       }
     },
     {
@@ -1957,14 +2250,12 @@
           "evidenceLinks": {
             "zoneId": "99_EVIDENCE_LINKS",
             "refs": [
-              "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
-              "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
-              "output/previews/linetype-table-integrated-20260602.png",
               "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
-              "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
-              "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
-              "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
-              "output/previews/system-asset-reuse-linetype-table-20260602.png"
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
             ],
             "copySourceAllowed": false
           },
@@ -1992,8 +2283,8 @@
         },
         "nativeWriteEvidence": {
           "status": "pass",
-          "summary": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
-          "report": "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
+          "summary": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+          "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
           "textStyleFixReport": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
           "visualScreenshot": "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
           "method": "copy_verified_handles_from_source_dwg_then_assign_chinese_text_style",
@@ -2018,8 +2309,8 @@
           "savedAssetDwg": true,
           "reuseReplay": {
             "status": "asset_reused",
-            "report": "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
-            "screenshot": "output/previews/system-asset-reuse-linetype-table-20260602.png",
+            "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+            "screenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
             "copyMethod": "copyobjects_handle_diff",
             "sourceSelectedCount": 450,
             "createdHandleCount": 450,
@@ -2074,14 +2365,12 @@
         ]
       },
       "evidenceRefs": [
-        "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
-        "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
-        "output/previews/linetype-table-integrated-20260602.png",
         "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
-        "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
-        "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
-        "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
-        "output/previews/system-asset-reuse-linetype-table-20260602.png"
+        "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+        "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+        "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+        "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+        "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
       ],
       "status": "verified",
       "lifecycle": {
@@ -2150,8 +2439,8 @@
           "styleVerificationStatus": "pass",
           "reuseReplay": {
             "status": "asset_reused",
-            "report": "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
-            "screenshot": "output/previews/system-asset-reuse-linetype-table-20260602.png",
+            "report": "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+            "screenshot": "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
             "copyMethod": "copyobjects_handle_diff",
             "sourceSelectedCount": 450,
             "createdHandleCount": 450,
@@ -2218,7 +2507,8 @@
           "source_boundary",
           "asset_librarian_catalog",
           "asset_dwg_curator_layout",
-          "asset_reuse_auditor_before_verified"
+          "asset_reuse_auditor_before_verified",
+          "model suggestions are advisory only"
         ],
         "forbiddenBehaviors": [
           "do not export whole modelspace",
@@ -2226,7 +2516,8 @@
           "do not include labels, borders, dimensions, or training notes unless explicitly included",
           "record includedHandles and excludedHandles before native export",
           "do not copy training panels into clean source",
-          "do not invent untracked global agents"
+          "do not invent untracked global agents",
+          "do not let model suggestions override source boundary, readback, reuse, or save gates"
         ],
         "polishHardeningDecision": {
           "status": "complete_for_current_scope",
@@ -2243,7 +2534,163 @@
             ],
             "notChecked": []
           }
+        },
+        "modelAssistedDecision": {
+          "status": "fail",
+          "modelInvoked": true,
+          "modelProviderStatus": {
+            "status": "schema_invalid",
+            "provider": "model_review",
+            "route": "codex_cli_local",
+            "routePolicy": {
+              "route": "codex_cli_local",
+              "label": "本机 Codex CLI / GPT-5.5 Medium",
+              "transport": "local_cli",
+              "externalData": false,
+              "requiresUserAuthorization": false,
+              "allowsImages": true,
+              "notes": [
+                "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+              ]
+            },
+            "required": true,
+            "modelInvoked": true,
+            "modelUnavailable": false,
+            "schemaValid": false,
+            "blocking": true,
+            "reason": ""
+          },
+          "classificationSuggestion": {},
+          "sourceBoundaryRecommendation": {},
+          "cleanSourceRecommendation": {},
+          "repairPlanRecommendation": {},
+          "blockingReasons": [
+            "missing required model asset governor fields"
+          ],
+          "evidenceRequired": [],
+          "validation": {
+            "status": "fail",
+            "issues": [
+              "missing required model asset governor fields"
+            ],
+            "missingFields": [
+              "status",
+              "classificationSuggestion",
+              "sourceBoundaryRecommendation",
+              "cleanSourceRecommendation",
+              "repairPlanRecommendation",
+              "blockingReasons",
+              "evidenceRequired"
+            ],
+            "checked": []
+          },
+          "executionAuthorized": false,
+          "mayExecuteCad": false,
+          "savedCurrentDwg": false,
+          "deletedEntities": false,
+          "evidenceBoundary": {
+            "checked": [
+              "model asset classification and source-boundary suggestions"
+            ],
+            "notChecked": [
+              "CAD handles/readback",
+              "native DWG save state",
+              "clean source permission",
+              "reuse replay"
+            ]
+          }
         }
+      },
+      "evidenceClosure": {
+        "status": "closed",
+        "reason": "close missing historical drawing_standards.basic evidence refs with current A2 warehouse CAD readback and reuse probes",
+        "archivedMissingRefs": [
+          {
+            "path": "assets[2]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/validation_runs/system-assets/linetype-style-summary-dwg/linetype_table_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[2]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_dwg_summary.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[2]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/linetype-table-integrated-20260602.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[2]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/validation_runs/system-assets/linetype-style-summary-dwg/native_asset_text_style_fix_report.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[2]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/system-asset-linetype-standard-assets-dwg-20260602-fixed.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[2]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/validation_runs/system-assets/asset-reuse/linetype_table_reuse_real.json",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          },
+          {
+            "path": "assets[2]/native/layoutPlan/evidenceLinks/refs",
+            "oldRef": "output/previews/system-asset-reuse-linetype-table-20260602.png",
+            "replacementRefs": [
+              "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+              "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+              "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+              "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+            ]
+          }
+        ],
+        "activeEvidenceRefs": [
+          "libraries/system_library/drawing_standards/basic/standard_assets.dwg",
+          "output/validation_runs/system-assets/asset-library-shelves/shelf_layout_report.json",
+          "output/previews/system-asset-warehouse-evidence-closure-a2-focused.png",
+          "output/validation_runs/system-assets/evidence-closure/dimension_style_reuse_probe_current.json",
+          "output/validation_runs/system-assets/evidence-closure/linetype_reuse_probe_current.json",
+          "output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json"
+        ]
       }
     }
   ],

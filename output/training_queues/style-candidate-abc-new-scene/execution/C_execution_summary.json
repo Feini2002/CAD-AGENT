@@ -1,0 +1,102 @@
+{
+  "status": "executed",
+  "plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\style-candidate-abc-new-scene\\execution\\C_cad_plan.json",
+  "intent": "draw_object",
+  "object_type": "shoe_cabinet",
+  "object_name": "玄关鞋柜 C",
+  "object_size": [
+    1600.0,
+    420.0
+  ],
+  "base_point": [
+    76700.0,
+    42000.0,
+    0.0
+  ],
+  "layer": "CODEX_PREVIEW",
+  "semantic_layer": "A-FURN",
+  "preview_only": true,
+  "entities": {
+    "rectangle": 1,
+    "text": 1,
+    "dimensions": 2
+  },
+  "created_handles": [
+    "H115",
+    "H116",
+    "H117",
+    "H118",
+    "H119",
+    "H120",
+    "H121"
+  ],
+  "style_evidence": {
+    "expected": {
+      "source_profile_id": "codex_preview_beta",
+      "style_token": "furniture.visible.medium",
+      "style_role": "visible_contour",
+      "layer_role": "furniture",
+      "semantic_layer": "A-FURN",
+      "resolved_layer": "CODEX_PREVIEW",
+      "lineweight_mm": 0.35,
+      "resolved_cad_lineweight": 35,
+      "linetype": "CONTINUOUS",
+      "linetype_scale": 1.0,
+      "color_policy": "by_layer",
+      "inheritance_mode": "by_layer",
+      "evidence_boundary": {
+        "checked": [
+          "style_token_resolved",
+          "semantic_layer_preserved",
+          "preview_layer_resolution",
+          "cad_property_write_intent"
+        ],
+        "not_checked": [
+          "ctb_stb_plot_mapping",
+          "plot_output",
+          "viewport_linetype_scaling",
+          "visual_readability"
+        ]
+      }
+    },
+    "expected_handles": [
+      "H115",
+      "H116",
+      "H117",
+      "H118",
+      "H119",
+      "H120",
+      "H121"
+    ],
+    "style_verified": false,
+    "property_verified": false,
+    "plot_verified": false,
+    "checked": [
+      "style_token_resolved",
+      "semantic_layer_preserved",
+      "preview_layer_resolution",
+      "cad_property_write_intent"
+    ],
+    "not_checked": [
+      "ctb_stb_plot_mapping",
+      "plot_output",
+      "viewport_linetype_scaling",
+      "visual_readability"
+    ]
+  },
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "allowed_layers": [
+      "CODEX_DIAGNOSTIC",
+      "CODEX_PREVIEW"
+    ],
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false,
+    "writes_only_preview_layer": true,
+    "writes_only_allowed_layers": true,
+    "saves_dwg": false,
+    "deletes_entities": false,
+    "modifies_formal_layers": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "version": "0.1",
+  "status": "valid",
+  "validation_errors": [],
+  "intent": "draw_object",
+  "layer": "CODEX_PREVIEW",
+  "bbox": {
+    "min": [
+      600,
+      600
+    ],
+    "max": [
+      2200,
+      1500
+    ]
+  },
+  "entities": [
+    {
+      "type": "rectangle",
+      "layer": "CODEX_PREVIEW",
+      "bbox": {
+        "min": [
+          600,
+          600
+        ],
+        "max": [
+          2200,
+          1500
+        ]
+      }
+    }
+  ],
+  "human_summary": "CAD_PLAN DRY RUN\n- intent: draw_object\n- object: Dining Table (table)\n- size: 1600 x 900 mm\n- placement: absolute at [600, 600, 0]\n- layer: CODEX_PREVIEW"
+}

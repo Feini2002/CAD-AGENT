@@ -456,6 +456,9 @@ def _assign_layout_plans(assets: list[dict[str, Any]]) -> list[dict[str, Any]]:
             native_dwg_exists=bool(native.get("nativeDwgExists")),
             lifecycle_status=_asset_contract_lifecycle_status(planned),
             verification_status=str(verification.get("status") or planned.get("verificationStatus") or "metadata_only"),
+            model_review_report=_dict_or_empty(
+                planned.get("modelGovernorReview") or planned.get("modelAssetGovernorReview")
+            ),
         )
         planned_assets.append(planned)
     return planned_assets

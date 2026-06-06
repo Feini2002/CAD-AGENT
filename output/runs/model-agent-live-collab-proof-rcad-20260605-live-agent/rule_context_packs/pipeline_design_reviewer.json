@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "rule-context-pack/v1",
+  "status": "ready",
+  "runId": "model-agent-live-collab-proof-rcad-20260605-live-agent",
+  "agentId": "pipeline_design_reviewer",
+  "taskKind": "design_review",
+  "requestMode": "ordinary_execution",
+  "triggerSignals": [
+    "design_judgment",
+    "multi_agent_chain",
+    "no_cad_preflight"
+  ],
+  "sourceRefs": [
+    "AGENTS.md#强制绘图准确性门槛",
+    "docs/governance/cad-agent-rules.md#证据边界",
+    "CORE_CONTEXT_BRIEF.md#当前一口径",
+    "CORE_RESTRUCTURE_PLAN.md#模型型 Agent 路由",
+    "docs/architecture/cad-agent-task-chain.md#系统任务链路",
+    "agents/pipeline/README.md#模型调用触发策略",
+    "agents/pipeline/pipeline_manifest.json#model_bridge_expansion",
+    "core/model_review/prompt_packs/manifest.json#prompt packs"
+  ],
+  "ruleDigest": [
+    "模型只能只读判断，不能执行 CAD、保存 DWG、删除实体、改正式图层或替代 readback。",
+    "截图只作视觉辅助，不能替代 created handles、bbox、layer、sourceSpec、reuse replay 或用户验收。",
+    "当前仓库事实以 run package、trace、registry、coverage JSON 和训练事实源为准，派生快照不能反向证明能力。",
+    "主 PlanMD 只保留路由入口和优先级；专项计划细节不能形成第二套 next。",
+    "自然语言不能直接跳到真实 CAD，必须先形成 CAD_PLAN 或结构化意图，并经过 validate、dry-run 和证据门禁。",
+    "模型型 Agent 负责设计判断、拆解、复审和交付边界；确定性 safety gate 与 CAD readback 继续走规则层。",
+    "只有 manifest 已登记的 Agent 可进入 requiredAgents；未登记 Agent 只能作为 reviewed package / OpenSpec 候选。",
+    "Prompt Pack 必须绑定 registered Agent、schema、boundary rules、negative examples 和 converter。"
+  ],
+  "retrievalQueries": [
+    "让模型型 Agent 协作设计一个茶几符号，并做 preview-only CAD 校验。",
+    "pipeline_design_reviewer",
+    "design_review"
+  ],
+  "retrievalHits": [
+    {
+      "layer": "L0",
+      "priority": 0,
+      "sourceRef": "AGENTS.md#强制绘图准确性门槛",
+      "digest": "模型只能只读判断，不能执行 CAD、保存 DWG、删除实体、改正式图层或替代 readback。",
+      "matchedQueries": [
+        "critical"
+      ],
+      "critical": true,
+      "missing": false
+    },
+    {
+      "layer": "L0",
+      "priority": 1,
+      "sourceRef": "docs/governance/cad-agent-rules.md#证据边界",
+      "digest": "截图只作视觉辅助，不能替代 created handles、bbox、layer、sourceSpec、reuse replay 或用户验收。",
+      "matchedQueries": [
+        "critical"
+      ],
+      "critical": true,
+      "missing": false
+    },
+    {
+      "layer": "L1",
+      "priority": 2,
+      "sourceRef": "CORE_CONTEXT_BRIEF.md#当前一口径",
+      "digest": "当前仓库事实以 run package、trace、registry、coverage JSON 和训练事实源为准，派生快照不能反向证明能力。",
+      "matchedQueries": [
+        "pipeline",
+        "design",
+        "reviewer",
+        "review",
+        "execution",
+        "design",
+        "agent",
+        "chain"
+      ],
+      "critical": false,
+      "missing": false
+    },
+    {
+      "layer": "L1",
+      "priority": 3,
+      "sourceRef": "CORE_RESTRUCTURE_PLAN.md#模型型 Agent 路由",
+      "digest": "主 PlanMD 只保留路由入口和优先级；专项计划细节不能形成第二套 next。",
+      "matchedQueries": [
+        "pipeline",
+        "design",
+        "reviewer",
+        "review",
+        "design",
+        "agent",
+        "no",
+        "cad"
+      ],
+      "critical": false,
+      "missing": false
+    },
+    {
+      "layer": "L2",
+      "priority": 4,
+      "sourceRef": "docs/architecture/cad-agent-task-chain.md#系统任务链路",
+      "digest": "自然语言不能直接跳到真实 CAD，必须先形成 CAD_PLAN 或结构化意图，并经过 validate、dry-run 和证据门禁。",
+      "matchedQueries": [
+        "pipeline",
+        "design",
+        "reviewer",
+        "review",
+        "ordinary",
+        "execution",
+        "design",
+        "agent"
+      ],
+      "critical": false,
+      "missing": false
+    },
+    {
+      "layer": "L2",
+      "priority": 5,
+      "sourceRef": "agents/pipeline/README.md#模型调用触发策略",
+      "digest": "模型型 Agent 负责设计判断、拆解、复审和交付边界；确定性 safety gate 与 CAD readback 继续走规则层。",
+      "matchedQueries": [
+        "pipeline",
+        "design",
+        "reviewer",
+        "review",
+        "execution",
+        "design",
+        "agent",
+        "chain"
+      ],
+      "critical": false,
+      "missing": false
+    },
+    {
+      "layer": "L3",
+      "priority": 6,
+      "sourceRef": "agents/pipeline/pipeline_manifest.json#model_bridge_expansion",
+      "digest": "只有 manifest 已登记的 Agent 可进入 requiredAgents；未登记 Agent 只能作为 reviewed package / OpenSpec 候选。",
+      "matchedQueries": [
+        "pipeline",
+        "design",
+        "reviewer",
+        "review",
+        "execution",
+        "design",
+        "judgment",
+        "multi"
+      ],
+      "critical": false,
+      "missing": false
+    },
+    {
+      "layer": "L3",
+      "priority": 7,
+      "sourceRef": "core/model_review/prompt_packs/manifest.json#prompt packs",
+      "digest": "Prompt Pack 必须绑定 registered Agent、schema、boundary rules、negative examples 和 converter。",
+      "matchedQueries": [
+        "pipeline",
+        "design",
+        "reviewer",
+        "review",
+        "execution",
+        "design",
+        "agent",
+        "no"
+      ],
+      "critical": false,
+      "missing": false
+    }
+  ],
+  "schemas": [
+    "core/model_review/schemas/design_review.schema.json"
+  ],
+  "hardGates": [
+    "cad_plan_required",
+    "validate_plan",
+    "dry_run",
+    "cad_readback",
+    "visual_acceptance_review",
+    "closeout_gate"
+  ],
+  "forbiddenActions": [
+    "cad_write",
+    "dwg_save",
+    "delete_entities",
+    "modify_formal_layers",
+    "table_c_claim"
+  ],
+  "evidenceBundle": {
+    "cadPlan": null,
+    "readback": null,
+    "screenshot": null,
+    "upstreamOutputs": [
+      {
+        "agentId": "pipeline_orchestrator",
+        "path": "agent_outputs/pipeline_orchestrator.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "3c2b366b6f8f0e67edc4b4220601384059f226b7aeadacdc1cfff1fd0085e2e5",
+        "modelInvoked": true,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_design_director",
+        "path": "agent_outputs/pipeline_design_director.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "221a1e6952aa2e867f9a91742c95995f12d66f401878fe81f97c5f3f2224771d",
+        "modelInvoked": true,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_style_generator",
+        "path": "agent_outputs/pipeline_style_generator.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "6aa4f9d839a4b95b4c9d1b959cc85d6aaf1e39492da1fa78ae195b87310dadff",
+        "modelInvoked": true,
+        "schemaValid": false,
+        "modelUnavailable": true
+      }
+    ]
+  },
+  "upstreamOutputs": [
+    {
+      "agentId": "pipeline_orchestrator",
+      "path": "agent_outputs/pipeline_orchestrator.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "3c2b366b6f8f0e67edc4b4220601384059f226b7aeadacdc1cfff1fd0085e2e5"
+    },
+    {
+      "agentId": "pipeline_design_director",
+      "path": "agent_outputs/pipeline_design_director.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "221a1e6952aa2e867f9a91742c95995f12d66f401878fe81f97c5f3f2224771d"
+    },
+    {
+      "agentId": "pipeline_style_generator",
+      "path": "agent_outputs/pipeline_style_generator.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "6aa4f9d839a4b95b4c9d1b959cc85d6aaf1e39492da1fa78ae195b87310dadff"
+    }
+  ],
+  "contextBudget": {
+    "maxRuleRefs": 12,
+    "maxDigestItems": 16,
+    "maxUpstreamOutputs": 6,
+    "criticalL0Preserved": true,
+    "derivedSourcesExcluded": [
+      "capability-map-data.js",
+      "capability-map.html",
+      "output/**/retention_report.json",
+      "output/**/sync_report.json"
+    ]
+  },
+  "conflicts": [],
+  "missingContext": [],
+  "generatedAt": "2026-06-05T07:46:57Z",
+  "writer": "core.orchestrator.rule_context_pack"
+}

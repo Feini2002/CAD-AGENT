@@ -91,6 +91,9 @@ def snapshot_diff(
     }
 
 
+ANNOTATION_ENTITY_TYPES = {"dimension", "text"}
+
+
 def bbox_from_entities(entities: list[dict[str, Any]], *, layer: str | None = None) -> dict[str, list[float]] | None:
     points: list[list[float]] = []
     for entity in entities:
@@ -111,6 +114,19 @@ def bbox_from_entities(entities: list[dict[str, Any]], *, layer: str | None = No
     xs = [point[0] for point in points]
     ys = [point[1] for point in points]
     return {"min": [min(xs), min(ys)], "max": [max(xs), max(ys)]}
+
+
+def geometry_bbox_from_entities(
+    entities: list[dict[str, Any]],
+    *,
+    layer: str | None = None,
+) -> dict[str, list[float]] | None:
+    geometry_entities = [
+        entity
+        for entity in entities
+        if str(entity.get("type", "")).lower() not in ANNOTATION_ENTITY_TYPES
+    ]
+    return bbox_from_entities(geometry_entities, layer=layer)
 
 
 def _near(actual: float, expected: float, tolerance: float) -> bool:
@@ -144,7 +160,7 @@ def compare_expected_to_readback(
         }
     )
 
-    bbox = bbox_from_entities(entities, layer=expected_layer)
+    bbox = geometry_bbox_from_entities(entities, layer=expected_layer)
     width, depth = expected["object_size"]
     if bbox and isinstance(width, (int, float)) and isinstance(depth, (int, float)):
         actual_width = bbox["max"][0] - bbox["min"][0]
@@ -340,6 +356,9 @@ def build_verification_report(
     bbox = bbox_from_entities(scoped_entities, layer=expected["layer"])
     if bbox is not None:
         actual["bbox"] = bbox
+    geometry_bbox = geometry_bbox_from_entities(scoped_entities, layer=expected["layer"])
+    if geometry_bbox is not None:
+        actual["geometry_bbox"] = geometry_bbox
 
     repair_suggestions = repair_suggestions_for_checks(checks)
     report = {

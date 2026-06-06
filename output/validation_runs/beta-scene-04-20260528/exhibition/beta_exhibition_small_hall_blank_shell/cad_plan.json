@@ -1,0 +1,28 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": {
+    "type": "display_unit",
+    "name": "Display Unit",
+    "width": 1200,
+    "depth": 500,
+    "height": 1800,
+    "object_spec_id": "object-display_unit-1200x500"
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      0.0,
+      4200.0,
+      0
+    ]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 0.9,
+  "needs_confirmation": false
+}

@@ -55,6 +55,9 @@
 - 新增待办、调整优先级、改变退出标准或拆分未来小包时，先同步 `CORE_RESTRUCTURE_PLAN.md`，再更新辅助 MD 的引用或状态说明。
 - 若文档整理和 Core 优先、`CAD_PLAN` 中间层、真实 CAD 验证门槛或场景轻量化发生冲突，必须以这些根边界为准。
 
+## 架构归并优先（ARCH-CONVERGENCE-01）
+当前仓库级主线是 `ARCH-CONVERGENCE-01` 架构归并画布工程。正式对象训练、整批训练、表 C 推进和系统资产大沉淀默认暂缓；除非用户明确覆盖暂停，否则先按 `docs/architecture/system-architecture-convergence.md`、`CORE_RESTRUCTURE_PLAN.md` §0.2 和 `openspec/changes/unify-system-architecture-canvas/` 把旧表格、底座、训练、资产、多 Agent、Worker / bridge、GPT-5.5 模型桥、截图和工作台归入七层任务生命周期：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。
+旧表 A / B / C 不删除，但全部退回能力与证据层。历史旧称“表 C / 真实 CAD 实力 / 90.99%”统一解释为 `Core Proof Coverage`（底座证据覆盖），不得代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。
 ## OpenSpec 变更契约
 
 根目录 `openspec/` 只作为**单个复杂变更的契约层**，不得替代 `CORE_RESTRUCTURE_PLAN.md` 或承载第二套 next、总 backlog、优先级和退出标准。
@@ -70,23 +73,23 @@
 
 面向用户的最终回复默认**不要附进度表、表单或表 A/B/C**。普通开发、调查、修复、绘图或规则更新完成后，用简洁自然段说明：本轮做了什么、关键证据、有没有风险或未验证项。
 
-只有用户明确点名 **开发状态查询 / 进度 / 完整状态 / 交接 / 审计 / 表 A / 表 B / 表 C / 真实 CAD 实力 / 刷新表 C / 报进度表** 时，才使用进度表格；其中涉及真实 CAD 能力时，必须先报 **表 C 真实 CAD 实力主指标**。详细口径见 `docs/governance/cad-agent-rules.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
+只有用户明确点名 **开发状态查询 / 进度 / 完整状态 / 交接 / 审计 / 表 A / 表 B / 表 C / Core Proof Coverage / 刷新表 C / 报进度表** 时，才使用进度表格。若用户问“真实 CAD 实力”，必须先区分 `Core Proof Coverage`、`Agent Task Maturity` 和 `Project Delivery Readiness`，不得直接用旧表 C 主指标回答端到端真实能力。详细口径见 `docs/governance/cad-agent-rules.md` §0.4；任务包计数与 next 以 `docs/planning/任务清单.md` §0 为准。
 
 **Agent 训练期例外（方案 B/C）：** 当 `docs/training/README.md` 与 `docs/training/cad-designer-growth-path.md` 所指的 **Agent 训练**（CAD Designer Agent 基础课程、任意场景案例 `projects/<case_id>/`、`开一轮训练`、用户未点名表 C/A/B）时，最终回复同样不要附进度表或表 A/B/C；只汇报课程 / 案例进展、CAD 证据路径与待你验收项。落图工序必须遵循该文档 **「理想链路（全局 · 训练期）」**（机器审计 → 截图 → Agent 自检 → 未过则自修，再请你验收）。训练交付回复还必须遵循 `docs/training/cad-common-sense-upgrade.md` 的低噪声模板：先说本轮结论，再说相对上一轮变化、机器证据证明了什么、没证明什么、请用户重点看哪里、用户怎样反馈最有用；不得只堆 handles、arc 数、gap / overlap 数字或截图。CAD Designer Agent 成长路径进度不等于表 C，也不代表完整施工图能力。
 
-**状态查询口径：** 下列内容只在用户点名时展开为完整 **表 A / 表 B / 表 C**；完成开发包、修改 registry / coverage、处理回归或绘图不准时，也不要自动附进度表。普通交付只用自然段说明本轮结果、证据和风险。用户问「真实 CAD 实力 / 推进表 C / 表 C / 刷新表 C」时，必须先展开完整表 C。
+**状态查询口径：** 下列内容只在用户点名时展开为完整 **表 A / 表 B / 表 C**；完成开发包、修改 registry / coverage、处理回归或绘图不准时，也不要自动附进度表。普通交付只用自然段说明本轮结果、证据和风险。用户问「真实 CAD 实力」时，先拆成 `Core Proof Coverage`、`Agent Task Maturity` 和 `Project Delivery Readiness`。
 
 **完整口径定义：**
 
 - **表 A — 工程节奏**：总进度、Core 底座开发进度、Agent 多场景实现进度；默认 `总进度 = Core × 70% + Agent × 30%`，允许约 5–10 个百分点主观误差。
 - **表 B — 任务清单三指令执行进度**：§3 能力证明、§4 一键推进 / 代码轨、§5 RCAD 烟囱包；`执行进度 ≈ status=done 包数 ÷ 本板块任务包总量`，§5 使用 `cad_status=verified` 包数。
-- **表 C — 真实 CAD 实力**：`scripts/run_capability_coverage.py` 的机器值，包括 `cad_proof_coverage_percent`、`cad_strength_index_percent`、`scene_fragment_strength_percent`、`showcase_readiness_percent`、`cad_strength_headline_percent` 和最高已证 Ladder。
+- **表 C — Core Proof Coverage（历史旧名：真实 CAD 实力）**：`scripts/run_capability_coverage.py` 的机器值，包括 `cad_proof_coverage_percent`、`cad_strength_index_percent`、`scene_fragment_strength_percent`、`showcase_readiness_percent`、`cad_strength_headline_percent` 和最高已证 Ladder；只证明底座证据覆盖，不证明 Agent 端到端成熟度或真实项目交付准备度。
 
 **禁止混用：**
 
-- 表 A 的「工程完备度 / 工程节奏」≠ 表 B 的「台账包完成度」≠ 表 C 的「真实 CAD 实力」。
+- 表 A 的「工程完备度 / 工程节奏」≠ 表 B 的「台账包完成度」≠ 表 C 的 `Core Proof Coverage`。
 - 表 B 的 RCAD 烟囱通过 ≠ `cad_capability_registry` 已满 `verified`，也不等于“已经能画准施工图”。
-- 普通回复可以不附表 C 数字，但只要进入开发状态查询、真实 CAD 能力汇报或表格口径，就不得省略表 C 主指标；任何时候都不得用 Core 进度、RCAD 高完成度、截图、dry-run 或 no-CAD benchmark 暗示真实 CAD 几何已证明。
+- 普通回复可以不附表 C 数字；进入完整历史表格口径时可展开表 C，但必须标明它是 `Core Proof Coverage`。任何时候都不得用 Core 进度、RCAD 高完成度、表 C 百分比、截图、dry-run 或 no-CAD benchmark 暗示 Agent 已具备端到端真实 CAD 能力。
 - 各表百分比均不替代测试、benchmark、截图、created handles 回读或 `geometry_verified` 证据。
 
 完成能力证明 / 代码轨 / CAD 补验相关包后，应同步更新 `docs/planning/任务清单.md` §0 的计数与 next；改登记表或 showcase 后须复跑 `run_capability_coverage.py` 并更新表 C。
@@ -167,6 +170,11 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 如果实际输出和预期不一致，Codex 不得把错误结果当成完成品交给用户。必须诊断差异，做最小安全修复，重新绘制或运行，并再次验证。
 
+用户已明确选择“准确性优先，不按额度分档”。凡 `agents/pipeline/pipeline_manifest.json` 的 `model_bridge_expansion` 登记为 `ready`、`planned` 或 `guard-only` 的判断节点，都应优先把 `gpt-5.5` 模型桥作为只读复审 / 判断 / 建议层；完整清单、P0-P3 顺序、初步 Prompt 规范和自动成长规则收口在 `CORE_RESTRUCTURE_PLAN.md` 与 `agents/pipeline/pipeline_manifest.json`。`pipeline_execute` 只能把 5.5 用作执行前安全守卫，不得让模型输出 CAD 命令、保存、删除、改正式图层或授权执行。
+模型桥数据外传授权口径见根目录 `MODEL_DATA_EXPORT_AUTHORIZATION.md`。用户已预授权本机 `codex.cmd exec` / 等价 Codex CLI 桥在该文件边界内发送最小必要 prompt、schema、任务摘要、CAD readback 摘要、必要裁剪截图或报告片段到 OpenAI 模型服务，以产生可审计 `modelInvoked=true` 的只读复审输出；该授权不覆盖全仓上传、密钥 / 客户敏感信息上传、任意文件读取、CAD 执行 / 保存 / 删除 / 正式图层修改、公开代理或多人共享个人登录态。换机后仍需重新确认本机 Codex 登录态、模型权限、环境变量、工作区白名单和本机审批机制。
+设计阶段属于 5.5 模型桥核心范围：`pipeline_design_director` 负责专业设计判断，`pipeline_style_generator` 负责 2-3 套参数化候选，`pipeline_design_reviewer` 负责 CAD readback 后的专业图纸复核。
+5.5 模型 pass 不能替代 UTF-8 编码门禁、`CAD_PLAN` 校验、dry-run、created handles 回读、bbox / layer / overlap 审计、sourceSpec、reuseReplay、表 C 证据或用户验收。所有模型桥 Agent 都是可自动升级的训练对象；模型 fail、用户反馈 fail、机器审计 fail、closeout blocked 或修复成功后，必须输出 `learningCandidate` 或 `not_required`，由 `pipeline_learning_promoter` 写回责任 Agent memory / prompt addendum。
+
 ## 修复交付必须运行
 
 以后所有修复默认必须先运行覆盖原问题的最小实际链路，再交付给用户；不能只改代码、只跑单元测试，或只写“未运行真实 CAD”的边界说明就把 CAD 相关修复当成完成。
@@ -207,14 +215,6 @@ $py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
 
 ## 保持记录更新
 
-当 CAD Agent 规则、脚本、测试、工作流文档或状态发生变化时，更新：
+当 CAD Agent 规则、脚本、测试、工作流文档或状态发生变化时，同步 `docs/status/current.md` 与 `docs/status/changelog.md`；若变更源自失败、风险或调试教训，同步 `docs/status/issues.md`。
 
-- `docs/status/current.md`
-- `docs/status/changelog.md`
-- 如果变更源自失败、风险或调试教训，更新 `docs/status/issues.md`
-
-每完成一个 PlanMD 开发包，还必须更新 Agent 交接包汇总：
-
-- `docs/handoffs/current.md`（按固定 9 项模板追加该包章节，供 Codex 校验）
-- `docs/handoffs/package-index.md`（同步全量包索引）
-- 索引说明见 `docs/handoffs/README.md`
+每完成一个 PlanMD 开发包，还必须同步 `docs/handoffs/current.md`（固定 9 项模板）与 `docs/handoffs/package-index.md`；索引说明见 `docs/handoffs/README.md`。

@@ -1,0 +1,27 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": {
+    "type": "table",
+    "name": "模型协作茶几",
+    "width": 1200,
+    "depth": 600
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      72000.0,
+      36000.0,
+      0.0
+    ],
+    "placement_phrase": "MODEL-AGENT-LIVE-COLLAB-PROOF-01 preview-only target"
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": true,
+    "include_dimensions": true
+  },
+  "confidence": 0.9,
+  "needs_confirmation": false
+}

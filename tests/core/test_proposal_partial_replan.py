@@ -62,13 +62,45 @@ class ProposalPartialReplanTests(unittest.TestCase):
     def test_apply_placement_offsets_updates_base_point(self) -> None:
         placements = [{"base_point": [10, 20, 0], "status": "placed"}]
         specs = [{"object_id": "object-test-1", "type": "desk", "name": "desk", "size": {"width": 1, "depth": 1, "height": 1}}]
-        updated, applied = apply_placement_offsets(
+        updated, applied, ignored, invalid = apply_placement_offsets(
             placements,
             specs,
             {"object-test-1": [5, -3, 0]},
         )
         self.assertEqual(applied, ["object-test-1"])
+        self.assertEqual(ignored, [])
+        self.assertEqual(invalid, [])
         self.assertEqual(updated[0]["base_point"], [15, 17, 0])
+
+    def test_apply_placement_offsets_reports_unknown_offsets(self) -> None:
+        placements = [{"base_point": [10, 20, 0], "status": "placed"}]
+        specs = [{"object_id": "object-test-1", "type": "desk", "name": "desk", "size": {"width": 1, "depth": 1, "height": 1}}]
+
+        updated, applied, ignored, invalid = apply_placement_offsets(
+            placements,
+            specs,
+            {"object-missing": [5, -3, 0]},
+        )
+
+        self.assertEqual(applied, [])
+        self.assertEqual(ignored, ["object-missing"])
+        self.assertEqual(invalid, [])
+        self.assertEqual(updated[0]["base_point"], [10, 20, 0])
+
+    def test_apply_placement_offsets_reports_invalid_known_offsets(self) -> None:
+        placements = [{"base_point": [10, 20, 0], "status": "placed"}]
+        specs = [{"object_id": "object-test-1", "type": "desk", "name": "desk", "size": {"width": 1, "depth": 1, "height": 1}}]
+
+        updated, applied, ignored, invalid = apply_placement_offsets(
+            placements,
+            specs,
+            {"object-test-1": ["x", -3, 0]},
+        )
+
+        self.assertEqual(applied, [])
+        self.assertEqual(ignored, [])
+        self.assertEqual(invalid, ["object-test-1"])
+        self.assertEqual(updated[0]["base_point"], [10, 20, 0])
 
 
 if __name__ == "__main__":

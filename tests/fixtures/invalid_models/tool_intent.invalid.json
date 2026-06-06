@@ -1,0 +1,16 @@
+{
+  "model_type": "tool_intent",
+  "data": {
+    "schemaVersion": "tool-intent/v1",
+    "toolIntentId": "bad-tool-intent",
+    "requestedByAgentId": "pipeline_design_reviewer",
+    "toolName": "read_run_package",
+    "purpose": "missing permission and risk fields",
+    "inputs": {},
+    "targetScope": {
+      "scopeType": "run_package"
+    },
+    "expectedEvidence": [],
+    "forbiddenEffects": []
+  }
+}

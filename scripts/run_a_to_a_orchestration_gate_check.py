@@ -27,12 +27,26 @@ ASSET_AGENTS = (
     "pipeline_asset_reuse_auditor",
 )
 VISUAL_AGENT = "pipeline_visual_layout_reviewer"
+VISUAL_ACCEPTANCE_AGENT = "pipeline_visual_acceptance_reviewer"
+DESIGN_AGENTS = (
+    "pipeline_design_director",
+    "pipeline_style_generator",
+    "pipeline_design_reviewer",
+)
+DESIGN_TASK_KINDS = (
+    "design_stage",
+    "style_candidate_generation",
+    "design_review",
+)
 REQUIRED_HARD_GATES = (
+    "system_architecture_canvas",
     "main_agent_dispatch_awareness",
+    "design_intelligence",
     "asset_governance",
     "asset_dwg_curation",
     "asset_reuse_audit",
     "visual_layout_review",
+    "visual_acceptance_review",
 )
 
 
@@ -60,6 +74,67 @@ def _pass_outputs() -> dict[str, Any]:
             "visualNoiseAcceptable": "pass",
             "nonScreenshotEvidenceChecked": "pass",
         },
+        "pipeline_visual_acceptance_reviewer": {
+            "status": "pass",
+            "visualAcceptanceDecision": "pass",
+            "aestheticAcceptable": "pass",
+            "textReadable": "pass",
+            "noMojibake": "pass",
+            "noSevereOverlap": "pass",
+            "noSevereClipping": "pass",
+            "alignmentAcceptable": "pass",
+            "contentMatchesIntent": "pass",
+            "reusableOutputLikely": "pass",
+            "evidenceBoundaryRespected": "pass",
+            "nonScreenshotEvidenceChecked": "pass",
+            "blockingReasons": [],
+        },
+    }
+
+
+def _design_pass_outputs() -> dict[str, Any]:
+    return {
+        "pipeline_design_director": {
+            "status": "pass",
+            "designStrategy": {"summary": "先生成 A/B/C 三套尺寸表达候选。"},
+            "drawingTypeDecision": "dimension_style_showcase",
+            "expressionPurpose": "candidate comparison before user choice",
+            "designIntent": "new parameterized style candidates",
+            "requiredChildAgents": ["pipeline_style_generator", "pipeline_design_reviewer"],
+            "openQuestions": [],
+            "evidenceBoundary": {"checked": ["request semantics"], "notChecked": ["cad readback"]},
+        },
+        "pipeline_style_generator": {
+            "status": "pass",
+            "styleDecision": "multiple",
+            "styleCandidates": [
+                {"candidateId": "A", "summary": "compact"},
+                {"candidateId": "B", "summary": "balanced"},
+                {"candidateId": "C", "summary": "presentation"},
+            ],
+            "selectedStyleCandidate": "",
+            "styleParameterGrammar": {"size": "width/depth/text hierarchy"},
+            "candidateTradeoffs": [],
+            "needsUserChoice": True,
+            "styleWaiverReason": "",
+            "candidateCountPolicy": "explicit_count",
+            "requestedCandidateCount": 3,
+            "candidateLabelPolicy": "abc",
+            "creativityPolicy": "contextual_not_forced",
+            "semanticRoutingConfidence": "high",
+        },
+        "pipeline_design_reviewer": {
+            "status": "pass",
+            "designReview": "ready for A/B/C user choice",
+            "professionalDrawingLike": "pass",
+            "readability": "pass",
+            "industryHabitFit": "pass",
+            "scaleAndProportionFit": "pass",
+            "styleCandidateFit": "pass",
+            "contentMatchesDesignPurpose": "pass",
+            "needsUserChoice": True,
+            "repairOrRegenerateRecommendation": {"mode": "ask_user_choice"},
+        },
     }
 
 
@@ -70,6 +145,12 @@ def _manifest_checks(root: Path) -> tuple[list[str], list[str]]:
     orchestration = manifest.get("orchestration", {}) if isinstance(manifest.get("orchestration"), dict) else {}
     agent_ids = {str(agent.get("agent_id", "")) for agent in manifest.get("agents", []) if isinstance(agent, dict)}
     flow_variants = orchestration.get("flow_variants", {}) if isinstance(orchestration.get("flow_variants"), dict) else {}
+    default_flow = orchestration.get("default_flow", []) if isinstance(orchestration.get("default_flow"), list) else []
+    hard_gate_map = (
+        orchestration.get("required_hard_gates_by_task_kind", {})
+        if isinstance(orchestration.get("required_hard_gates_by_task_kind"), dict)
+        else {}
+    )
     hard_gates = orchestration.get("hard_gates", {}) if isinstance(orchestration.get("hard_gates"), dict) else {}
     main_agent_identity = (
         orchestration.get("main_agent_identity", {}) if isinstance(orchestration.get("main_agent_identity"), dict) else {}
@@ -79,6 +160,11 @@ def _manifest_checks(root: Path) -> tuple[list[str], list[str]]:
         if isinstance(orchestration.get("dynamic_dispatch_policy"), dict)
         else {}
     )
+    high_risk_task_kinds = (
+        dynamic_dispatch_policy.get("high_risk_task_kinds", [])
+        if isinstance(dynamic_dispatch_policy.get("high_risk_task_kinds"), list)
+        else []
+    )
     unregistered_policy = (
         orchestration.get("unregistered_agent_request_policy", {})
         if isinstance(orchestration.get("unregistered_agent_request_policy"), dict)
@@ -86,17 +172,47 @@ def _manifest_checks(root: Path) -> tuple[list[str], list[str]]:
     )
     forbidden_patterns = manifest.get("forbidden_patterns", {}) if isinstance(manifest.get("forbidden_patterns"), dict) else {}
 
-    for agent_id in [*ASSET_AGENTS, VISUAL_AGENT]:
+    for agent_id in [*ASSET_AGENTS, VISUAL_AGENT, VISUAL_ACCEPTANCE_AGENT, *DESIGN_AGENTS]:
         if agent_id in agent_ids:
             checked.append(f"agent registered: {agent_id}")
         else:
             issues.append(f"missing agent registration: {agent_id}")
+
+    design_flow_present = all(agent_id in default_flow for agent_id in DESIGN_AGENTS)
+    if design_flow_present:
+        checked.append("default flow includes design intelligence chain")
+    else:
+        issues.append("default flow missing design intelligence chain")
+    if (
+        design_flow_present
+        and default_flow.index("pipeline_design_director") < default_flow.index("pipeline_style_generator")
+        and default_flow.index("pipeline_style_generator") < default_flow.index("pipeline_visual_intent")
+        and default_flow.index("pipeline_visual_acceptance_reviewer") < default_flow.index("pipeline_design_reviewer")
+    ):
+        checked.append("default flow orders design director/style generator/reviewer correctly")
+    elif design_flow_present:
+        issues.append("default flow order for design intelligence chain is incorrect")
+
+    for task_kind in DESIGN_TASK_KINDS:
+        if task_kind in high_risk_task_kinds:
+            checked.append(f"high-risk task kind registered: {task_kind}")
+        else:
+            issues.append(f"missing high-risk task kind: {task_kind}")
+        gates_for_task = hard_gate_map.get(task_kind, []) if isinstance(hard_gate_map.get(task_kind), list) else []
+        if "design_intelligence" in gates_for_task:
+            checked.append(f"{task_kind} requires design_intelligence gate")
+        else:
+            issues.append(f"{task_kind} missing design_intelligence gate")
 
     asset_layout_flow = flow_variants.get("asset_dwg_layout", [])
     if isinstance(asset_layout_flow, list) and VISUAL_AGENT in asset_layout_flow:
         checked.append("asset_dwg_layout flow includes visual layout reviewer")
     else:
         issues.append("asset_dwg_layout flow missing visual layout reviewer")
+    if isinstance(asset_layout_flow, list) and VISUAL_ACCEPTANCE_AGENT in asset_layout_flow:
+        checked.append("asset_dwg_layout flow includes visual acceptance reviewer")
+    else:
+        issues.append("asset_dwg_layout flow missing visual acceptance reviewer")
 
     sedimentation_flow = flow_variants.get("system_asset_sedimentation", [])
     for agent_id in ASSET_AGENTS:
@@ -110,6 +226,31 @@ def _manifest_checks(root: Path) -> tuple[list[str], list[str]]:
             checked.append(f"hard gate registered: {gate}")
         else:
             issues.append(f"missing hard gate: {gate}")
+
+    repo_governance_gates = (
+        hard_gate_map.get("repository_artifact_governance", [])
+        if isinstance(hard_gate_map.get("repository_artifact_governance"), list)
+        else []
+    )
+    if "system_architecture_canvas" in repo_governance_gates:
+        checked.append("repository artifact governance requires system architecture canvas gate")
+    else:
+        issues.append("repository_artifact_governance missing system_architecture_canvas gate")
+    architecture_gate = hard_gates.get("system_architecture_canvas", {}) if isinstance(hard_gates.get("system_architecture_canvas"), dict) else {}
+    architecture_requires = architecture_gate.get("requires", []) if isinstance(architecture_gate.get("requires"), list) else []
+    missing_architecture_fields = sorted(
+        {
+            "seven_layer_canvas",
+            "old_module_layer_mapping",
+            "metric_reframe",
+            "training_pause_boundary",
+            "no_second_master_plan",
+        }.difference(architecture_requires)
+    )
+    if not missing_architecture_fields:
+        checked.append("system architecture canvas gate declares layer, metric, training, and PlanMD boundaries")
+    else:
+        issues.append(f"system architecture canvas gate missing fields: {missing_architecture_fields}")
 
     if main_agent_identity.get("identity") == "pipeline_orchestrator_main_agent":
         checked.append("main agent identity registered")
@@ -143,6 +284,51 @@ def _manifest_checks(root: Path) -> tuple[list[str], list[str]]:
         checked.append("visual layout reviewer definition exists")
     else:
         issues.append("missing visual layout reviewer definition")
+    visual_acceptance_gate = (
+        hard_gates.get("visual_acceptance_review", {})
+        if isinstance(hard_gates.get("visual_acceptance_review"), dict)
+        else {}
+    )
+    visual_acceptance_requires = (
+        visual_acceptance_gate.get("requires", [])
+        if isinstance(visual_acceptance_gate.get("requires"), list)
+        else []
+    )
+    if "noMojibake" in visual_acceptance_requires and "textReadable" in visual_acceptance_requires:
+        checked.append("visual acceptance gate requires readability and mojibake checks")
+    else:
+        issues.append("visual acceptance gate missing readability/mojibake checks")
+    visual_acceptance_agent_file = root / "agents/pipeline/visual_acceptance_reviewer/agent.json"
+    if visual_acceptance_agent_file.is_file():
+        checked.append("visual acceptance reviewer definition exists")
+    else:
+        issues.append("missing visual acceptance reviewer definition")
+
+    design_gate = hard_gates.get("design_intelligence", {}) if isinstance(hard_gates.get("design_intelligence"), dict) else {}
+    design_requires = design_gate.get("requires", []) if isinstance(design_gate.get("requires"), list) else []
+    design_required_fields = {
+        "designStrategy",
+        "drawingTypeDecision",
+        "expressionPurpose",
+        "styleCandidate_or_designWaiver",
+        "designReview_when_visible_output",
+    }
+    missing_design_fields = sorted(design_required_fields.difference(design_requires))
+    if not missing_design_fields:
+        checked.append("design intelligence gate requires strategy, drawing type, style candidate, and review")
+    else:
+        issues.append(f"design intelligence gate missing fields: {missing_design_fields}")
+    for agent_id in DESIGN_AGENTS:
+        agent_file = root / f"agents/pipeline/{agent_id.removeprefix('pipeline_')}/agent.json"
+        if agent_file.is_file():
+            checked.append(f"design agent definition exists: {agent_id}")
+        else:
+            issues.append(f"missing design agent definition: {agent_id}")
+    for pattern in ("design_stage_skipped", "template_style_without_design_reasoning", "design_review_skipped"):
+        if pattern in forbidden_patterns:
+            checked.append(f"forbidden pattern registered: {pattern}")
+        else:
+            issues.append(f"missing forbidden pattern: {pattern}")
 
     return checked, issues
 
@@ -179,6 +365,15 @@ def _contract_checks() -> tuple[list[str], list[str]]:
         checked.append("contract records registered visual layout dynamic dispatch")
     else:
         issues.append("contract missing registered visual layout dynamic dispatch reason")
+    if any(
+        isinstance(item, dict)
+        and item.get("agentId") == VISUAL_ACCEPTANCE_AGENT
+        and item.get("reason")
+        for item in dynamic_additions
+    ):
+        checked.append("contract records registered visual acceptance dynamic dispatch")
+    else:
+        issues.append("contract missing registered visual acceptance dynamic dispatch reason")
 
     sediment_context = build_request_context(
         context_id="a2a-check-sedimentation",
@@ -272,6 +467,87 @@ def _contract_checks() -> tuple[list[str], list[str]]:
     else:
         issues.append("contract did not block forced unregistered effective agent")
 
+    design_context = build_request_context(
+        context_id="a2a-check-style-candidates",
+        request_kind="draw",
+        user_request="为新场景生成 A/B/C 三套尺寸样式方案候选，要有创造性表达",
+        allow_cad=True,
+    )
+    design_contract = build_a_to_a_task_contract(design_context)
+    if design_contract.get("taskKind") == "style_candidate_generation":
+        checked.append("contract detects style_candidate_generation")
+    else:
+        issues.append(f"style candidate taskKind mismatch: {design_contract.get('taskKind')}")
+    for agent_id in DESIGN_AGENTS:
+        if agent_id in design_contract.get("missingRequiredAgents", []):
+            checked.append(f"contract blocks missing design agent: {agent_id}")
+        else:
+            issues.append(f"contract did not block missing design agent: {agent_id}")
+    if "design_intelligence" in design_contract.get("hardGates", []):
+        checked.append("contract requires design_intelligence for style candidates")
+    else:
+        issues.append("contract missing design_intelligence for style candidates")
+
+    design_context["agent_outputs"] = _design_pass_outputs()
+    ready_design_contract = build_a_to_a_task_contract(design_context)
+    if ready_design_contract.get("status") == "ready":
+        checked.append("style candidate contract becomes ready after design outputs pass")
+    else:
+        issues.append("style candidate contract stayed blocked after design outputs pass")
+
+    guidance_context = build_request_context(
+        context_id="a2a-check-style-guidance",
+        request_kind="general",
+        user_request="优化语义合同：新样式、创造性表达、A/B/C 发后选这些词不要当做死命令，不一定每次都三套。",
+        allow_cad=False,
+    )
+    guidance_contract = build_a_to_a_task_contract(guidance_context)
+    if guidance_contract.get("taskKind") == "ordinary_orchestration":
+        checked.append("contract treats style wording guidance as ordinary orchestration")
+    else:
+        issues.append(f"style wording guidance over-triggered taskKind: {guidance_contract.get('taskKind')}")
+    if "style_candidate_generation" not in guidance_contract.get("triggeredSemantics", []):
+        checked.append("contract keeps A/B/C guidance as soft signal")
+    else:
+        issues.append("contract treated A/B/C guidance as hard style_candidate_generation")
+    decomposition = guidance_contract.get("semanticDecomposition", {})
+    if isinstance(decomposition, dict) and decomposition.get("requestMode") == "semantic_contract_guidance":
+        checked.append("contract emits semantic decomposition for dialogue/CLI layer")
+    else:
+        issues.append("contract missing semantic decomposition for guidance request")
+
+    question_context = build_request_context(
+        context_id="a2a-check-style-question",
+        request_kind="general",
+        user_request="是不是以后提到新样式就必须 A/B/C？先回答规则，不要执行。",
+        allow_cad=False,
+    )
+    question_contract = build_a_to_a_task_contract(question_context)
+    question_decomposition = question_contract.get("semanticDecomposition", {})
+    if question_contract.get("taskKind") == "ordinary_orchestration" and isinstance(
+        question_decomposition, dict
+    ) and question_decomposition.get("requestMode") == "semantic_question":
+        checked.append("contract treats style rule questions as non-execution semantics")
+    else:
+        issues.append("contract over-triggered style rule question")
+
+    two_option_context = build_request_context(
+        context_id="a2a-check-two-options",
+        request_kind="draw",
+        user_request="给玄关柜生成两个尺寸样式方案让我选，不要 A/B/C 三套。",
+        allow_cad=True,
+    )
+    two_option_contract = build_a_to_a_task_contract(two_option_context)
+    two_option_routing = two_option_contract.get("semanticDecomposition", {}).get("designRouting", {})
+    if (
+        two_option_contract.get("taskKind") == "style_candidate_generation"
+        and two_option_routing.get("requestedCandidateCount") == 2
+        and two_option_routing.get("candidateLabelPolicy") == "numeric_or_named_options"
+    ):
+        checked.append("contract extracts two-option candidate count without forcing A/B/C")
+    else:
+        issues.append("contract failed to extract two-option candidate count")
+
     dispatch_report = orchestrate_request(
         build_request_context(
             context_id="a2a-check-dispatch",
@@ -316,6 +592,7 @@ def run_check(project_root: Path = PROJECT_ROOT) -> dict[str, Any]:
                 "notChecked": [
                     "real CAD DWG relayout",
                     "concrete task visual_layout_review output",
+                    "concrete task visual_acceptance_review output",
                     "real CAD asset reuse replay",
                 ],
             },

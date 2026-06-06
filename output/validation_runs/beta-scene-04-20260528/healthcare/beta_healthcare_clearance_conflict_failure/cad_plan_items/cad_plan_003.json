@@ -1,0 +1,31 @@
+{
+  "version": "0.1",
+  "domain": "office",
+  "intent": "draw_object",
+  "object": {
+    "type": "cabinet",
+    "name": "Back Cabinet",
+    "width": 1800,
+    "depth": 600,
+    "height": 2400,
+    "object_spec_id": "object-cabinet-1800x600",
+    "instance_id": "cabinet-01",
+    "role": "general_storage",
+    "composition_id": "cabinet_pullback_conflict"
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      200,
+      750,
+      0
+    ]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 0.9,
+  "needs_confirmation": false
+}

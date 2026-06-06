@@ -1,0 +1,30 @@
+{
+  "command": [
+    "codex.cmd",
+    "exec",
+    "--model",
+    "gpt-5.5",
+    "--sandbox",
+    "read-only",
+    "--ephemeral",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "--ignore-rules",
+    "--output-schema",
+    "C:\\Users\\User\\Desktop\\CAD-AGENT\\core\\model_review\\schemas\\style_generation_review.schema.json",
+    "--output-last-message",
+    "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-rcad-20260605-live-agent\\agent_outputs\\pipeline_style_generator.raw_model_review.json",
+    "-"
+  ],
+  "cwd": "C:\\Users\\User\\Desktop\\CAD-AGENT",
+  "eventsStream": {
+    "path": "events.jsonl",
+    "requested": false,
+    "status": "reserved_for_codex_exec_json"
+  },
+  "sanitized": true,
+  "schemaVersion": 1,
+  "status": "built",
+  "stdinRef": "prompt.md",
+  "timeoutSeconds": 180
+}

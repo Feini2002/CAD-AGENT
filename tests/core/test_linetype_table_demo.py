@@ -187,6 +187,24 @@ class LinetypeTableDemoTests(unittest.TestCase):
             self.assertEqual(audit["sampleCellContainmentAudit"]["status"], "fail", audit)
             self.assertEqual(audit["status"], "fail", audit)
 
+    def test_layout_audit_detects_missing_sample_handles(self) -> None:
+        from core.training.linetype_table_audit import audit_linetype_table_layout
+        from core.training.linetype_table_demo import draw_linetype_table
+        from core.verification.fake_cad_driver import FakeCadDriver
+
+        driver = FakeCadDriver()
+        with temporary_artifact_dir("linetype_table_audit_missing_handle") as root:
+            report = draw_linetype_table(driver=driver, output_dir=root)
+            snapshot = driver.snapshot_handles(handles=report["created_handles"], layer=report["targetLayer"])
+            first_record = report["rowHandles"][0]
+            first_record["sampleHandles"] = ["MISSING-HANDLE"]
+
+            audit = audit_linetype_table_layout(report, snapshot=snapshot)
+
+            self.assertEqual(audit["sampleCellContainmentAudit"]["status"], "fail", audit)
+            self.assertEqual(audit["sampleCellContainmentAudit"]["missingSampleHandleCount"], 1)
+            self.assertEqual(audit["status"], "fail", audit)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,3945 @@
+{
+  "status": "pass",
+  "timestamp": "2026-06-03T17:47:52.562947+00:00",
+  "repairId": "A1-LINETYPE-FRAME-RESTORE-20260604",
+  "rootCause": "Previous A2 cleanup purged CODEX_PREVIEW globally; A1 linetype table grid/frame lines were on that layer and were deleted out of scope.",
+  "repairScope": "A1_LINE_STANDARDS table grid/frame only",
+  "sourceGeometry": "core.training.linetype_table_demo constants and current A1 text/sample bbox alignment",
+  "assetDwg": "C:\\Users\\User\\Desktop\\CAD-AGENT\\libraries\\system_library\\drawing_standards\\basic\\standard_assets.dwg",
+  "previousActiveDocument": {
+    "name": "standard_assets.dwg",
+    "fullName": "C:\\Users\\User\\Desktop\\CAD-AGENT\\libraries\\system_library\\drawing_standards\\basic\\standard_assets.dwg"
+  },
+  "activeDocumentAfterSave": {
+    "name": "standard_assets.dwg",
+    "fullName": "C:\\Users\\User\\Desktop\\CAD-AGENT\\libraries\\system_library\\drawing_standards\\basic\\standard_assets.dwg",
+    "saved": true
+  },
+  "openedByTool": false,
+  "savedAssetDwg": true,
+  "savedCurrentBusinessDwg": false,
+  "tableBbox": {
+    "min": [
+      8200.0,
+      1264.0
+    ],
+    "max": [
+      21260.0,
+      6900.0
+    ]
+  },
+  "createdHandleCount": 191,
+  "createdHandles": [
+    "315A",
+    "315B",
+    "315C",
+    "315D",
+    "315E",
+    "315F",
+    "3160",
+    "3161",
+    "3162",
+    "3163",
+    "3164",
+    "3165",
+    "3166",
+    "3167",
+    "3168",
+    "3169",
+    "316A",
+    "316B",
+    "316C",
+    "316D",
+    "316E",
+    "316F",
+    "3170",
+    "3171",
+    "3172",
+    "3173",
+    "3174",
+    "3175",
+    "3176",
+    "3177",
+    "3178",
+    "3179",
+    "317A",
+    "317B",
+    "317C",
+    "317D",
+    "317E",
+    "317F",
+    "3180",
+    "3181",
+    "3182",
+    "3183",
+    "3184",
+    "3185",
+    "3186",
+    "3187",
+    "3188",
+    "3189",
+    "318A",
+    "318B",
+    "318C",
+    "318D",
+    "318E",
+    "318F",
+    "3190",
+    "3191",
+    "3192",
+    "3193",
+    "3194",
+    "3195",
+    "3196",
+    "3197",
+    "3198",
+    "3199",
+    "319A",
+    "319B",
+    "319C",
+    "319D",
+    "319E",
+    "319F",
+    "31A0",
+    "31A1",
+    "31A2",
+    "31A3",
+    "31A4",
+    "31A5",
+    "31A6",
+    "31A7",
+    "31A8",
+    "31A9",
+    "31AA",
+    "31AB",
+    "31AC",
+    "31AD",
+    "31AE",
+    "31AF",
+    "31B0",
+    "31B1",
+    "31B2",
+    "31B3",
+    "31B4",
+    "31B5",
+    "31B6",
+    "31B7",
+    "31B8",
+    "31B9",
+    "31BA",
+    "31BB",
+    "31BC",
+    "31BD",
+    "31BE",
+    "31BF",
+    "31C0",
+    "31C1",
+    "31C2",
+    "31C3",
+    "31C4",
+    "31C5",
+    "31C6",
+    "31C7",
+    "31C8",
+    "31C9",
+    "31CA",
+    "31CB",
+    "31CC",
+    "31CD",
+    "31CE",
+    "31CF",
+    "31D0",
+    "31D1",
+    "31D2",
+    "31D3",
+    "31D4",
+    "31D5",
+    "31D6",
+    "31D7",
+    "31D8",
+    "31D9",
+    "31DA",
+    "31DB",
+    "31DC",
+    "31DD",
+    "31DE",
+    "31DF",
+    "31E0",
+    "31E1",
+    "31E2",
+    "31E3",
+    "31E4",
+    "31E5",
+    "31E6",
+    "31E7",
+    "31E8",
+    "31E9",
+    "31EA",
+    "31EB",
+    "31EC",
+    "31ED",
+    "31EE",
+    "31EF",
+    "31F0",
+    "31F1",
+    "31F2",
+    "31F3",
+    "31F4",
+    "31F5",
+    "31F6",
+    "31F7",
+    "31F8",
+    "31F9",
+    "31FA",
+    "31FB",
+    "31FC",
+    "31FD",
+    "31FE",
+    "31FF",
+    "3200",
+    "3201",
+    "3202",
+    "3203",
+    "3204",
+    "3205",
+    "3206",
+    "3207",
+    "3208",
+    "3209",
+    "320A",
+    "320B",
+    "320C",
+    "320D",
+    "320E",
+    "320F",
+    "3210",
+    "3211",
+    "3212",
+    "3213",
+    "3214",
+    "3215",
+    "3216",
+    "3217",
+    "3218"
+  ],
+  "segments": [
+    {
+      "handle": "315A",
+      "role": "outer_bottom",
+      "start": [
+        8200.0,
+        1264.0
+      ],
+      "end": [
+        21260.0,
+        1264.0
+      ],
+      "lineweight": 30
+    },
+    {
+      "handle": "315B",
+      "role": "outer_right",
+      "start": [
+        21260.0,
+        1264.0
+      ],
+      "end": [
+        21260.0,
+        6900.0
+      ],
+      "lineweight": 30
+    },
+    {
+      "handle": "315C",
+      "role": "outer_top",
+      "start": [
+        21260.0,
+        6900.0
+      ],
+      "end": [
+        8200.0,
+        6900.0
+      ],
+      "lineweight": 30
+    },
+    {
+      "handle": "315D",
+      "role": "outer_left",
+      "start": [
+        8200.0,
+        6900.0
+      ],
+      "end": [
+        8200.0,
+        1264.0
+      ],
+      "lineweight": 30
+    },
+    {
+      "handle": "315E",
+      "role": "title_bottom",
+      "start": [
+        8200.0,
+        6520.0
+      ],
+      "end": [
+        21260.0,
+        6520.0
+      ],
+      "lineweight": 20
+    },
+    {
+      "handle": "315F",
+      "role": "panel_1_left",
+      "start": [
+        8200.0,
+        6520.0
+      ],
+      "end": [
+        8200.0,
+        1264.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3160",
+      "role": "panel_1_right",
+      "start": [
+        14600.0,
+        6520.0
+      ],
+      "end": [
+        14600.0,
+        1264.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3161",
+      "role": "panel_1_header_column",
+      "start": [
+        8630.0,
+        6520.0
+      ],
+      "end": [
+        8630.0,
+        6270.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3162",
+      "role": "panel_1_header_column",
+      "start": [
+        9900.0,
+        6520.0
+      ],
+      "end": [
+        9900.0,
+        6270.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3163",
+      "role": "panel_1_header_column",
+      "start": [
+        12050.0,
+        6520.0
+      ],
+      "end": [
+        12050.0,
+        6270.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3164",
+      "role": "panel_1_header_bottom",
+      "start": [
+        8200.0,
+        6270.0
+      ],
+      "end": [
+        14600.0,
+        6270.0
+      ],
+      "lineweight": 20
+    },
+    {
+      "handle": "3165",
+      "role": "panel_1_group_bottom:基础图案线型",
+      "start": [
+        8200.0,
+        6090.0
+      ],
+      "end": [
+        14600.0,
+        6090.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3166",
+      "role": "panel_1_row_column:连续实线",
+      "start": [
+        8630.0,
+        6090.0
+      ],
+      "end": [
+        8630.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3167",
+      "role": "panel_1_row_column:连续实线",
+      "start": [
+        9900.0,
+        6090.0
+      ],
+      "end": [
+        9900.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3168",
+      "role": "panel_1_row_column:连续实线",
+      "start": [
+        12050.0,
+        6090.0
+      ],
+      "end": [
+        12050.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3169",
+      "role": "panel_1_row_bottom:连续实线",
+      "start": [
+        8200.0,
+        5890.0
+      ],
+      "end": [
+        14600.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "316A",
+      "role": "panel_1_row_column:短虚线",
+      "start": [
+        8630.0,
+        5890.0
+      ],
+      "end": [
+        8630.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "316B",
+      "role": "panel_1_row_column:短虚线",
+      "start": [
+        9900.0,
+        5890.0
+      ],
+      "end": [
+        9900.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "316C",
+      "role": "panel_1_row_column:短虚线",
+      "start": [
+        12050.0,
+        5890.0
+      ],
+      "end": [
+        12050.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "316D",
+      "role": "panel_1_row_bottom:短虚线",
+      "start": [
+        8200.0,
+        5690.0
+      ],
+      "end": [
+        14600.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "316E",
+      "role": "panel_1_row_column:隐藏线",
+      "start": [
+        8630.0,
+        5690.0
+      ],
+      "end": [
+        8630.0,
+        5490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "316F",
+      "role": "panel_1_row_column:隐藏线",
+      "start": [
+        9900.0,
+        5690.0
+      ],
+      "end": [
+        9900.0,
+        5490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3170",
+      "role": "panel_1_row_column:隐藏线",
+      "start": [
+        12050.0,
+        5690.0
+      ],
+      "end": [
+        12050.0,
+        5490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3171",
+      "role": "panel_1_row_bottom:隐藏线",
+      "start": [
+        8200.0,
+        5490.0
+      ],
+      "end": [
+        14600.0,
+        5490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3172",
+      "role": "panel_1_row_column:中心线",
+      "start": [
+        8630.0,
+        5490.0
+      ],
+      "end": [
+        8630.0,
+        5290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3173",
+      "role": "panel_1_row_column:中心线",
+      "start": [
+        9900.0,
+        5490.0
+      ],
+      "end": [
+        9900.0,
+        5290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3174",
+      "role": "panel_1_row_column:中心线",
+      "start": [
+        12050.0,
+        5490.0
+      ],
+      "end": [
+        12050.0,
+        5290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3175",
+      "role": "panel_1_row_bottom:中心线",
+      "start": [
+        8200.0,
+        5290.0
+      ],
+      "end": [
+        14600.0,
+        5290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3176",
+      "role": "panel_1_row_column:点线",
+      "start": [
+        8630.0,
+        5290.0
+      ],
+      "end": [
+        8630.0,
+        5090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3177",
+      "role": "panel_1_row_column:点线",
+      "start": [
+        9900.0,
+        5290.0
+      ],
+      "end": [
+        9900.0,
+        5090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3178",
+      "role": "panel_1_row_column:点线",
+      "start": [
+        12050.0,
+        5290.0
+      ],
+      "end": [
+        12050.0,
+        5090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3179",
+      "role": "panel_1_row_bottom:点线",
+      "start": [
+        8200.0,
+        5090.0
+      ],
+      "end": [
+        14600.0,
+        5090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "317A",
+      "role": "panel_1_row_column:点划线",
+      "start": [
+        8630.0,
+        5090.0
+      ],
+      "end": [
+        8630.0,
+        4890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "317B",
+      "role": "panel_1_row_column:点划线",
+      "start": [
+        9900.0,
+        5090.0
+      ],
+      "end": [
+        9900.0,
+        4890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "317C",
+      "role": "panel_1_row_column:点划线",
+      "start": [
+        12050.0,
+        5090.0
+      ],
+      "end": [
+        12050.0,
+        4890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "317D",
+      "role": "panel_1_row_bottom:点划线",
+      "start": [
+        8200.0,
+        4890.0
+      ],
+      "end": [
+        14600.0,
+        4890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "317E",
+      "role": "panel_1_row_column:分割点线",
+      "start": [
+        8630.0,
+        4890.0
+      ],
+      "end": [
+        8630.0,
+        4690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "317F",
+      "role": "panel_1_row_column:分割点线",
+      "start": [
+        9900.0,
+        4890.0
+      ],
+      "end": [
+        9900.0,
+        4690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3180",
+      "role": "panel_1_row_column:分割点线",
+      "start": [
+        12050.0,
+        4890.0
+      ],
+      "end": [
+        12050.0,
+        4690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3181",
+      "role": "panel_1_row_bottom:分割点线",
+      "start": [
+        8200.0,
+        4690.0
+      ],
+      "end": [
+        14600.0,
+        4690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3182",
+      "role": "panel_1_row_column:幻影线",
+      "start": [
+        8630.0,
+        4690.0
+      ],
+      "end": [
+        8630.0,
+        4490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3183",
+      "role": "panel_1_row_column:幻影线",
+      "start": [
+        9900.0,
+        4690.0
+      ],
+      "end": [
+        9900.0,
+        4490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3184",
+      "role": "panel_1_row_column:幻影线",
+      "start": [
+        12050.0,
+        4690.0
+      ],
+      "end": [
+        12050.0,
+        4490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3185",
+      "role": "panel_1_row_bottom:幻影线",
+      "start": [
+        8200.0,
+        4490.0
+      ],
+      "end": [
+        14600.0,
+        4490.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3186",
+      "role": "panel_1_row_column:边界线",
+      "start": [
+        8630.0,
+        4490.0
+      ],
+      "end": [
+        8630.0,
+        4290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3187",
+      "role": "panel_1_row_column:边界线",
+      "start": [
+        9900.0,
+        4490.0
+      ],
+      "end": [
+        9900.0,
+        4290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3188",
+      "role": "panel_1_row_column:边界线",
+      "start": [
+        12050.0,
+        4490.0
+      ],
+      "end": [
+        12050.0,
+        4290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3189",
+      "role": "panel_1_row_bottom:边界线",
+      "start": [
+        8200.0,
+        4290.0
+      ],
+      "end": [
+        14600.0,
+        4290.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "318A",
+      "role": "panel_1_row_column:细虚线",
+      "start": [
+        8630.0,
+        4290.0
+      ],
+      "end": [
+        8630.0,
+        4090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "318B",
+      "role": "panel_1_row_column:细虚线",
+      "start": [
+        9900.0,
+        4290.0
+      ],
+      "end": [
+        9900.0,
+        4090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "318C",
+      "role": "panel_1_row_column:细虚线",
+      "start": [
+        12050.0,
+        4290.0
+      ],
+      "end": [
+        12050.0,
+        4090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "318D",
+      "role": "panel_1_row_bottom:细虚线",
+      "start": [
+        8200.0,
+        4090.0
+      ],
+      "end": [
+        14600.0,
+        4090.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "318E",
+      "role": "panel_1_row_column:长虚线",
+      "start": [
+        8630.0,
+        4090.0
+      ],
+      "end": [
+        8630.0,
+        3890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "318F",
+      "role": "panel_1_row_column:长虚线",
+      "start": [
+        9900.0,
+        4090.0
+      ],
+      "end": [
+        9900.0,
+        3890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3190",
+      "role": "panel_1_row_column:长虚线",
+      "start": [
+        12050.0,
+        4090.0
+      ],
+      "end": [
+        12050.0,
+        3890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3191",
+      "role": "panel_1_row_bottom:长虚线",
+      "start": [
+        8200.0,
+        3890.0
+      ],
+      "end": [
+        14600.0,
+        3890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3192",
+      "role": "panel_1_row_column:稀疏轴线",
+      "start": [
+        8630.0,
+        3890.0
+      ],
+      "end": [
+        8630.0,
+        3690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3193",
+      "role": "panel_1_row_column:稀疏轴线",
+      "start": [
+        9900.0,
+        3890.0
+      ],
+      "end": [
+        9900.0,
+        3690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3194",
+      "role": "panel_1_row_column:稀疏轴线",
+      "start": [
+        12050.0,
+        3890.0
+      ],
+      "end": [
+        12050.0,
+        3690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3195",
+      "role": "panel_1_row_bottom:稀疏轴线",
+      "start": [
+        8200.0,
+        3690.0
+      ],
+      "end": [
+        14600.0,
+        3690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3196",
+      "role": "panel_1_group_bottom:工程与家装语义",
+      "start": [
+        8200.0,
+        3510.0
+      ],
+      "end": [
+        14600.0,
+        3510.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3197",
+      "role": "panel_1_row_column:墙体粗轮廓",
+      "start": [
+        8630.0,
+        3510.0
+      ],
+      "end": [
+        8630.0,
+        3310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3198",
+      "role": "panel_1_row_column:墙体粗轮廓",
+      "start": [
+        9900.0,
+        3510.0
+      ],
+      "end": [
+        9900.0,
+        3310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3199",
+      "role": "panel_1_row_column:墙体粗轮廓",
+      "start": [
+        12050.0,
+        3510.0
+      ],
+      "end": [
+        12050.0,
+        3310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "319A",
+      "role": "panel_1_row_bottom:墙体粗轮廓",
+      "start": [
+        8200.0,
+        3310.0
+      ],
+      "end": [
+        14600.0,
+        3310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "319B",
+      "role": "panel_1_row_column:家具外轮廓",
+      "start": [
+        8630.0,
+        3310.0
+      ],
+      "end": [
+        8630.0,
+        3110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "319C",
+      "role": "panel_1_row_column:家具外轮廓",
+      "start": [
+        9900.0,
+        3310.0
+      ],
+      "end": [
+        9900.0,
+        3110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "319D",
+      "role": "panel_1_row_column:家具外轮廓",
+      "start": [
+        12050.0,
+        3310.0
+      ],
+      "end": [
+        12050.0,
+        3110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "319E",
+      "role": "panel_1_row_bottom:家具外轮廓",
+      "start": [
+        8200.0,
+        3110.0
+      ],
+      "end": [
+        14600.0,
+        3110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "319F",
+      "role": "panel_1_row_column:家具内部细节",
+      "start": [
+        8630.0,
+        3110.0
+      ],
+      "end": [
+        8630.0,
+        2910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A0",
+      "role": "panel_1_row_column:家具内部细节",
+      "start": [
+        9900.0,
+        3110.0
+      ],
+      "end": [
+        9900.0,
+        2910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A1",
+      "role": "panel_1_row_column:家具内部细节",
+      "start": [
+        12050.0,
+        3110.0
+      ],
+      "end": [
+        12050.0,
+        2910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A2",
+      "role": "panel_1_row_bottom:家具内部细节",
+      "start": [
+        8200.0,
+        2910.0
+      ],
+      "end": [
+        14600.0,
+        2910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A3",
+      "role": "panel_1_row_column:上方投影线",
+      "start": [
+        8630.0,
+        2910.0
+      ],
+      "end": [
+        8630.0,
+        2710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A4",
+      "role": "panel_1_row_column:上方投影线",
+      "start": [
+        9900.0,
+        2910.0
+      ],
+      "end": [
+        9900.0,
+        2710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A5",
+      "role": "panel_1_row_column:上方投影线",
+      "start": [
+        12050.0,
+        2910.0
+      ],
+      "end": [
+        12050.0,
+        2710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A6",
+      "role": "panel_1_row_bottom:上方投影线",
+      "start": [
+        8200.0,
+        2710.0
+      ],
+      "end": [
+        14600.0,
+        2710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A7",
+      "role": "panel_1_row_column:隐藏边线",
+      "start": [
+        8630.0,
+        2710.0
+      ],
+      "end": [
+        8630.0,
+        2510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A8",
+      "role": "panel_1_row_column:隐藏边线",
+      "start": [
+        9900.0,
+        2710.0
+      ],
+      "end": [
+        9900.0,
+        2510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31A9",
+      "role": "panel_1_row_column:隐藏边线",
+      "start": [
+        12050.0,
+        2710.0
+      ],
+      "end": [
+        12050.0,
+        2510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31AA",
+      "role": "panel_1_row_bottom:隐藏边线",
+      "start": [
+        8200.0,
+        2510.0
+      ],
+      "end": [
+        14600.0,
+        2510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31AB",
+      "role": "panel_1_row_column:标注引线",
+      "start": [
+        8630.0,
+        2510.0
+      ],
+      "end": [
+        8630.0,
+        2310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31AC",
+      "role": "panel_1_row_column:标注引线",
+      "start": [
+        9900.0,
+        2510.0
+      ],
+      "end": [
+        9900.0,
+        2310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31AD",
+      "role": "panel_1_row_column:标注引线",
+      "start": [
+        12050.0,
+        2510.0
+      ],
+      "end": [
+        12050.0,
+        2310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31AE",
+      "role": "panel_1_row_bottom:标注引线",
+      "start": [
+        8200.0,
+        2310.0
+      ],
+      "end": [
+        14600.0,
+        2310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31AF",
+      "role": "panel_1_row_column:开启范围线",
+      "start": [
+        8630.0,
+        2310.0
+      ],
+      "end": [
+        8630.0,
+        1994.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B0",
+      "role": "panel_1_row_column:开启范围线",
+      "start": [
+        9900.0,
+        2310.0
+      ],
+      "end": [
+        9900.0,
+        1994.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B1",
+      "role": "panel_1_row_column:开启范围线",
+      "start": [
+        12050.0,
+        2310.0
+      ],
+      "end": [
+        12050.0,
+        1994.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B2",
+      "role": "panel_1_row_bottom:开启范围线",
+      "start": [
+        8200.0,
+        1994.0
+      ],
+      "end": [
+        14600.0,
+        1994.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B3",
+      "role": "panel_1_row_column:材质分界线",
+      "start": [
+        8630.0,
+        1994.0
+      ],
+      "end": [
+        8630.0,
+        1794.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B4",
+      "role": "panel_1_row_column:材质分界线",
+      "start": [
+        9900.0,
+        1994.0
+      ],
+      "end": [
+        9900.0,
+        1794.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B5",
+      "role": "panel_1_row_column:材质分界线",
+      "start": [
+        12050.0,
+        1994.0
+      ],
+      "end": [
+        12050.0,
+        1794.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B6",
+      "role": "panel_1_row_bottom:材质分界线",
+      "start": [
+        8200.0,
+        1794.0
+      ],
+      "end": [
+        14600.0,
+        1794.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B7",
+      "role": "panel_1_row_column:轴网定位线",
+      "start": [
+        8630.0,
+        1794.0
+      ],
+      "end": [
+        8630.0,
+        1594.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B8",
+      "role": "panel_1_row_column:轴网定位线",
+      "start": [
+        9900.0,
+        1794.0
+      ],
+      "end": [
+        9900.0,
+        1594.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31B9",
+      "role": "panel_1_row_column:轴网定位线",
+      "start": [
+        12050.0,
+        1794.0
+      ],
+      "end": [
+        12050.0,
+        1594.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31BA",
+      "role": "panel_1_row_bottom:轴网定位线",
+      "start": [
+        8200.0,
+        1594.0
+      ],
+      "end": [
+        14600.0,
+        1594.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31BB",
+      "role": "panel_1_row_column:尺寸线与尺寸界线",
+      "start": [
+        8630.0,
+        1594.0
+      ],
+      "end": [
+        8630.0,
+        1394.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31BC",
+      "role": "panel_1_row_column:尺寸线与尺寸界线",
+      "start": [
+        9900.0,
+        1594.0
+      ],
+      "end": [
+        9900.0,
+        1394.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31BD",
+      "role": "panel_1_row_column:尺寸线与尺寸界线",
+      "start": [
+        12050.0,
+        1594.0
+      ],
+      "end": [
+        12050.0,
+        1394.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31BE",
+      "role": "panel_1_row_bottom:尺寸线与尺寸界线",
+      "start": [
+        8200.0,
+        1394.0
+      ],
+      "end": [
+        14600.0,
+        1394.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31BF",
+      "role": "panel_2_left",
+      "start": [
+        14860.0,
+        6520.0
+      ],
+      "end": [
+        14860.0,
+        1416.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31C0",
+      "role": "panel_2_right",
+      "start": [
+        21260.0,
+        6520.0
+      ],
+      "end": [
+        21260.0,
+        1416.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31C1",
+      "role": "panel_2_header_column",
+      "start": [
+        15290.0,
+        6520.0
+      ],
+      "end": [
+        15290.0,
+        6270.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31C2",
+      "role": "panel_2_header_column",
+      "start": [
+        16560.0,
+        6520.0
+      ],
+      "end": [
+        16560.0,
+        6270.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31C3",
+      "role": "panel_2_header_column",
+      "start": [
+        18710.0,
+        6520.0
+      ],
+      "end": [
+        18710.0,
+        6270.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31C4",
+      "role": "panel_2_header_bottom",
+      "start": [
+        14860.0,
+        6270.0
+      ],
+      "end": [
+        21260.0,
+        6270.0
+      ],
+      "lineweight": 20
+    },
+    {
+      "handle": "31C5",
+      "role": "panel_2_group_bottom:工程与家装语义",
+      "start": [
+        14860.0,
+        6090.0
+      ],
+      "end": [
+        21260.0,
+        6090.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31C6",
+      "role": "panel_2_row_column:剖切位置线",
+      "start": [
+        15290.0,
+        6090.0
+      ],
+      "end": [
+        15290.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31C7",
+      "role": "panel_2_row_column:剖切位置线",
+      "start": [
+        16560.0,
+        6090.0
+      ],
+      "end": [
+        16560.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31C8",
+      "role": "panel_2_row_column:剖切位置线",
+      "start": [
+        18710.0,
+        6090.0
+      ],
+      "end": [
+        18710.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31C9",
+      "role": "panel_2_row_bottom:剖切位置线",
+      "start": [
+        14860.0,
+        5890.0
+      ],
+      "end": [
+        21260.0,
+        5890.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31CA",
+      "role": "panel_2_row_column:拆除构件线",
+      "start": [
+        15290.0,
+        5890.0
+      ],
+      "end": [
+        15290.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31CB",
+      "role": "panel_2_row_column:拆除构件线",
+      "start": [
+        16560.0,
+        5890.0
+      ],
+      "end": [
+        16560.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31CC",
+      "role": "panel_2_row_column:拆除构件线",
+      "start": [
+        18710.0,
+        5890.0
+      ],
+      "end": [
+        18710.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31CD",
+      "role": "panel_2_row_bottom:拆除构件线",
+      "start": [
+        14860.0,
+        5690.0
+      ],
+      "end": [
+        21260.0,
+        5690.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31CE",
+      "role": "panel_2_group_bottom:专业管线语义",
+      "start": [
+        14860.0,
+        5510.0
+      ],
+      "end": [
+        21260.0,
+        5510.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31CF",
+      "role": "panel_2_row_column:给水管线",
+      "start": [
+        15290.0,
+        5510.0
+      ],
+      "end": [
+        15290.0,
+        5310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D0",
+      "role": "panel_2_row_column:给水管线",
+      "start": [
+        16560.0,
+        5510.0
+      ],
+      "end": [
+        16560.0,
+        5310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D1",
+      "role": "panel_2_row_column:给水管线",
+      "start": [
+        18710.0,
+        5510.0
+      ],
+      "end": [
+        18710.0,
+        5310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D2",
+      "role": "panel_2_row_bottom:给水管线",
+      "start": [
+        14860.0,
+        5310.0
+      ],
+      "end": [
+        21260.0,
+        5310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D3",
+      "role": "panel_2_row_column:热水管线",
+      "start": [
+        15290.0,
+        5310.0
+      ],
+      "end": [
+        15290.0,
+        5110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D4",
+      "role": "panel_2_row_column:热水管线",
+      "start": [
+        16560.0,
+        5310.0
+      ],
+      "end": [
+        16560.0,
+        5110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D5",
+      "role": "panel_2_row_column:热水管线",
+      "start": [
+        18710.0,
+        5310.0
+      ],
+      "end": [
+        18710.0,
+        5110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D6",
+      "role": "panel_2_row_bottom:热水管线",
+      "start": [
+        14860.0,
+        5110.0
+      ],
+      "end": [
+        21260.0,
+        5110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D7",
+      "role": "panel_2_row_column:排水管线",
+      "start": [
+        15290.0,
+        5110.0
+      ],
+      "end": [
+        15290.0,
+        4910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D8",
+      "role": "panel_2_row_column:排水管线",
+      "start": [
+        16560.0,
+        5110.0
+      ],
+      "end": [
+        16560.0,
+        4910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31D9",
+      "role": "panel_2_row_column:排水管线",
+      "start": [
+        18710.0,
+        5110.0
+      ],
+      "end": [
+        18710.0,
+        4910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31DA",
+      "role": "panel_2_row_bottom:排水管线",
+      "start": [
+        14860.0,
+        4910.0
+      ],
+      "end": [
+        21260.0,
+        4910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31DB",
+      "role": "panel_2_row_column:燃气管线",
+      "start": [
+        15290.0,
+        4910.0
+      ],
+      "end": [
+        15290.0,
+        4710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31DC",
+      "role": "panel_2_row_column:燃气管线",
+      "start": [
+        16560.0,
+        4910.0
+      ],
+      "end": [
+        16560.0,
+        4710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31DD",
+      "role": "panel_2_row_column:燃气管线",
+      "start": [
+        18710.0,
+        4910.0
+      ],
+      "end": [
+        18710.0,
+        4710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31DE",
+      "role": "panel_2_row_bottom:燃气管线",
+      "start": [
+        14860.0,
+        4710.0
+      ],
+      "end": [
+        21260.0,
+        4710.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31DF",
+      "role": "panel_2_row_column:强电线路",
+      "start": [
+        15290.0,
+        4710.0
+      ],
+      "end": [
+        15290.0,
+        4510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E0",
+      "role": "panel_2_row_column:强电线路",
+      "start": [
+        16560.0,
+        4710.0
+      ],
+      "end": [
+        16560.0,
+        4510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E1",
+      "role": "panel_2_row_column:强电线路",
+      "start": [
+        18710.0,
+        4710.0
+      ],
+      "end": [
+        18710.0,
+        4510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E2",
+      "role": "panel_2_row_bottom:强电线路",
+      "start": [
+        14860.0,
+        4510.0
+      ],
+      "end": [
+        21260.0,
+        4510.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E3",
+      "role": "panel_2_row_column:弱电线路",
+      "start": [
+        15290.0,
+        4510.0
+      ],
+      "end": [
+        15290.0,
+        4310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E4",
+      "role": "panel_2_row_column:弱电线路",
+      "start": [
+        16560.0,
+        4510.0
+      ],
+      "end": [
+        16560.0,
+        4310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E5",
+      "role": "panel_2_row_column:弱电线路",
+      "start": [
+        18710.0,
+        4510.0
+      ],
+      "end": [
+        18710.0,
+        4310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E6",
+      "role": "panel_2_row_bottom:弱电线路",
+      "start": [
+        14860.0,
+        4310.0
+      ],
+      "end": [
+        21260.0,
+        4310.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E7",
+      "role": "panel_2_row_column:消防管线",
+      "start": [
+        15290.0,
+        4310.0
+      ],
+      "end": [
+        15290.0,
+        4110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E8",
+      "role": "panel_2_row_column:消防管线",
+      "start": [
+        16560.0,
+        4310.0
+      ],
+      "end": [
+        16560.0,
+        4110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31E9",
+      "role": "panel_2_row_column:消防管线",
+      "start": [
+        18710.0,
+        4310.0
+      ],
+      "end": [
+        18710.0,
+        4110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31EA",
+      "role": "panel_2_row_bottom:消防管线",
+      "start": [
+        14860.0,
+        4110.0
+      ],
+      "end": [
+        21260.0,
+        4110.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31EB",
+      "role": "panel_2_row_column:空调冷媒风管线",
+      "start": [
+        15290.0,
+        4110.0
+      ],
+      "end": [
+        15290.0,
+        3910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31EC",
+      "role": "panel_2_row_column:空调冷媒风管线",
+      "start": [
+        16560.0,
+        4110.0
+      ],
+      "end": [
+        16560.0,
+        3910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31ED",
+      "role": "panel_2_row_column:空调冷媒风管线",
+      "start": [
+        18710.0,
+        4110.0
+      ],
+      "end": [
+        18710.0,
+        3910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31EE",
+      "role": "panel_2_row_bottom:空调冷媒风管线",
+      "start": [
+        14860.0,
+        3910.0
+      ],
+      "end": [
+        21260.0,
+        3910.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31EF",
+      "role": "panel_2_group_bottom:边界与控制线",
+      "start": [
+        14860.0,
+        3730.0
+      ],
+      "end": [
+        21260.0,
+        3730.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "31F0",
+      "role": "panel_2_row_column:地界红线",
+      "start": [
+        15290.0,
+        3730.0
+      ],
+      "end": [
+        15290.0,
+        3530.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F1",
+      "role": "panel_2_row_column:地界红线",
+      "start": [
+        16560.0,
+        3730.0
+      ],
+      "end": [
+        16560.0,
+        3530.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F2",
+      "role": "panel_2_row_column:地界红线",
+      "start": [
+        18710.0,
+        3730.0
+      ],
+      "end": [
+        18710.0,
+        3530.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F3",
+      "role": "panel_2_row_bottom:地界红线",
+      "start": [
+        14860.0,
+        3530.0
+      ],
+      "end": [
+        21260.0,
+        3530.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F4",
+      "role": "panel_2_row_column:退界控制线",
+      "start": [
+        15290.0,
+        3530.0
+      ],
+      "end": [
+        15290.0,
+        3330.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F5",
+      "role": "panel_2_row_column:退界控制线",
+      "start": [
+        16560.0,
+        3530.0
+      ],
+      "end": [
+        16560.0,
+        3330.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F6",
+      "role": "panel_2_row_column:退界控制线",
+      "start": [
+        18710.0,
+        3530.0
+      ],
+      "end": [
+        18710.0,
+        3330.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F7",
+      "role": "panel_2_row_bottom:退界控制线",
+      "start": [
+        14860.0,
+        3330.0
+      ],
+      "end": [
+        21260.0,
+        3330.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F8",
+      "role": "panel_2_row_column:规划预留线",
+      "start": [
+        15290.0,
+        3330.0
+      ],
+      "end": [
+        15290.0,
+        3130.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31F9",
+      "role": "panel_2_row_column:规划预留线",
+      "start": [
+        16560.0,
+        3330.0
+      ],
+      "end": [
+        16560.0,
+        3130.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31FA",
+      "role": "panel_2_row_column:规划预留线",
+      "start": [
+        18710.0,
+        3330.0
+      ],
+      "end": [
+        18710.0,
+        3130.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31FB",
+      "role": "panel_2_row_bottom:规划预留线",
+      "start": [
+        14860.0,
+        3130.0
+      ],
+      "end": [
+        21260.0,
+        3130.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31FC",
+      "role": "panel_2_row_column:安全净距线",
+      "start": [
+        15290.0,
+        3130.0
+      ],
+      "end": [
+        15290.0,
+        2930.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31FD",
+      "role": "panel_2_row_column:安全净距线",
+      "start": [
+        16560.0,
+        3130.0
+      ],
+      "end": [
+        16560.0,
+        2930.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31FE",
+      "role": "panel_2_row_column:安全净距线",
+      "start": [
+        18710.0,
+        3130.0
+      ],
+      "end": [
+        18710.0,
+        2930.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "31FF",
+      "role": "panel_2_row_bottom:安全净距线",
+      "start": [
+        14860.0,
+        2930.0
+      ],
+      "end": [
+        21260.0,
+        2930.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3200",
+      "role": "panel_2_group_bottom:复合模拟线型",
+      "start": [
+        14860.0,
+        2750.0
+      ],
+      "end": [
+        21260.0,
+        2750.0
+      ],
+      "lineweight": 13
+    },
+    {
+      "handle": "3201",
+      "role": "panel_2_row_column:折断线",
+      "start": [
+        15290.0,
+        2750.0
+      ],
+      "end": [
+        15290.0,
+        2550.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3202",
+      "role": "panel_2_row_column:折断线",
+      "start": [
+        16560.0,
+        2750.0
+      ],
+      "end": [
+        16560.0,
+        2550.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3203",
+      "role": "panel_2_row_column:折断线",
+      "start": [
+        18710.0,
+        2750.0
+      ],
+      "end": [
+        18710.0,
+        2550.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3204",
+      "role": "panel_2_row_bottom:折断线",
+      "start": [
+        14860.0,
+        2550.0
+      ],
+      "end": [
+        21260.0,
+        2550.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3205",
+      "role": "panel_2_row_column:波浪线",
+      "start": [
+        15290.0,
+        2550.0
+      ],
+      "end": [
+        15290.0,
+        2350.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3206",
+      "role": "panel_2_row_column:波浪线",
+      "start": [
+        16560.0,
+        2550.0
+      ],
+      "end": [
+        16560.0,
+        2350.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3207",
+      "role": "panel_2_row_column:波浪线",
+      "start": [
+        18710.0,
+        2550.0
+      ],
+      "end": [
+        18710.0,
+        2350.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3208",
+      "role": "panel_2_row_bottom:波浪线",
+      "start": [
+        14860.0,
+        2350.0
+      ],
+      "end": [
+        21260.0,
+        2350.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3209",
+      "role": "panel_2_row_column:圆围栏线",
+      "start": [
+        15290.0,
+        2350.0
+      ],
+      "end": [
+        15290.0,
+        2150.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "320A",
+      "role": "panel_2_row_column:圆围栏线",
+      "start": [
+        16560.0,
+        2350.0
+      ],
+      "end": [
+        16560.0,
+        2150.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "320B",
+      "role": "panel_2_row_column:圆围栏线",
+      "start": [
+        18710.0,
+        2350.0
+      ],
+      "end": [
+        18710.0,
+        2150.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "320C",
+      "role": "panel_2_row_bottom:圆围栏线",
+      "start": [
+        14860.0,
+        2150.0
+      ],
+      "end": [
+        21260.0,
+        2150.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "320D",
+      "role": "panel_2_row_column:方围栏线",
+      "start": [
+        15290.0,
+        2150.0
+      ],
+      "end": [
+        15290.0,
+        1950.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "320E",
+      "role": "panel_2_row_column:方围栏线",
+      "start": [
+        16560.0,
+        2150.0
+      ],
+      "end": [
+        16560.0,
+        1950.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "320F",
+      "role": "panel_2_row_column:方围栏线",
+      "start": [
+        18710.0,
+        2150.0
+      ],
+      "end": [
+        18710.0,
+        1950.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3210",
+      "role": "panel_2_row_bottom:方围栏线",
+      "start": [
+        14860.0,
+        1950.0
+      ],
+      "end": [
+        21260.0,
+        1950.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3211",
+      "role": "panel_2_row_column:保温棉线",
+      "start": [
+        15290.0,
+        1950.0
+      ],
+      "end": [
+        15290.0,
+        1746.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3212",
+      "role": "panel_2_row_column:保温棉线",
+      "start": [
+        16560.0,
+        1950.0
+      ],
+      "end": [
+        16560.0,
+        1746.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3213",
+      "role": "panel_2_row_column:保温棉线",
+      "start": [
+        18710.0,
+        1950.0
+      ],
+      "end": [
+        18710.0,
+        1746.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3214",
+      "role": "panel_2_row_bottom:保温棉线",
+      "start": [
+        14860.0,
+        1746.0
+      ],
+      "end": [
+        21260.0,
+        1746.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3215",
+      "role": "panel_2_row_column:文字管线",
+      "start": [
+        15290.0,
+        1746.0
+      ],
+      "end": [
+        15290.0,
+        1546.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3216",
+      "role": "panel_2_row_column:文字管线",
+      "start": [
+        16560.0,
+        1746.0
+      ],
+      "end": [
+        16560.0,
+        1546.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3217",
+      "role": "panel_2_row_column:文字管线",
+      "start": [
+        18710.0,
+        1746.0
+      ],
+      "end": [
+        18710.0,
+        1546.0
+      ],
+      "lineweight": 9
+    },
+    {
+      "handle": "3218",
+      "role": "panel_2_row_bottom:文字管线",
+      "start": [
+        14860.0,
+        1546.0
+      ],
+      "end": [
+        21260.0,
+        1546.0
+      ],
+      "lineweight": 9
+    }
+  ],
+  "readbackCount": 191,
+  "readbackSamples": [
+    {
+      "handle": "315A",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          1264.0
+        ],
+        "max": [
+          21260.0,
+          1264.0
+        ]
+      }
+    },
+    {
+      "handle": "315B",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          21260.0,
+          1264.0
+        ],
+        "max": [
+          21260.0,
+          6900.0
+        ]
+      }
+    },
+    {
+      "handle": "315C",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          6900.0
+        ],
+        "max": [
+          21260.0,
+          6900.0
+        ]
+      }
+    },
+    {
+      "handle": "315D",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          1264.0
+        ],
+        "max": [
+          8200.0,
+          6900.0
+        ]
+      }
+    },
+    {
+      "handle": "315E",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          6520.0
+        ],
+        "max": [
+          21260.0,
+          6520.0
+        ]
+      }
+    },
+    {
+      "handle": "315F",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          1264.0
+        ],
+        "max": [
+          8200.0,
+          6520.0
+        ]
+      }
+    },
+    {
+      "handle": "3160",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          14600.0,
+          1264.0
+        ],
+        "max": [
+          14600.0,
+          6520.0
+        ]
+      }
+    },
+    {
+      "handle": "3161",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          6270.0
+        ],
+        "max": [
+          8630.0,
+          6520.0
+        ]
+      }
+    },
+    {
+      "handle": "3162",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          6270.0
+        ],
+        "max": [
+          9900.0,
+          6520.0
+        ]
+      }
+    },
+    {
+      "handle": "3163",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          6270.0
+        ],
+        "max": [
+          12050.0,
+          6520.0
+        ]
+      }
+    },
+    {
+      "handle": "3164",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          6270.0
+        ],
+        "max": [
+          14600.0,
+          6270.0
+        ]
+      }
+    },
+    {
+      "handle": "3165",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          6090.0
+        ],
+        "max": [
+          14600.0,
+          6090.0
+        ]
+      }
+    },
+    {
+      "handle": "3166",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          5890.0
+        ],
+        "max": [
+          8630.0,
+          6090.0
+        ]
+      }
+    },
+    {
+      "handle": "3167",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          5890.0
+        ],
+        "max": [
+          9900.0,
+          6090.0
+        ]
+      }
+    },
+    {
+      "handle": "3168",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          5890.0
+        ],
+        "max": [
+          12050.0,
+          6090.0
+        ]
+      }
+    },
+    {
+      "handle": "3169",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          5890.0
+        ],
+        "max": [
+          14600.0,
+          5890.0
+        ]
+      }
+    },
+    {
+      "handle": "316A",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          5690.0
+        ],
+        "max": [
+          8630.0,
+          5890.0
+        ]
+      }
+    },
+    {
+      "handle": "316B",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          5690.0
+        ],
+        "max": [
+          9900.0,
+          5890.0
+        ]
+      }
+    },
+    {
+      "handle": "316C",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          5690.0
+        ],
+        "max": [
+          12050.0,
+          5890.0
+        ]
+      }
+    },
+    {
+      "handle": "316D",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          5690.0
+        ],
+        "max": [
+          14600.0,
+          5690.0
+        ]
+      }
+    },
+    {
+      "handle": "316E",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          5490.0
+        ],
+        "max": [
+          8630.0,
+          5690.0
+        ]
+      }
+    },
+    {
+      "handle": "316F",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          5490.0
+        ],
+        "max": [
+          9900.0,
+          5690.0
+        ]
+      }
+    },
+    {
+      "handle": "3170",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          5490.0
+        ],
+        "max": [
+          12050.0,
+          5690.0
+        ]
+      }
+    },
+    {
+      "handle": "3171",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          5490.0
+        ],
+        "max": [
+          14600.0,
+          5490.0
+        ]
+      }
+    },
+    {
+      "handle": "3172",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          5290.0
+        ],
+        "max": [
+          8630.0,
+          5490.0
+        ]
+      }
+    },
+    {
+      "handle": "3173",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          5290.0
+        ],
+        "max": [
+          9900.0,
+          5490.0
+        ]
+      }
+    },
+    {
+      "handle": "3174",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          5290.0
+        ],
+        "max": [
+          12050.0,
+          5490.0
+        ]
+      }
+    },
+    {
+      "handle": "3175",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          5290.0
+        ],
+        "max": [
+          14600.0,
+          5290.0
+        ]
+      }
+    },
+    {
+      "handle": "3176",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          5090.0
+        ],
+        "max": [
+          8630.0,
+          5290.0
+        ]
+      }
+    },
+    {
+      "handle": "3177",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          5090.0
+        ],
+        "max": [
+          9900.0,
+          5290.0
+        ]
+      }
+    },
+    {
+      "handle": "3178",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          5090.0
+        ],
+        "max": [
+          12050.0,
+          5290.0
+        ]
+      }
+    },
+    {
+      "handle": "3179",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          5090.0
+        ],
+        "max": [
+          14600.0,
+          5090.0
+        ]
+      }
+    },
+    {
+      "handle": "317A",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          4890.0
+        ],
+        "max": [
+          8630.0,
+          5090.0
+        ]
+      }
+    },
+    {
+      "handle": "317B",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          4890.0
+        ],
+        "max": [
+          9900.0,
+          5090.0
+        ]
+      }
+    },
+    {
+      "handle": "317C",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          4890.0
+        ],
+        "max": [
+          12050.0,
+          5090.0
+        ]
+      }
+    },
+    {
+      "handle": "317D",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          4890.0
+        ],
+        "max": [
+          14600.0,
+          4890.0
+        ]
+      }
+    },
+    {
+      "handle": "317E",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          4690.0
+        ],
+        "max": [
+          8630.0,
+          4890.0
+        ]
+      }
+    },
+    {
+      "handle": "317F",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          4690.0
+        ],
+        "max": [
+          9900.0,
+          4890.0
+        ]
+      }
+    },
+    {
+      "handle": "3180",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          4690.0
+        ],
+        "max": [
+          12050.0,
+          4890.0
+        ]
+      }
+    },
+    {
+      "handle": "3181",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          4690.0
+        ],
+        "max": [
+          14600.0,
+          4690.0
+        ]
+      }
+    },
+    {
+      "handle": "3182",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          4490.0
+        ],
+        "max": [
+          8630.0,
+          4690.0
+        ]
+      }
+    },
+    {
+      "handle": "3183",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          4490.0
+        ],
+        "max": [
+          9900.0,
+          4690.0
+        ]
+      }
+    },
+    {
+      "handle": "3184",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          4490.0
+        ],
+        "max": [
+          12050.0,
+          4690.0
+        ]
+      }
+    },
+    {
+      "handle": "3185",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          4490.0
+        ],
+        "max": [
+          14600.0,
+          4490.0
+        ]
+      }
+    },
+    {
+      "handle": "3186",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          4290.0
+        ],
+        "max": [
+          8630.0,
+          4490.0
+        ]
+      }
+    },
+    {
+      "handle": "3187",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          4290.0
+        ],
+        "max": [
+          9900.0,
+          4490.0
+        ]
+      }
+    },
+    {
+      "handle": "3188",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          4290.0
+        ],
+        "max": [
+          12050.0,
+          4490.0
+        ]
+      }
+    },
+    {
+      "handle": "3189",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          4290.0
+        ],
+        "max": [
+          14600.0,
+          4290.0
+        ]
+      }
+    },
+    {
+      "handle": "318A",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          4090.0
+        ],
+        "max": [
+          8630.0,
+          4290.0
+        ]
+      }
+    },
+    {
+      "handle": "318B",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          4090.0
+        ],
+        "max": [
+          9900.0,
+          4290.0
+        ]
+      }
+    },
+    {
+      "handle": "318C",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          4090.0
+        ],
+        "max": [
+          12050.0,
+          4290.0
+        ]
+      }
+    },
+    {
+      "handle": "318D",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          4090.0
+        ],
+        "max": [
+          14600.0,
+          4090.0
+        ]
+      }
+    },
+    {
+      "handle": "318E",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          3890.0
+        ],
+        "max": [
+          8630.0,
+          4090.0
+        ]
+      }
+    },
+    {
+      "handle": "318F",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          3890.0
+        ],
+        "max": [
+          9900.0,
+          4090.0
+        ]
+      }
+    },
+    {
+      "handle": "3190",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          3890.0
+        ],
+        "max": [
+          12050.0,
+          4090.0
+        ]
+      }
+    },
+    {
+      "handle": "3191",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          3890.0
+        ],
+        "max": [
+          14600.0,
+          3890.0
+        ]
+      }
+    },
+    {
+      "handle": "3192",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          3690.0
+        ],
+        "max": [
+          8630.0,
+          3890.0
+        ]
+      }
+    },
+    {
+      "handle": "3193",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          3690.0
+        ],
+        "max": [
+          9900.0,
+          3890.0
+        ]
+      }
+    },
+    {
+      "handle": "3194",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          3690.0
+        ],
+        "max": [
+          12050.0,
+          3890.0
+        ]
+      }
+    },
+    {
+      "handle": "3195",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          3690.0
+        ],
+        "max": [
+          14600.0,
+          3690.0
+        ]
+      }
+    },
+    {
+      "handle": "3196",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          3510.0
+        ],
+        "max": [
+          14600.0,
+          3510.0
+        ]
+      }
+    },
+    {
+      "handle": "3197",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          3310.0
+        ],
+        "max": [
+          8630.0,
+          3510.0
+        ]
+      }
+    },
+    {
+      "handle": "3198",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          3310.0
+        ],
+        "max": [
+          9900.0,
+          3510.0
+        ]
+      }
+    },
+    {
+      "handle": "3199",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          3310.0
+        ],
+        "max": [
+          12050.0,
+          3510.0
+        ]
+      }
+    },
+    {
+      "handle": "319A",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          3310.0
+        ],
+        "max": [
+          14600.0,
+          3310.0
+        ]
+      }
+    },
+    {
+      "handle": "319B",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          3110.0
+        ],
+        "max": [
+          8630.0,
+          3310.0
+        ]
+      }
+    },
+    {
+      "handle": "319C",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          3110.0
+        ],
+        "max": [
+          9900.0,
+          3310.0
+        ]
+      }
+    },
+    {
+      "handle": "319D",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          3110.0
+        ],
+        "max": [
+          12050.0,
+          3310.0
+        ]
+      }
+    },
+    {
+      "handle": "319E",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          3110.0
+        ],
+        "max": [
+          14600.0,
+          3110.0
+        ]
+      }
+    },
+    {
+      "handle": "319F",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          2910.0
+        ],
+        "max": [
+          8630.0,
+          3110.0
+        ]
+      }
+    },
+    {
+      "handle": "31A0",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          2910.0
+        ],
+        "max": [
+          9900.0,
+          3110.0
+        ]
+      }
+    },
+    {
+      "handle": "31A1",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          2910.0
+        ],
+        "max": [
+          12050.0,
+          3110.0
+        ]
+      }
+    },
+    {
+      "handle": "31A2",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          2910.0
+        ],
+        "max": [
+          14600.0,
+          2910.0
+        ]
+      }
+    },
+    {
+      "handle": "31A3",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          2710.0
+        ],
+        "max": [
+          8630.0,
+          2910.0
+        ]
+      }
+    },
+    {
+      "handle": "31A4",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          2710.0
+        ],
+        "max": [
+          9900.0,
+          2910.0
+        ]
+      }
+    },
+    {
+      "handle": "31A5",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          2710.0
+        ],
+        "max": [
+          12050.0,
+          2910.0
+        ]
+      }
+    },
+    {
+      "handle": "31A6",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8200.0,
+          2710.0
+        ],
+        "max": [
+          14600.0,
+          2710.0
+        ]
+      }
+    },
+    {
+      "handle": "31A7",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          8630.0,
+          2510.0
+        ],
+        "max": [
+          8630.0,
+          2710.0
+        ]
+      }
+    },
+    {
+      "handle": "31A8",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          9900.0,
+          2510.0
+        ],
+        "max": [
+          9900.0,
+          2710.0
+        ]
+      }
+    },
+    {
+      "handle": "31A9",
+      "layer": "ASSET_PROOF_CONTENT",
+      "objectName": "AcDbLine",
+      "bbox": {
+        "min": [
+          12050.0,
+          2510.0
+        ],
+        "max": [
+          12050.0,
+          2710.0
+        ]
+      }
+    }
+  ],
+  "policy": "No existing entities were deleted; A1 repair lines were restored on ASSET_PROOF_CONTENT instead of CODEX_PREVIEW.",
+  "postLayoutVerification": {
+    "status": "pass",
+    "timestamp": "2026-06-03T17:51:00.536816+00:00",
+    "repairHandlesExpected": 191,
+    "repairHandlesFoundAfterShelfLayout": 191,
+    "a1LayerObjectCounts": {
+      "ASSET_PROOF_CONTENT|AcDbText": 161,
+      "ASSET_PROOF_CONTENT|AcDbArc": 1,
+      "ASSET_PROOF_CONTENT|AcDbPolyline": 4,
+      "ASSET_PROOF_CONTENT|AcDbLine": 199,
+      "ASSET_PROOF_CONTENT|AcDbCircle": 5,
+      "ASSET_01_CLEAN_ASSETS|AcDbLine": 1
+    },
+    "a1ProofContentLineCount": 199,
+    "a1CodexPreviewCount": 0,
+    "latestShelfPreviewLayerPurge": {
+      "status": "not_run",
+      "deletedCount": 0,
+      "deletedHandles": [],
+      "skipped": [],
+      "scope": {
+        "name": "",
+        "bbox": null
+      },
+      "policy": "CODEX_PREVIEW cleanup is scoped-only. Without an explicit bbox, legacy proof geometry is normalized to ASSET_PROOF_CONTENT instead of deleted."
+    },
+    "latestShelfReport": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\system-assets\\asset-library-shelves\\shelf_layout_report.json",
+    "visualPreview": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\previews\\system-asset-a1-restored-a2-cleaned.png",
+    "savedAssetDwg": true,
+    "savedCurrentBusinessDwg": false
+  }
+}

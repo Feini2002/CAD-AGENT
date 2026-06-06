@@ -1,0 +1,117 @@
+{
+  "version": "0.1",
+  "composition_id": "two_workstations_shared_aisle",
+  "name": "Two Workstations Shared Aisle",
+  "domain": "office",
+  "persona_role": "office_planner",
+  "request_text": "生成两个工位并保留共用主通道语义",
+  "objects": [
+    {
+      "instance_id": "desk-01",
+      "type": "desk",
+      "name": "Workstation Desk A",
+      "role": "work_surface",
+      "base_point": [
+        0,
+        0,
+        0
+      ],
+      "size": {
+        "width": 1400,
+        "depth": 700,
+        "height": 750
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "chair-01",
+      "type": "chair",
+      "name": "Task Chair A",
+      "role": "seating_for_desk",
+      "base_point": [
+        450,
+        -700,
+        0
+      ],
+      "size": {
+        "width": 500,
+        "depth": 500,
+        "height": 850
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "desk-02",
+      "type": "desk",
+      "name": "Workstation Desk B",
+      "role": "work_surface",
+      "base_point": [
+        2200,
+        0,
+        0
+      ],
+      "size": {
+        "width": 1400,
+        "depth": 700,
+        "height": 750
+      },
+      "include_dimensions": false
+    },
+    {
+      "instance_id": "chair-02",
+      "type": "chair",
+      "name": "Task Chair B",
+      "role": "seating_for_desk",
+      "base_point": [
+        2650,
+        -700,
+        0
+      ],
+      "size": {
+        "width": 500,
+        "depth": 500,
+        "height": 850
+      },
+      "include_dimensions": false
+    }
+  ],
+  "bbox": {
+    "min": [
+      0,
+      -700
+    ],
+    "max": [
+      3600,
+      700
+    ]
+  },
+  "evidence": {
+    "geometry_accuracy": "not_verified_without_cad_readback",
+    "screenshot_role": "visual_aid_only"
+  },
+  "bindings": [
+    {
+      "from_instance_id": "chair-01",
+      "to_instance_id": "desk-01",
+      "relation": "seating_for_desk"
+    },
+    {
+      "from_instance_id": "chair-02",
+      "to_instance_id": "desk-02",
+      "relation": "seating_for_desk"
+    }
+  ],
+  "circulation": [
+    {
+      "zone_id": "main-aisle-01",
+      "role": "main_aisle",
+      "min_width_mm": 1100,
+      "target_width_mm": 1100,
+      "continuity_required": true,
+      "connects": [
+        "desk-01",
+        "desk-02"
+      ]
+    }
+  ]
+}

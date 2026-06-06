@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "handoff_packet/v1",
+  "fromAgentId": "pipeline_design_director",
+  "toAgentIds": [
+    "pipeline_style_generator",
+    "pipeline_design_reviewer"
+  ],
+  "status": "ready",
+  "decisionSummary": "pass pass 室内/家具平面 CAD 符号：茶几 top-view symbol，适合放入平面布置图，不是施工详图、三维渲染或完整产品设计图。",
+  "statePatch": {
+    "phase": "orchestrator_reviewed",
+    "phaseLabelForUser": "模型型 Agent 只读设计链路",
+    "completedEvidence": [
+      "已复审 userRequest、dispatchPlan、ruleContextPack 和 pipeline_orchestrator upstream summary。",
+      "已完成图纸类型、表达目的、设计意图、受众、约束和 Agent 分发判断。"
+    ],
+    "pendingEvidence": [
+      "CAD_PLAN",
+      "validate_plan 结果",
+      "dry_run 结果",
+      "cad_readback 结果",
+      "visual_acceptance_review 结果",
+      "closeout_gate 结果"
+    ],
+    "pendingUserAction": "",
+    "blockedReason": "request_kind='draw' requires cad_policy.allow_cad=true；当前 cad_policy.allow_cad=false 且 dispatchPlan.status=blocked。",
+    "nextSafeAction": "将本只读设计判断交给已登记标准链路，先生成 CAD_PLAN/结构化意图；在 allow_cad=false 时仅允许 preview-only、dry-run/readback 类证据流程，不执行真实 CAD 写入。"
+  },
+  "evidenceRefs": [
+    "Input Payload.userRequest: 让模型型 Agent 协作设计一个茶几符号，并做 preview-only CAD 校验。",
+    "taskContext.requestContext.cad_policy.allow_cad=false, preview_only=true。",
+    "agentSpecific.dispatchPlan.status=blocked, blockedBeforeExecution=true, blockingReasons=request_kind='draw' requires cad_policy.allow_cad=true。",
+    "agentSpecific.dispatchPlan.requiredAgents listed standard_draw chain agents。",
+    "ruleContextPack.ruleDigest and retrievalHits on read-only boundaries, CAD_PLAN gate, readback evidence boundary, and registered-Agent restriction。",
+    "statePatchRequest phase=orchestrator_reviewed, phaseLabelForUser=模型型 Agent 只读设计链路。"
+  ],
+  "evidenceMissing": [
+    "具体 CAD_PLAN 内容。",
+    "目标尺寸、单位、插入点、目标图层、线型/线宽规范。",
+    "dry_run/readback/screenshot/visual acceptance evidence。",
+    "manifest 对 pipeline_style_generator 与 pipeline_design_reviewer 本轮可分发状态的显式证据。"
+  ],
+  "openQuestions": [
+    "未提供茶几符号的目标尺寸、单位、插入位置、目标图层、线型/线宽规范；若 CAD_PLAN 阶段无法从上下文推断，应使用安全默认值或提问。",
+    "当前证据未证明 pipeline_style_generator 或 pipeline_design_reviewer 已在本轮 dispatchPlan.requiredAgents 中登记，因此不能要求它们本轮执行。"
+  ],
+  "downstreamInstructions": [
+    "CAD 执行被 cad_policy.allow_cad=false 阻塞。",
+    "dispatchPlan.status=blocked 且 blockedBeforeExecution=true。",
+    "缺少 CAD_PLAN、readback 和视觉验收证据，不能作几何或交付通过声明。",
+    "CAD_PLAN 或结构化意图，包含茶几符号几何策略、尺寸/单位、图层、线型、插入范围和 preview-only 标记。",
+    "validate_plan 结果。",
+    "dry_run 结果。",
+    "cad_readback 结果，包括 created handles、bbox、layer 等机器证据。",
+    "visual_acceptance_review 结果。",
+    "closeout_gate 结果。"
+  ],
+  "allowedClaims": [
+    "本轮完成了只读设计导演复审。",
+    "建议采用单方案茶几平面 CAD 符号策略，而不是多候选 style generation。",
+    "真实 CAD 写入仍被 cad_policy.allow_cad=false 阻塞。",
+    "后续必须经过 CAD_PLAN、validate_plan、dry_run、cad_readback、visual_acceptance_review 和 closeout_gate 才能作交付声明。"
+  ],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "sha256OfSourceOutput": "3fa5929735c0d570d4292973a221636e9a949325e134ad00745b89b073ff9a43"
+}

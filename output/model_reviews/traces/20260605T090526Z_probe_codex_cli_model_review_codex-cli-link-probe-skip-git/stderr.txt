@@ -1,0 +1,62 @@
+2026-06-05T09:05:26.446521Z  WARN codex_core_plugins::manager: failed to warm featured plugin ids cache error=failed to send remote plugin sync request to https://chatgpt.com/backend-api/plugins/featured: error sending request for url (https://chatgpt.com/backend-api/plugins/featured?platform=codex)
+2026-06-05T09:05:26.473805Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+OpenAI Codex v0.130.0
+--------
+workdir: C:\Users\User\AppData\Local\Temp\cad-agent-model-bridge\codex-cli-link-probe-skip-git
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: medium
+reasoning summaries: none
+session id: 019e9707-b9c2-7fe3-84e0-2b3e52429016
+--------
+user
+You are running a connectivity probe for a CAD Agent model-review bridge.
+Do not inspect files, do not call tools, do not execute CAD, and do not make
+any claim about a real drawing.
+
+Return exactly one JSON object matching the provided schema.
+For this synthetic probe only, set status to pass, all boolean fields to true,
+blockingReasons and visualProblems to empty arrays, and repairRecommendation to
+{"mode":"none","reason":"synthetic connectivity probe only","targetZone":"none","targetHandles":[],"nextChecks":[]}.
+Set lookHereFirst to ["synthetic probe only"].
+Also include decision, assumptions, alternativesConsidered, blockingReasons,
+nextRequiredEvidence, learningCandidate, statePatch, finalResponseAllowedClaims,
+evidenceUsed, and evidenceMissing. statePatch must contain phase,
+phaseLabelForUser, completedEvidence, pendingEvidence, pendingUserAction,
+blockedReason, and nextSafeAction. Include toolIntent and set it to null.
+2026-06-05T09:05:26.519081Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013), url: wss://api.openai.com/v1/responses
+2026-06-05T09:05:26.520113Z  WARN codex_core::session_startup_prewarm: startup websocket prewarm setup failed: stream disconnected before completion: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013)
+2026-06-05T09:05:26.521475Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013), url: wss://api.openai.com/v1/responses
+2026-06-05T09:05:26.521550Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (1/5 in 191ms)...
+2026-06-05T09:05:26.542767Z  WARN codex_core_plugins::startup_sync: git sync failed for curated plugin sync; falling back to GitHub HTTP error=git ls-remote curated plugins repo failed with status exit code: 128: fatal: unable to access 'https://github.com/openai/plugins.git/': Failed to connect to github.com port 443 after 20 ms: Could not connect to server git_binary="git"
+2026-06-05T09:05:26.543800Z  WARN codex_core_plugins::startup_sync: GitHub HTTP sync failed for curated plugin sync; falling back to export archive error=failed to get curated plugins repository from https://api.github.com/repos/openai/plugins: error sending request for url (https://api.github.com/repos/openai/plugins) backup_archive_api_url="https://chatgpt.com/backend-api/plugins/export/curated"
+2026-06-05T09:05:26.544773Z  WARN codex_core_plugins::manager: failed to sync curated plugins repo: git sync failed for curated plugin sync: git ls-remote curated plugins repo failed with status exit code: 128: fatal: unable to access 'https://github.com/openai/plugins.git/': Failed to connect to github.com port 443 after 20 ms: Could not connect to server; GitHub HTTP sync failed for curated plugin sync: failed to get curated plugins repository from https://api.github.com/repos/openai/plugins: error sending request for url (https://api.github.com/repos/openai/plugins); export archive sync failed for curated plugin sync: failed to get curated plugins export archive metadata from https://chatgpt.com/backend-api/plugins/export/curated: error sending request for url (https://chatgpt.com/backend-api/plugins/export/curated)
+2026-06-05T09:05:26.726625Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013), url: wss://api.openai.com/v1/responses
+2026-06-05T09:05:26.726785Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (2/5 in 412ms)...
+ERROR: Reconnecting... 2/5
+2026-06-05T09:05:27.144743Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013), url: wss://api.openai.com/v1/responses
+2026-06-05T09:05:27.144825Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (3/5 in 725ms)...
+ERROR: Reconnecting... 3/5
+2026-06-05T09:05:27.872287Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013), url: wss://api.openai.com/v1/responses
+2026-06-05T09:05:27.872410Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (4/5 in 1.642s)...
+ERROR: Reconnecting... 4/5
+2026-06-05T09:05:29.527080Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013), url: wss://api.openai.com/v1/responses
+2026-06-05T09:05:29.527247Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (5/5 in 2.91s)...
+ERROR: Reconnecting... 5/5
+2026-06-05T09:05:32.449603Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: IO error: 以一种访问权限不允许的方式做了一个访问套接字的尝试。 (os error 10013), url: wss://api.openai.com/v1/responses
+2026-06-05T09:05:32.449684Z  WARN codex_core::client: falling back to HTTP
+2026-06-05T09:05:35.511505Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (1/5 in 218ms)...
+ERROR: Reconnecting... 1/5
+2026-06-05T09:05:36.452011Z  WARN codex_core_plugins::startup_remote_sync: skipping startup remote plugin sync because curated marketplace is not ready codex_home=C:\Users\CodexSandboxOffline\.codex
+2026-06-05T09:05:38.880835Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (2/5 in 391ms)...
+ERROR: Reconnecting... 2/5
+2026-06-05T09:05:42.258053Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (3/5 in 799ms)...
+ERROR: Reconnecting... 3/5
+2026-06-05T09:05:46.064093Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (4/5 in 1.704s)...
+ERROR: Reconnecting... 4/5
+2026-06-05T09:05:50.751339Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (5/5 in 3.186s)...
+ERROR: Reconnecting... 5/5
+ERROR: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/responses)
+ERROR: stream disconnected before completion: error sending request for url (https://api.openai.com/v1/responses)

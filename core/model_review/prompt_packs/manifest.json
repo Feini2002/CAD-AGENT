@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "model-review-prompt-pack-library/v1",
+  "description": "Read-only model-backed prompt packs for registered pipeline Agents. Prompt packs do not authorize CAD execution, deletion, saving, table C claims, or user acceptance.",
+  "packs": [
+    {
+      "agentId": "pipeline_visual_acceptance_reviewer",
+      "taskType": "visual_acceptance_review",
+      "version": 1,
+      "converter": "visual_acceptance",
+      "promptPath": "core/model_review/prompt_packs/pipeline_visual_acceptance_reviewer/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_visual_acceptance_reviewer/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_visual_acceptance_reviewer/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_visual_acceptance_reviewer/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/visual_acceptance_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_repair",
+      "taskType": "repair_plan_review",
+      "version": 1,
+      "converter": "repair_plan",
+      "promptPath": "core/model_review/prompt_packs/pipeline_repair/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_repair/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_repair/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_repair/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/repair_plan_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_asset_governor",
+      "taskType": "asset_governor_review",
+      "version": 1,
+      "converter": "asset_governor",
+      "promptPath": "core/model_review/prompt_packs/pipeline_asset_governor/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_asset_governor/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_asset_governor/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_asset_governor/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/asset_governor_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_visual_layout_reviewer",
+      "taskType": "visual_layout_review",
+      "version": 1,
+      "converter": "visual_layout",
+      "promptPath": "core/model_review/prompt_packs/pipeline_visual_layout_reviewer/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_visual_layout_reviewer/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_visual_layout_reviewer/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_visual_layout_reviewer/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/visual_layout_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_orchestrator",
+      "taskType": "orchestrator_dispatch_review",
+      "version": 1,
+      "converter": "identity",
+      "promptPath": "core/model_review/prompt_packs/pipeline_orchestrator/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_orchestrator/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_orchestrator/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_orchestrator/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/orchestrator_dispatch_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_delivery",
+      "taskType": "delivery_claims_review",
+      "version": 1,
+      "converter": "identity",
+      "promptPath": "core/model_review/prompt_packs/pipeline_delivery/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_delivery/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_delivery/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_delivery/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/delivery_claims_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_design_director",
+      "taskType": "design_director_review",
+      "version": 1,
+      "converter": "identity",
+      "promptPath": "core/model_review/prompt_packs/pipeline_design_director/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_design_director/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_design_director/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_design_director/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/design_director_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_style_generator",
+      "taskType": "style_generation_review",
+      "version": 1,
+      "converter": "identity",
+      "promptPath": "core/model_review/prompt_packs/pipeline_style_generator/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_style_generator/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_style_generator/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_style_generator/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/style_generation_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_design_reviewer",
+      "taskType": "design_review",
+      "version": 1,
+      "converter": "identity",
+      "promptPath": "core/model_review/prompt_packs/pipeline_design_reviewer/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_design_reviewer/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_design_reviewer/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_design_reviewer/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/design_review.schema.json"
+    }
+  ],
+  "plannedPacks": [
+    {
+      "agentId": "pipeline_visual_intent",
+      "taskType": "visual_intent_review",
+      "priority": "P1",
+      "purpose": "Review reference images, screenshots, style targets, visual parts, proportions, and forbidden simplifications before CAD_PLAN."
+    },
+    {
+      "agentId": "pipeline_intent",
+      "taskType": "intent_review",
+      "priority": "P1",
+      "purpose": "Review plain-language to structured-intent conversion, ambiguity, assumptions, missing dimensions, and evidence boundaries."
+    },
+    {
+      "agentId": "pipeline_audit",
+      "taskType": "audit_review",
+      "priority": "P1",
+      "purpose": "Review machine audit output for hidden visual or semantic failures and promote stronger checker candidates."
+    },
+    {
+      "agentId": "pipeline_asset_dwg_curator",
+      "taskType": "asset_dwg_curation_review",
+      "priority": "P1",
+      "purpose": "Review native system asset DWG layout plans, source/proof separation, shelf readability, and expansion capacity."
+    },
+    {
+      "agentId": "pipeline_context_curator",
+      "taskType": "context_curator_review",
+      "priority": "P2",
+      "purpose": "Review context packs for stale history, missing user feedback, invalid handles, and evidence drift."
+    },
+    {
+      "agentId": "pipeline_asset_retriever",
+      "taskType": "asset_retrieval_review",
+      "priority": "P2",
+      "purpose": "Review retrieval strength and prevent weak matches from being treated as CAD proof."
+    },
+    {
+      "agentId": "pipeline_asset_librarian",
+      "taskType": "asset_librarian_review",
+      "priority": "P2",
+      "purpose": "Review asset taxonomy, naming, dedupe, retrieval tags, lifecycle state, and version conflicts."
+    },
+    {
+      "agentId": "pipeline_asset_reuse_auditor",
+      "taskType": "asset_reuse_audit_review",
+      "priority": "P2",
+      "purpose": "Review whether reuse evidence is plan-only, ready probe, or real replay with created handles/readback."
+    },
+    {
+      "agentId": "pipeline_learning_promoter",
+      "taskType": "learning_promotion_review",
+      "priority": "P2",
+      "purpose": "Review model/user/machine failures and decide memory, prompt delta, checker candidate, base rule, task rule, and retest targets."
+    },
+    {
+      "agentId": "pipeline_execute",
+      "taskType": "execute_plan_guard_review",
+      "priority": "P3",
+      "purpose": "Review CAD_PLAN execution risk only; never authorize CAD commands, deletion, saving, or formal-layer edits."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "no-cad-model-agent-chain-result/v1",
+  "status": "blocked",
+  "runId": "model-agent-live-collab-proof-rcad-20260605-short-label",
+  "route": "standard_draw",
+  "agentsCalled": [
+    "pipeline_design_director",
+    "pipeline_style_generator",
+    "pipeline_design_reviewer"
+  ],
+  "upstreamOutputs": [
+    {
+      "agentId": "pipeline_design_director",
+      "path": "agent_outputs/pipeline_design_director.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "b01cc704b60200a9f27e7edda68fa7ec3e143e2dcf7e8b237e48399cf63be214",
+      "modelInvoked": false,
+      "schemaValid": false,
+      "modelUnavailable": true
+    },
+    {
+      "agentId": "pipeline_style_generator",
+      "path": "agent_outputs/pipeline_style_generator.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "dfbf7976631ac74e465d3fd26401cd21f2908ff8d2951fdef38411069cd750e0",
+      "modelInvoked": false,
+      "schemaValid": false,
+      "modelUnavailable": true
+    },
+    {
+      "agentId": "pipeline_design_reviewer",
+      "path": "agent_outputs/pipeline_design_reviewer.json",
+      "status": "unavailable",
+      "summary": "unavailable",
+      "sha256": "bd7bc6266ea140d046f15050a6346dc657793eb8089ac8b10055e61f5c26dca5",
+      "modelInvoked": false,
+      "schemaValid": false,
+      "modelUnavailable": true
+    }
+  ],
+  "blockingReasons": [
+    "pipeline_design_director model output not pass",
+    "pipeline_style_generator model output not pass",
+    "pipeline_design_reviewer model output not pass"
+  ],
+  "cadExecutionAuthorized": false,
+  "savedCurrentDwg": false,
+  "nextCadPreflight": [
+    "validate_plan",
+    "dry_run",
+    "created_handles_readback"
+  ],
+  "evidenceBoundary": [
+    "model chain is no-CAD and no-save",
+    "model pass does not replace CAD readback",
+    "output can only feed a later CAD_PLAN/intent preflight"
+  ],
+  "writtenFiles": [
+    "dispatch_plan.json",
+    "task_contract.json",
+    "required_agents.json",
+    "risk_assessment.json",
+    "rule_context_pack.json",
+    "rule_context_packs/pipeline_design_director.json",
+    "agent_outputs/pipeline_design_director.json",
+    "rule_context_packs/pipeline_style_generator.json",
+    "agent_outputs/pipeline_style_generator.json",
+    "rule_context_packs/pipeline_design_reviewer.json",
+    "agent_outputs/pipeline_design_reviewer.json",
+    "agent_outputs/pipeline_intent.json",
+    "agent_outputs/pipeline_audit.json",
+    "agent_outputs/pipeline_delivery.chain.json"
+  ],
+  "generatedAt": "2026-06-05T07:13:54Z"
+}

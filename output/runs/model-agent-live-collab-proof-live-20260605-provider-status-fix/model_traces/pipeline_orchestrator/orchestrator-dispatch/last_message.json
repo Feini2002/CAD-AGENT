@@ -1,0 +1,117 @@
+{
+  "additionalAgentRequests": [],
+  "blockedBeforeExecution": true,
+  "blockingReasons": [
+    "request_kind='draw' requires cad_policy.allow_cad=true",
+    "orchestrator host runtime is read-only and cannot execute CAD",
+    "dispatch plan does not prove CAD geometry or user acceptance"
+  ],
+  "dispatchRationale": [
+    {
+      "agentId": "pipeline_context_curator",
+      "gate": "cad_plan_required",
+      "reason": "整理当前请求、run package、规则上下文和 CAD_PLAN 输入边界，确保自然语言不直接进入 CAD。"
+    },
+    {
+      "agentId": "pipeline_visual_intent",
+      "gate": "cad_plan_required",
+      "reason": "茶几符号涉及设计和视觉表达判断，需要把视觉目标转成可执行的结构化意图。"
+    },
+    {
+      "agentId": "pipeline_intent",
+      "gate": "cad_plan_required",
+      "reason": "将设计意图收敛为 CAD_PLAN 或等价结构化绘图计划，并保持 preview-only 边界。"
+    },
+    {
+      "agentId": "pipeline_execute",
+      "gate": "validate_plan",
+      "reason": "真实 CAD 执行只能由已登记执行 Agent 在 CAD policy 放行后进行；当前 orchestrator host 只读且 cad_policy.allow_cad=false。"
+    },
+    {
+      "agentId": "pipeline_audit",
+      "gate": "cad_readback",
+      "reason": "preview-only CAD 校验仍需要 created handles、bbox、layer 等机器回读，不能由模型或截图替代。"
+    },
+    {
+      "agentId": "pipeline_visual_acceptance_reviewer",
+      "gate": "visual_acceptance_review",
+      "reason": "可见 CAD 输出需要视觉验收，检查符号可读性、比例、重叠和用户可验收边界。"
+    },
+    {
+      "agentId": "pipeline_delivery",
+      "gate": "closeout_gate",
+      "reason": "交付 Agent 只能基于 CAD_PLAN、validate、dry-run、readback、视觉验收和 closeout gate 汇总允许声明。"
+    }
+  ],
+  "evidenceMissing": [
+    "CAD_PLAN payload content",
+    "validate_plan output",
+    "dry_run output",
+    "created_handles_readback",
+    "CAD screenshot or visual preview",
+    "visual_acceptance_review output",
+    "closeout_gate output",
+    "user acceptance"
+  ],
+  "evidenceUsed": [
+    "user_request.json",
+    "context_pack.json",
+    "rule_context_pack.json",
+    "agents/pipeline/pipeline_manifest.json",
+    "core/model_review/prompt_packs/manifest.json",
+    "dispatchPlan.route=standard_draw",
+    "riskAssessment.riskFlags.visibleCadOutput=true",
+    "requestContext.cad_policy.allow_cad=false",
+    "requestContext.cad_policy.preview_only=true"
+  ],
+  "finalResponseAllowedClaims": [
+    "已生成只读分发建议",
+    "已识别为 standard_draw 路由",
+    "已列出 requiredAgents 与 hard gates",
+    "当前执行前因 cad_policy.allow_cad=false 被阻断",
+    "不能声称 CAD 已绘制、几何已验证、截图已验收或任务已完成"
+  ],
+  "hardGates": [
+    "cad_plan_required",
+    "validate_plan",
+    "dry_run",
+    "cad_readback",
+    "visual_acceptance_review",
+    "closeout_gate"
+  ],
+  "needsUserConfirmation": false,
+  "requiredAgents": [
+    "pipeline_context_curator",
+    "pipeline_visual_intent",
+    "pipeline_intent",
+    "pipeline_execute",
+    "pipeline_audit",
+    "pipeline_visual_acceptance_reviewer",
+    "pipeline_delivery"
+  ],
+  "route": "standard_draw",
+  "statePatch": {
+    "blockedReason": "这是普通绘图 / preview-only CAD 校验请求，但当前 CAD policy 不允许 CAD 执行；只能生成分发建议，不能落图或声称校验完成。",
+    "completedEvidence": [
+      "已识别 route=standard_draw",
+      "已确认 requiredAgents 均为 manifest 已登记 Agent",
+      "已确认当前请求为 preview-only 且 cad_policy.allow_cad=false，因此执行前阻断"
+    ],
+    "nextSafeAction": "在 CAD policy 放行后，由 pipeline_execute 按 CAD_PLAN 先 validate、dry-run，再仅写 CODEX_PREVIEW 并进入 readback 与视觉验收。",
+    "pendingEvidence": [
+      "CAD_PLAN 内容或结构化绘图计划",
+      "validate_plan 结果",
+      "dry_run 结果",
+      "CAD created handles / bbox / layer readback",
+      "视觉验收结果",
+      "closeout gate 结果"
+    ],
+    "pendingUserAction": "",
+    "phase": "orchestrator_reviewed",
+    "phaseLabelForUser": "主编排已生成分发计划"
+  },
+  "status": "pass",
+  "taskKind": "ordinary_orchestration",
+  "toolIntent": null,
+  "userIntentSummary": "让模型型 Agent 协作设计一个茶几符号，并做 preview-only CAD 校验。"
+}

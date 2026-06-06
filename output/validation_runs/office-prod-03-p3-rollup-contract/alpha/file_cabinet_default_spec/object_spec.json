@@ -1,0 +1,45 @@
+{
+  "version": "0.1",
+  "object_id": "object-file_cabinet-900x450",
+  "type": "file_cabinet",
+  "name": "File Cabinet",
+  "style_profile_id": "style-modern",
+  "size": {
+    "width": 900,
+    "depth": 450,
+    "height": 1100
+  },
+  "components": [
+    {
+      "component_id": "file-cabinet-body",
+      "role": "body",
+      "count": 1
+    },
+    {
+      "component_id": "file-cabinet-drawers",
+      "role": "drawer_stack",
+      "count": 4
+    },
+    {
+      "component_id": "file-cabinet-front-clearance",
+      "role": "cabinet_front_clearance",
+      "count": 1
+    }
+  ],
+  "placement_requirements": [
+    "base point is lower-left plan corner"
+  ],
+  "drawing_intent": "plan_preview",
+  "placement_role": "document_storage",
+  "clearance_refs": [
+    {
+      "role": "cabinet_front_clearance",
+      "bound_to": "file_cabinet",
+      "front_depth_mm": 800
+    }
+  ],
+  "assertion_hints": [
+    "back_wall_preferred",
+    "office_edge_placement"
+  ]
+}

@@ -1,6 +1,6 @@
 # Core Status
 
-最后更新：2026-05-28（完工后架构瘦身）
+最后更新：2026-06-06（ARCH-CONVERGENCE-01：架构归并画布工程成为当前主线；旧表 C / 90% 口径降级为 `Core Proof Coverage`，不再表示端到端真实 CAD 能力；训练暂缓，先同步架构、规则、状态和脚本口径）
 
 本文只回答“当前能力成熟到哪里、证据是什么、风险边界是什么”。历史长流水已归档到 `docs/history/snapshots/finished-architecture-2026-05-28/CORE_STATUS.md`，近期流水看 `docs/status/current.md`，唯一 PlanMD 看 `CORE_RESTRUCTURE_PLAN.md`。
 
@@ -15,9 +15,21 @@
 | `scaffold` | 目录、文档或数据壳已建立，核心能力尚未形成 |
 | `blocked` | 缺依赖、缺证据或有已知失败，不能继续声称可用 |
 
+## 成熟度口径（ARCH-CONVERGENCE-01）
+
+当前不再把旧表 A / B / C 作为系统主叙事。后续状态优先拆成三层：
+
+| 口径 | 当前判断 | 说明 |
+| --- | --- | --- |
+| `Core Proof Coverage` | 历史机器值约 **90.99%**，最高已证 L4 | 旧表 C / coverage JSON / registry 的底座证据覆盖；说明底层零件有历史 proof，不说明真实任务会画准 |
+| `Agent Task Maturity` | 早期，可按 **5%-10%** 的训练感受谨慎看待 | 需要 CAD Designer Agent 通过对象课、案例 feedback、真实 readback、局部修复和学习沉淀逐步提升 |
+| `Project Delivery Readiness` | 更早期 | 不能由表 C、RCAD、截图、dry-run、fake driver 或模型 pass 推导 |
+
+旧表 A / B / C 仍保留为历史和底座回归口径，只在完整状态审计、历史对账、registry / coverage 修改或用户明确点名时展开。
+
 ## 四进度口径（固定模板，V-PROOF-04 + 表 C）
 
-以下口径 **禁止** 混用。聊天最终回复默认不附进度表；只有用户点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C 或真实 CAD 实力时，才展开下列表格，并先报表 C 主指标。
+以下口径 **禁止** 混用。聊天最终回复默认不附进度表；只有用户点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C 或历史 coverage 时，才展开下列表格。若用户说“真实 CAD 实力”，必须先澄清旧表 C 只是 `Core Proof Coverage`，不是 Agent 端到端真实能力。
 
 ```text
 cad_capability_registry: 333 rows
@@ -44,18 +56,18 @@ RCAD 烟囱: 29/29 verified；≠ 真实 CAD 实力
 | 代码轨 | **52/52 done** | 历史 55 口径已对账为 52 执行包 |
 | RCAD 烟囱 | **29/29 verified** | 包完成度，不等于施工图能力 |
 
-### 表 C — 真实 CAD 实力
+### 表 C — Core Proof Coverage（历史旧名：真实 CAD 实力）
 
 | 指标 | 当前值 |
 | --- | --- |
-| **真实 CAD 实力（主指标）** | **90.99%** |
+| **Core Proof Coverage（旧主指标）** | **90.99%** |
 | CAD 证明覆盖率 | **90.99%** |
 | CAD 实力指数（Ladder 加权） | **93.53%** |
 | 场景片段实力（L3+） | **93.62%** |
 | 展示就绪度（showcase） | **90.99%** |
 | 最高已证 Ladder | **L4** |
 
-机器报告：`output/validation_runs/capability-lab/cad_capability_coverage.json`。若 Markdown 与 JSON 冲突，以 JSON 为准。
+机器报告：`output/validation_runs/capability-lab/cad_capability_coverage.json`。若 Markdown 与 JSON 冲突，以 JSON 为准。该表只证明底座证据覆盖，不证明 `Agent Task Maturity` 或 `Project Delivery Readiness`。
 
 ## 能力矩阵摘要
 
@@ -68,6 +80,7 @@ RCAD 烟囱: 29/29 verified；≠ 真实 CAD 实力
 | Composition / VCAD 视觉表达 | `partially_verified` | V-PROOF-42/43、VCAD-01/02 reports | 视觉截图不替代 readback |
 | Scene Agent | `alpha_ready_non_cad` | office / residential / restaurant benchmarks | 场景层不实现 Core 算法或 CAD 执行 |
 | 自动读图 / shell 识别 | `prototype` | drawing-read fixtures / boundary docs | 未确认 shell candidates 不得直接落 CAD |
+| 模型型 Agent trace / run package / Host runtime / Reviewer closeout / Workbench Trace Viewer | `alpha_ready_non_cad` | `core/model_review/`、`core/orchestrator/run_package_state.py`、`core/orchestrator/closeout_gate.py`、`core/orchestrator/delete_neighbor_gates.py`、`core/orchestrator/orchestrator_host_runtime.py`、`core/orchestrator/reviewer_host_runtime.py`、`core/orchestrator/workbench_trace_viewer.py`、`core/orchestrator/local_live_model_bridge*.py`、相关 tests、`capability-map.html`、`CORE_RESTRUCTURE_PLAN.md` | 只证明模型调用证据、任务状态、分发计划、closeout 决策、删除范围 / 邻区保护、delivery 口径和派生 trace 视图可复盘；长期路线要求先有 `worker_orchestration_ready` / `local_bridge_connected`，再用完整 trace 包里的 `modelInvoked=true` / `modelUnavailable=false` / `schemaValid=true` 证明 `single_agent_live`；fake CAD preflight 只能是 `proofStatus=not_verified`，不替代 CAD readback、A-to-A hard gate、用户验收或表 C |
 
 ## 当前关键风险
 
@@ -77,6 +90,7 @@ RCAD 烟囱: 29/29 verified；≠ 真实 CAD 实力
 | CAD 画面观感不足 | 用户要求画面时走 `VCAD-*`；截图只作 `visual_aid_only` |
 | 自动读图未交付预备 | 保持人工确认 gate，不从未确认读图结果直接落 CAD |
 | 文档再膨胀 | `run_doc_governance_audit.py` 检查活跃入口体量、链接、handoff 和表 C |
+| 模型活体与业务通过混淆 | provider / schema 正常只说明 Agent 真调用了模型；若模型因证据不足返回 `needs_more_evidence` / `unavailable`，应视为正确业务阻断，不能误称链路没活或 CAD 已验证 |
 
 更多失败教训见 `docs/status/issues.md`。
 

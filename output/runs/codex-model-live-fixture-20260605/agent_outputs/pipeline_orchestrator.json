@@ -1,0 +1,48 @@
+{
+  "status": "unavailable",
+  "modelInvoked": false,
+  "reason": "codex cli review failed to start: fixture model output is not defined for schema: C:\\Users\\User\\Desktop\\CAD-AGENT\\core\\model_review\\schemas\\orchestrator_dispatch_review.schema.json",
+  "modelProviderStatus": {
+    "status": "unavailable",
+    "provider": "codex_cli",
+    "route": "codex_cli_local",
+    "routePolicy": {
+      "route": "codex_cli_local",
+      "label": "本机 Codex CLI / GPT-5.5 Medium",
+      "transport": "local_cli",
+      "externalData": false,
+      "requiresUserAuthorization": false,
+      "allowsImages": true,
+      "notes": [
+        "默认模型策略为 gpt-5.5 + model_reasoning_effort=medium；依赖本机 Codex 登录态、模型权限和额度。"
+      ]
+    },
+    "required": true,
+    "modelInvoked": false,
+    "modelUnavailable": true,
+    "schemaValid": false,
+    "blocking": true,
+    "reason": "codex cli review failed to start: fixture model output is not defined for schema: C:\\Users\\User\\Desktop\\CAD-AGENT\\core\\model_review\\schemas\\orchestrator_dispatch_review.schema.json",
+    "errorCategory": "provider_unavailable"
+  },
+  "modelUnavailable": true,
+  "schemaValid": false,
+  "contextLeakAudit": {
+    "schemaVersion": "model-context-leak-audit/v1",
+    "unexpectedProjectContextLoaded": false,
+    "warnings": [],
+    "blocking": false
+  },
+  "modelTrace": {
+    "traceId": "orchestrator-dispatch",
+    "agentId": "pipeline_orchestrator",
+    "taskType": "orchestrator_dispatch_review",
+    "traceDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\codex-model-live-fixture-20260605\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch",
+    "exportManifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\codex-model-live-fixture-20260605\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\export_manifest.json",
+    "contextLeakAuditPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\codex-model-live-fixture-20260605\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\context_leak_audit.json",
+    "manifestPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\codex-model-live-fixture-20260605\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\trace_manifest.json",
+    "reviewPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\codex-model-live-fixture-20260605\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\trace_review.json",
+    "summaryPath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\codex-model-live-fixture-20260605\\model_traces\\pipeline_orchestrator\\orchestrator-dispatch\\trace_summary.md",
+    "traceReviewStatus": "blocked"
+  }
+}

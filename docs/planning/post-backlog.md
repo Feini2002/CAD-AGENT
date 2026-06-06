@@ -26,7 +26,7 @@ Core 与三轨已收口后，后续工作按本台账路由。优先级以 `CORE
 | **BETA-SCENE-04** | 展陈/医疗 scene benchmark | **done** | 场景 manifest | exhibition 7/7 + healthcare 6/6 no-CAD benchmark pass | `docs/verification/beta_scene_04_exhibition_healthcare_boundaries.md`、`output/validation_runs/beta-scene-04-20260528/` |
 | **BETA-CROSS-MACHINE-02** | 换机复验 P0 gate | **done** | AutoCAD 测试会话 | `run_beta_cross_machine_02_gate.py` + MCP 手动画 1 次 | `docs/runbooks/cross-machine-reverify.md` |
 | BETA-AGENT-REGISTRY-01 | 垂直行业登记策略 | **done** | 无 | 策略文档已交付 | `docs/verification/agent_vertical_registry_strategy.md` |
-| BETA-PROPOSAL-02 | 多方案确认流产品化 | ready | 产品需求 | 确认 schema + 测试 | `core/proposal_engine` |
+| **BETA-PROPOSAL-02** | 多方案确认流产品化 | **done** | no-CAD 产品流 | comparison / confirmed finalize benchmark + 18 项 proposal 单测通过；证据边界为 `benchmark_pass_non_cad`，不证明 CAD 几何 | `core/proposal_engine`；`output/test_artifacts/benchmarks/beta_proposal_02/`；`output/test_artifacts/benchmarks/beta_proposal_05/` |
 
 ## 已收口（勿重复开旧轨包）
 

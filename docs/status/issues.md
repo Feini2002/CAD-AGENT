@@ -1,3 +1,79 @@
+## 2026-06-06 旧能力百分比和探索式架构分片会误导真实训练判断
+
+现象：早期开发阶段形成的表 A / B / C、V-PROOF、RCAD 和“真实 CAD 实力 90%”等口径，在当时用于追踪底座施工、registry 和 evidence 覆盖。但系统后续继续加入 CAD Designer Agent 训练、资产库、A-to-A、多 Agent、GPT-5.5 模型桥、Worker 编排、截图和工作台后，这些旧指标仍停留在主叙事位置，容易让用户误以为系统端到端真实绘图能力已经接近 90%。用户实际感受更接近：底座材料很厚，但真实任务成熟度仍可能只有 5%-10%。
+
+影响：如果继续把旧表 C 当作“真实 CAD 实力”，训练前判断会被高估；系统也会继续在画布上分片加模块，而不是把旧模块归入统一生命周期。这样会导致训练、资产、模型桥、工作台和能力证明并列存在，却不知道谁服务谁、谁不能越过谁。
+
+修复 / 计划：新增 `ARCH-CONVERGENCE-01` 架构归并画布工程。旧表 C 降级为 `Core Proof Coverage`，只表示底座证据覆盖；新增 `Agent Task Maturity` 和 `Project Delivery Readiness` 作为真实训练和交付判断口径。正式对象训练暂缓，先同步 `docs/architecture/system-architecture-convergence.md`、`CORE_RESTRUCTURE_PLAN.md`、`docs/planning/任务清单.md`、规则、状态和 OpenSpec 契约 `openspec/changes/unify-system-architecture-canvas/`。
+
+以后规则：任何模块、脚本、Agent、资产、训练项或工作台显示，都必须能归入七层画布：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。旧表 A/B/C 可以作为历史和底座回归，但不得作为端到端真实 CAD 能力主指标。训练恢复前要完成脚本和派生显示口径审计。
+
+相关文件：`docs/architecture/system-architecture-convergence.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_STATUS.md`、`docs/planning/任务清单.md`、`docs/governance/cad-agent-rules.md`、`openspec/changes/unify-system-architecture-canvas/`
+
+## 2026-06-06 本地活体模型桥不能被误解为绕过所有 CAD 证据
+
+现象：用户讨论“Worker / 本地 bridge / Codex CLI / GPT-5.5 / CAD-MCP”时，很容易把三个层级混在一起：一是 Cloudflare Worker 是否已经承载远程触发、状态机、队列和多 Agent 编排；二是 Agent 是否真实调用模型、吃到 prompt 并返回 schema JSON；三是 CAD-MCP 是否已写入 `CODEX_PREVIEW`、是否有 handles readback、是否能交付或进入训练沉淀。
+
+影响：如果把 `modelInvoked=true` 当成 CAD 已验证，系统会再次用模型 pass 替代 validate、dry-run、created handles、bbox / layer / entity audit、visual acceptance、neighbor protection、sourceSpec、reuseReplay 或用户验收。反过来，如果模型因缺 CAD_PLAN / readback / screenshot 证据而返回 `needs_more_evidence` 或 `unavailable`，也可能被误判为“模型没活”，从而掩盖正确的业务阻断。
+
+修复 / 计划：`LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01` 已把独立架构 MD 的剩余路线迁入 `CORE_RESTRUCTURE_PLAN.md` §3.1，并在本地 runtime 加固完成声明分层：`worker_orchestration_ready`、`local_bridge_connected`、`single_agent_live`、`multi_agent_live`、`cad_mcp_preview_live` 和 `formal_training_integrated`。Worker 编排证据必须有 run state、task envelope、队列 / retry、heartbeat 和结果回传；本地活体证据必须有 `modelInvoked=true`、`modelUnavailable=false`、`schemaValid=true`、sanitized `codex.cmd exec --model gpt-5.5` trace、完整 trace 包 diagnostics 和下游 decision；CAD 证据仍按原链路独立验证。
+
+以后规则：Worker 编排只证明任务系统可远程触发和可排队；模型活体调用只证明“Agent 真在思考 / 复审 / 决策”，不证明 CAD 几何、不提升表 C、不等于用户验收。接入 CAD-MCP 前还要确认 Codex 配置不会被 `--ignore-user-config` 连带忽略 MCP；优先使用 bridge-owned Codex config。Worker 是长期编排入口，但不能保存 Codex 登录态、不能直接执行 `codex.cmd`、不能成为任意 shell 代理。
+
+补充规则：Worker 实现不能只跑快乐路径。W1 起必须覆盖 timeout、circuit breaker、retry 上限、dead-letter queue / 等价 DLQ、bridge heartbeat 过期、idempotency、backpressure、kill switch、日志脱敏和 security-blocked 不重试。任何超时、provider unavailable、bridge offline 或 CAD-MCP unavailable 都只能进入可审计状态，不能伪造模型输出或 CAD evidence。
+
+相关文件：`CORE_RESTRUCTURE_PLAN.md`、`core/orchestrator/local_live_model_bridge*.py`、`scripts/diagnose_local_live_model_bridge.py`、`agents/pipeline/README.md`、`docs/architecture/cad-agent-task-chain.md`
+
+## 2026-06-04 A2 局部修复不能全局清理 CODEX_PREVIEW，误删 A1 表格框线
+
+现象：用户只要求修复 `standard_assets.dwg` 的 A2 尺寸 / 文字 / 引线标准区域，但上一轮为了清掉 A2 上的遮挡线框，脚本把整张系统资产 DWG 的 `CODEX_PREVIEW` 实体全局删除。A1 线型 / 图层 / 填充标准表格的框线和行列线当时也在 `CODEX_PREVIEW` 上，因此被误删，导致 A1 原有表格内容只剩文字和样线，缺少表格骨架。
+
+影响：这是局部修复边界错误，会破坏用户未授权修改的区域；也会让“视觉验收通过”产生假阳性，因为 A2 看起来干净了，但 A1 已经损坏。截图非空、A2 变清爽、对象数量回读通过都不能替代分区级回读和未触碰区域保护。
+
+修复 / 计划：`_purge_forbidden_preview_layer_content()` 已改为显式 `scope_bbox` 才能执行；没有范围时返回 `not_run`，常规 layout 只允许把历史 proof 几何迁到 `ASSET_PROOF_CONTENT`，不得全图删除。新增回归测试覆盖“A2 范围内可删、A1 范围外必须保留”和“无范围不执行”。真实 CAD 已在 `standard_assets.dwg` 原位恢复 A1 线型表框线，新增 191 条 `ASSET_PROOF_CONTENT` 表格线，无删除现有实体，报告为 `output/validation_runs/system-assets/asset-library-shelves/a1_linetype_frame_repair_report.json`，截图为 `output/previews/system-asset-a1-restored-a2-cleaned.png`。
+
+以后规则：局部修复必须先锁定目标分区、handles 或 bbox；任何“清理残留 / 删除噪声 / purge preview layer”都不得默认全局执行。若历史资产内容仍在 `CODEX_PREVIEW`，优先做图层归一化而不是删除；只有用户授权且有目标 bbox / handles 时才允许范围内删除。验收必须同时检查目标区和相邻未授权区是否被误伤。
+
+相关文件：`scripts/layout_system_asset_shelves.py`、`tests/core/test_system_asset_sedimentation.py`、`libraries/system_library/drawing_standards/basic/standard_assets.dwg`
+
+## 2026-06-03 系统资产 active evidence refs 不能指向已经缺失的历史产物
+
+现象：仓库治理硬门禁补强后，`run_asset_library_governance_check.py` 正确暴露了系统资产合同 / registry 中仍引用已不存在的历史 evidence 文件，以及 latest shelf layout report 缺失的问题。若继续把这些路径当 active evidence，工作台、治理脚本和人工复审会以为资产证据仍可追溯，但实际已经断链。
+
+影响：资产沉淀可能被误报为 verified / 可复用；A2 仓库排版即使真实 CAD 已重写，也会因为旧证据引用缺失而无法闭合。更危险的是用空 JSON、空截图或派生快照补洞，会把“不可追溯”伪装成“证据存在”。
+
+修复 / 计划：`A2-ASSET-WAREHOUSE-EVIDENCE-CLOSURE-REALCAD-01` 已新增 evidence closure 工具，active refs 只指向本轮存在且可读的 shelf report、聚焦截图和 reuse probe；历史缺失 refs 只能进入归档边界，不再作为 active pass 条件。治理脚本已重新通过，`sediment_system_asset.py --verify --category drawing_standards.basic` 也通过。
+
+以后规则：系统资产证据闭合只能用当前真实报告、CAD readback、截图或 reuse probe 重新闭合；不得创建空文件、派生快照或 sync report 冒充历史证据。闭合报告必须说明哪些历史文件没有重建，以及当前几何证明来自哪一组替代证据。
+
+相关文件：`core/assets/asset_evidence_closure.py`、`scripts/close_system_asset_evidence_refs.py`、`libraries/system_library/drawing_standards/basic/assets.json`、`libraries/system_library/registry.json`、`output/validation_runs/system-assets/evidence-closure/drawing_standards_basic_evidence_closure.json`
+
+## 2026-06-03 A2 仓库证据闭合不等于表 C 历史 coverage 缺口已修复
+
+现象：A2 仓库真实 CAD 修复后，资产库治理与沉淀 verify 已经 pass；但 `scripts/run_data_bloat_audit.py --summary-only` 仍返回 blocked，剩余阻断为 coverage `report_path_missing=303`。
+
+影响：如果把 A2 资产证据闭合和表 C coverage 历史证据缺口混在一起，Agent 可能会误报“全仓证据闭合完成”，或者为了让 audit 变绿而批量伪造 / 空置 303 条历史报告路径。
+
+修复 / 计划：本包只解决 drawing standards basic / A2 仓库这一组系统资产证据链。303 条 coverage 缺口保持 blocked，后续必须单独恢复 / 重跑 Table C 对应证据，或审查后降级不具备证据的 registry claims。
+
+以后规则：完成系统资产仓库治理包时，只能声称资产库证据闭合；不得把 `run_data_bloat_audit.py` 的 coverage 阻断说成已解决。表 C 证据缺口必须走表 C / registry 专项包。
+
+相关文件：`scripts/run_data_bloat_audit.py`、`output/validation_runs/capability-lab/cad_capability_coverage.json`、`CORE_RESTRUCTURE_PLAN.md`
+
+## 2026-06-03 模型辅助输出不能被误当作执行授权
+
+现象：资产守门员和修复 Agent 引入模型能力后，最危险的误用不是“模型判断错”，而是后续链路把模型的分类 / clean source 建议 / repair plan 候选当作已经通过的规则门禁，甚至直接执行删除、保存或正式图层修改。
+
+影响：如果模型建议覆盖 `sourceBoundaryDecision`、CAD readback、reuse probe 或保存边界，系统资产库可能再次把训练污染、whole modelspace、current screen 或 proof panel 当作 clean source；如果 repair plan 候选能直接带 CAD 命令，局部修复会绕开 handles / bbox / layer 证据，破坏用户 DWG 保护规则。
+
+修复 / 计划：`MODEL-BACKED-ASSET-GOVERNOR-REPAIR-P3` 已把两类模型输出固定为只读建议：资产守门员输出 `modelAssistedDecision` 但规则决策不被覆盖；修复模型输出 `modelBackedRepairPlan` / `repairPlanCandidate`，且 `executionPolicy` 必须是 `proposal_only`。schema 和转换器拒绝 `cadCommands`、`executeNow`、`saveCurrentDwg`、`deleteEntities`、`executionAuthorized` 等直接执行字段。
+
+以后规则：模型型 Agent 适合做视觉理解、资产分类和修复计划草案；执行、保存、删除、正式图层、表 C、资产 verified 晋升和用户 DWG 保护仍由规则门禁、CAD readback、精确 handles / bbox 和用户授权决定。任何模型建议如果缺字段、越权或要求 broad scope，都应进入 blocked / manual review，而不是被自动修正后放行。
+
+相关文件：`core/model_review/asset_governor_review.py`、`core/model_review/repair_plan_review.py`、`agents/pipeline/asset_governor/agent.json`、`agents/pipeline/repair/agent.json`、`agents/COMMON_PROMPT_CONTRACT.md`
+
+2026-06-04 补充：`DELETE-SCOPE-NEIGHBOR-PROTECTION-GATE-01` 已新增确定性 `delete_scope_gate.json` / `neighbor_protection.json` 生成器。后续模型给出的 repair / cleanup 建议必须先落到 target handles / scope bbox、victim preview、occupied bbox 和 neighbor diff 这些规则证据上；缺证据仍 blocked。
+
 ## 2026-06-03 训练前防膨胀不能绕过证据闭合
 
 现象：`capability-map-data.js` 已经是明显膨胀的派生快照，训练、复训、正式收尾型工作台同步和系统资产沉淀还会持续产生 debug、test artifacts、retry、dry-run、execution summary、旧截图和临时报告。反方复核还指出当前事实源闭合可能已有缺口：若 active `fact_source`、registry evidence 或表 C report path 不可达，直接清理只会把断链包装成健康状态。
@@ -468,7 +544,7 @@
 | Schema 未登记 | schema 文件可能存在但 validator 不知道 | 新 schema 必须同步 registry、example、invalid fixture 和 tests |
 | Markdown 进度漂移 | 表 A/B/C、RCAD 烟囱和 coverage JSON 容易被旧快照覆盖 | 表 C 以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准；任务 next 以 PlanMD + 任务清单同步为准 |
 | guard / negative 行误升 showcase | 安全守卫或负例拦截会被误算成几何能力，抬高表 C | negative / guard registry 行必须保持 `smoke`；只证明 guard-only，不得写成 `geometry_verified` / `showcase` |
-| 普通回复表格噪声 / 旧上下文覆盖新规则 | 旧版 `AGENTS.md` 曾要求默认带精简进度表；若会话压缩或早期注入的旧规则仍在上下文中，可能覆盖当前仓库 opt-in 规则，导致普通回复误带表 | 普通最终回复默认不附进度表；只有用户点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C 或真实 CAD 实力时才展开表格，并先报表 C 主指标；文档审计新增 stale output policy 检查 |
+| 普通回复表格噪声 / 旧上下文覆盖新规则 | 旧版 `AGENTS.md` 曾要求默认带精简进度表；若会话压缩或早期注入的旧规则仍在上下文中，可能覆盖当前仓库 opt-in 规则，导致普通回复误带表 | 普通最终回复默认不附进度表；只有用户点名开发状态查询、进度、完整状态、交接、审计、表 A/B/C、表 C 或真实 CAD 实力时才展开表格；涉及真实 CAD 实力时先拆 `Core Proof Coverage`、`Agent Task Maturity` 和 `Project Delivery Readiness`，表 C 只作为 Core Proof Coverage 机器快照，不代表端到端交付能力 |
 | 常识资料被误当成能力 | 把 GitHub 方法论、图库、PDF、DWG 或截图放进仓库，不会自动让 Agent 稳定使用，可能虚报“已学会” | 常识必须经过 `source_note → knowledge_summary → object_or_rule_candidate → executable_check → evidence_boundary`；未形成可执行检查前只能作为参考知识 |
 | raw 标准图库进 git 的边界风险 | 用户需要 `standard_cad_library_raw/` 随 git 迁移；如果批次说明缺失，可能把临时文件、授权不清资料或下载失败缓存误提交，也可能把 raw 命中误报为系统能力 | 每批次默认跑 `scripts/run_asset_raw_intake.py --write` 生成 `source_note`、reference manifest 和 inferred annotation；提交前检查 `git status --short standard_cad_library_raw libraries/reference_library libraries/system_library`；raw 永远先按 `reference_only` 处理 |
 | HTML 训练工作台被误当能力证明或最新事实源 | 根目录 `capability-map.html` 是给人看的计划 / 覆盖清单，如果勾选口径不严或数据快照未同步，可能被误读为真实 CAD 已验证或最新训练状态 | 页面只显示阶段；勾选必须来自 raw 导入、常识整理、训练通过或自产资产晋升事实；真实几何能力仍看 CAD 证据和表 C；训练、registry、coverage 或 Prompt 改动后必须跑 `scripts/sync_training_workbench.py`，并通过 `scripts/run_training_workbench_agent_check.py` |
@@ -1082,11 +1158,11 @@
 
 日期：2026-06-03
 
-现象：`capability-map-data.js` 已从多 MB / 多万行派生快照瘦到 1,361,055 bytes / 1 行，legacy aliases 已移除；但 `scripts/run_data_bloat_audit.py --summary-only` 仍返回 `blocked`，`scripts/sync_training_workbench.py` 也仍失败。失败原因不是 compact 输出，而是 13 个 active `fact_source` 路径不存在，且 coverage `evidence_path_audit.report_path_missing=303`。
+现象：`capability-map-data.js` 已从多 MB / 多万行派生快照瘦到 compact 1 行，legacy aliases 已移除。后续小修已把 13 个指向缺失历史 output 的 active `fact_source` 改为 `archived` 并保留 `archiveReason`，`scripts/sync_training_workbench.py` 和 Agent check 已恢复 pass；但 `scripts/run_data_bloat_audit.py --summary-only` 仍返回 `blocked`，剩余原因是 coverage `evidence_path_audit.report_path_missing=303`。
 
-影响：如果只看工作台页面能否打开或快照大小，就会误判系统健康；如果为了让同步变绿而把缺失事实源改成 derived 或删除引用，会把“证据链断裂”伪装成“治理完成”。
+影响：如果只看工作台页面能否打开或快照大小，就会误判系统健康；如果为了让同步变绿而把缺失事实源改成 derived、删除引用或生成空报告，会把“证据链断裂”伪装成“治理完成”。当前 active training fact source 已闭合，但表 C registry 的历史 showcase 证据路径仍不可复盘。
 
-修复 / 计划：本轮新增 A0 data-bloat audit，只读报告 `protected`、`derived`、`candidate`、`blocked`；active fact_source 缺失、派生快照误登记 fact_source、coverage report path missing 都会 hard block。后续要么恢复这些事实源文件，要么审查后把不再代表当前事实的条目降级 / 归档，并同步 coverage 证据索引；不得用空 stub 或页面快照替代真实报告。
+修复 / 计划：A0 data-bloat audit 已只读报告 `protected`、`derived`、`candidate`、`blocked`；active fact_source 缺失、派生快照误登记 fact_source、coverage report path missing 都会 hard block。`DATA-BLOAT-EVIDENCE-CLOSURE-01` 已完成训练事实源归档修复；剩余 303 条 coverage 缺口应另开表 C 证据包，恢复 / 重跑历史 evidence reports，或审查后降级不再具备证据的 registry claims；不得用空 stub 或页面快照替代真实报告。
 
 以后规则：防膨胀第一步先看 A0 blocked，而不是先清 output 或改快照；`capability-map-data.js`、sync report、retention report、data-bloat audit report 只能是 derived / diagnostic，不得作为训练 fact_source。
 
@@ -1231,3 +1307,31 @@
 以后规则：系统资产 DWG 仓库验收必须同时有 `visualClearanceAudit.status=pass` 和 `visualReadabilityAudit.status=pass`；截图只是人工复审入口，不能替代 handles / bbox / readback / readability metrics。用户指出“排版乱”时，先补机器可读性门禁，再修布局。
 
 相关文件：`scripts/layout_system_asset_shelves.py`、`core/assets/system_asset_library_governance.py`、`core/orchestrator/a_to_a_task_contract.py`、`agents/pipeline/visual_layout_reviewer/agent.json`、`agents/COMMON_PROMPT_CONTRACT.md`
+
+### 问题：规则型 Agent 容易被误解为真实模型 Agent，视觉仓库“乱码感”也会漏过纯规则门禁
+
+日期：2026-06-03
+
+现象：用户复审 `standard_assets.dwg` 时指出 A2 尺寸 / 文字 / 引线标准在仓库总览里像乱码。只读调查显示中文编码本身通过，主要问题是 A2 proof panel 在总览中缩得过小、文本/尺寸密度过高，并且存在 `CODEX_PREVIEW` 遗留几何污染；同时用户追问系统里的 `pipeline_*` Agent 是否真的调用模型。
+
+影响：如果仓库只保留角色名、schema 和规则门禁，容易让人以为每个 Agent 都有独立视觉理解；实际上大多数 Agent 只是契约型 / 规则型角色，能检查字段和阻断流程，但不能像当前 Codex 会话一样理解截图观感。纯规则门禁能抓 bbox、图层、overlap，却可能漏掉“整体像乱码、不可读、不像仓库”的视觉体验问题。
+
+修复 / 计划：第一包已新增 `core/model_review` 和视觉 `modelBackedReview` 门禁，把 `codex.cmd exec` 作为本机只读模型复审桥；`pipeline_visual_layout_reviewer` 可在 workflow 要求时消费模型 JSON，失败则阻断 A-to-A。第二包仍需补全 layer census、A1/A2 内 `CODEX_PREVIEW` 污染阻断和证据文件存在性检查，并实际修复当前仓库排版。
+
+以后规则：Agent 类型必须明确表达：契约型负责角色和输出，规则型负责可确定证据，模型型必须显式调用模型并产生 schema 化报告。模型复审不能写 CAD、不能保存 DWG、不能替代 handles / bbox / layer / sourceSpec / reuseReplay；但当视觉仓库验收出现“看起来乱、密、像乱码”时，应优先考虑模型型 reviewer 或人工复审，而不是只拿规则 pass 反驳视觉反馈。
+
+相关文件：`CORE_RESTRUCTURE_PLAN.md`、`core/model_review/`、`core/orchestrator/a_to_a_task_contract.py`、`core/assets/system_asset_library_governance.py`、`agents/pipeline/visual_layout_reviewer/agent.json`、`agents/COMMON_PROMPT_CONTRACT.md`
+
+### 问题：仓库治理只看 layerSamples 和 registry 引用，会漏掉 A1/A2 污染与断链证据
+
+日期：2026-06-03
+
+现象：A2 尺寸 / 文字 / 引线标准在仓库总览里有“乱码感”时，旧 `protectedContentReadback.clusters[*].layerSamples` 只取前若干实体图层；如果 `CODEX_PREVIEW` 污染对象不在 sample 窗口内，治理报告可能显示 proof content 已迁出预览层。另一个问题是资产合同、visible panel、reuse probe 和 evidence links 中引用的报告 / 截图可以已经不存在，但治理脚本仍只看 metadata 结构和 registry 条目。
+
+影响：这会造成两类虚绿：一是仓库里实际仍混有训练 / 预览污染，却被 sample-only 报告漏过；二是资产看似有证据路径，实际文件缺失，后续训练工作台、复用审计和人工复审都断链。
+
+修复 / 计划：已新增 `SYSTEM-ASSET-WAREHOUSE-GOVERNANCE-P2`。布局脚本输出 full layer census：`layers` / `layerCounts`；Core `audit_visual_rack_plan()` 接收 `protected_content_report`，sample-only fail，`CODEX_PREVIEW` / `ASSET_SOURCE_BOUNDARY` 进入保护内容即 fail。`run_asset_library_governance_check.py` 递归检查白名单证据字段引用的本地文件是否存在。
+
+以后规则：系统资产仓库复审不得只用 `layerSamples`、截图或 registry 引用证明干净；必须看 full layer census、created handles/bbox、clearance/readability audit 和证据文件存在性。缺 latest shelf layout report 或缺 referenced evidence file 时，应先修证据链或重新生成，而不是继续声称资产库已治理通过。
+
+相关文件：`scripts/layout_system_asset_shelves.py`、`core/assets/system_asset_library_governance.py`、`scripts/run_asset_library_governance_check.py`、`tests/core/test_asset_library_governance.py`、`agents/pipeline/visual_layout_reviewer/agent.json`

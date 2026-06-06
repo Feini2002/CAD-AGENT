@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "orchestrator-host-dispatch-plan/v1",
+  "runId": "model-agent-live-collab-proof-live-20260605-codex-audit",
+  "status": "blocked",
+  "route": "standard_draw",
+  "taskKind": "ordinary_orchestration",
+  "userIntentSummary": "让模型型 Agent 协作设计一个茶几符号，并做 preview-only CAD 校验。",
+  "requiredAgents": [
+    "pipeline_context_curator",
+    "pipeline_visual_intent",
+    "pipeline_intent",
+    "pipeline_execute",
+    "pipeline_audit",
+    "pipeline_visual_acceptance_reviewer",
+    "pipeline_delivery"
+  ],
+  "tasks": [
+    {
+      "taskId": "01-pipeline_context_curator",
+      "agentId": "pipeline_context_curator",
+      "status": "pending",
+      "reason": "route=standard_draw requires registered pipeline responsibility",
+      "hardGate": "cad_plan_required"
+    },
+    {
+      "taskId": "02-pipeline_visual_intent",
+      "agentId": "pipeline_visual_intent",
+      "status": "pending",
+      "reason": "route=standard_draw requires registered pipeline responsibility",
+      "hardGate": "cad_plan_required"
+    },
+    {
+      "taskId": "03-pipeline_intent",
+      "agentId": "pipeline_intent",
+      "status": "pending",
+      "reason": "route=standard_draw requires registered pipeline responsibility",
+      "hardGate": "cad_plan_required"
+    },
+    {
+      "taskId": "04-pipeline_execute",
+      "agentId": "pipeline_execute",
+      "status": "pending",
+      "reason": "CAD execution remains delegated and gated; orchestrator host is read-only",
+      "hardGate": "cad_plan_required"
+    },
+    {
+      "taskId": "05-pipeline_audit",
+      "agentId": "pipeline_audit",
+      "status": "pending",
+      "reason": "machine audit/readback evidence is required before delivery claims",
+      "hardGate": "cad_readback"
+    },
+    {
+      "taskId": "06-pipeline_visual_acceptance_reviewer",
+      "agentId": "pipeline_visual_acceptance_reviewer",
+      "status": "pending",
+      "reason": "visible CAD output requires user-facing visual acceptance before delivery",
+      "hardGate": "visual_acceptance_review"
+    },
+    {
+      "taskId": "07-pipeline_delivery",
+      "agentId": "pipeline_delivery",
+      "status": "pending",
+      "reason": "route=standard_draw requires registered pipeline responsibility",
+      "hardGate": "cad_plan_required"
+    }
+  ],
+  "hardGates": [
+    "cad_plan_required",
+    "validate_plan",
+    "dry_run",
+    "cad_readback",
+    "visual_acceptance_review",
+    "closeout_gate"
+  ],
+  "needsUserConfirmation": false,
+  "blockedBeforeExecution": true,
+  "blockingReasons": [
+    "request_kind='draw' requires cad_policy.allow_cad=true"
+  ],
+  "additionalAgentRequests": [],
+  "evidenceBoundary": [
+    "orchestrator host runtime is read-only",
+    "dispatch plan does not execute CAD",
+    "dispatch plan does not prove CAD geometry or user acceptance"
+  ]
+}

@@ -17,7 +17,7 @@ except ModuleNotFoundError:  # Imported as scripts.sync_training_workbench.
 ensure_project_root_on_path()
 
 from core.verification.capability_coverage import DEFAULT_OUTPUT_PATH, DEFAULT_REGISTRY_PATH, run_capability_coverage  # noqa: E402
-from core.training.learning_promotion import promote_training_acceptance  # noqa: E402
+from core.training.learning_promotion import promote_training_acceptance, write_common_prompt_contract  # noqa: E402
 from scripts import build_capability_map_data  # noqa: E402
 from scripts.run_training_workbench_agent_check import run_agent_check  # noqa: E402
 
@@ -74,6 +74,8 @@ def sync_training_workbench(
             registry_path=DEFAULT_REGISTRY_PATH,
             output_path=DEFAULT_OUTPUT_PATH,
         )
+
+    write_common_prompt_contract(root)
 
     report_paths = [path for path in build_capability_map_data.training_acceptance_report_paths() if path.exists()]
     if report_paths:

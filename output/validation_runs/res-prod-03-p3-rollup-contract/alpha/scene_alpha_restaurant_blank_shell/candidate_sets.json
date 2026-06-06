@@ -1,0 +1,3030 @@
+{
+  "version": "0.1",
+  "selection": {
+    "circulation_strategy": "l_spine",
+    "circulation_candidate_id": "circulation-l_spine",
+    "zone_id": "zone-shell-restaurant-small-front-l_spine-right"
+  },
+  "circulation_branches": [
+    {
+      "circulation_candidate_id": "circulation-l_spine",
+      "strategy": "l_spine",
+      "score": 1.0125,
+      "status": "pass",
+      "selected": true,
+      "zone_count": 2,
+      "zone_placement_candidates": [
+        {
+          "zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+          "zone_score": 0.9336,
+          "side_of_path": "right",
+          "summary": {
+            "placement_count": 5,
+            "placed_count": 5,
+            "failed_count": 0,
+            "failure_reasons": [],
+            "object_types": [
+              "chair",
+              "counter",
+              "display_unit",
+              "shelf",
+              "table"
+            ]
+          },
+          "placements": [
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-right-table",
+              "object_type": "table",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+              "status": "placed",
+              "base_point": [
+                0.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  0.0,
+                  0.0
+                ],
+                "max": [
+                  1200.0,
+                  700.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  -100.0,
+                  -100.0
+                ],
+                "max": [
+                  1300.0,
+                  800.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-table-1200",
+                "block": {
+                  "block_id": "block-table-1200",
+                  "block_version": "1",
+                  "name": "Table 1200",
+                  "category": "table",
+                  "domain": "generic",
+                  "tags": [
+                    "preview"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_TABLE_1200",
+                    "definition_name": "BLOCK_TABLE_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "chair_pullback",
+                      "offset_mm": 300,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-right-chair",
+              "object_type": "chair",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+              "status": "placed",
+              "base_point": [
+                1500.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  1500.0,
+                  0.0
+                ],
+                "max": [
+                  2000.0,
+                  500.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  1400.0,
+                  -100.0
+                ],
+                "max": [
+                  2100.0,
+                  600.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-chair-500",
+                "block": {
+                  "block_id": "block-chair-500",
+                  "block_version": "1",
+                  "name": "Chair 500",
+                  "category": "chair",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "seating"
+                  ],
+                  "size": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_CHAIR_500",
+                    "definition_name": "BLOCK_CHAIR_500",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      250.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "rear_clearance",
+                      "offset_mm": 300,
+                      "side": "back"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-right-counter",
+              "object_type": "counter",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+              "status": "placed",
+              "base_point": [
+                2300.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  2300.0,
+                  0.0
+                ],
+                "max": [
+                  4100.0,
+                  700.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  2200.0,
+                  -100.0
+                ],
+                "max": [
+                  4200.0,
+                  800.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-counter-1800",
+                "block": {
+                  "block_id": "block-counter-1800",
+                  "block_version": "1",
+                  "name": "Counter 1800",
+                  "category": "counter",
+                  "domain": "retail",
+                  "tags": [
+                    "preview",
+                    "retail",
+                    "service"
+                  ],
+                  "size": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 600,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_COUNTER_1800",
+                    "definition_name": "BLOCK_COUNTER_1800",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      900.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "service_aisle",
+                      "offset_mm": 600,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-right-shelf",
+              "object_type": "shelf",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+              "status": "placed",
+              "base_point": [
+                4400.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  4400.0,
+                  0.0
+                ],
+                "max": [
+                  5300.0,
+                  350.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  4300.0,
+                  -100.0
+                ],
+                "max": [
+                  5400.0,
+                  450.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-shelf-900",
+                "block": {
+                  "block_id": "block-shelf-900",
+                  "block_version": "1",
+                  "name": "Shelf 900",
+                  "category": "shelf",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "storage"
+                  ],
+                  "size": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_SHELF_900",
+                    "definition_name": "BLOCK_SHELF_900",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      450.0,
+                      175.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "front_access",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-right-display_unit",
+              "object_type": "display_unit",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-right",
+              "status": "placed",
+              "base_point": [
+                5600.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  5600.0,
+                  0.0
+                ],
+                "max": [
+                  6800.0,
+                  500.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  5500.0,
+                  -100.0
+                ],
+                "max": [
+                  6900.0,
+                  600.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-display-unit-1200",
+                "block": {
+                  "block_id": "block-display-unit-1200",
+                  "block_version": "1",
+                  "name": "Display Unit 1200",
+                  "category": "display_unit",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "display"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "definition_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "viewer_clearance",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            }
+          ],
+          "rank_key": [
+            true,
+            5,
+            0,
+            0.9336
+          ],
+          "selected": true
+        },
+        {
+          "zone_id": "zone-shell-restaurant-small-front-l_spine-left",
+          "zone_score": 0.9336,
+          "side_of_path": "left",
+          "summary": {
+            "placement_count": 5,
+            "placed_count": 5,
+            "failed_count": 0,
+            "failure_reasons": [],
+            "object_types": [
+              "chair",
+              "counter",
+              "display_unit",
+              "shelf",
+              "table"
+            ]
+          },
+          "placements": [
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-left-table",
+              "object_type": "table",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-left",
+              "status": "placed",
+              "base_point": [
+                0.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  0.0,
+                  3600.0
+                ],
+                "max": [
+                  1200.0,
+                  4300.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  -100.0,
+                  3500.0
+                ],
+                "max": [
+                  1300.0,
+                  4400.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-table-1200",
+                "block": {
+                  "block_id": "block-table-1200",
+                  "block_version": "1",
+                  "name": "Table 1200",
+                  "category": "table",
+                  "domain": "generic",
+                  "tags": [
+                    "preview"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_TABLE_1200",
+                    "definition_name": "BLOCK_TABLE_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "chair_pullback",
+                      "offset_mm": 300,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-left-chair",
+              "object_type": "chair",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-left",
+              "status": "placed",
+              "base_point": [
+                1500.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  1500.0,
+                  3600.0
+                ],
+                "max": [
+                  2000.0,
+                  4100.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  1400.0,
+                  3500.0
+                ],
+                "max": [
+                  2100.0,
+                  4200.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-chair-500",
+                "block": {
+                  "block_id": "block-chair-500",
+                  "block_version": "1",
+                  "name": "Chair 500",
+                  "category": "chair",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "seating"
+                  ],
+                  "size": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_CHAIR_500",
+                    "definition_name": "BLOCK_CHAIR_500",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      250.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "rear_clearance",
+                      "offset_mm": 300,
+                      "side": "back"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-left-counter",
+              "object_type": "counter",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-left",
+              "status": "placed",
+              "base_point": [
+                2300.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  2300.0,
+                  3600.0
+                ],
+                "max": [
+                  4100.0,
+                  4300.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  2200.0,
+                  3500.0
+                ],
+                "max": [
+                  4200.0,
+                  4400.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-counter-1800",
+                "block": {
+                  "block_id": "block-counter-1800",
+                  "block_version": "1",
+                  "name": "Counter 1800",
+                  "category": "counter",
+                  "domain": "retail",
+                  "tags": [
+                    "preview",
+                    "retail",
+                    "service"
+                  ],
+                  "size": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 600,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_COUNTER_1800",
+                    "definition_name": "BLOCK_COUNTER_1800",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      900.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "service_aisle",
+                      "offset_mm": 600,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-left-shelf",
+              "object_type": "shelf",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-left",
+              "status": "placed",
+              "base_point": [
+                4400.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  4400.0,
+                  3600.0
+                ],
+                "max": [
+                  5300.0,
+                  3950.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  4300.0,
+                  3500.0
+                ],
+                "max": [
+                  5400.0,
+                  4050.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-shelf-900",
+                "block": {
+                  "block_id": "block-shelf-900",
+                  "block_version": "1",
+                  "name": "Shelf 900",
+                  "category": "shelf",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "storage"
+                  ],
+                  "size": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_SHELF_900",
+                    "definition_name": "BLOCK_SHELF_900",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      450.0,
+                      175.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "front_access",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-l_spine-left-display_unit",
+              "object_type": "display_unit",
+              "zone_id": "zone-shell-restaurant-small-front-l_spine-left",
+              "status": "placed",
+              "base_point": [
+                5600.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  5600.0,
+                  3600.0
+                ],
+                "max": [
+                  6800.0,
+                  4100.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  5500.0,
+                  3500.0
+                ],
+                "max": [
+                  6900.0,
+                  4200.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-display-unit-1200",
+                "block": {
+                  "block_id": "block-display-unit-1200",
+                  "block_version": "1",
+                  "name": "Display Unit 1200",
+                  "category": "display_unit",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "display"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "definition_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "viewer_clearance",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            }
+          ],
+          "rank_key": [
+            true,
+            5,
+            0,
+            0.9336
+          ],
+          "selected": false
+        }
+      ]
+    },
+    {
+      "circulation_candidate_id": "circulation-straight_spine",
+      "strategy": "straight_spine",
+      "score": 0.8,
+      "status": "pass",
+      "selected": false,
+      "zone_count": 2,
+      "zone_placement_candidates": [
+        {
+          "zone_id": "zone-shell-restaurant-small-front-straight_spine-right",
+          "zone_score": 0.9336,
+          "side_of_path": "right",
+          "summary": {
+            "placement_count": 5,
+            "placed_count": 5,
+            "failed_count": 0,
+            "failure_reasons": [],
+            "object_types": [
+              "chair",
+              "counter",
+              "display_unit",
+              "shelf",
+              "table"
+            ]
+          },
+          "placements": [
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-right-table",
+              "object_type": "table",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-right",
+              "status": "placed",
+              "base_point": [
+                0.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  0.0,
+                  0.0
+                ],
+                "max": [
+                  1200.0,
+                  700.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  -100.0,
+                  -100.0
+                ],
+                "max": [
+                  1300.0,
+                  800.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-table-1200",
+                "block": {
+                  "block_id": "block-table-1200",
+                  "block_version": "1",
+                  "name": "Table 1200",
+                  "category": "table",
+                  "domain": "generic",
+                  "tags": [
+                    "preview"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_TABLE_1200",
+                    "definition_name": "BLOCK_TABLE_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "chair_pullback",
+                      "offset_mm": 300,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-right-chair",
+              "object_type": "chair",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-right",
+              "status": "placed",
+              "base_point": [
+                1500.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  1500.0,
+                  0.0
+                ],
+                "max": [
+                  2000.0,
+                  500.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  1400.0,
+                  -100.0
+                ],
+                "max": [
+                  2100.0,
+                  600.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-chair-500",
+                "block": {
+                  "block_id": "block-chair-500",
+                  "block_version": "1",
+                  "name": "Chair 500",
+                  "category": "chair",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "seating"
+                  ],
+                  "size": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_CHAIR_500",
+                    "definition_name": "BLOCK_CHAIR_500",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      250.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "rear_clearance",
+                      "offset_mm": 300,
+                      "side": "back"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-right-counter",
+              "object_type": "counter",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-right",
+              "status": "placed",
+              "base_point": [
+                2300.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  2300.0,
+                  0.0
+                ],
+                "max": [
+                  4100.0,
+                  700.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  2200.0,
+                  -100.0
+                ],
+                "max": [
+                  4200.0,
+                  800.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-counter-1800",
+                "block": {
+                  "block_id": "block-counter-1800",
+                  "block_version": "1",
+                  "name": "Counter 1800",
+                  "category": "counter",
+                  "domain": "retail",
+                  "tags": [
+                    "preview",
+                    "retail",
+                    "service"
+                  ],
+                  "size": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 600,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_COUNTER_1800",
+                    "definition_name": "BLOCK_COUNTER_1800",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      900.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "service_aisle",
+                      "offset_mm": 600,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-right-shelf",
+              "object_type": "shelf",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-right",
+              "status": "placed",
+              "base_point": [
+                4400.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  4400.0,
+                  0.0
+                ],
+                "max": [
+                  5300.0,
+                  350.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  4300.0,
+                  -100.0
+                ],
+                "max": [
+                  5400.0,
+                  450.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-shelf-900",
+                "block": {
+                  "block_id": "block-shelf-900",
+                  "block_version": "1",
+                  "name": "Shelf 900",
+                  "category": "shelf",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "storage"
+                  ],
+                  "size": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_SHELF_900",
+                    "definition_name": "BLOCK_SHELF_900",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      450.0,
+                      175.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "front_access",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-right-display_unit",
+              "object_type": "display_unit",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-right",
+              "status": "placed",
+              "base_point": [
+                5600.0,
+                0.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  5600.0,
+                  0.0
+                ],
+                "max": [
+                  6800.0,
+                  500.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  5500.0,
+                  -100.0
+                ],
+                "max": [
+                  6900.0,
+                  600.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-display-unit-1200",
+                "block": {
+                  "block_id": "block-display-unit-1200",
+                  "block_version": "1",
+                  "name": "Display Unit 1200",
+                  "category": "display_unit",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "display"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "definition_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "viewer_clearance",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            }
+          ],
+          "rank_key": [
+            true,
+            5,
+            0,
+            0.9336
+          ],
+          "selected": false
+        },
+        {
+          "zone_id": "zone-shell-restaurant-small-front-straight_spine-left",
+          "zone_score": 0.9336,
+          "side_of_path": "left",
+          "summary": {
+            "placement_count": 5,
+            "placed_count": 5,
+            "failed_count": 0,
+            "failure_reasons": [],
+            "object_types": [
+              "chair",
+              "counter",
+              "display_unit",
+              "shelf",
+              "table"
+            ]
+          },
+          "placements": [
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-left-table",
+              "object_type": "table",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-left",
+              "status": "placed",
+              "base_point": [
+                0.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  0.0,
+                  3600.0
+                ],
+                "max": [
+                  1200.0,
+                  4300.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  -100.0,
+                  3500.0
+                ],
+                "max": [
+                  1300.0,
+                  4400.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-table-1200",
+                "block": {
+                  "block_id": "block-table-1200",
+                  "block_version": "1",
+                  "name": "Table 1200",
+                  "category": "table",
+                  "domain": "generic",
+                  "tags": [
+                    "preview"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_TABLE_1200",
+                    "definition_name": "BLOCK_TABLE_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "chair_pullback",
+                      "offset_mm": 300,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-left-chair",
+              "object_type": "chair",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-left",
+              "status": "placed",
+              "base_point": [
+                1500.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  1500.0,
+                  3600.0
+                ],
+                "max": [
+                  2000.0,
+                  4100.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  1400.0,
+                  3500.0
+                ],
+                "max": [
+                  2100.0,
+                  4200.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-chair-500",
+                "block": {
+                  "block_id": "block-chair-500",
+                  "block_version": "1",
+                  "name": "Chair 500",
+                  "category": "chair",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "seating"
+                  ],
+                  "size": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_CHAIR_500",
+                    "definition_name": "BLOCK_CHAIR_500",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      250.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "rear_clearance",
+                      "offset_mm": 300,
+                      "side": "back"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-left-counter",
+              "object_type": "counter",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-left",
+              "status": "placed",
+              "base_point": [
+                2300.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  2300.0,
+                  3600.0
+                ],
+                "max": [
+                  4100.0,
+                  4300.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  2200.0,
+                  3500.0
+                ],
+                "max": [
+                  4200.0,
+                  4400.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-counter-1800",
+                "block": {
+                  "block_id": "block-counter-1800",
+                  "block_version": "1",
+                  "name": "Counter 1800",
+                  "category": "counter",
+                  "domain": "retail",
+                  "tags": [
+                    "preview",
+                    "retail",
+                    "service"
+                  ],
+                  "size": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 600,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_COUNTER_1800",
+                    "definition_name": "BLOCK_COUNTER_1800",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      900.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "service_aisle",
+                      "offset_mm": 600,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-left-shelf",
+              "object_type": "shelf",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-left",
+              "status": "placed",
+              "base_point": [
+                4400.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  4400.0,
+                  3600.0
+                ],
+                "max": [
+                  5300.0,
+                  3950.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  4300.0,
+                  3500.0
+                ],
+                "max": [
+                  5400.0,
+                  4050.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-shelf-900",
+                "block": {
+                  "block_id": "block-shelf-900",
+                  "block_version": "1",
+                  "name": "Shelf 900",
+                  "category": "shelf",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "storage"
+                  ],
+                  "size": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_SHELF_900",
+                    "definition_name": "BLOCK_SHELF_900",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      450.0,
+                      175.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "front_access",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-straight_spine-left-display_unit",
+              "object_type": "display_unit",
+              "zone_id": "zone-shell-restaurant-small-front-straight_spine-left",
+              "status": "placed",
+              "base_point": [
+                5600.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  5600.0,
+                  3600.0
+                ],
+                "max": [
+                  6800.0,
+                  4100.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  5500.0,
+                  3500.0
+                ],
+                "max": [
+                  6900.0,
+                  4200.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-display-unit-1200",
+                "block": {
+                  "block_id": "block-display-unit-1200",
+                  "block_version": "1",
+                  "name": "Display Unit 1200",
+                  "category": "display_unit",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "display"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "definition_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "viewer_clearance",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            }
+          ],
+          "rank_key": [
+            true,
+            5,
+            0,
+            0.9336
+          ],
+          "selected": false
+        }
+      ]
+    },
+    {
+      "circulation_candidate_id": "circulation-along_wall",
+      "strategy": "along_wall",
+      "score": 0.5525,
+      "status": "pass",
+      "selected": false,
+      "zone_count": 1,
+      "zone_placement_candidates": [
+        {
+          "zone_id": "zone-shell-restaurant-small-front-along_wall-left",
+          "zone_score": 0.9336,
+          "side_of_path": "left",
+          "summary": {
+            "placement_count": 5,
+            "placed_count": 5,
+            "failed_count": 0,
+            "failure_reasons": [],
+            "object_types": [
+              "chair",
+              "counter",
+              "display_unit",
+              "shelf",
+              "table"
+            ]
+          },
+          "placements": [
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-along_wall-left-table",
+              "object_type": "table",
+              "zone_id": "zone-shell-restaurant-small-front-along_wall-left",
+              "status": "placed",
+              "base_point": [
+                0.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  0.0,
+                  3600.0
+                ],
+                "max": [
+                  1200.0,
+                  4300.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  -100.0,
+                  3500.0
+                ],
+                "max": [
+                  1300.0,
+                  4400.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-table-1200",
+                "block": {
+                  "block_id": "block-table-1200",
+                  "block_version": "1",
+                  "name": "Table 1200",
+                  "category": "table",
+                  "domain": "generic",
+                  "tags": [
+                    "preview"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_TABLE_1200",
+                    "definition_name": "BLOCK_TABLE_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "chair_pullback",
+                      "offset_mm": 300,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-along_wall-left-chair",
+              "object_type": "chair",
+              "zone_id": "zone-shell-restaurant-small-front-along_wall-left",
+              "status": "placed",
+              "base_point": [
+                1500.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  1500.0,
+                  3600.0
+                ],
+                "max": [
+                  2000.0,
+                  4100.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  1400.0,
+                  3500.0
+                ],
+                "max": [
+                  2100.0,
+                  4200.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-chair-500",
+                "block": {
+                  "block_id": "block-chair-500",
+                  "block_version": "1",
+                  "name": "Chair 500",
+                  "category": "chair",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "seating"
+                  ],
+                  "size": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 300,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_CHAIR_500",
+                    "definition_name": "BLOCK_CHAIR_500",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      250.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "rear_clearance",
+                      "offset_mm": 300,
+                      "side": "back"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 500,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-along_wall-left-counter",
+              "object_type": "counter",
+              "zone_id": "zone-shell-restaurant-small-front-along_wall-left",
+              "status": "placed",
+              "base_point": [
+                2300.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  2300.0,
+                  3600.0
+                ],
+                "max": [
+                  4100.0,
+                  4300.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  2200.0,
+                  3500.0
+                ],
+                "max": [
+                  4200.0,
+                  4400.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-counter-1800",
+                "block": {
+                  "block_id": "block-counter-1800",
+                  "block_version": "1",
+                  "name": "Counter 1800",
+                  "category": "counter",
+                  "domain": "retail",
+                  "tags": [
+                    "preview",
+                    "retail",
+                    "service"
+                  ],
+                  "size": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 600,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_COUNTER_1800",
+                    "definition_name": "BLOCK_COUNTER_1800",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      900.0,
+                      350.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "service_aisle",
+                      "offset_mm": 600,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1800,
+                    "depth": 700
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-along_wall-left-shelf",
+              "object_type": "shelf",
+              "zone_id": "zone-shell-restaurant-small-front-along_wall-left",
+              "status": "placed",
+              "base_point": [
+                4400.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  4400.0,
+                  3600.0
+                ],
+                "max": [
+                  5300.0,
+                  3950.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  4300.0,
+                  3500.0
+                ],
+                "max": [
+                  5400.0,
+                  4050.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-shelf-900",
+                "block": {
+                  "block_id": "block-shelf-900",
+                  "block_version": "1",
+                  "name": "Shelf 900",
+                  "category": "shelf",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "storage"
+                  ],
+                  "size": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_SHELF_900",
+                    "definition_name": "BLOCK_SHELF_900",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      450.0,
+                      175.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "front_access",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 900,
+                    "depth": 350
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            },
+            {
+              "object_id": "placement-zone-shell-restaurant-small-front-along_wall-left-display_unit",
+              "object_type": "display_unit",
+              "zone_id": "zone-shell-restaurant-small-front-along_wall-left",
+              "status": "placed",
+              "base_point": [
+                5600.0,
+                3600.0,
+                0
+              ],
+              "rotation": 0,
+              "bbox": {
+                "min": [
+                  5600.0,
+                  3600.0
+                ],
+                "max": [
+                  6800.0,
+                  4100.0
+                ]
+              },
+              "clearance_bbox": {
+                "min": [
+                  5500.0,
+                  3500.0
+                ],
+                "max": [
+                  6900.0,
+                  4200.0
+                ]
+              },
+              "source": {
+                "type": "block",
+                "block_id": "block-display-unit-1200",
+                "block": {
+                  "block_id": "block-display-unit-1200",
+                  "block_version": "1",
+                  "name": "Display Unit 1200",
+                  "category": "display_unit",
+                  "domain": "generic",
+                  "tags": [
+                    "preview",
+                    "display"
+                  ],
+                  "size": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "insertion_point": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rotation_allowed": true,
+                  "clearance_mm": 150,
+                  "source": {
+                    "type": "symbol_fallback",
+                    "path": "",
+                    "status": "symbol_fallback"
+                  },
+                  "cad_identity": {
+                    "block_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "definition_name": "BLOCK_DISPLAY_UNIT_1200",
+                    "expected_entity_type": "block_reference"
+                  },
+                  "anchor_points": {
+                    "insert": [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    "center": [
+                      600.0,
+                      250.0,
+                      0.0
+                    ]
+                  },
+                  "footprint_2d": {
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "clearance_zones": [
+                    {
+                      "role": "viewer_clearance",
+                      "offset_mm": 150,
+                      "side": "front"
+                    }
+                  ],
+                  "symbol_2d": {
+                    "type": "rectangle",
+                    "width": 1200,
+                    "depth": 500
+                  },
+                  "layer_bindings": {
+                    "insert_layer_role": "preview",
+                    "block_internal_layer_role": "furniture"
+                  },
+                  "validation": {
+                    "status": "symbol_fallback",
+                    "readback_fields": [
+                      "handle",
+                      "block_name",
+                      "insertion_point",
+                      "rotation",
+                      "scale",
+                      "layer",
+                      "bbox"
+                    ],
+                    "tolerance_mm": 2.0
+                  }
+                }
+              },
+              "failure_reasons": []
+            }
+          ],
+          "rank_key": [
+            true,
+            5,
+            0,
+            0.9336
+          ],
+          "selected": false
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "circulation_candidates": 3,
+    "circulation_branches": 3,
+    "zone_placement_candidates": 5
+  }
+}

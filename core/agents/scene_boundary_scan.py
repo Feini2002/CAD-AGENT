@@ -9,6 +9,7 @@ AGENT_FILE_SUFFIXES = {".py", ".md", ".json", ".yaml", ".yml"}
 
 # Documents the forbidden catalog itself; not subject to substring scan.
 BOUNDARY_RULES_DOC = "SCENE_AGENT_RULES.md"
+NON_SCENE_AGENT_DIRS = {"pipeline"}
 
 # (rule_id, forbidden_substring)
 FORBIDDEN_SUBSTRINGS: tuple[tuple[str, str], ...] = (
@@ -72,6 +73,10 @@ class BoundaryViolation:
     detail: str
 
 
+def _non_scene_agent_path(relative_path: Path) -> bool:
+    return bool(relative_path.parts and relative_path.parts[0] in NON_SCENE_AGENT_DIRS)
+
+
 def iter_agent_files(agent_root: Path) -> list[Path]:
     if not agent_root.is_dir():
         return []
@@ -79,6 +84,7 @@ def iter_agent_files(agent_root: Path) -> list[Path]:
         path
         for path in agent_root.rglob("*")
         if path.is_file() and path.suffix.lower() in AGENT_FILE_SUFFIXES
+        and not _non_scene_agent_path(path.relative_to(agent_root))
     )
 
 

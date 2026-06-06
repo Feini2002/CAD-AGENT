@@ -1,0 +1,615 @@
+{
+  "$defs": {
+    "learningCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "checkerDelta": {
+          "type": "string"
+        },
+        "correctPattern": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "errorPattern": {
+          "type": "string"
+        },
+        "promptDelta": {
+          "type": "string"
+        },
+        "responsibleAgentIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "retestOriginalTask": {
+          "type": "boolean"
+        },
+        "trigger": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision",
+        "trigger",
+        "responsibleAgentIds",
+        "errorPattern",
+        "correctPattern",
+        "promptDelta",
+        "checkerDelta",
+        "retestOriginalTask"
+      ],
+      "type": "object"
+    },
+    "statePatch": {
+      "additionalProperties": false,
+      "properties": {
+        "blockedReason": {
+          "type": "string"
+        },
+        "completedEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "nextSafeAction": {
+          "type": "string"
+        },
+        "pendingEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pendingUserAction": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "phaseLabelForUser": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase",
+        "phaseLabelForUser",
+        "completedEvidence",
+        "pendingEvidence",
+        "pendingUserAction",
+        "blockedReason",
+        "nextSafeAction"
+      ],
+      "type": "object"
+    },
+    "toolIntent": {
+      "additionalProperties": false,
+      "properties": {
+        "expectedEvidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "forbiddenEffects": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "inputs": {
+          "$ref": "#/$defs/toolIntentInputs"
+        },
+        "permissionClass": {
+          "enum": [
+            "read_only",
+            "safe_generate",
+            "deterministic_verify",
+            "cad_preview",
+            "cad_write",
+            "delete_or_replace",
+            "save_current_dwg"
+          ],
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "requestedByAgentId": {
+          "type": "string"
+        },
+        "requestedEffects": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "riskLevel": {
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "type": "string"
+        },
+        "schemaVersion": {
+          "type": "string"
+        },
+        "targetScope": {
+          "$ref": "#/$defs/toolIntentTargetScope"
+        },
+        "toolIntentId": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "toolIntentId",
+        "requestedByAgentId",
+        "toolName",
+        "purpose",
+        "inputs",
+        "targetScope",
+        "riskLevel",
+        "permissionClass",
+        "expectedEvidence",
+        "forbiddenEffects",
+        "requestedEffects"
+      ],
+      "type": "object"
+    },
+    "toolIntentInputs": {
+      "additionalProperties": false,
+      "properties": {
+        "agentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "auditJson": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cadPlanPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "driverMode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executionMode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executionSummaryPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paths": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payloadJson": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "planPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "runId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schemaRef": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summaryPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetLayer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "runId",
+        "path",
+        "paths",
+        "schemaRef",
+        "agentId",
+        "planPath",
+        "cadPlanPath",
+        "summaryPath",
+        "executionSummaryPath",
+        "targetLayer",
+        "driverMode",
+        "executionMode",
+        "payloadJson",
+        "auditJson"
+      ],
+      "type": "object"
+    },
+    "toolIntentTargetScope": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "previewOnly": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "savedCurrentDwg": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scopeRef": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scopeType": {
+          "type": "string"
+        },
+        "targetHandles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetLayer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "targetPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "scopeType",
+        "targetLayer",
+        "targetHandles",
+        "targetPath",
+        "scopeRef",
+        "bbox",
+        "previewOnly",
+        "savedCurrentDwg",
+        "notes"
+      ],
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "candidateCountPolicy": {
+      "enum": [
+        "not_applicable",
+        "contextual_not_forced",
+        "single_or_auto_selected_allowed",
+        "respect_user_request",
+        "explicit_multi_candidate",
+        "explicit_count"
+      ],
+      "type": "string"
+    },
+    "candidateLabelPolicy": {
+      "enum": [
+        "not_applicable",
+        "abc",
+        "numeric_or_named_options"
+      ],
+      "type": "string"
+    },
+    "candidateTradeoffs": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tradeoff": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tradeoff"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "creativityPolicy": {
+      "enum": [
+        "contextual_not_forced",
+        "suppressed_by_user"
+      ],
+      "type": "string"
+    },
+    "evidenceMissing": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "evidenceUsed": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "finalResponseAllowedClaims": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "learningCandidate": {
+      "$ref": "#/$defs/learningCandidate"
+    },
+    "needsUserChoice": {
+      "type": "boolean"
+    },
+    "requestedCandidateCount": {
+      "maximum": 3,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "selectedStyleCandidate": {
+      "type": "string"
+    },
+    "semanticRoutingConfidence": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "type": "string"
+    },
+    "statePatch": {
+      "$ref": "#/$defs/statePatch"
+    },
+    "status": {
+      "enum": [
+        "pass",
+        "fail",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "styleCandidates": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "maxItems": 3,
+      "minItems": 0,
+      "type": "array"
+    },
+    "styleDecision": {
+      "enum": [
+        "waived",
+        "single",
+        "multiple"
+      ],
+      "type": "string"
+    },
+    "styleParameterGrammar": {
+      "additionalProperties": false,
+      "properties": {
+        "scale": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "scale"
+      ],
+      "type": "object"
+    },
+    "styleWaiverReason": {
+      "type": "string"
+    },
+    "toolIntent": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/toolIntent"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "status",
+    "styleDecision",
+    "styleCandidates",
+    "selectedStyleCandidate",
+    "styleParameterGrammar",
+    "candidateTradeoffs",
+    "needsUserChoice",
+    "styleWaiverReason",
+    "candidateCountPolicy",
+    "requestedCandidateCount",
+    "candidateLabelPolicy",
+    "creativityPolicy",
+    "semanticRoutingConfidence",
+    "learningCandidate",
+    "statePatch",
+    "finalResponseAllowedClaims",
+    "evidenceUsed",
+    "evidenceMissing",
+    "toolIntent"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "no-cad-chain-delivery/v1",
+  "status": "blocked",
+  "deliveryDecision": "not_verified",
+  "evidenceBundle": {
+    "upstreamOutputs": [
+      {
+        "agentId": "pipeline_design_director",
+        "path": "agent_outputs/pipeline_design_director.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "03f3d5b3125dd0953b122a7f8555c1f2f4e53b16b94c60d11d1c57364d9d95f7",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_style_generator",
+        "path": "agent_outputs/pipeline_style_generator.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "31dd99d43a5528fcd6a2414c4bc9f5116adcbc5e1b8dc61f232d8e4b476b068d",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true
+      },
+      {
+        "agentId": "pipeline_design_reviewer",
+        "path": "agent_outputs/pipeline_design_reviewer.json",
+        "status": "unavailable",
+        "summary": "unavailable",
+        "sha256": "d508a0570426222c18f83dd677be9c598783679af236cdaa6afbfc4847b3d08c",
+        "modelInvoked": false,
+        "schemaValid": false,
+        "modelUnavailable": true
+      }
+    ]
+  },
+  "allowedClaims": [],
+  "blockingReasons": [
+    "pipeline_design_director model output not pass",
+    "pipeline_style_generator model output not pass",
+    "pipeline_design_reviewer model output not pass"
+  ],
+  "cadExecutionAuthorized": false,
+  "savedCurrentDwg": false,
+  "evidenceDoesNotProve": [
+    "CAD geometry",
+    "created handles readback",
+    "user acceptance",
+    "table C capability increase"
+  ]
+}

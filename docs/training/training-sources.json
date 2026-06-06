@@ -7,8 +7,9 @@
       "kind": "training_queue_state",
       "role": "fact_source",
       "path": "output/training_queues/cad-foundation-first-10/queue_state.json",
-      "status": "active",
+      "status": "archived",
       "owner": "cad_designer",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "监督式前 10 项基础 CAD 操作队列状态。"
     },
     {
@@ -16,8 +17,9 @@
       "kind": "training_acceptance_report",
       "role": "fact_source",
       "path": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json",
-      "status": "active",
+      "status": "archived",
       "owner": "cad_designer",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "前 10 项基础 CAD 操作中文无监督验收报告；用于工作台阶段、learning promotion 和 Prompt 沉淀。"
     },
     {
@@ -25,8 +27,9 @@
       "kind": "training_queue_state",
       "role": "fact_source",
       "path": "output/training_queues/cad-foundation-remaining-21/queue_state.json",
-      "status": "active",
+      "status": "archived",
       "owner": "cad_designer",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "CAD 基础操作剩余 21 项批量无监督训练队列状态。"
     },
     {
@@ -34,8 +37,9 @@
       "kind": "training_acceptance_report",
       "role": "fact_source",
       "path": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json",
-      "status": "active",
+      "status": "archived",
       "owner": "cad_designer",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "CAD 基础操作剩余 21 项中文批量验收报告；用于工作台阶段、learning promotion 和 Prompt 沉淀。"
     },
     {
@@ -43,8 +47,9 @@
       "kind": "training_acceptance_report",
       "role": "fact_source",
       "path": "output/training_queues/cad-foundation-remaining-21/focused/image-arrow-solid-fill-square/semantic_acceptance_report.json",
-      "status": "active",
+      "status": "archived",
       "owner": "cad_designer",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "第 12 项填充与边界的箭头语义位置 SOLID 实心填充二次加强训练报告；用于沉淀图像反馈定位经验。"
     },
     {
@@ -52,8 +57,9 @@
       "kind": "training_acceptance_report",
       "role": "fact_source",
       "path": "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json",
-      "status": "active",
+      "status": "archived",
       "owner": "cad_designer",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "第 22 项线宽线型标准 focused 加强训练报告；用于沉淀真实 Lineweight / Linetype / LinetypeScale 回读经验。"
     },
     {
@@ -61,8 +67,9 @@
       "kind": "training_learning_ledger",
       "role": "fact_source",
       "path": "output/training_learning/agent_learning_ledger.json",
-      "status": "active",
+      "status": "archived",
       "owner": "pipeline_learning_promoter",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "已验收训练项晋升到责任智能体后的总账；必须包含 promotionGate，用于记录训练事实源、工作台同步、Agent 校准、规则候选和原任务回测决策。"
     },
     {
@@ -205,8 +212,9 @@
       "kind": "system_asset_native_write_report",
       "role": "fact_source",
       "path": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_dimension_style_report.json",
-      "status": "active",
+      "status": "archived",
       "owner": "pipeline_execute",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "室内尺寸样式视觉标准写入 standard_assets.dwg 的原生 DimStyle 报告；证明 10 个中文 DimStyle 和 CODEX_CN_TEXT 已写入并保存系统资产 DWG。"
     },
     {
@@ -214,8 +222,9 @@
       "kind": "system_asset_reuse_probe",
       "role": "fact_source",
       "path": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe.json",
-      "status": "active",
+      "status": "archived",
       "owner": "pipeline_intent",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "室内尺寸样式视觉标准白话复用探针；用于验证 system_asset_reuse_workflow 能命中并生成 style_definition 复用计划。"
     },
     {
@@ -223,8 +232,9 @@
       "kind": "system_asset_reuse_probe",
       "role": "fact_source",
       "path": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_visible_panel.json",
-      "status": "active",
+      "status": "archived",
       "owner": "pipeline_intent",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "室内尺寸样式视觉标准补写可见面板后的白话复用探针；证明 registry 编码预检通过、workflow ready、sourceSpec=style_definition、savedCurrentDwg=false。"
     },
     {
@@ -232,8 +242,9 @@
       "kind": "system_asset_reuse_probe",
       "role": "fact_source",
       "path": "output/validation_runs/system-assets/dimension-style-standard-dwg/reuse_workflow_probe_after_rules_hardening.json",
-      "status": "active",
+      "status": "archived",
       "owner": "pipeline_intent",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "真沉淀与 A-to-A 门禁加固后的尺寸样式复用探针；证明 semantic rules 已带 reuse_workflow_probe，workflow ready 且 savedCurrentDwg=false。"
     },
     {
@@ -241,8 +252,9 @@
       "kind": "system_asset_native_visible_panel_report",
       "role": "fact_source",
       "path": "output/validation_runs/system-assets/dimension-style-standard-dwg/native_visible_panel_r1/native_visible_panel_summary.json",
-      "status": "active",
+      "status": "archived",
       "owner": "pipeline_execute",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "室内尺寸样式视觉标准补写 standard_assets.dwg 模型空间可见面板的汇总报告；证明 325 个可见对象、44 个尺寸实体回读且系统资产 DWG 已保存。"
     },
     {
@@ -250,8 +262,9 @@
       "kind": "system_asset_visual_preview",
       "role": "fact_source",
       "path": "output/previews/system-asset-dimension-style-visible-panel-r1-focused.png",
-      "status": "active",
+      "status": "archived",
       "owner": "pipeline_audit",
+      "archiveReason": "历史 output 产物当前工作区缺失；保留路径作历史索引，不作为 active fact_source。",
       "desc": "standard_assets.dwg 中尺寸样式可见面板的聚焦截图；用于人工复核模型空间确实包含尺寸样式内容，截图仍不替代 CAD readback。"
     },
     {

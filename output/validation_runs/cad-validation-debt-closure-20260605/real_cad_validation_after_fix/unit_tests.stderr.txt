@@ -1,0 +1,140 @@
+..................................F.......F.F.....F.....................................................F............................................................................E...........................................................................................................................................................................................................................................................................................F..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................s....s...............................................
+======================================================================
+ERROR: test_real_cad_capture_passes_generated_execution_summary_to_preview (core.test_beta_cross_machine_02_gate.BetaCrossMachine02GateTests.test_real_cad_capture_passes_generated_execution_summary_to_preview)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\User\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py", line 1396, in patched
+    return func(*newargs, **newkeywargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\CAD-AGENT\tests\core\test_beta_cross_machine_02_gate.py", line 66, in test_real_cad_capture_passes_generated_execution_summary_to_preview
+    steps = cross_machine_reverify._run_real_cad_user_gate(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\CAD-AGENT\core\verification\cross_machine_reverify.py", line 188, in _run_real_cad_user_gate
+    execution_summary_path.write_text(
+  File "C:\Users\User\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\test_artifacts\\beta_cross_machine_02\\task_scoped_capture\\migration-reverify-execution-summary.json'
+
+======================================================================
+FAIL: test_manifest_registers_visual_contract_agents_and_flow (agents.test_pipeline_visual_contracts.PipelineVisualContractTests.test_manifest_registers_visual_contract_agents_and_flow)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\CAD-AGENT\tests\agents\test_pipeline_visual_contracts.py", line 37, in test_manifest_registers_visual_contract_agents_and_flow
+    self.assertEqual(
+AssertionError: Lists differ: ['pip[57 chars]line_asset_governor', 'pipeline_orchestrator',[271 chars]ter'] != ['pip[57 chars]line_orchestrator', 'pipeline_visual_intent', [121 chars]ter']
+
+First differing element 2:
+'pipeline_asset_governor'
+'pipeline_orchestrator'
+
+First list contains 5 additional elements.
+First extra element 10:
+'pipeline_visual_acceptance_reviewer'
+
+  ['pipeline_context_curator',
+   'pipeline_asset_retriever',
+-  'pipeline_asset_governor',
+   'pipeline_orchestrator',
+-  'pipeline_design_director',
+-  'pipeline_style_generator',
+   'pipeline_visual_intent',
+   'pipeline_intent',
+   'pipeline_execute',
+   'pipeline_audit',
+-  'pipeline_visual_acceptance_reviewer',
+-  'pipeline_design_reviewer',
+   'pipeline_repair',
+   'pipeline_delivery',
+   'pipeline_learning_promoter']
+
+======================================================================
+FAIL: test_scene_agent_files_do_not_implement_core_execution_or_readback (agents.test_scene_agent_boundaries.SceneAgentBoundaryTests.test_scene_agent_files_do_not_implement_core_execution_or_readback)
+Legacy substring guard kept for regression; canonical scan is scan_agent_tree.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\CAD-AGENT\tests\agents\test_scene_agent_boundaries.py", line 98, in test_scene_agent_files_do_not_implement_core_execution_or_readback
+    self.assertEqual(violations, [])
+AssertionError: Lists differ: [BoundaryViolation(relative_path='pipeline[214 chars]g'")] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+BoundaryViolation(relative_path='pipeline/asset_governor/agent.json', rule_id='cad_io', detail="forbidden substring 'save_dwg'")
+
++ []
+- [BoundaryViolation(relative_path='pipeline/asset_governor/agent.json',
+-                    rule_id='cad_io',
+-                    detail="forbidden substring 'save_dwg'"),
+-  BoundaryViolation(relative_path='pipeline/asset_librarian/agent.json',
+-                    rule_id='cad_io',
+-                    detail="forbidden substring 'save_dwg'")]
+
+======================================================================
+FAIL: test_x_scene_03_agent_tree_passes_boundary_scan (agents.test_scene_agent_boundaries.SceneAgentBoundaryTests.test_x_scene_03_agent_tree_passes_boundary_scan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\CAD-AGENT\tests\agents\test_scene_agent_boundaries.py", line 61, in test_x_scene_03_agent_tree_passes_boundary_scan
+    self.assertEqual(violations, [], violations)
+AssertionError: Lists differ: [BoundaryViolation(relative_path='pipeline[214 chars]g'")] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+BoundaryViolation(relative_path='pipeline/asset_governor/agent.json', rule_id='cad_io', detail="forbidden substring 'save_dwg'")
+
++ []
+- [BoundaryViolation(relative_path='pipeline/asset_governor/agent.json',
+-                    rule_id='cad_io',
+-                    detail="forbidden substring 'save_dwg'"),
+-  BoundaryViolation(relative_path='pipeline/asset_librarian/agent.json',
+-                    rule_id='cad_io',
+-                    detail="forbidden substring 'save_dwg'")] : [BoundaryViolation(relative_path='pipeline/asset_governor/agent.json', rule_id='cad_io', detail="forbidden substring 'save_dwg'"), BoundaryViolation(relative_path='pipeline/asset_librarian/agent.json', rule_id='cad_io', detail="forbidden substring 'save_dwg'")]
+
+======================================================================
+FAIL: test_x_scene_05_agents_tree_boundary_scan_clean (agents.test_scene_alpha_acceptance.SceneAlphaAcceptanceTests.test_x_scene_05_agents_tree_boundary_scan_clean)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\CAD-AGENT\tests\agents\test_scene_alpha_acceptance.py", line 74, in test_x_scene_05_agents_tree_boundary_scan_clean
+    self.assertEqual(violations, [], violations)
+AssertionError: Lists differ: [BoundaryViolation(relative_path='pipeline[214 chars]g'")] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+BoundaryViolation(relative_path='pipeline/asset_governor/agent.json', rule_id='cad_io', detail="forbidden substring 'save_dwg'")
+
++ []
+- [BoundaryViolation(relative_path='pipeline/asset_governor/agent.json',
+-                    rule_id='cad_io',
+-                    detail="forbidden substring 'save_dwg'"),
+-  BoundaryViolation(relative_path='pipeline/asset_librarian/agent.json',
+-                    rule_id='cad_io',
+-                    detail="forbidden substring 'save_dwg'")] : [BoundaryViolation(relative_path='pipeline/asset_governor/agent.json', rule_id='cad_io', detail="forbidden substring 'save_dwg'"), BoundaryViolation(relative_path='pipeline/asset_librarian/agent.json', rule_id='cad_io', detail="forbidden substring 'save_dwg'")]
+
+======================================================================
+FAIL: test_model_asset_governor_suggestion_cannot_override_rule_source_boundary (core.test_asset_library_governance.AssetLibraryGovernanceTests.test_model_asset_governor_suggestion_cannot_override_rule_source_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\CAD-AGENT\tests\core\test_asset_library_governance.py", line 314, in test_model_asset_governor_suggestion_cannot_override_rule_source_boundary
+    self.assertEqual(governance["modelAssistedDecision"]["status"], "pass")
+AssertionError: 'fail' != 'pass'
+- fail
++ pass
+
+
+======================================================================
+FAIL: test_current_repository_active_docs_fit_finished_architecture_budget (core.test_doc_governance.DocGovernanceTests.test_current_repository_active_docs_fit_finished_architecture_budget)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\CAD-AGENT\tests\core\test_doc_governance.py", line 398, in test_current_repository_active_docs_fit_finished_architecture_budget
+    self.assertEqual(report["status"], "pass", report["findings"])
+AssertionError: 'findings' != 'pass'
+- findings
++ pass
+ : [{'code': 'active_doc_over_budget', 'severity': 'medium', 'path': 'AGENTS.md', 'message': 'Active document has 224 lines, over the finished-architecture budget of 220. Move completed details to history/archive and keep this file as a control surface.'}, {'code': 'active_doc_over_budget', 'severity': 'medium', 'path': 'CORE_CONTEXT_BRIEF.md', 'message': 'Active document has 122 lines, over the finished-architecture budget of 120. Move completed details to history/archive and keep this file as a control surface.'}, {'code': 'active_doc_over_budget', 'severity': 'medium', 'path': 'CORE_RESTRUCTURE_PLAN.md', 'message': 'Active document has 146 lines, over the finished-architecture budget of 140. Move completed details to history/archive and keep this file as a control surface.'}, {'code': 'active_doc_over_budget', 'severity': 'medium', 'path': 'README.md', 'message': 'Active document has 167 lines, over the finished-architecture budget of 140. Move completed details to history/archive and keep this file as a control surface.'}, {'code': 'active_doc_over_budget', 'severity': 'medium', 'path': 'docs/handoffs/current.md', 'message': 'Active document has 336 lines, over the finished-architecture budget of 140. Move completed details to history/archive and keep this file as a control surface.'}, {'code': 'active_doc_over_budget', 'severity': 'medium', 'path': 'docs/handoffs/package-index.md', 'message': 'Active document has 156 lines, over the finished-architecture budget of 140. Move completed details to history/archive and keep this file as a control surface.'}, {'code': 'active_doc_over_budget', 'severity': 'medium', 'path': 'docs/status/current.md', 'message': 'Active document has 189 lines, over the finished-architecture budget of 160. Move completed details to history/archive and keep this file as a control surface.'}]
+
+----------------------------------------------------------------------
+Ran 1297 tests in 67.656s
+
+FAILED (failures=6, errors=1, skipped=2)
