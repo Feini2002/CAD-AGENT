@@ -4,6 +4,10 @@ CAD Agent Core Lab 是一个可迁移的 CAD Agent 开发包。它训练的不�
 
 当前主线是 **ARCH-CONVERGENCE-01 架构归并画布**：把旧表 A/B/C、能力证明、RCAD、训练地图、资产、多 Agent、模型桥、Worker、截图和工作台，统一归入一条任务生命周期。旧表 C 只保留为 `Core Proof Coverage`，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。
 
+最新训练底座补强是 `ADAPTIVE-CAPABILITY-GROWTH-TRAINING-01`：系统现在能把“某项能力训练过但输出又退回烟测”的问题拆成 repo-local 能力画像、`growth_replay` 路由、表达回归门禁和 closeout claim gate。它是 focused / formal 复训的安全底座，不等于恢复整批训练、真实 CAD 几何验证、Worker 部署或表 C 提升。
+
+主 Agent 认知提升还有更硬的一条：任何声称“主 Agent 变聪明”的改动，都必须证明它改变了真实任务里的判断；否则只是机制建设。
+
 ## 一眼看懂
 
 ```mermaid

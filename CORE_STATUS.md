@@ -1,6 +1,6 @@
 # Core Status
 
-最后更新：2026-06-06（ARCH-CONVERGENCE-01：架构归并画布工程成为当前主线；旧表 C / 90% 口径降级为 `Core Proof Coverage`，不再表示端到端真实 CAD 能力；训练暂缓，先同步架构、规则、状态和脚本口径）
+最后更新：2026-06-07（ARCH-CONVERGENCE-01：架构归并画布工程仍是当前主线；旧表 C / 90% 口径降级为 `Core Proof Coverage`，不再表示端到端真实 CAD 能力；adaptive capability growth 已落为 no-CAD / runner / closeout 门禁能力，不代表正式训练恢复或表 C 提升）
 
 本文只回答“当前能力成熟到哪里、证据是什么、风险边界是什么”。历史长流水已归档到 `docs/history/snapshots/finished-architecture-2026-05-28/CORE_STATUS.md`，近期流水看 `docs/status/current.md`，唯一 PlanMD 看 `CORE_RESTRUCTURE_PLAN.md`。
 
@@ -80,7 +80,8 @@ RCAD 烟囱: 29/29 verified；≠ 真实 CAD 实力
 | Composition / VCAD 视觉表达 | `partially_verified` | V-PROOF-42/43、VCAD-01/02 reports | 视觉截图不替代 readback |
 | Scene Agent | `alpha_ready_non_cad` | office / residential / restaurant benchmarks | 场景层不实现 Core 算法或 CAD 执行 |
 | 自动读图 / shell 识别 | `prototype` | drawing-read fixtures / boundary docs | 未确认 shell candidates 不得直接落 CAD |
-| 模型型 Agent trace / run package / Host runtime / Reviewer closeout / Workbench Trace Viewer | `alpha_ready_non_cad` | `core/model_review/`、`core/orchestrator/run_package_state.py`、`core/orchestrator/closeout_gate.py`、`core/orchestrator/delete_neighbor_gates.py`、`core/orchestrator/orchestrator_host_runtime.py`、`core/orchestrator/reviewer_host_runtime.py`、`core/orchestrator/workbench_trace_viewer.py`、`core/orchestrator/local_live_model_bridge*.py`、相关 tests、`capability-map.html`、`CORE_RESTRUCTURE_PLAN.md` | 只证明模型调用证据、任务状态、分发计划、closeout 决策、删除范围 / 邻区保护、delivery 口径和派生 trace 视图可复盘；长期路线要求先有 `worker_orchestration_ready` / `local_bridge_connected`，再用完整 trace 包里的 `modelInvoked=true` / `modelUnavailable=false` / `schemaValid=true` 证明 `single_agent_live`；fake CAD preflight 只能是 `proofStatus=not_verified`，不替代 CAD readback、A-to-A hard gate、用户验收或表 C |
+| Adaptive capability growth / `growth_replay` | `alpha_ready_non_cad` | `core/training/capability_growth_profile.py`、`core/training/adaptive_replay_planner.py`、`core/training/expression_regression_gate.py`、`core/training/adaptive_growth_closeout.py`、`scripts/run_cad_foundation_remaining_training.py --replay-mode growth_replay`、相关 tests、OpenSpec `adaptive-capability-growth-training` | 只证明能力画像、路由、回归门禁和完成声明边界；不证明真实 CAD 几何、用户验收、Worker 部署、系统资产 verified、正式训练集成或表 C 提升 |
+| 模型型 Agent trace / run package / Host runtime / Reviewer closeout / Workbench Trace Viewer / Worker orchestrator remote | `alpha_ready_mixed` | `core/model_review/`、`core/orchestrator/run_package_state.py`、`core/orchestrator/closeout_gate.py`、`core/orchestrator/delete_neighbor_gates.py`、`core/orchestrator/orchestrator_host_runtime.py`、`core/orchestrator/reviewer_host_runtime.py`、`core/orchestrator/workbench_trace_viewer.py`、`core/orchestrator/local_live_model_bridge*.py`、`workers/orchestrator/**`、`WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`、相关 tests、`capability-map.html`、`CORE_RESTRUCTURE_PLAN.md` | 只证明模型调用证据、任务状态、分发计划、closeout 决策、删除范围 / 邻区保护、delivery 口径、派生 trace 视图和 `cadagent` 远程 Worker / Durable Object 编排可复盘；最新远程 smoke 为 `run_20260606151438_worker_orchestration_ready_f6260886`。本机 quick CAD preview 已在真实 AutoCAD 中只写 `CODEX_PREVIEW` 并回读 7 个 handles，`savedCurrentDwg=false`；但仍未接 Queue / Workflows、长期真实 bridge runner、真实 `gpt-5.5` provider 或正式训练集成，不替代 A-to-A hard gate、用户验收或表 C |
 
 ## 当前关键风险
 
@@ -91,6 +92,8 @@ RCAD 烟囱: 29/29 verified；≠ 真实 CAD 实力
 | 自动读图未交付预备 | 保持人工确认 gate，不从未确认读图结果直接落 CAD |
 | 文档再膨胀 | `run_doc_governance_audit.py` 检查活跃入口体量、链接、handoff 和表 C |
 | 模型活体与业务通过混淆 | provider / schema 正常只说明 Agent 真调用了模型；若模型因证据不足返回 `needs_more_evidence` / `unavailable`，应视为正确业务阻断，不能误称链路没活或 CAD 已验证 |
+| 能力成长画像污染 | `growth_replay` 只能读仓库内 active / protected 事实源；`output/debug`、派生工作台、诊断报告、外部路径、缺失文件、截图或模型 pass 不能作为 hard baseline；缺正反例或原任务回测时只能 blocked / not_verified |
+| 主 Agent 认知幻觉 | 规则、Prompt Pack、trace、learningCandidate 或测试 pass 只说明机制存在；只有能证明真实任务中的 route、dispatch、tool choice、blocking 或 replay 结果因历史经验改变，才可称为认知提升 |
 
 更多失败教训见 `docs/status/issues.md`。
 

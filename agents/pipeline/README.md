@@ -48,6 +48,10 @@
 
 模型桥学习只提升 Agent 判断和 Prompt 质量；不提升表 C，不替代 CAD readback，不替代 sourceSpec / reuseReplay，不替代用户验收。
 
+自适应能力成长复训只允许把可审计 lesson 作为上游输入。`growth_replay` 需要 repo-local active / protected profile source、正反例、required / observed features、表达比较和原任务回测边界；debug、derived、external、missing source、截图或模型 pass 不能作为 hard baseline。模型型 Agent 可以提出 lesson candidate 或复审表达是否退化，但不能把候选直接写入规则、checker、Agent memory、训练事实源、Worker 或表 C。
+
+主 Agent 认知提升必须可观察：如果一次改动没有改变 `pipeline_orchestrator` 的 route、dispatch、requiredAgents、tool choice、blocking reason、learningCandidate 或下一次 replay 结果，就只能称为机制建设，不能称为主脑变聪明。
+
 ## 当前真实度分层
 
 当前系统已经越过“只有死规则”的阶段，但还没到“所有 Agent 都真实独立协作”的终态。后续判断 Agent 是否真实，统一按这四层表达：

@@ -12,6 +12,9 @@ from typing import Any, Callable
 
 from core.safety.policy import PREVIEW_LAYER
 from core.safety.write_guard import run_negative_write_guard_checks
+from core.training.adaptive_replay_planner import build_adaptive_replay_plan, disabled_adaptive_replay_plan
+from core.training.capability_growth_profile import build_capability_growth_profile
+from core.training.expression_regression_gate import evaluate_expression_regression_guard
 from core.training.foundation_panel_drawings import (
     LINEWEIGHT_STANDARD_SAMPLES,
     PANEL_COLUMNS,
@@ -23,6 +26,19 @@ from core.training.foundation_panel_drawings import (
 from core.training.streaming_demo import ClockFn, SleepFn, StreamingCadDemoConfig, StreamingCadDemoRecorder
 from core.verification.render_preview import build_screenshot_decision, prepare_autocad_for_capture, visual_preview_payload
 
+
+FOUNDATION_FIRST_10_IDS = [
+    "cad-primitives",
+    "cad-selection-edit",
+    "cad-transform",
+    "cad-offset-trim",
+    "cad-layer-discipline",
+    "cad-closure-constraints",
+    "cad-readback-audit",
+    "cad-units-scale",
+    "cad-coordinate-input",
+    "cad-osnap-ortho-polar",
+]
 
 FOUNDATION_REMAINING_21_IDS = [
     "cad-polyline-width-cleanup",
@@ -47,6 +63,26 @@ FOUNDATION_REMAINING_21_IDS = [
     "cad-layer-pollution-check",
     "cad-safe-undo-rollback",
 ]
+FOUNDATION_ALL_31_IDS = FOUNDATION_FIRST_10_IDS + FOUNDATION_REMAINING_21_IDS
+
+FOUNDATION_BATCH_CONFIGS: dict[str, dict[str, Any]] = {
+    "remaining-21": {
+        "ids": FOUNDATION_REMAINING_21_IDS,
+        "queueId": "cad-foundation-remaining-21",
+        "mode": "unsupervised_batch_chinese_labels",
+        "artifactPrefix": "remaining_21",
+        "displayStart": 11,
+        "label": "剩余 21 项基础 CAD 操作",
+    },
+    "all-31": {
+        "ids": FOUNDATION_ALL_31_IDS,
+        "queueId": "cad-foundation-all-31",
+        "mode": "unsupervised_full_batch_retrain",
+        "artifactPrefix": "all_31",
+        "displayStart": 1,
+        "label": "完整 31 项基础 CAD 操作",
+    },
+}
 
 QUEUE_ID = "cad-foundation-remaining-21"
 MODE = "unsupervised_batch_chinese_labels"
@@ -78,8 +114,14 @@ def _read_json(path: Path) -> dict[str, Any]:
         return {}
 
 
-def _previous_training_handles(output_dir: Path) -> list[str]:
-    summary = _read_json(output_dir / "remaining_21_execution_summary.json")
+def _batch_config(batch_preset: str) -> dict[str, Any]:
+    if batch_preset not in FOUNDATION_BATCH_CONFIGS:
+        raise ValueError(f"unknown foundation batch preset: {batch_preset}")
+    return FOUNDATION_BATCH_CONFIGS[batch_preset]
+
+
+def _previous_training_handles(output_dir: Path, *, artifact_prefix: str = "remaining_21") -> list[str]:
+    summary = _read_json(output_dir / f"{artifact_prefix}_execution_summary.json")
     handles = summary.get("created_handles")
     if not isinstance(handles, list):
         return []
@@ -90,22 +132,32 @@ def _program_map(programs: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     return {str(program.get("capabilityId", "")): program for program in programs}
 
 
-def foundation_remaining_programs(programs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def foundation_batch_programs(programs: list[dict[str, Any]], capability_ids: list[str]) -> list[dict[str, Any]]:
     by_id = _program_map(programs)
-    missing = [capability_id for capability_id in FOUNDATION_REMAINING_21_IDS if capability_id not in by_id]
+    missing = [capability_id for capability_id in capability_ids if capability_id not in by_id]
     if missing:
         raise ValueError(f"training programs missing from workbench data: {missing}")
-    return [by_id[capability_id] for capability_id in FOUNDATION_REMAINING_21_IDS]
+    return [by_id[capability_id] for capability_id in capability_ids]
+
+
+def foundation_remaining_programs(programs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return foundation_batch_programs(programs, FOUNDATION_REMAINING_21_IDS)
 
 
 def _foundation_item_entries(
     programs: list[dict[str, Any]],
     selected_capability_ids: list[str] | None = None,
+    *,
+    capability_ids: list[str] | None = None,
+    display_start: int = 11,
 ) -> list[tuple[int, dict[str, Any]]]:
-    items = foundation_remaining_programs(programs)
-    by_id = {str(item["capabilityId"]): (index, item) for index, item in enumerate(items)}
+    items = foundation_batch_programs(programs, capability_ids or FOUNDATION_REMAINING_21_IDS)
+    by_id = {
+        str(item["capabilityId"]): (index, {**item, "displayIndex": display_start + index})
+        for index, item in enumerate(items)
+    }
     if not selected_capability_ids:
-        return list(enumerate(items))
+        return [(index, {**item, "displayIndex": display_start + index}) for index, item in enumerate(items)]
     missing = [capability_id for capability_id in selected_capability_ids if capability_id not in by_id]
     if missing:
         raise ValueError(f"focused foundation training ids are unknown: {missing}")
@@ -151,8 +203,14 @@ def _bbox_overlap(a: dict[str, list[float]] | None, b: dict[str, list[float]] | 
     )
 
 
-def _parking_anchor(driver: Any, output_dir: Path, existing_bbox: dict[str, list[float]] | None) -> dict[str, Any]:
-    previous_handles = _previous_training_handles(output_dir)
+def _parking_anchor(
+    driver: Any,
+    output_dir: Path,
+    existing_bbox: dict[str, list[float]] | None,
+    *,
+    artifact_prefix: str = "remaining_21",
+) -> dict[str, Any]:
+    previous_handles = _previous_training_handles(output_dir, artifact_prefix=artifact_prefix)
     previous_entities = []
     if previous_handles and hasattr(driver, "snapshot_handles"):
         previous_entities = driver.snapshot_handles(handles=previous_handles, layer=PREVIEW_LAYER)
@@ -211,10 +269,15 @@ def _build_plan(
     *,
     scope: dict[str, Any],
     training_options: dict[str, Any] | None = None,
+    queue_id: str = QUEUE_ID,
+    batch_mode: str = MODE,
+    replay_mode: str = "smoke_replay",
+    adaptive_replay: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     plan_items = []
     for original_index, item in item_entries:
         origin = _panel_origin(base, original_index)
+        display_number = int(item.get("displayIndex", original_index + 11))
         expected_evidence = [
             f"仅写 {PREVIEW_LAYER} 图层",
             "创建句柄回读",
@@ -225,7 +288,7 @@ def _build_plan(
             expected_evidence.append("三档线宽与连续线 / 中心线 / 虚线必须回读")
         plan_items.append(
             {
-                "index": original_index + 11,
+                "index": display_number,
                 "capabilityId": item["capabilityId"],
                 "title": item["name"],
                 "basePoint": origin,
@@ -235,9 +298,15 @@ def _build_plan(
         )
     return {
         "schemaVersion": 1,
-        "queueId": QUEUE_ID,
-        "mode": MODE,
+        "queueId": queue_id,
+        "mode": batch_mode,
         "scope": scope,
+        "replayMode": replay_mode,
+        "adaptiveReplay": {
+            "status": (adaptive_replay or {}).get("status", "disabled"),
+            "itemCount": len((adaptive_replay or {}).get("items", [])),
+            "doesNotUpdateProfile": True,
+        },
         "trainingOptions": training_options or {},
         "basePoint": base,
         "items": plan_items,
@@ -255,7 +324,7 @@ def _validate_plan(plan: dict[str, Any]) -> list[str]:
     ids = [str(item.get("capabilityId", "")) for item in plan.get("items", [])]
     expected_ids = plan.get("scope", {}).get("requestedCapabilityIds") or FOUNDATION_REMAINING_21_IDS
     if ids != expected_ids:
-        errors.append("remaining foundation item ids are out of requested order or incomplete")
+        errors.append("foundation item ids are out of requested order or incomplete")
     if plan.get("safety", {}).get("previewLayer") != PREVIEW_LAYER:
         errors.append("training batch must draw on CODEX_PREVIEW")
     for item in plan.get("items", []):
@@ -367,6 +436,130 @@ def _lineweight_linetype_evidence(readback: list[dict[str, Any]]) -> dict[str, A
     }
 
 
+def _adaptive_check_set(
+    *,
+    capability_profile: dict[str, Any],
+    adaptive_replay: dict[str, Any],
+    regression_guard: dict[str, Any],
+    safety_boundaries: dict[str, Any],
+) -> list[dict[str, str]]:
+    return [
+        _check(
+            "adaptive_replay_profile_source",
+            capability_profile.get("status") != "blocked",
+            str(capability_profile.get("reason") or capability_profile.get("profileSource", {}).get("status", "")),
+        ),
+        _check(
+            "adaptive_replay_plan",
+            adaptive_replay.get("status") in {"disabled", "pass"},
+            str(adaptive_replay.get("reason") or adaptive_replay.get("status", "")),
+        ),
+        _check(
+            "expression_regression_guard",
+            regression_guard.get("status") in {"not_applicable", "pass"},
+            str(regression_guard.get("reason") or regression_guard.get("status", "")),
+        ),
+        _check(
+            "worker_deploy_not_required",
+            safety_boundaries.get("worker", {}).get("deployRequired") is False,
+            "deployRequired=false",
+        ),
+    ]
+
+
+def _blocked_adaptive_report(
+    *,
+    output_dir: Path,
+    generated: str,
+    queue_id: str,
+    batch_mode: str,
+    scope: dict[str, Any],
+    replay_mode: str,
+    batch_preset: str,
+    artifact_prefix: str,
+    capability_profile: dict[str, Any],
+    adaptive_replay: dict[str, Any],
+    regression_guard: dict[str, Any],
+    safety_boundaries: dict[str, Any],
+    blocked_reason: str,
+) -> dict[str, Any]:
+    report_path = output_dir / f"{artifact_prefix}_report.json"
+    state_path = output_dir.parent / "queue_state.json"
+    checks = _adaptive_check_set(
+        capability_profile=capability_profile,
+        adaptive_replay=adaptive_replay,
+        regression_guard=regression_guard,
+        safety_boundaries=safety_boundaries,
+    )
+    report = {
+        "status": "blocked",
+        "generated_at": generated,
+        "active_document": "",
+        "queueId": queue_id,
+        "mode": str(scope.get("mode", "batch")),
+        "batchMode": batch_mode,
+        "scope": scope,
+        "replayMode": replay_mode,
+        "batchPreset": batch_preset,
+        "capabilityProfile": capability_profile,
+        "adaptiveReplay": adaptive_replay,
+        "regressionGuard": regression_guard,
+        "safetyBoundaries": safety_boundaries,
+        "timeoutSeconds": 30,
+        "selfRecoveryAttempted": False,
+        "circuitBreakerTriggered": False,
+        "blockedReason": blocked_reason,
+        "existing_preview_bbox_before": None,
+        "parking_anchor": {"source": "not_run", "bbox": None, "basePoint": [0.0, 0.0, 0.0]},
+        "batch_bbox": None,
+        "created_handle_count": 0,
+        "readback_count": 0,
+        "actual_type_counts": {},
+        "actual_layer_counts": {},
+        "missing_handles": [],
+        "streamingMode": {"enabled": False, "event_count": 0},
+        "items": [],
+        "checks": checks,
+        "watchdog": [],
+        "write_guard": {"status": "not_run", "reason": "adaptive replay blocked before CAD write"},
+        "screenshotDecision": {"shouldCapture": False, "reason": "adaptive replay blocked before CAD write"},
+        "visualPreview": {
+            "status": "skipped",
+            "role": "visual_aid_only",
+            "reason": "adaptive replay blocked before CAD write",
+        },
+        "visual_self_check": {
+            "status": "blocked",
+            "preview_path": "",
+            "review": "自适应训练在进入 CAD 写入前被安全边界阻断。",
+            "remaining_visual_limits": "未执行 CAD 写入，截图不适用。",
+        },
+        "artifacts": {
+            "training_plan": "",
+            "dry_run": "",
+            "execution_summary": "",
+            "preview": "",
+            "report": _artifact(report_path, output_dir),
+        },
+    }
+    queue_state = {
+        "schemaVersion": 1,
+        "queueId": queue_id,
+        "mode": str(scope.get("mode", "batch")),
+        "batchMode": batch_mode,
+        "scope": scope,
+        "status": "blocked",
+        "updatedAt": generated,
+        "currentIndex": 0,
+        "totalCount": len(scope.get("requestedCapabilityIds", [])),
+        "completionEvidencePath": str(report_path),
+        "items": [],
+    }
+    _write_json(report_path, report)
+    _write_json(state_path, queue_state)
+    return report
+
+
 def run_foundation_remaining_training_batch(
     *,
     programs: list[dict[str, Any]],
@@ -382,11 +575,28 @@ def run_foundation_remaining_training_batch(
     streaming_config: StreamingCadDemoConfig | None = None,
     sleep_fn: SleepFn | None = None,
     clock_fn: ClockFn | None = None,
+    batch_preset: str = "remaining-21",
+    replay_mode: str = "smoke_replay",
+    profile_source: Path | None = None,
+    allow_low_expression: bool = False,
+    project_root: Path | None = None,
 ) -> dict[str, Any]:
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     generated = generated_at or _utc_now()
-    item_entries = _foundation_item_entries(programs, selected_capability_ids)
+    config = _batch_config(batch_preset)
+    capability_ids = list(config["ids"])
+    queue_id = str(config["queueId"])
+    batch_mode = str(config["mode"])
+    artifact_prefix = str(config["artifactPrefix"])
+    display_start = int(config["displayStart"])
+    batch_label = str(config["label"])
+    item_entries = _foundation_item_entries(
+        programs,
+        selected_capability_ids,
+        capability_ids=capability_ids,
+        display_start=display_start,
+    )
     requested_ids = [str(item["capabilityId"]) for _, item in item_entries]
     scope_mode = "focused" if selected_capability_ids else "batch"
     scope = {
@@ -397,18 +607,76 @@ def run_foundation_remaining_training_batch(
         "rule": (
             "点名单项或子图样时只做轻量级 focused retraining；只有用户明确要求全部/整批/重新跑所有时才允许整批训练。"
             if selected_capability_ids
-            else "用户请求整批训练或未限制范围时，才执行完整 21 项批量训练。"
+            else f"用户请求整批训练或未限制范围时，才执行{batch_label}。"
         ),
+        "batchPreset": batch_preset,
     }
+    capability_profile = build_capability_growth_profile(
+        programs=programs,
+        capability_ids=requested_ids,
+        replay_mode=replay_mode,
+        profile_source=profile_source,
+        project_root=project_root or Path.cwd(),
+        generated_at=generated,
+    )
+    adaptive_replay = build_adaptive_replay_plan(
+        replay_mode=replay_mode,
+        scope=scope,
+        capability_profile=capability_profile,
+        allow_low_expression=allow_low_expression,
+    )
+    regression_guard = evaluate_expression_regression_guard(
+        adaptive_replay.get("items", []),
+        replay_mode=replay_mode,
+        allow_low_expression=allow_low_expression,
+    )
+    safety_boundaries = adaptive_replay.get("safetyBoundaries") or disabled_adaptive_replay_plan(
+        replay_mode
+    ).get("safetyBoundaries", {})
+    if capability_profile.get("status") == "blocked" or adaptive_replay.get("status") == "blocked":
+        blocked_reason = str(
+            capability_profile.get("reason")
+            or adaptive_replay.get("reason")
+            or "adaptive_replay_blocked"
+        )
+        return _blocked_adaptive_report(
+            output_dir=output_dir,
+            generated=generated,
+            queue_id=queue_id,
+            batch_mode=batch_mode,
+            scope=scope,
+            replay_mode=replay_mode,
+            batch_preset=batch_preset,
+            artifact_prefix=artifact_prefix,
+            capability_profile=capability_profile,
+            adaptive_replay=adaptive_replay,
+            regression_guard=regression_guard,
+            safety_boundaries=safety_boundaries,
+            blocked_reason=blocked_reason,
+        )
 
     existing_entities = []
     if hasattr(driver, "snapshot_modelspace"):
         existing_entities = driver.snapshot_modelspace(layer=PREVIEW_LAYER)
     existing_bbox = _bbox_from_entities(existing_entities)
-    parking_anchor = _parking_anchor(driver, Path(anchor_output_dir or output_dir), existing_bbox)
+    parking_anchor = _parking_anchor(
+        driver,
+        Path(anchor_output_dir or output_dir),
+        existing_bbox,
+        artifact_prefix=artifact_prefix,
+    )
     base = list(parking_anchor["basePoint"])
 
-    plan = _build_plan(item_entries, base, scope=scope, training_options=training_options)
+    plan = _build_plan(
+        item_entries,
+        base,
+        scope=scope,
+        training_options=training_options,
+        queue_id=queue_id,
+        batch_mode=batch_mode,
+        replay_mode=replay_mode,
+        adaptive_replay=adaptive_replay,
+    )
     dry_run = _dry_run(plan)
     watchdog: list[dict[str, Any]] = []
     item_reports: list[dict[str, Any]] = []
@@ -421,11 +689,17 @@ def run_foundation_remaining_training_batch(
         sleep_fn=sleep_fn or time.sleep,
         clock_fn=active_clock_fn,
     )
+    adaptive_item_map = {
+        str(item.get("capabilityId", "")): item
+        for item in adaptive_replay.get("items", [])
+        if isinstance(item, dict)
+    }
 
     for original_index, item in item_entries:
         origin = _panel_origin(base, original_index)
         capability_id = str(item["capabilityId"])
-        streaming_recorder.start_item(capability_id=capability_id, index=original_index + 11)
+        display_number = int(item.get("displayIndex", original_index + display_start))
+        streaming_recorder.start_item(capability_id=capability_id, index=display_number)
         draw_watchdog_index = len(watchdog)
         before_draw_demo_delay = streaming_recorder.delay_seconds_total
         try:
@@ -479,7 +753,7 @@ def run_foundation_remaining_training_batch(
             streaming_recorder.after_item(handles, capability_id=capability_id)
         item_report = {
             "capabilityId": capability_id,
-            "title": f"{original_index + 11:02d} {item['name']}",
+            "title": f"{display_number:02d} {item['name']}",
             "status": item_status,
             "handles": list(dict.fromkeys(handles)),
             "handle_count": len(set(handles)),
@@ -491,6 +765,13 @@ def run_foundation_remaining_training_batch(
         }
         if style_evidence is not None:
             item_report["styleEvidence"] = style_evidence
+        if capability_id in adaptive_item_map:
+            adaptive_item = adaptive_item_map[capability_id]
+            item_report["adaptiveReplay"] = adaptive_item
+            item_report["profileVersionUsed"] = adaptive_item.get("profileVersionUsed", "")
+            item_report["consumedLessonIds"] = adaptive_item.get("consumedLessonIds", [])
+            item_report["whyExpressionLevelChosen"] = adaptive_item.get("whyExpressionLevelChosen", "")
+            item_report["acceptedLowExpression"] = bool(adaptive_item.get("acceptedLowExpression", False))
         item_reports.append(item_report)
         if blocked_reason:
             break
@@ -593,21 +874,34 @@ def run_foundation_remaining_training_batch(
             + f" measured_delay_seconds={streaming_summary.get('delaySecondsTotal', 0.0)}",
         ),
     ]
+    checks.extend(
+        _adaptive_check_set(
+            capability_profile=capability_profile,
+            adaptive_replay=adaptive_replay,
+            regression_guard=regression_guard,
+            safety_boundaries=safety_boundaries,
+        )
+    )
     status = "pass" if dry_run["status"] == "pass" and all(check["status"] == "pass" for check in checks) else "blocked"
 
-    plan_path = output_dir / "remaining_21_training_plan.json"
-    dry_run_path = output_dir / "remaining_21_dry_run.json"
-    execution_summary_path = output_dir / "remaining_21_execution_summary.json"
-    preview_path = output_dir / "remaining_21_preview.png"
-    report_path = output_dir / "remaining_21_report.json"
+    plan_path = output_dir / f"{artifact_prefix}_training_plan.json"
+    dry_run_path = output_dir / f"{artifact_prefix}_dry_run.json"
+    execution_summary_path = output_dir / f"{artifact_prefix}_execution_summary.json"
+    preview_path = output_dir / f"{artifact_prefix}_preview.png"
+    report_path = output_dir / f"{artifact_prefix}_report.json"
     state_path = output_dir.parent / "queue_state.json"
 
     execution_summary = {
         "status": status,
-        "queueId": QUEUE_ID,
+        "queueId": queue_id,
         "mode": scope_mode,
-        "batchMode": MODE,
+        "batchMode": batch_mode,
         "scope": scope,
+        "replayMode": replay_mode,
+        "capabilityProfile": capability_profile,
+        "adaptiveReplay": adaptive_replay,
+        "regressionGuard": regression_guard,
+        "safetyBoundaries": safety_boundaries,
         "trainingOptions": training_options or {},
         "generated_at": generated,
         "created_handles": all_handles,
@@ -669,10 +963,15 @@ def run_foundation_remaining_training_batch(
         "status": status,
         "generated_at": generated,
         "active_document": str(getattr(getattr(driver, "doc", None), "Name", "")),
-        "queueId": QUEUE_ID,
+        "queueId": queue_id,
         "mode": scope_mode,
-        "batchMode": MODE,
+        "batchMode": batch_mode,
         "scope": scope,
+        "replayMode": replay_mode,
+        "capabilityProfile": capability_profile,
+        "adaptiveReplay": adaptive_replay,
+        "regressionGuard": regression_guard,
+        "safetyBoundaries": safety_boundaries,
         "trainingOptions": training_options or {},
         "timeoutSeconds": timeout_seconds,
         "selfRecoveryAttempted": bool(blocked_reason or timed_out),
@@ -710,10 +1009,16 @@ def run_foundation_remaining_training_batch(
 
     queue_state = {
         "schemaVersion": 1,
-        "queueId": QUEUE_ID,
+        "queueId": queue_id,
         "mode": scope_mode,
-        "batchMode": MODE,
+        "batchMode": batch_mode,
         "scope": scope,
+        "replayMode": replay_mode,
+        "adaptiveReplay": {
+            "status": adaptive_replay.get("status"),
+            "itemCount": len(adaptive_replay.get("items", [])),
+        },
+        "regressionGuard": {"status": regression_guard.get("status")},
         "status": "completed" if status == "pass" else "blocked",
         "updatedAt": generated,
         "currentIndex": len(item_reports),

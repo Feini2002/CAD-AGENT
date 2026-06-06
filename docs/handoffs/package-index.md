@@ -6,6 +6,9 @@
 
 | 序号 | 开发包 | 位置 |
 | --- | --- | --- |
+| current | ADAPTIVE-CAPABILITY-GROWTH-TRAINING-01：自适应能力成长训练闭环与临时 MD 删除 | `current.md` |
+| current | WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01：Cloudflare Worker 初始远程部署与 smoke | `current.md` |
+| current | WORKER-ORCHESTRATOR-PREDEPLOY-HARDENING-01：Cloudflare Worker 预部署编排层与临时 playMD 删除 | `current.md` |
 | current | ARCH-CONVERGENCE-01：架构归并画布、三成熟度口径与工作台表 C 收口 | `current.md` |
 | current | LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01：模型桥安全加固与独立 MD 收口 | `current.md` |
 | current | LOCAL-LIVE-MODEL-BRIDGE-RUNTIME-GATES-01：Worker-first 运行骨架、分层 feature gate 与诊断脚本 | `current.md` |

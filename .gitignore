@@ -58,8 +58,15 @@ __pycache__/
 
 # Local environment files
 .env
+**/.dev.vars
 .venv/
 venv/
+node_modules/
+.wrangler/
+.wrangler-config/
+.wrangler-*/
+tmp-worker-*.log
+tmp-worker-*.txt
 
 # CAD lock/temp files
 *.dwl

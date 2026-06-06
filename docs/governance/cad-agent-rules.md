@@ -76,6 +76,8 @@ focused / formal CAD 可见交付还必须有 `closeout_decision.json` 或等价
 
 所有模型桥 Agent 都是可自动升级的训练对象。模型 fail、用户反馈 fail、机器审计 fail、closeout blocked 或修复成功后，必须记录 `learningCandidate` 或显式 `not_required`，包括 `errorPattern`、`correctPattern`、`promptDelta`、`checkerDelta`、`retestOriginalTask` 和 `responsibleAgentIds`。`pipeline_learning_promoter` 负责把可沉淀经验写回责任 Agent 的 `training_memory.json` / `prompt_addendum.md`，并在需要时提出基础规则、单项规则、检查器和原任务回测候选；该沉淀不提升表 C，不替代真实 CAD 证据。
 
+任何声称主 Agent 变聪明、具备更强认知、已经学会某类判断或已经接近 Codex-like 主脑的改动，都必须提供 before / after proof：同类真实任务中 route、dispatch、requiredAgents、tool choice、blocking reason、learningCandidate、原任务回测或下一次 replay 结果确实因历史经验而改变。没有这类证据时，只能称为机制建设、提示词建设、规则建设或可训练性建设，不能称为认知提升。
+
 如果未来判断根目录 Markdown 过多，优先迁移到 `docs/history/`、`docs/architecture/`、`docs/decisions/` 或 `docs/verification/`，不要直接删除仍有历史依据的文档。
 
 ### 0.3.2 架构归并画布优先
@@ -334,6 +336,14 @@ focused 训练报告必须写入 `scope.mode=focused`、`requestedCapabilityIds`
 `quick_trial` 回复不超过 3 句，必须说明“快试未沉淀”，不得声称训练通过、工作台已更新、表 C 提升或可交付准确。若快试预计新增对象超过 20 个、需要修改已有实体、涉及正式图层 / 保存 / 删除、关键回读失败、超过 2 分钟仍无关键证据，或用户要求正式准确性，必须先说明原因并升级到 `focused_retraining` / `formal_acceptance`，不得静默执行重链路。
 
 训练收尾必须经过 `promotionGate`。正式训练或复训通过后，gate 至少要声明 `updateTrainingSource`、`updateWorkbench`、`updateAgentCalibration`、`updateBaseRules`、`updateTaskRules`、`updateChecker` 和 `retestOriginalTask` 七项决策。`quick_trial` 必须保持 `promotionLevel=observation`，不得写 Agent 校准或工作台已沉淀状态；底座规则、单项规则和检查器 delta 必须标为 `needs_reviewed_package`，不能由训练脚本静默写入长期规则。
+
+## 7.4.1 自适应能力成长复训边界
+
+当用户指出“这个能力之前训练过但输出又退回烟测”或明确要求“加深 / 按历史经验提高表达”时，默认进入 adaptive capability growth 判断，而不是直接重跑完整队列。系统应优先构建 repo-local `capability_growth_profile`：只读取仓库内 active / protected 事实源、final report、learning ledger、Agent memory / Prompt addendum、registry evidence 和明确引用的训练报告；`output/debug`、工作台派生快照、sync report、retention report、diagnostic report、外部路径、缺失文件、截图和模型 pass 只能是 diagnostic / derived，不能作为 hard baseline。
+
+`growth_replay` 只允许在 `focused_retraining` 或显式 `formal_acceptance` 中使用。它必须记录 `requestedCapabilityIds`、`scopeReason`、profile source roles、positive / negative lesson、required features、observed features、expression comparison 和 original task retest boundary；缺任一关键项时 closeout 只能 `blocked` / `not_verified`。`smoke_replay` 允许最小表达豁免，但必须写明 `acceptedExemption=explicit_minimal_smoke`，不得把豁免烟测说成能力成长。
+
+能力成长复训不能自动修改基础规则、单项规则、检查器、Agent memory、训练事实源、工作台、Worker 或表 C。任何可迁移 lesson 先进入 review-only candidate；要长期沉淀必须再经过 `promotionGate`、reviewed package、必要原任务回测和对应文档 / 事实源同步。没有真实 CAD created handles readback 时，不得声称几何能力已经增强。
 
 ## 7.5 未列入计划的复合任务动态编排
 

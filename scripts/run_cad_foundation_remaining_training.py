@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the remaining 21 CAD foundation-operation training items."""
+"""Run CAD foundation-operation batch training items."""
 
 from __future__ import annotations
 
@@ -15,7 +15,11 @@ except ModuleNotFoundError:  # Imported as scripts.run_cad_foundation_remaining_
 
 ensure_project_root_on_path()
 
-from core.training.foundation_batch_training import QUEUE_ID, run_foundation_remaining_training_batch  # noqa: E402
+from core.training.foundation_batch_training import (  # noqa: E402
+    FOUNDATION_BATCH_CONFIGS,
+    QUEUE_ID,
+    run_foundation_remaining_training_batch,
+)
 from core.training.streaming_demo import SleepFn, StreamingCadDemoConfig  # noqa: E402
 from scripts import build_capability_map_data  # noqa: E402
 from scripts.run_training_queue import _artifact_retention_summary, _post_sync_summary  # noqa: E402
@@ -24,10 +28,23 @@ from scripts.run_training_queue import _artifact_retention_summary, _post_sync_s
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "output" / "training_queues" / QUEUE_ID / "remaining-21-chinese"
 
 
-def _focused_output_dir(capability_ids: list[str]) -> Path:
+def _batch_config(batch_preset: str) -> dict[str, Any]:
+    return FOUNDATION_BATCH_CONFIGS[batch_preset]
+
+
+def _default_output_dir(batch_preset: str) -> Path:
+    config = _batch_config(batch_preset)
+    queue_id = str(config["queueId"])
+    folder = "all-31-retrain" if batch_preset == "all-31" else "remaining-21-chinese"
+    return PROJECT_ROOT / "output" / "training_queues" / queue_id / folder
+
+
+def _focused_output_dir(capability_ids: list[str], *, batch_preset: str = "remaining-21") -> Path:
+    config = _batch_config(batch_preset)
+    queue_id = str(config["queueId"])
     name = "_".join(capability_ids) if capability_ids else "all"
     safe_name = "".join(char if char.isalnum() or char in ("-", "_") else "_" for char in name)
-    return PROJECT_ROOT / "output" / "training_queues" / QUEUE_ID / "focused" / safe_name
+    return PROJECT_ROOT / "output" / "training_queues" / queue_id / "focused" / safe_name
 
 
 def _parse_hatch_scales(value: str) -> list[float]:
@@ -70,6 +87,11 @@ def run_remaining_training(
     artifact_retention: bool = True,
     artifact_retention_write: bool = False,
     artifact_retention_func=None,
+    batch_preset: str = "remaining-21",
+    replay_mode: str = "smoke_replay",
+    profile_source: Path | None = None,
+    allow_low_expression: bool = False,
+    project_root: Path | None = PROJECT_ROOT,
 ) -> dict[str, Any]:
     streaming_config = (
         StreamingCadDemoConfig.hybrid(
@@ -93,6 +115,11 @@ def run_remaining_training(
         anchor_output_dir=anchor_output_dir,
         streaming_config=streaming_config,
         sleep_fn=sleep_fn,
+        batch_preset=batch_preset,
+        replay_mode=replay_mode,
+        profile_source=profile_source,
+        allow_low_expression=allow_low_expression,
+        project_root=project_root,
     )
     report["postTrainingSync"] = {"status": "not_required", "reason": "Training report did not pass."}
     report["postTrainingArtifactRetention"] = {
@@ -116,7 +143,8 @@ def run_remaining_training(
             "status": "not_required",
             "reason": "Focused lightweight retraining does not replace full-batch acceptance.",
         }
-        report_path = output_dir / "remaining_21_report.json"
+        artifact_prefix = str(_batch_config(batch_preset)["artifactPrefix"])
+        report_path = output_dir / f"{artifact_prefix}_report.json"
         report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         return report
 
@@ -139,14 +167,22 @@ def run_remaining_training(
             "reason": "Caller requested --no-artifact-retention.",
         }
 
-    report_path = output_dir / "remaining_21_report.json"
+    artifact_prefix = str(_batch_config(batch_preset)["artifactPrefix"])
+    report_path = output_dir / f"{artifact_prefix}_report.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return report
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Train and accept the remaining CAD foundation-operation items.")
+    parser = argparse.ArgumentParser(description="Train and accept CAD foundation-operation items.")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument(
+        "--batch-preset",
+        choices=sorted(FOUNDATION_BATCH_CONFIGS),
+        default="remaining-21",
+        help="Batch preset to run. Defaults to the historical remaining 21 items.",
+    )
+    parser.add_argument("--all-31", action="store_true", help="Shortcut for --batch-preset all-31.")
     parser.add_argument("--fake-cad", action="store_true", help="Use the in-memory fake CAD driver for tests.")
     parser.add_argument("--timeout-seconds", type=int, default=30)
     parser.add_argument("--no-post-sync", action="store_true", help="Skip training workbench sync after pass.")
@@ -162,6 +198,22 @@ def main() -> int:
     parser.add_argument("--stream-operation-delay", type=float, default=0.12, help="Delay after critical drawing operations.")
     parser.add_argument("--stream-operation-budget", type=int, default=5, help="Max operation delays per item.")
     parser.add_argument("--stream-no-zoom", action="store_true", help="Disable per-item zoom during streaming demo mode.")
+    parser.add_argument(
+        "--replay-mode",
+        choices=["smoke_replay", "growth_replay", "standard_replay"],
+        default="smoke_replay",
+        help="Adaptive replay contract mode. Defaults to legacy smoke replay.",
+    )
+    parser.add_argument(
+        "--profile-source",
+        type=Path,
+        help="Repo-local adaptive capability profile JSON. Only read as planning context.",
+    )
+    parser.add_argument(
+        "--allow-low-expression",
+        action="store_true",
+        help="Allow an explicitly recorded low-expression exemption in adaptive regression guard.",
+    )
     parser.add_argument(
         "--only",
         action="append",
@@ -181,11 +233,13 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    output_dir = args.output_dir
+    batch_preset = "all-31" if args.all_31 else args.batch_preset
+    output_dir_was_default = args.output_dir == DEFAULT_OUTPUT_DIR
+    output_dir = _default_output_dir(batch_preset) if output_dir_was_default else args.output_dir
     anchor_output_dir = None
-    if args.only and output_dir == DEFAULT_OUTPUT_DIR:
-        output_dir = _focused_output_dir(args.only)
-        anchor_output_dir = DEFAULT_OUTPUT_DIR
+    if args.only and output_dir_was_default:
+        output_dir = _focused_output_dir(args.only, batch_preset=batch_preset)
+        anchor_output_dir = _default_output_dir(batch_preset)
 
     training_options: dict[str, Any] = {}
     if args.hatch_full_fill:
@@ -216,6 +270,11 @@ def main() -> int:
         stream_zoom_each_item=not args.stream_no_zoom,
         artifact_retention=not args.no_artifact_retention,
         artifact_retention_write=args.artifact_retention_write,
+        batch_preset=batch_preset,
+        replay_mode=args.replay_mode,
+        profile_source=args.profile_source,
+        allow_low_expression=args.allow_low_expression,
+        project_root=PROJECT_ROOT,
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     sync_status = report.get("postTrainingSync", {}).get("status")

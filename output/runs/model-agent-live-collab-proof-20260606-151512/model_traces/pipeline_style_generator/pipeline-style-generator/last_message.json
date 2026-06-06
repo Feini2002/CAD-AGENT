@@ -1,0 +1,65 @@
+{
+  "alternativesConsidered": [],
+  "assumptions": [],
+  "blockingReasons": [],
+  "candidateCountPolicy": "explicit_multi_candidate",
+  "candidateLabelPolicy": "abc",
+  "candidateTradeoffs": [
+    {
+      "id": "A",
+      "tradeoff": "more readable"
+    }
+  ],
+  "creativityPolicy": "contextual_not_forced",
+  "decision": "pass",
+  "evidenceMissing": [],
+  "evidenceUsed": [
+    "local_fixture_model",
+    "rule_context_pack",
+    "upstream handoff packets"
+  ],
+  "finalResponseAllowedClaims": [
+    "local fixture agent-chain output only"
+  ],
+  "learningCandidate": {
+    "checkerDelta": "",
+    "correctPattern": "",
+    "decision": "not_required",
+    "errorPattern": "",
+    "promptDelta": "",
+    "responsibleAgentIds": [],
+    "retestOriginalTask": false,
+    "trigger": "not_required"
+  },
+  "needsUserChoice": false,
+  "nextRequiredEvidence": [],
+  "requestedCandidateCount": 2,
+  "selectedStyleCandidate": "A",
+  "semanticRoutingConfidence": "high",
+  "statePatch": {
+    "blockedReason": "",
+    "completedEvidence": [
+      "local fixture model output"
+    ],
+    "nextSafeAction": "continue",
+    "pendingEvidence": [],
+    "pendingUserAction": "",
+    "phase": "style_generation_review.schema.json",
+    "phaseLabelForUser": "style_generation_review.schema.json"
+  },
+  "status": "pass",
+  "styleCandidates": [
+    {
+      "id": "A"
+    },
+    {
+      "id": "B"
+    }
+  ],
+  "styleDecision": "multiple",
+  "styleParameterGrammar": {
+    "scale": "model_units"
+  },
+  "styleWaiverReason": "",
+  "toolIntent": null
+}

@@ -2,12 +2,9 @@
   "schemaVersion": 1,
   "agentId": "pipeline_audit",
   "learningState": "prompt_updated",
-  "updatedAt": "2026-06-02T02:03:17+00:00",
+  "updatedAt": "2026-06-06T15:56:30+00:00",
   "sourceReports": [
-    "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json",
-    "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json",
-    "output/training_queues/cad-foundation-remaining-21/focused/image-arrow-solid-fill-square/semantic_acceptance_report.json",
-    "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json"
+    "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
   ],
   "acceptedCapabilities": [
     "cad-primitives",
@@ -43,12 +40,12 @@
     "cad-safe-undo-rollback"
   ],
   "acceptedCapabilityCount": 31,
-  "lessonCount": 33,
+  "lessonCount": 31,
   "lessons": [
     {
       "capabilityId": "cad-primitives",
-      "title": "01 基础图元",
-      "summary": "01 基础图元 已通过中文训练验收，handles 14/14 已回读。",
+      "title": "01 基础图元绘制",
+      "summary": "01 基础图元绘制 已通过中文训练验收，handles 15/15 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -60,25 +57,25 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 14,
-        "readbackCount": 14,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 15,
+        "readbackCount": 15,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-selection-edit",
-      "title": "02 选择编辑",
-      "summary": "02 选择编辑 已通过中文训练验收，handles 27/27 已回读。",
+      "title": "02 选择与基础编辑",
+      "summary": "02 选择与基础编辑 已通过中文训练验收，handles 21/21 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -90,24 +87,24 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 27,
-        "readbackCount": 27,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 21,
+        "readbackCount": 21,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-transform",
-      "title": "03 变换",
-      "summary": "03 变换 已通过中文训练验收，handles 13/13 已回读。",
+      "title": "03 旋转镜像缩放",
+      "summary": "03 旋转镜像缩放 已通过中文训练验收，handles 24/24 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -119,25 +116,25 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 13,
-        "readbackCount": 13,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 24,
+        "readbackCount": 24,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-offset-trim",
-      "title": "04 偏移修剪",
-      "summary": "04 偏移修剪 已通过中文训练验收，handles 14/14 已回读。",
+      "title": "04 偏移修剪延伸",
+      "summary": "04 偏移修剪延伸 已通过中文训练验收，handles 18/18 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -149,13 +146,13 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 14,
-        "readbackCount": 14,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 18,
+        "readbackCount": 18,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -163,12 +160,12 @@
         "pipeline_audit",
         "pipeline_repair"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-layer-discipline",
-      "title": "05 图层守卫",
-      "summary": "05 图层守卫 已通过中文训练验收，handles 10/10 已回读。",
+      "title": "05 图层与线型基础",
+      "summary": "05 图层与线型基础 已通过中文训练验收，handles 13/13 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -180,25 +177,25 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 10,
-        "readbackCount": 10,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 13,
+        "readbackCount": 13,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_execute",
         "pipeline_audit",
         "pipeline_delivery"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-closure-constraints",
-      "title": "06 闭合对齐",
-      "summary": "06 闭合对齐 已通过中文训练验收，handles 19/19 已回读。",
+      "title": "06 闭合对齐约束",
+      "summary": "06 闭合对齐约束 已通过中文训练验收，handles 14/14 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -210,13 +207,13 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 19,
-        "readbackCount": 19,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 14,
+        "readbackCount": 14,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -224,12 +221,12 @@
         "pipeline_audit",
         "pipeline_repair"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-readback-audit",
-      "title": "07 回读审计",
-      "summary": "07 回读审计 已通过中文训练验收，handles 13/13 已回读。",
+      "title": "07 回读与自检基础",
+      "summary": "07 回读与自检基础 已通过中文训练验收，handles 13/13 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -241,25 +238,25 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 13,
         "readbackCount": 13,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_audit",
         "pipeline_delivery",
         "pipeline_learning_promoter"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-units-scale",
-      "title": "08 单位比例",
-      "summary": "08 单位比例 已通过中文训练验收，handles 17/17 已回读。",
+      "title": "08 单位与比例设置",
+      "summary": "08 单位与比例设置 已通过中文训练验收，handles 12/12 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -271,25 +268,25 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 17,
-        "readbackCount": 17,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 12,
+        "readbackCount": 12,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-coordinate-input",
-      "title": "09 坐标输入",
-      "summary": "09 坐标输入 已通过中文训练验收，handles 12/12 已回读。",
+      "title": "09 坐标输入基础",
+      "summary": "09 坐标输入基础 已通过中文训练验收，handles 13/13 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -301,25 +298,25 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 12,
-        "readbackCount": 12,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 13,
+        "readbackCount": 13,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-osnap-ortho-polar",
-      "title": "10 捕捉正交",
-      "summary": "10 捕捉正交 已通过中文训练验收，handles 12/12 已回读。",
+      "title": "10 捕捉与正交极轴",
+      "summary": "10 捕捉与正交极轴 已通过中文训练验收，handles 11/11 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -331,20 +328,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
-        "handleCount": 12,
-        "readbackCount": 12,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
+        "handleCount": 11,
+        "readbackCount": 11,
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-polyline-width-cleanup",
@@ -361,20 +358,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 9,
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-hatch-boundary",
@@ -391,20 +388,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 31,
         "readbackCount": 31,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-boundary-region",
@@ -421,20 +418,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 8,
         "readbackCount": 8,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-fillet-chamfer",
@@ -451,20 +448,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 11,
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-stretch-edit",
@@ -481,20 +478,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 16,
         "readbackCount": 16,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-block-insert-attribute",
@@ -511,20 +508,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 8,
         "readbackCount": 8,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-block-rotate-scale",
@@ -541,20 +538,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 9,
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-xref-underlay-protect",
@@ -571,20 +568,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 12,
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-layout-viewport",
@@ -601,20 +598,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 15,
         "readbackCount": 15,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-plot-scale-titleblock",
@@ -631,20 +628,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 15,
         "readbackCount": 15,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-redline-revision",
@@ -661,20 +658,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 13,
         "readbackCount": 13,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-layer-lineweight-standard",
@@ -691,20 +688,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 12,
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-selection-by-room",
@@ -721,20 +718,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 15,
         "readbackCount": 15,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-array-copy-pattern",
@@ -751,20 +748,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 11,
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-measure-distance-area",
@@ -781,20 +778,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 12,
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-purge-audit-cleanup",
@@ -811,20 +808,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 9,
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-dim-style-baseline",
@@ -841,20 +838,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 12,
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-text-mleader-style",
@@ -871,20 +868,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 9,
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-handle-bbox-report",
@@ -901,20 +898,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 11,
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-layer-pollution-check",
@@ -931,20 +928,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 11,
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     },
     {
       "capabilityId": "cad-safe-undo-rollback",
@@ -961,84 +958,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 8,
         "readbackCount": 8,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T08:39:22+00:00",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
         "pipeline_execute",
         "pipeline_audit"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json"
-    },
-    {
-      "capabilityId": "cad-hatch-boundary",
-      "title": "12 填充与边界：箭头语义实心填充二次加强",
-      "summary": "12 填充与边界：箭头语义实心填充二次加强 已通过中文训练验收，handles 2/2 已回读。",
-      "promptGuidance": [
-        "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
-        "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
-        "通过前必须回读 created handles，并说明 checked / not_checked。",
-        "真实 CAD 测试默认只写 CODEX_PREVIEW，不保存 DWG，不污染正式图层。",
-        "CAD 截图必须走任务级截图编排：局部修复优先传 target_handles、repair_plan.target_handles 或 repair_plan.target_bbox；没有局部目标时才退到 execution_summary.created_handles。",
-        "AutoCAD 会话截图默认保留 CAD / IDE 布局，用 AutoCAD 客户区 PrintWindow；只有 PrintWindow 失败或 CAD 完全不可见时才短暂置顶。",
-        "单项复验、focused retraining、视觉复核和正式验收需要截图时，Agent 必须报告 screenshotDecision 和 visualPreview，并说明截图只是 visual_aid_only。",
-        "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。",
-        "用户用箭头、蓝圈或截图指定 CAD 位置时，先识别被指对象及相对位置，不得默认另起训练模块。",
-        "图像反馈类 CAD 修正应优先从当前 AutoCAD 实体回读参照 bbox，再按当前画面语义定位；不要套旧 execution summary 坐标。",
-        "若用户要求同尺寸补画样本，先从已存在样本 bbox 推导尺寸，再画新对象并回读 created handles。",
-        "误画在其它区域的预览实体默认保留，未经用户明确批准不得删除 CAD 对象或保存 DWG。"
-      ],
-      "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "focused_secondary_retraining",
-        "handleCount": 2,
-        "readbackCount": 2,
-        "feedback": "用户确认图三箭头处语义定位正确；已在原第 12 项面板上方画同尺寸 SOLID 实心正方形。"
-      },
-      "sourceGeneratedAt": "2026-06-01T09:20:00Z",
-      "responsibleAgentIds": [
-        "cad_designer",
-        "pipeline_intent",
-        "pipeline_execute",
-        "pipeline_audit"
-      ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/focused/image-arrow-solid-fill-square/semantic_acceptance_report.json"
-    },
-    {
-      "capabilityId": "cad-layer-lineweight-standard",
-      "title": "22 线宽线型标准",
-      "summary": "22 线宽线型标准 已通过中文训练验收，handles 12/12 已回读。",
-      "promptGuidance": [
-        "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
-        "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
-        "通过前必须回读 created handles，并说明 checked / not_checked。",
-        "真实 CAD 测试默认只写 CODEX_PREVIEW，不保存 DWG，不污染正式图层。",
-        "CAD 截图必须走任务级截图编排：局部修复优先传 target_handles、repair_plan.target_handles 或 repair_plan.target_bbox；没有局部目标时才退到 execution_summary.created_handles。",
-        "AutoCAD 会话截图默认保留 CAD / IDE 布局，用 AutoCAD 客户区 PrintWindow；只有 PrintWindow 失败或 CAD 完全不可见时才短暂置顶。",
-        "单项复验、focused retraining、视觉复核和正式验收需要截图时，Agent 必须报告 screenshotDecision 和 visualPreview，并说明截图只是 visual_aid_only。",
-        "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
-      ],
-      "evidence": {
-        "queueId": "cad-foundation-remaining-21",
-        "mode": "focused",
-        "handleCount": 12,
-        "readbackCount": 12,
-        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
-      },
-      "sourceGeneratedAt": "2026-06-02T02:03:17+00:00",
-      "responsibleAgentIds": [
-        "cad_designer",
-        "pipeline_intent",
-        "pipeline_execute",
-        "pipeline_audit"
-      ],
-      "sourceReport": "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     }
   ],
   "promptUpdateSummary": [
@@ -1049,11 +982,7 @@
     "CAD 截图必须走任务级截图编排：局部修复优先传 target_handles、repair_plan.target_handles 或 repair_plan.target_bbox；没有局部目标时才退到 execution_summary.created_handles。",
     "AutoCAD 会话截图默认保留 CAD / IDE 布局，用 AutoCAD 客户区 PrintWindow；只有 PrintWindow 失败或 CAD 完全不可见时才短暂置顶。",
     "单项复验、focused retraining、视觉复核和正式验收需要截图时，Agent 必须报告 screenshotDecision 和 visualPreview，并说明截图只是 visual_aid_only。",
-    "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。",
-    "用户用箭头、蓝圈或截图指定 CAD 位置时，先识别被指对象及相对位置，不得默认另起训练模块。",
-    "图像反馈类 CAD 修正应优先从当前 AutoCAD 实体回读参照 bbox，再按当前画面语义定位；不要套旧 execution summary 坐标。",
-    "若用户要求同尺寸补画样本，先从已存在样本 bbox 推导尺寸，再画新对象并回读 created handles。",
-    "误画在其它区域的预览实体默认保留，未经用户明确批准不得删除 CAD 对象或保存 DWG。"
+    "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
   ],
   "evidenceBoundary": "训练沉淀只更新 Agent 经验、Prompt 和检查口径；不提升表 C，不代表完整施工图能力。"
 }

@@ -1,7 +1,7 @@
 {
   "version": "0.1",
   "status": "pass",
-  "generatedAt": "2026-06-06T08:45:57+00:00",
+  "generatedAt": "2026-06-06T17:27:24+00:00",
   "write": false,
   "policy": {
     "mode": "archive_unreferenced_old_screenshots",
@@ -34,10 +34,10 @@
     "docs/status",
     "capability-map-data.js"
   ],
-  "candidateCount": 26,
-  "protectedArtifactCount": 5167,
-  "referenceFileCount": 1315,
-  "keptCount": 26,
+  "candidateCount": 31,
+  "protectedArtifactCount": 5212,
+  "referenceFileCount": 1322,
+  "keptCount": 31,
   "archivePlannedCount": 0,
   "archivedCount": 0,
   "kept": [
@@ -65,6 +65,21 @@
       "path": "output/previews/object-family-sofa-replay-20260605-rcad.png",
       "reason": "referenced",
       "reference": "docs/handoffs/current.md"
+    },
+    {
+      "path": "output/previews/runtime-trace-workbench-20260606.png",
+      "reason": "referenced",
+      "reference": "output/validation_runs/training-artifact-retention/retention_report.json"
+    },
+    {
+      "path": "output/previews/runtime-trace-workbench-compact-20260606.png",
+      "reason": "referenced",
+      "reference": "docs/status/changelog.md"
+    },
+    {
+      "path": "output/previews/runtime-trace-workbench-plain-20260606.png",
+      "reason": "referenced",
+      "reference": "output/validation_runs/training-artifact-retention/retention_report.json"
     },
     {
       "path": "output/previews/system-asset-a1-restored-a2-cleaned.png",
@@ -127,6 +142,11 @@
       "reference": "output/validation_runs/training-artifact-retention/retention_report.json"
     },
     {
+      "path": "output/previews/worker-bridge-cad-preview-20260606-151512.png",
+      "reason": "referenced",
+      "reference": "docs/status/changelog.md"
+    },
+    {
       "path": "output/test_artifacts/agent-prompt-workbench-model-filter.png",
       "reason": "referenced",
       "reference": "output/validation_runs/cad-validation-debt-closure-20260605/data_bloat_audit.json"
@@ -170,6 +190,11 @@
       "path": "output/test_artifacts/training_workbench_sync_tests/training_source_fixture/source_27.png",
       "reason": "referenced",
       "reference": "output/validation_runs/cad-validation-debt-closure-20260605/data_bloat_audit.json"
+    },
+    {
+      "path": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_preview.png",
+      "reason": "referenced",
+      "reference": "output/validation_runs/training-artifact-retention/retention_report.json"
     }
   ],
   "protectedArtifacts": [
@@ -177,6 +202,46 @@
       "path": "output/debug/system-assets/standard_assets_recovery_from_bak.dwg",
       "reason": "protected_suffix",
       "suffix": ".dwg"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-cli-smoke/remaining_21_dry_run.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-cli-smoke/remaining_21_execution_summary.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-cli-smoke/remaining_21_report.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-cli-smoke/remaining_21_training_plan.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-closeout-cli-smoke-20260607/remaining_21_dry_run.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-closeout-cli-smoke-20260607/remaining_21_execution_summary.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-closeout-cli-smoke-20260607/remaining_21_report.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/adaptive-growth-closeout-cli-smoke-20260607/remaining_21_training_plan.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
     },
     {
       "path": "output/test_artifacts/agent-check-debug.json",
@@ -18229,12 +18294,52 @@
       "suffix": ".json"
     },
     {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-3e44e3427280486a892174dce0ce666a/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-3e44e3427280486a892174dce0ce666a/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-501aff6b88c347b0871a23cffae1c3f8/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-501aff6b88c347b0871a23cffae1c3f8/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-959546d0ae0e4a368352fe3fa3c73da0/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-959546d0ae0e4a368352fe3fa3c73da0/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
       "path": "output/test_artifacts/project_sample_loader/loader-path-escape-967080a0af384aaf92901cbdc220e69a/escape_sample/sample.manifest.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
     {
       "path": "output/test_artifacts/project_sample_loader/loader-path-escape-967080a0af384aaf92901cbdc220e69a/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-9fef7d21cddc4dd3b44812afd2095c6b/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-9fef7d21cddc4dd3b44812afd2095c6b/outside.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -18284,6 +18389,21 @@
       "suffix": ".dwg"
     },
     {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-3c0333732bd1477dbb0efe275782446f/leak_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-3c0333732bd1477dbb0efe275782446f/leak_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-3c0333732bd1477dbb0efe275782446f/leak_sample/source/secret.dwg",
+      "reason": "protected_suffix",
+      "suffix": ".dwg"
+    },
+    {
       "path": "output/test_artifacts/project_sample_protocol/dwg-present-57ebb7a55be3454faac21e61d60cc746/leak_sample/input/shell.manual.json",
       "reason": "protected_suffix",
       "suffix": ".json"
@@ -18295,6 +18415,36 @@
     },
     {
       "path": "output/test_artifacts/project_sample_protocol/dwg-present-57ebb7a55be3454faac21e61d60cc746/leak_sample/source/secret.dwg",
+      "reason": "protected_suffix",
+      "suffix": ".dwg"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-707e95ea564045f79a18b98dc6a95b40/leak_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-707e95ea564045f79a18b98dc6a95b40/leak_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-707e95ea564045f79a18b98dc6a95b40/leak_sample/source/secret.dwg",
+      "reason": "protected_suffix",
+      "suffix": ".dwg"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-80d992be19244c098029f1947b54c8e6/leak_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-80d992be19244c098029f1947b54c8e6/leak_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-80d992be19244c098029f1947b54c8e6/leak_sample/source/secret.dwg",
       "reason": "protected_suffix",
       "suffix": ".dwg"
     },
@@ -18374,12 +18524,47 @@
       "suffix": ".dwg"
     },
     {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-d1512742940e498cae87a7277a8d68e2/leak_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-d1512742940e498cae87a7277a8d68e2/leak_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-d1512742940e498cae87a7277a8d68e2/leak_sample/source/secret.dwg",
+      "reason": "protected_suffix",
+      "suffix": ".dwg"
+    },
+    {
       "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-194540775df84a0e82280c0898271455/escape_sample/sample.manifest.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
     {
       "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-194540775df84a0e82280c0898271455/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-1fcc345cfe5b482db357266ab78828b3/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-1fcc345cfe5b482db357266ab78828b3/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-30989bb7baa14ffaa01582ddab039da6/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-30989bb7baa14ffaa01582ddab039da6/outside.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -18400,6 +18585,16 @@
     },
     {
       "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-516b0823057c4754bc8fabd6760719f6/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-63ff013b43b940cbae61cfd562ac00d9/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-63ff013b43b940cbae61cfd562ac00d9/outside.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -18434,6 +18629,16 @@
       "suffix": ".json"
     },
     {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-8fae41c85e8b4c9181c89f2fb65bc580/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-8fae41c85e8b4c9181c89f2fb65bc580/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
       "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-9d1666dca0174dfabe752f679e9173c9/escape_sample/sample.manifest.json",
       "reason": "protected_suffix",
       "suffix": ".json"
@@ -18444,7 +18649,22 @@
       "suffix": ".json"
     },
     {
+      "path": "output/test_artifacts/project_sample_protocol/missing-manifest-257c7e914fdf4320a0c3b51e9fb900a5/bad_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/missing-manifest-4b08435dcad04d37adc1aec7c313152c/bad_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
       "path": "output/test_artifacts/project_sample_protocol/missing-manifest-6fb3f404a3fa43f59e929d329b8297a4/bad_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/missing-manifest-9f3300d1cb8943e8ab51c1b0d628e9d2/bad_sample/input/shell.manual.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -18455,6 +18675,11 @@
     },
     {
       "path": "output/test_artifacts/project_sample_protocol/missing-manifest-c4b91fc38b174668ab07a53dff2905dc/bad_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/missing-manifest-c4d9527c269a4491b340e15bcaff9504/bad_sample/input/shell.manual.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -24839,7 +25064,7 @@
       "suffix": ".json"
     },
     {
-      "path": "output/test_artifacts/training_queue_post_sync_5e09f26647bb4ffc9b0d33d89c6a2e6f/queue_state.json",
+      "path": "output/test_artifacts/training_queue_post_sync_ea3eb2e1871a4c24a34c279d3559d9fe/queue_state.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -25945,6 +26170,31 @@
     },
     {
       "path": "output/test_artifacts/write_guard_cad_runner/fake_only/write_guard_cad_runner_report.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_dry_run.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_execution_summary.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_training_plan.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/training_queues/cad-foundation-all-31/queue_state.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },

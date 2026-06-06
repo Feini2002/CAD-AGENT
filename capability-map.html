@@ -505,6 +505,244 @@
       line-height: 1.55;
     }
 
+    .runtime-trace-panel {
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .runtime-trace-panel .panel-head {
+      padding: 10px 12px;
+    }
+
+    .runtime-trace-panel .panel-head h3 {
+      font-size: 15px;
+    }
+
+    .runtime-trace-panel .panel-head p {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .runtime-trace-shell {
+      display: grid;
+      grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .runtime-trace-summary {
+      display: grid;
+      align-content: start;
+      gap: 7px;
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfc;
+    }
+
+    .runtime-trace-hero {
+      display: grid;
+      gap: 4px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .runtime-trace-kicker {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .runtime-trace-hero strong {
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .runtime-trace-answer {
+      margin: 0;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .runtime-trace-next,
+    .runtime-trace-storage {
+      display: grid;
+      gap: 3px;
+      padding: 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f6fafb;
+    }
+
+    .runtime-trace-next span,
+    .runtime-trace-storage span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .runtime-trace-next b,
+    .runtime-trace-storage b {
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .runtime-trace-summary strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .runtime-trace-summary p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .runtime-trace-meter {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .runtime-trace-meter div {
+      min-width: 0;
+      padding: 7px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--surface);
+    }
+
+    .runtime-trace-meter span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .runtime-trace-meter b {
+      display: block;
+      margin-top: 2px;
+      overflow-wrap: anywhere;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .runtime-trace-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .runtime-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 6px;
+      min-width: 0;
+      min-height: 74px;
+      padding: 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfc;
+    }
+
+    .runtime-step.pass {
+      border-color: #98ccb9;
+      background: #f0faf5;
+    }
+
+    .runtime-step.blocked,
+    .runtime-step.fail {
+      border-color: #ddaaa5;
+      background: #fff6f4;
+    }
+
+    .runtime-step.not_checked,
+    .runtime-step.running,
+    .runtime-step.waiting {
+      border-color: #dfca96;
+      background: #fff9ed;
+    }
+
+    .runtime-step-head {
+      display: grid;
+      gap: 2px;
+    }
+
+    .runtime-step-head strong {
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .runtime-step-index {
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .runtime-step-main {
+      min-width: 0;
+    }
+
+    .runtime-step p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .runtime-step-plain {
+      color: var(--ink) !important;
+      font-size: 11px !important;
+      font-weight: 800;
+    }
+
+    .runtime-evidence-line {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .runtime-step code,
+    .runtime-trace-summary code {
+      display: block;
+      max-width: 100%;
+      margin-top: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--ink-soft);
+      font-size: 11px;
+    }
+
+    .runtime-step .runtime-blocker {
+      color: #9b3d35;
+      font-weight: 800;
+    }
+
+    .runtime-trace-empty {
+      padding: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
     .panel {
       border: 1px solid var(--line-strong);
       border-radius: 6px;
@@ -1477,6 +1715,7 @@
     @media (max-width: 1180px) {
       .status-bar,
       .sync-panel,
+      .runtime-trace-shell,
       .workbench-grid,
       .trace-layout,
       .flightdeck-grid,
@@ -1503,6 +1742,10 @@
       }
 
       .trace-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .runtime-trace-steps {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
@@ -1566,6 +1809,11 @@
       .tab {
         flex: 1 1 calc(50% - 6px);
         text-align: center;
+      }
+
+      .runtime-trace-meter,
+      .runtime-trace-steps {
+        grid-template-columns: 1fr;
       }
 
       .section-head {
@@ -1642,6 +1890,17 @@
         </div>
         <div class="tag-row" id="commandCenterSummary"></div>
       </div>
+
+      <section class="panel runtime-trace-panel">
+        <div class="panel-head">
+          <div>
+            <h3>链路追踪</h3>
+            <p>显示最近一次从白话、Worker、Bridge 到 CAD 预览的本地快照；只读展示，不会主动执行 CAD。</p>
+          </div>
+          <div class="tag-row" id="runtimeTraceBadges"></div>
+        </div>
+        <div id="runtimeTracePanel" aria-live="polite"></div>
+      </section>
 
       <div class="flightdeck-grid">
         <div class="flightdeck-stack">
@@ -1950,6 +2209,11 @@
       traceQuery: "",
       failureFilter: null
     };
+    const runtimeTraceState = {
+      data: null,
+      error: "",
+      loaded: false
+    };
 
     function defaultAgentId() {
       const primary = agents.find((agent) => agent.status === "primary_training");
@@ -2055,6 +2319,16 @@
       const date = new Date(value);
       if (Number.isNaN(date.getTime())) return value;
       return date.toLocaleString("zh-CN", { hour12: false });
+    }
+
+    function formatDuration(ms) {
+      const value = Number(ms);
+      if (!Number.isFinite(value) || value < 0) return "未记录";
+      if (value < 1000) return `${Math.round(value)} ms`;
+      if (value < 60000) return `${(value / 1000).toFixed(value < 10000 ? 1 : 0)} s`;
+      const minutes = Math.floor(value / 60000);
+      const seconds = Math.round((value % 60000) / 1000);
+      return `${minutes}m ${seconds}s`;
     }
 
     function stageRank(program) {
@@ -2166,6 +2440,203 @@
       `;
     }
 
+    function runtimeTone(status) {
+      const value = String(status || "not_checked");
+      if (["pass", "ok", "completed", "ready"].includes(value)) return "pass";
+      if (["blocked", "fail", "failed", "error"].includes(value)) return "blocked";
+      if (["running", "waiting", "queued", "not_checked"].includes(value)) return value;
+      return "not_checked";
+    }
+
+    function runtimeStatusText(status) {
+      const tone = runtimeTone(status);
+      if (tone === "pass") return "已通过";
+      if (tone === "blocked") return "卡住了";
+      if (tone === "running") return "进行中";
+      if (tone === "waiting" || tone === "queued") return "等待中";
+      return "未检查";
+    }
+
+    function runtimePlainStepName(step, index) {
+      const names = {
+        codex_plaintext: "我先理解你的白话",
+        worker_smoke: "Worker 先确认能收任务",
+        agent_chain: "Agent 把事情拆成步骤",
+        validate_plan: "先检查 CAD 计划能不能画",
+        dry_run: "先空跑一遍，避免乱写图",
+        cad_preview: "只写进 CAD 预览层",
+        cad_readback: "再从 CAD 读回来核对",
+        screenshot: "截一张图给人看",
+        closeout: "最后决定能不能交付"
+      };
+      return names[step.id] || step.label || `第 ${index + 1} 步`;
+    }
+
+    function runtimePlainStatus(step) {
+      const tone = runtimeTone(step.status);
+      if (tone === "pass") return "通过";
+      if (tone === "blocked") return step.blocker ? `卡：${runtimeCompactBlocker(step.blocker)}` : "卡住";
+      if (tone === "not_checked") return "未实测";
+      if (tone === "running") return "运行中";
+      if (tone === "waiting" || tone === "queued") return "等待";
+      return step.detail ? step.detail.slice(0, 18) : "无详情";
+    }
+
+    function runtimeCompactBlocker(blocker) {
+      const text = String(blocker || "");
+      const labels = [];
+      if (text.includes("visual_acceptance_review")) labels.push("视觉验收");
+      if (text.includes("neighbor_protection")) labels.push("邻区保护");
+      if (text.includes("evidence_state")) labels.push("回读字段");
+      if (labels.length) return "缺" + labels.slice(0, 3).join("、");
+      return text.length > 18 ? text.slice(0, 18) + "..." : text;
+    }
+
+    function runtimeNextPlainAction(blockedSteps, trace) {
+      if (!trace.steps || !trace.steps.length) return "先生成一份链路快照。";
+      const first = blockedSteps[0];
+      if (!first) return "可以换真实 CAD 任务继续试。";
+      if (first.id === "closeout") return "补最后验收证据。";
+      if (first.id === "agent_chain") return "跑真实模型证据。";
+      if (first.id === "cad_preview" || first.id === "cad_readback") return "查 CAD / bridge 连通。";
+      if (first.id === "worker_smoke") return "查 Worker 和 token。";
+      return `先处理“${runtimePlainStepName(first, 0)}”。`;
+    }
+
+    function runtimePlainSummary(trace, blockedSteps, passCount) {
+      if (!trace.steps || !trace.steps.length) return "还没有最近链路记录。";
+      const firstBlocked = blockedSteps[0];
+      if (firstBlocked) {
+        return `已过 ${passCount}/${trace.steps.length}，卡在“${runtimePlainStepName(firstBlocked, trace.steps.indexOf(firstBlocked))}”。`;
+      }
+      if (runtimeTone(trace.status) === "pass") return "最近一次已走通。";
+      return "还没有足够记录。";
+    }
+
+    function runtimeCompactStorageText(policy) {
+      if (policy?.mode === "rolling_latest_only") return "只覆盖 latest.json；原始证据另按保留策略。";
+      return "当前只读显示；保留策略看后端。";
+    }
+
+    function renderRuntimeTracePanel() {
+      const trace = runtimeTraceState.data || {};
+      const badges = [];
+      if (trace.status) badges.push(tag(runtimeStatusText(trace.status), runtimeTone(trace.status) === "pass" ? "green" : runtimeTone(trace.status) === "blocked" ? "amber" : ""));
+      if (trace.runId) badges.push(tag("run " + trace.runId));
+      if (trace.generatedAt) badges.push(tag("更新 " + formatTime(trace.generatedAt), "blue"));
+      byId("runtimeTraceBadges").innerHTML = badges.join("");
+
+      if (runtimeTraceState.error) {
+        byId("runtimeTracePanel").innerHTML = `
+          <div class="runtime-trace-empty">
+            链路快照读取失败：${escapeHtml(runtimeTraceState.error)}<br>
+            运行 <code>scripts\\build_runtime_trace_snapshot.py</code> 后刷新页面即可查看。
+          </div>
+        `;
+        return;
+      }
+
+      if (!runtimeTraceState.loaded) {
+        byId("runtimeTracePanel").innerHTML = `<div class="runtime-trace-empty">正在读取最新链路快照。</div>`;
+        return;
+      }
+
+      if (!trace.steps || !trace.steps.length) {
+        byId("runtimeTracePanel").innerHTML = `
+          <div class="runtime-trace-empty">
+            还没有链路快照。运行 <code>scripts\\build_runtime_trace_snapshot.py</code> 会生成 <code>output/runtime_traces/latest.json</code>。
+          </div>
+        `;
+        return;
+      }
+
+      const blocked = trace.steps.filter((step) => runtimeTone(step.status) === "blocked");
+      const passCount = trace.steps.filter((step) => runtimeTone(step.status) === "pass").length;
+      const worker = trace.worker || {};
+      const storagePolicy = trace.storagePolicy || {};
+      const plainSummary = runtimePlainSummary(trace, blocked, passCount);
+      const nextAction = runtimeNextPlainAction(blocked, trace);
+      const storageText = runtimeCompactStorageText(storagePolicy);
+      const stepsMarkup = trace.steps.map((step, index) => {
+        const tone = runtimeTone(step.status);
+        const tooltip = [
+          step.detail || "",
+          step.blocker ? "卡点：" + step.blocker : "",
+          step.evidence ? "证据：" + step.evidence : ""
+        ].filter(Boolean).join("\n");
+        return `
+          <article class="runtime-step ${escapeHtml(tone)}" title="${escapeHtml(tooltip)}">
+            <div class="runtime-step-index">${index + 1}</div>
+            <div class="runtime-step-main">
+              <div class="runtime-step-head">
+                <strong>${escapeHtml(runtimePlainStepName(step, index))}</strong>
+                <span class="subline">${escapeHtml(formatDuration(step.durationMs))} · ${escapeHtml(step.owner || "unknown")}</span>
+              </div>
+              <p class="runtime-step-plain">${escapeHtml(runtimePlainStatus(step))}</p>
+            </div>
+            ${tag(runtimeStatusText(step.status), tone === "pass" ? "green" : tone === "blocked" ? "amber" : "")}
+          </article>
+        `;
+      }).join("");
+
+      byId("runtimeTracePanel").innerHTML = `
+        <div class="runtime-trace-shell">
+          <aside class="runtime-trace-summary">
+            <div class="runtime-trace-hero">
+              <span class="runtime-trace-kicker">现在发生了什么</span>
+              <strong>${escapeHtml(blocked[0] ? "链路还没完全放行" : runtimeTone(trace.status) === "pass" ? "链路已走通" : "链路还没开始")}</strong>
+              <p class="runtime-trace-answer">${escapeHtml(plainSummary)}</p>
+            </div>
+            <div class="runtime-trace-next">
+              <span>下一步看这里</span>
+              <b>${escapeHtml(nextAction)}</b>
+            </div>
+            <div class="runtime-trace-meter">
+              <div><span>总状态</span><b>${escapeHtml(runtimeStatusText(trace.status))}</b></div>
+              <div><span>总耗时</span><b>${escapeHtml(formatDuration(trace.totalDurationMs))}</b></div>
+              <div><span>通过步骤</span><b>${escapeHtml(passCount + " / " + trace.steps.length)}</b></div>
+              <div><span>卡点</span><b>${escapeHtml(blocked.length || "0")}</b></div>
+            </div>
+            <div class="runtime-trace-storage">
+              <span>记录会不会膨胀</span>
+              <b>${escapeHtml(storageText)}</b>
+            </div>
+            <p>Worker：${escapeHtml(worker.workerName || "未记录")} ${worker.workerVersion ? "· " + escapeHtml(worker.workerVersion.slice(0, 8)) : ""}</p>
+          </aside>
+          <div class="runtime-trace-steps">${stepsMarkup}</div>
+        </div>
+      `;
+    }
+
+    async function loadRuntimeTraceSnapshot() {
+      if (!/^https?:$/.test(window.location.protocol)) {
+        runtimeTraceState.loaded = true;
+        runtimeTraceState.error = "请通过 start_training_workbench.bat 的本地服务器打开页面，直接 file:// 打开不能读取 JSON 快照。";
+        renderRuntimeTracePanel();
+        return;
+      }
+      try {
+        const response = await fetch(`output/runtime_traces/latest.json?check=${Date.now()}`, { cache: "no-store" });
+        if (response.status === 404) {
+          runtimeTraceState.loaded = true;
+          runtimeTraceState.error = "";
+          runtimeTraceState.data = null;
+          renderRuntimeTracePanel();
+          return;
+        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        runtimeTraceState.loaded = true;
+        runtimeTraceState.error = "";
+        runtimeTraceState.data = data;
+        renderRuntimeTracePanel();
+      } catch (error) {
+        runtimeTraceState.loaded = true;
+        runtimeTraceState.error = error instanceof Error ? error.message : String(error);
+        renderRuntimeTracePanel();
+      }
+    }
+
     function latestGeneratedAtFromScript(text) {
       const match = text.match(/"generatedAt"\s*:\s*"([^"]+)"/);
       return match ? match[1] : "";
@@ -2185,6 +2656,12 @@
           // 本地文件或临时服务不可读时保持当前快照，不打断训练浏览。
         }
       }, 15000);
+    }
+
+    function initRuntimeTracePolling() {
+      loadRuntimeTraceSnapshot();
+      if (!/^https?:$/.test(window.location.protocol)) return;
+      window.setInterval(loadRuntimeTraceSnapshot, 5000);
     }
 
     function renderTabs() {
@@ -3140,6 +3617,7 @@
     function renderAll() {
       renderStatusMetrics();
       renderSyncPanel();
+      renderRuntimeTracePanel();
       renderTabs();
       renderCommandCenter();
       renderPlanControls();
@@ -3231,6 +3709,7 @@
       renderAll();
       bindEvents();
       initSnapshotPolling();
+      initRuntimeTracePolling();
     }
 
     init();

@@ -2,12 +2,9 @@
   "schemaVersion": 1,
   "agentId": "pipeline_learning_promoter",
   "learningState": "prompt_updated",
-  "updatedAt": "2026-06-02T02:03:17+00:00",
+  "updatedAt": "2026-06-06T15:56:30+00:00",
   "sourceReports": [
-    "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json",
-    "output/training_queues/cad-foundation-remaining-21/remaining-21-chinese/remaining_21_report.json",
-    "output/training_queues/cad-foundation-remaining-21/focused/image-arrow-solid-fill-square/semantic_acceptance_report.json",
-    "output/training_queues/cad-foundation-remaining-21/focused/cad-layer-lineweight-standard/remaining_21_report.json"
+    "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
   ],
   "acceptedCapabilities": [
     "cad-readback-audit"
@@ -17,8 +14,8 @@
   "lessons": [
     {
       "capabilityId": "cad-readback-audit",
-      "title": "07 回读审计",
-      "summary": "07 回读审计 已通过中文训练验收，handles 13/13 已回读。",
+      "title": "07 回读与自检基础",
+      "summary": "07 回读与自检基础 已通过中文训练验收，handles 13/13 已回读。",
       "promptGuidance": [
         "CAD 测试必须使用中文标注；图层名、文件名、Schema key 等技术名允许保留原文。",
         "落图前先选择不覆盖旧图形的测试画布，避免重叠用户已有图块。",
@@ -30,20 +27,20 @@
         "截图不得替代 created handles、CAD readback、bbox / 属性审计或用户验收；目标句柄不可用时报告 focus_target_unavailable，不得把 whole modelspace / 当前屏幕当作成功证据。"
       ],
       "evidence": {
-        "queueId": "cad-foundation-first-10",
-        "mode": "unsupervised_batch_chinese_labels",
+        "queueId": "cad-foundation-all-31",
+        "mode": "batch",
         "handleCount": 13,
         "readbackCount": 13,
-        "feedback": "中文面板已生成；handles 已回读；全部在 CODEX_PREVIEW"
+        "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-01T13:05:09",
+      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_audit",
         "pipeline_delivery",
         "pipeline_learning_promoter"
       ],
-      "sourceReport": "output/training_queues/cad-foundation-first-10/unsupervised-10-chinese/unsupervised_10_chinese_report.json"
+      "sourceReport": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
     }
   ],
   "promptUpdateSummary": [

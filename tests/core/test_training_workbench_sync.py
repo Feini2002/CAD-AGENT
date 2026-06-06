@@ -111,12 +111,13 @@ class TrainingWorkbenchSyncTests(unittest.TestCase):
         summary = data.get("trainingSourceSummary", {})
 
         self.assertEqual(summary.get("schemaVersion"), "training-source-summary/v1")
-        self.assertEqual(summary.get("localAcceptedTrainingProgramCount"), 0)
+        self.assertEqual(summary.get("localAcceptedTrainingProgramCount"), 31)
+        self.assertEqual(summary.get("localFullyCompleteProgramCount"), 31)
         self.assertGreater(summary.get("archivedTrainingAcceptanceReportCount", 0), 0)
-        self.assertEqual(summary.get("activeTrainingAcceptanceReportCount"), 0)
-        self.assertEqual(summary.get("recommendationCode"), "restore_remote_evidence_before_retraining")
+        self.assertEqual(summary.get("activeTrainingAcceptanceReportCount"), 1)
+        self.assertEqual(summary.get("recommendationCode"), "local_training_evidence_available")
         self.assertIn("不是浏览器缓存", summary.get("portableEvidencePolicy", ""))
-        self.assertIn("不需要重训", summary.get("recommendedAction", ""))
+        self.assertIn("不需要重新训练", summary.get("recommendedAction", ""))
         self.assertIn("output/training_queues/**", summary.get("restorePaths", []))
 
     def test_workbench_v3_flightdeck_contract_declared(self) -> None:

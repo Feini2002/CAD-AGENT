@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "handoff_packet/v1",
+  "fromAgentId": "pipeline_design_reviewer",
+  "toAgentIds": [
+    "pipeline_intent",
+    "pipeline_audit",
+    "pipeline_delivery"
+  ],
+  "status": "ready",
+  "decisionSummary": "pass pass fixture style candidates are readable enough for intent drafting",
+  "statePatch": {
+    "phase": "design_review.schema.json",
+    "phaseLabelForUser": "design_review.schema.json",
+    "completedEvidence": [
+      "local fixture model output"
+    ],
+    "pendingEvidence": [],
+    "pendingUserAction": "",
+    "blockedReason": "",
+    "nextSafeAction": "continue"
+  },
+  "evidenceRefs": [
+    "local_fixture_model",
+    "rule_context_pack",
+    "upstream handoff packets"
+  ],
+  "evidenceMissing": [],
+  "openQuestions": [],
+  "downstreamInstructions": [],
+  "allowedClaims": [
+    "local fixture agent-chain output only"
+  ],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "sha256OfSourceOutput": "bb9a3be1a654b105b7ffb34f33a12241cd0a9a255a1269ebdbe82bbbfd711802"
+}

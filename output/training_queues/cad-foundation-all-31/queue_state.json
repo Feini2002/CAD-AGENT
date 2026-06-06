@@ -1,0 +1,301 @@
+{
+  "schemaVersion": 1,
+  "queueId": "cad-foundation-all-31",
+  "mode": "batch",
+  "batchMode": "unsupervised_full_batch_retrain",
+  "scope": {
+    "mode": "batch",
+    "requestedCapabilityIds": [
+      "cad-primitives",
+      "cad-selection-edit",
+      "cad-transform",
+      "cad-offset-trim",
+      "cad-layer-discipline",
+      "cad-closure-constraints",
+      "cad-readback-audit",
+      "cad-units-scale",
+      "cad-coordinate-input",
+      "cad-osnap-ortho-polar",
+      "cad-polyline-width-cleanup",
+      "cad-hatch-boundary",
+      "cad-boundary-region",
+      "cad-fillet-chamfer",
+      "cad-stretch-edit",
+      "cad-block-insert-attribute",
+      "cad-block-rotate-scale",
+      "cad-xref-underlay-protect",
+      "cad-layout-viewport",
+      "cad-plot-scale-titleblock",
+      "cad-redline-revision",
+      "cad-layer-lineweight-standard",
+      "cad-selection-by-room",
+      "cad-array-copy-pattern",
+      "cad-measure-distance-area",
+      "cad-purge-audit-cleanup",
+      "cad-dim-style-baseline",
+      "cad-text-mleader-style",
+      "cad-handle-bbox-report",
+      "cad-layer-pollution-check",
+      "cad-safe-undo-rollback"
+    ],
+    "scopeReason": "",
+    "fullBatchAllowed": true,
+    "rule": "用户请求整批训练或未限制范围时，才执行完整 31 项基础 CAD 操作。",
+    "batchPreset": "all-31"
+  },
+  "status": "completed",
+  "updatedAt": "2026-06-06T15:56:30+00:00",
+  "currentIndex": 31,
+  "totalCount": 31,
+  "completionEvidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json",
+  "items": [
+    {
+      "index": 0,
+      "capabilityId": "cad-primitives",
+      "name": "01 基础图元绘制",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 1,
+      "capabilityId": "cad-selection-edit",
+      "name": "02 选择与基础编辑",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 2,
+      "capabilityId": "cad-transform",
+      "name": "03 旋转镜像缩放",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 3,
+      "capabilityId": "cad-offset-trim",
+      "name": "04 偏移修剪延伸",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 4,
+      "capabilityId": "cad-layer-discipline",
+      "name": "05 图层与线型基础",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 5,
+      "capabilityId": "cad-closure-constraints",
+      "name": "06 闭合对齐约束",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 6,
+      "capabilityId": "cad-readback-audit",
+      "name": "07 回读与自检基础",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 7,
+      "capabilityId": "cad-units-scale",
+      "name": "08 单位与比例设置",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 8,
+      "capabilityId": "cad-coordinate-input",
+      "name": "09 坐标输入基础",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 9,
+      "capabilityId": "cad-osnap-ortho-polar",
+      "name": "10 捕捉与正交极轴",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 10,
+      "capabilityId": "cad-polyline-width-cleanup",
+      "name": "11 多段线宽度与清理",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 11,
+      "capabilityId": "cad-hatch-boundary",
+      "name": "12 填充与边界",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 12,
+      "capabilityId": "cad-boundary-region",
+      "name": "13 边界生成",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 13,
+      "capabilityId": "cad-fillet-chamfer",
+      "name": "14 圆角倒角",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 14,
+      "capabilityId": "cad-stretch-edit",
+      "name": "15 拉伸编辑",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 15,
+      "capabilityId": "cad-block-insert-attribute",
+      "name": "16 块插入与属性",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 16,
+      "capabilityId": "cad-block-rotate-scale",
+      "name": "17 块旋转缩放",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 17,
+      "capabilityId": "cad-xref-underlay-protect",
+      "name": "18 底图引用保护",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 18,
+      "capabilityId": "cad-layout-viewport",
+      "name": "19 布局与视口",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 19,
+      "capabilityId": "cad-plot-scale-titleblock",
+      "name": "20 打印比例与图框",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 20,
+      "capabilityId": "cad-redline-revision",
+      "name": "21 红线与修订",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 21,
+      "capabilityId": "cad-layer-lineweight-standard",
+      "name": "22 线宽线型标准",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 22,
+      "capabilityId": "cad-selection-by-room",
+      "name": "23 按房间安全选择",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 23,
+      "capabilityId": "cad-array-copy-pattern",
+      "name": "24 阵列与复制模式",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 24,
+      "capabilityId": "cad-measure-distance-area",
+      "name": "25 距离面积测量",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 25,
+      "capabilityId": "cad-purge-audit-cleanup",
+      "name": "26 图纸清理审计",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 26,
+      "capabilityId": "cad-dim-style-baseline",
+      "name": "27 尺寸样式基线",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 27,
+      "capabilityId": "cad-text-mleader-style",
+      "name": "28 文字引线样式",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 28,
+      "capabilityId": "cad-handle-bbox-report",
+      "name": "29 句柄与边界框报告",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 29,
+      "capabilityId": "cad-layer-pollution-check",
+      "name": "30 图层污染检查",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    },
+    {
+      "index": 30,
+      "capabilityId": "cad-safe-undo-rollback",
+      "name": "31 安全撤销回滚",
+      "status": "completed",
+      "decision": "pass",
+      "evidencePath": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-all-31\\all-31-retrain\\all_31_report.json"
+    }
+  ]
+}

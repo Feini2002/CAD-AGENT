@@ -1,6 +1,29 @@
 ﻿# 当前交接包窗口
+## ADAPTIVE-CAPABILITY-GROWTH-TRAINING-01
+**交接摘要**：自适应能力成长训练已落为 `core/training/*growth*`、`adaptive_replay_planner`、`expression_regression_gate`、`adaptive_growth_closeout`、runner `--replay-mode growth_replay`、OpenSpec `adaptive-capability-growth-training` 和测试；临时调研稿已删除。验证与边界以最新终端结果、changelog 和 OpenSpec 为准：本包不运行真实 CAD、不部署 Worker、不写训练事实源、不提升表 C，后续真实 focused retraining 仍需独立 CAD readback / closeout 证据。
+## WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01
+1. **包名**：`WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01`
+2. **修改文件列表**：更新 `wrangler.jsonc`、`package.json`、`workers/orchestrator/scripts/run-wrangler.mjs`、`workers/orchestrator/src/worker-configuration.d.ts`、`WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`。
+3. **关键设计说明**：Cloudflare Worker 已按平台规则部署为 `cadagent`；用户原始命名 `CADAgent` 因 Wrangler 校验要求小写而规范化。部署使用 `deploy --strict --secrets-file`，真实 deploy 仍需 `CADAGENT_DEPLOY_APPROVED=true`，wrapper 继续阻断裸 deploy、`secret put` 和 `dev --remote`。
+4. **新增/修改测试**：未新增 runtime 测试；本包新增远程部署 smoke 验证和 wrapper 真实 deploy 放行门禁。
+5. **实际运行的命令和结果**：`npm.cmd run worker:check` -> pass；`wrangler whoami` -> 已登录 `cmw1196466375@gmail.com` 且具备 Workers 写权限；`wrangler deploy --strict --secrets-file <temporary-json>` -> deployed `cadagent`，URL `https://cadagent.cmw1196466375.workers.dev`，version `ecf455d4-89f0-4b14-92aa-0c3885c7c491`；远程 `npm.cmd run worker:smoke` -> pass，`runId=run_20260606144204_worker_orchestration_ready_06e12cd1`、`state=completed`。
+6. **是否运行真实 CAD**：否。本包只运行 Worker / Durable Object 远程编排 smoke；未连接 AutoCAD、未运行 CAD-MCP、未写 / 保存 DWG、未删除实体、未改正式图层。
+7. **机器可读证据路径**：部署配置在 `wrangler.jsonc`；远程 smoke 脚本为 `workers/orchestrator/test/orchestrator-smoke.mjs`；部署停闸和记录为 `WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`。
+8. **结论分类**：Cloudflare remote `worker_orchestration_ready` 已激活并通过 smoke；不等于 `local_bridge_connected`、`single_agent_live`、`multi_agent_live` 或 `cad_mcp_preview_live`。
+9. **剩余风险**：Queue / Workflows、真实 bridge-owned Codex config、真实 `gpt-5.5` runner、多 Agent live、CAD-MCP preview handles readback、token rotation、rollback drill 和生产环境分层仍需后续单独包证明。
+---
+## WORKER-ORCHESTRATOR-PREDEPLOY-HARDENING-01
+1. **包名**：`WORKER-ORCHESTRATOR-PREDEPLOY-HARDENING-01`
+2. **修改文件列表**：新增 `workers/orchestrator/**`、`wrangler.jsonc`、`package.json`、`package-lock.json`、`WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`；更新 `.gitignore`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`；删除本轮临时 Worker playMD。
+3. **关键设计说明**：本包把 Worker-first 编排从临时 playMD 推进为 Cloudflare Worker 预部署代码骨架：Worker API + Durable Object run state，任务图提交前校验，bridge 注册 / lease / heartbeat / submit，heartbeat token、bridge token、idempotency、timeout / retry / DLQ、stale / offline bridge 处理、backpressure、circuit breaker、kill switch、日志脱敏、secret scan 和 wrapper 级 deploy guard。远程部署前必须继续走 `WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`。
+4. **新增/修改测试**：新增 runtime contract tests、HTTP smoke、boundary check、secret scan 和 wrangler wrapper 负向验证；runtime tests 覆盖 wrong submit `heartbeatToken`、revoked bridge replay、重复 / 缺失 / 环形 task graph、DLQ、bridge offline / stale、max concurrent leases、capability gap、backpressure、security blocked 等路径。
+5. **实际运行的命令和结果**：`npm.cmd run worker:check` -> pass（runtime tests 14 pass，TypeScript `--noEmit` pass，secret scan pass，wrangler types pass，`wrangler deploy --dry-run` pass）；本地 `wrangler dev --local` + `npm.cmd run worker:smoke` -> pass，最终 run id 为 `run_20260606130602_worker_orchestration_ready_1be702ae`；`node workers/orchestrator/scripts/run-wrangler.mjs deploy` / `secret put WORKER_API_TOKEN` / `dev --remote` 均按预期 exit 2 并被 wrapper 阻断。
+6. **是否运行真实 CAD**：否。本包只做 Worker / Durable Object 编排预部署骨架、代码测试和文档收尾；未连接 AutoCAD、未运行 CAD-MCP、未写 / 保存 DWG、未删除实体、未改正式图层。
+7. **机器可读证据路径**：核心代码在 `workers/orchestrator/src/`；runtime tests 在 `workers/orchestrator/test/orchestrator-runtime.test.ts`；HTTP smoke 在 `workers/orchestrator/test/orchestrator-smoke.mjs`；wrapper / secret / boundary checks 在 `workers/orchestrator/scripts/`；部署停闸清单为 `WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`。
+8. **结论分类**：local / dry-run `worker_orchestration_ready` 预部署骨架已加固并收尾；临时 playMD 已删除，长期事实源已回写。未声明 Cloudflare remote deploy、真实 secret、Queue / Workflows、真实 bridge runner、真实模型活体调用或 CAD-MCP preview verified。
+9. **剩余风险**：远程 Cloudflare 环境、`wrangler secret put`、Queue / Workflows、bridge-owned Codex config、真实 local bridge / `gpt-5.5` runner、多 Agent live 和真实 CAD-MCP preview handles readback 仍需后续分层证明。
+---
 ## ARCH-CONVERGENCE-01
-
 1. **包名**：`ARCH-CONVERGENCE-01`
 2. **修改文件列表**：重写 `docs/architecture/system-architecture-convergence.md`，调整 `docs/architecture/README.md` 的入口顺序；更新 `core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、`agents/pipeline/pipeline_manifest.json`、`scripts/run_a_to_a_orchestration_gate_check.py`、`tests/core/test_a_to_a_task_contract.py`、`core/verification/capability_coverage.py`、`scripts/build_capability_map_data.py`、`scripts/run_training_workbench_agent_check.py`、`capability-map.html`、`capability-map-data.js`、`output/validation_runs/capability-lab/cad_capability_coverage.json`、`docs/status/issues.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md` 和 `openspec/changes/unify-system-architecture-canvas/tasks.md`。
 3. **关键设计说明**：本包把 `system-architecture-convergence.md` 收束为七层任务生命周期：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。旧表格、底座、训练、资产、多 Agent、Worker / bridge、截图和工作台全部归位到这些层内；旧表 C / 90.99% 统一改称 `Core Proof Coverage`，只代表底座证据覆盖，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。OpenSpec 仍是单个复杂变更契约，不成为第二套主计划。
@@ -23,7 +46,7 @@
 6. **是否运行真实 CAD**：否。本包未新开真实 CAD；fake driver 仍只证明编排和 preview-only 安全边界，不证明真实 CAD 几何。
 7. **机器可读证据路径**：最新真实 `single_agent_live` 证据为 `output/model_reviews/local_live_model_bridge_runtime_smoke_fresh_usable_20260606/run_20260606073718_single_agent_live_1a45fb4a/worker_run_state.json`，trace 包在同目录 `model_traces/pipeline_design_director/pipeline-design-director/`；沙箱网络阻断样本为 `output/model_reviews/local_live_model_bridge_runtime_smoke_fresh_20260606/run_20260606073443_single_agent_live_129a671e/`；业务证据不足导致 trace review blocked 的反例为 `output/model_reviews/local_live_model_bridge_runtime_smoke_fresh_approved_20260606/run_20260606073558_single_agent_live_84582a6a/`。
 8. **结论分类**：本地 runtime / diagnostics 加固与独立 MD 收口已完成；最新 `single_agent_live` 真实 provider smoke 通过严格 diagnostics。未运行真实 CAD，不提升表 C，不声明真实 CAD preview verified。
-9. **剩余风险**：Cloudflare Worker / Durable Object / Queue 迁移、bridge-owned Codex config、真实 `single_agent_live` / `multi_agent_live` 复验和真实 CAD-MCP preview-only handles readback 仍需后续单独包证明。
+9. **剩余风险**：远程 Cloudflare 环境、Queue / Workflows 接入、bridge-owned Codex config、真实 `single_agent_live` / `multi_agent_live` 复验和真实 CAD-MCP preview-only handles readback 仍需后续单独包证明；当前 Worker / Durable Object 只到本地 / dry-run 预部署骨架。
 
 ---
 

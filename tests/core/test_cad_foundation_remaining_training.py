@@ -95,6 +95,10 @@ class CadFoundationRemainingTrainingTests(unittest.TestCase):
             self.assertEqual(report["status"], "pass", report)
             self.assertEqual([item["capabilityId"] for item in report["items"]], FOUNDATION_REMAINING_21_IDS)
             self.assertEqual(report["queueId"], "cad-foundation-remaining-21")
+            self.assertEqual(report["replayMode"], "smoke_replay")
+            self.assertEqual(report["adaptiveReplay"]["status"], "disabled")
+            self.assertEqual(report["regressionGuard"]["status"], "not_applicable")
+            self.assertFalse(report["safetyBoundaries"]["worker"]["deployRequired"])
             self.assertEqual(report["created_handle_count"], report["readback_count"])
             self.assertGreater(report["created_handle_count"], len(FOUNDATION_REMAINING_21_IDS))
             self.assertEqual(report["missing_handles"], [])
@@ -116,6 +120,38 @@ class CadFoundationRemainingTrainingTests(unittest.TestCase):
             persisted = json.loads(report_path.read_text(encoding="utf-8"))
             self.assertEqual(persisted["items"][0]["capabilityId"], "cad-polyline-width-cleanup")
             self.assertEqual(persisted["items"][-1]["capabilityId"], "cad-safe-undo-rollback")
+            self.assertEqual(persisted["adaptiveReplay"]["status"], "disabled")
+
+    def test_all_31_foundation_batch_writes_full_retraining_report(self) -> None:
+        from core.training.foundation_batch_training import (
+            FOUNDATION_ALL_31_IDS,
+            run_foundation_remaining_training_batch,
+        )
+        from core.verification.fake_cad_driver import FakeCadDriver
+
+        with temporary_artifact_dir("cad_foundation_all_31_training") as root:
+            report = run_foundation_remaining_training_batch(
+                programs=self.training_programs(),
+                driver=FakeCadDriver(),
+                output_dir=root,
+                generated_at="2026-06-06T00:00:00Z",
+                capture_preview=False,
+                batch_preset="all-31",
+            )
+
+            self.assertEqual(report["status"], "pass", report)
+            self.assertEqual(report["queueId"], "cad-foundation-all-31")
+            self.assertEqual([item["capabilityId"] for item in report["items"]], FOUNDATION_ALL_31_IDS)
+            self.assertEqual(report["items"][0]["title"], "01 基础图元绘制")
+            self.assertTrue(report["items"][-1]["title"].startswith("31 "))
+            self.assertEqual(report["artifacts"]["report"], "all_31_report.json")
+            self.assertTrue((root / "all_31_training_plan.json").is_file())
+            self.assertTrue((root / "all_31_execution_summary.json").is_file())
+
+            checks = {check["name"]: check for check in report["checks"]}
+            self.assertEqual(checks["all_items_generated"]["message"], "31/31")
+            self.assertEqual(checks["chinese_labels"]["status"], "pass")
+            self.assertIn("latin_terms=0", checks["chinese_labels"]["message"])
 
     def test_block_training_panels_use_uniform_block_scale(self) -> None:
         from core.training.foundation_batch_training import run_foundation_remaining_training_batch
@@ -561,6 +597,143 @@ class CadFoundationRemainingTrainingTests(unittest.TestCase):
 
             checks = {check["name"]: check for check in report["checks"]}
             self.assertEqual(checks["lineweight_linetype_standard"]["status"], "pass")
+
+    def test_growth_replay_records_adaptive_profile_planner_and_regression_guard(self) -> None:
+        from core.training.foundation_batch_training import run_foundation_remaining_training_batch
+        from core.verification.fake_cad_driver import FakeCadDriver
+
+        with temporary_artifact_dir("cad_foundation_growth_replay") as root:
+            profile_source = root / "capability-profile.json"
+            profile_source.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "profiles": {
+                            "cad-layer-lineweight-standard": {
+                                "profileVersion": "lineweight-v2",
+                                "minimumExpressionLevel": "growth",
+                                "transferableLessons": [
+                                    {"lessonId": "lineweight-distinct-samples", "summary": "线宽必须真实变化。"}
+                                ],
+                            },
+                            "cad-dim-style-baseline": {
+                                "profileVersion": "dim-v1",
+                                "minimumExpressionLevel": "growth",
+                                "transferableLessons": [
+                                    {"lessonId": "dimension-chain-baseline", "summary": "尺寸链必须可回读。"}
+                                ],
+                            },
+                        },
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            report = run_foundation_remaining_training_batch(
+                programs=self.training_programs(),
+                driver=FakeCadDriver(),
+                output_dir=root,
+                generated_at="2026-06-07T00:00:00Z",
+                capture_preview=False,
+                selected_capability_ids=["cad-layer-lineweight-standard", "cad-dim-style-baseline"],
+                scope_reason="用户要求把 22/27 从烟测升级到成长 replay",
+                replay_mode="growth_replay",
+                profile_source=profile_source,
+                project_root=root,
+            )
+
+            self.assertEqual(report["status"], "pass", report)
+            self.assertEqual(report["replayMode"], "growth_replay")
+            self.assertEqual(report["adaptiveReplay"]["status"], "pass")
+            self.assertEqual(report["capabilityProfile"]["status"], "pass")
+            self.assertEqual(report["regressionGuard"]["status"], "pass")
+            self.assertEqual(report["adaptiveReplay"]["items"][0]["profileVersionUsed"], "lineweight-v2")
+            self.assertEqual(report["adaptiveReplay"]["items"][0]["consumedLessonIds"], ["lineweight-distinct-samples"])
+            self.assertIn("growth_replay", report["adaptiveReplay"]["items"][0]["whyExpressionLevelChosen"])
+            self.assertFalse(report["adaptiveReplay"]["items"][0]["acceptedLowExpression"])
+            self.assertEqual(report["safetyBoundaries"]["worker"]["status"], "not_required")
+            self.assertEqual(report["safetyBoundaries"]["cadExecution"]["targetLayer"], "CODEX_PREVIEW")
+
+            checks = {check["name"]: check for check in report["checks"]}
+            self.assertEqual(checks["adaptive_replay_plan"]["status"], "pass")
+            self.assertEqual(checks["expression_regression_guard"]["status"], "pass")
+            self.assertEqual(checks["worker_deploy_not_required"]["status"], "pass")
+
+            persisted_report = json.loads((root / report["artifacts"]["report"]).read_text(encoding="utf-8"))
+            persisted_summary = json.loads((root / report["artifacts"]["execution_summary"]).read_text(encoding="utf-8"))
+            self.assertEqual(persisted_report["adaptiveReplay"]["status"], "pass")
+            self.assertEqual(persisted_summary["adaptiveReplay"]["status"], "pass")
+
+    def test_growth_replay_blocks_profile_source_outside_workspace_before_drawing(self) -> None:
+        from core.training.foundation_batch_training import run_foundation_remaining_training_batch
+        from core.verification.fake_cad_driver import FakeCadDriver
+
+        driver = FakeCadDriver()
+        with temporary_artifact_dir("cad_foundation_growth_replay_bad_source") as root:
+            report = run_foundation_remaining_training_batch(
+                programs=self.training_programs(),
+                driver=driver,
+                output_dir=root,
+                generated_at="2026-06-07T00:00:00Z",
+                capture_preview=False,
+                selected_capability_ids=["cad-layer-lineweight-standard"],
+                scope_reason="bad source should block before CAD write",
+                replay_mode="growth_replay",
+                profile_source=root.parent / "outside-profile.json",
+                project_root=root,
+            )
+
+            self.assertEqual(report["status"], "blocked", report)
+            self.assertEqual(report["blockedReason"], "profile_source_outside_workspace")
+            self.assertEqual(report["created_handle_count"], 0)
+            self.assertEqual(driver.snapshot_modelspace(layer="CODEX_PREVIEW"), [])
+            self.assertEqual(report["adaptiveReplay"]["status"], "blocked")
+            self.assertEqual(report["capabilityProfile"]["profileSource"]["reason"], "profile_source_outside_workspace")
+            checks = {check["name"]: check for check in report["checks"]}
+            self.assertEqual(checks["adaptive_replay_profile_source"]["status"], "fail")
+
+    def test_run_remaining_training_accepts_growth_replay_arguments(self) -> None:
+        from scripts.run_cad_foundation_remaining_training import run_remaining_training
+
+        with temporary_artifact_dir("cad_foundation_growth_replay_cli") as root:
+            profile_source = root / "profile.json"
+            profile_source.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "profiles": {
+                            "cad-layer-lineweight-standard": {
+                                "profileVersion": "cli-v1",
+                                "minimumExpressionLevel": "growth",
+                                "transferableLessons": [{"lessonId": "cli-lesson", "summary": "CLI lesson"}],
+                            }
+                        },
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            report = run_remaining_training(
+                output_dir=root,
+                fake_cad=True,
+                timeout_seconds=30,
+                post_sync=False,
+                capture_preview=False,
+                selected_capability_ids=["cad-layer-lineweight-standard"],
+                scope_reason="CLI growth replay smoke",
+                replay_mode="growth_replay",
+                profile_source=profile_source,
+                allow_low_expression=True,
+                project_root=root,
+            )
+
+            self.assertEqual(report["status"], "pass", report)
+            self.assertEqual(report["postTrainingSync"]["status"], "skipped")
+            self.assertEqual(report["replayMode"], "growth_replay")
+            self.assertTrue(report["regressionGuard"]["allowLowExpression"])
+            self.assertEqual(report["adaptiveReplay"]["items"][0]["profileVersionUsed"], "cli-v1")
 
     def test_focused_retraining_only_generates_requested_foundation_item(self) -> None:
         from core.training.foundation_batch_training import run_foundation_remaining_training_batch

@@ -1,7 +1,7 @@
 {
   "version": "0.1",
   "status": "pass",
-  "generated_at": "2026-06-06T08:53:16+00:00",
+  "generated_at": "2026-06-06T15:58:37+00:00",
   "root": "C:\\Users\\User\\Desktop\\CAD-AGENT",
   "coverage": {
     "status": "pass",
@@ -35,10 +35,145 @@
   "data_output": "C:\\Users\\User\\Desktop\\CAD-AGENT\\capability-map-data.js",
   "html_path": "C:\\Users\\User\\Desktop\\CAD-AGENT\\capability-map.html",
   "learning_promotion": {
-    "status": "skipped",
-    "acceptedItemCount": 0,
-    "promotedAgentCount": 0,
-    "promotionGate": {}
+    "status": "promoted",
+    "acceptedItemCount": 31,
+    "promotedAgentCount": 7,
+    "promotionGate": {
+      "schemaVersion": 1,
+      "status": "ready",
+      "promotionLevel": "systemized",
+      "decisionOrder": [
+        "updateTrainingSource",
+        "updateWorkbench",
+        "updateBaseRules",
+        "updateTaskRules",
+        "updateAgentCalibration",
+        "updateChecker",
+        "retestOriginalTask"
+      ],
+      "decisions": {
+        "updateTrainingSource": {
+          "required": true,
+          "status": "ready",
+          "reason": "正式训练验收通过后必须登记或核对训练事实源。",
+          "target": "docs/training/training-sources.json",
+          "evidence": [
+            "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
+          ]
+        },
+        "updateWorkbench": {
+          "required": true,
+          "status": "required",
+          "reason": "训练事实变化后必须刷新 capability-map-data.js / HTML 派生快照。",
+          "target": "scripts/sync_training_workbench.py",
+          "evidence": [
+            "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
+          ]
+        },
+        "updateBaseRules": {
+          "required": false,
+          "status": "not_required",
+          "reason": "本轮没有底座规则 delta。",
+          "target": "docs/governance/cad-agent-rules.md",
+          "evidence": []
+        },
+        "updateTaskRules": {
+          "required": false,
+          "status": "not_required",
+          "reason": "本轮没有单项任务规则 delta。",
+          "target": "",
+          "evidence": []
+        },
+        "updateAgentCalibration": {
+          "required": true,
+          "status": "ready",
+          "reason": "正式训练沉淀必须同步责任 Agent memory / prompt addendum，形成 A-to-A 校准输入。",
+          "target": "agents/**/training_memory.json",
+          "evidence": [
+            "cad_designer",
+            "pipeline_audit",
+            "pipeline_delivery",
+            "pipeline_execute",
+            "pipeline_intent",
+            "pipeline_learning_promoter",
+            "pipeline_repair"
+          ]
+        },
+        "updateChecker": {
+          "required": false,
+          "status": "not_required",
+          "reason": "本轮没有检查器 delta。",
+          "target": "",
+          "evidence": []
+        },
+        "retestOriginalTask": {
+          "required": false,
+          "status": "not_required",
+          "reason": "没有声明原任务引用；保持 not_checked，不能声称已回测原任务。",
+          "target": "",
+          "evidence": []
+        }
+      },
+      "acceptedCapabilityIds": [
+        "cad-primitives",
+        "cad-selection-edit",
+        "cad-transform",
+        "cad-offset-trim",
+        "cad-layer-discipline",
+        "cad-closure-constraints",
+        "cad-readback-audit",
+        "cad-units-scale",
+        "cad-coordinate-input",
+        "cad-osnap-ortho-polar",
+        "cad-polyline-width-cleanup",
+        "cad-hatch-boundary",
+        "cad-boundary-region",
+        "cad-fillet-chamfer",
+        "cad-stretch-edit",
+        "cad-block-insert-attribute",
+        "cad-block-rotate-scale",
+        "cad-xref-underlay-protect",
+        "cad-layout-viewport",
+        "cad-plot-scale-titleblock",
+        "cad-redline-revision",
+        "cad-layer-lineweight-standard",
+        "cad-selection-by-room",
+        "cad-array-copy-pattern",
+        "cad-measure-distance-area",
+        "cad-purge-audit-cleanup",
+        "cad-dim-style-baseline",
+        "cad-text-mleader-style",
+        "cad-handle-bbox-report",
+        "cad-layer-pollution-check",
+        "cad-safe-undo-rollback"
+      ],
+      "sourceReportPaths": [
+        "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
+      ],
+      "agentCalibration": {
+        "required": true,
+        "affectedAgentIds": [
+          "cad_designer",
+          "pipeline_audit",
+          "pipeline_delivery",
+          "pipeline_execute",
+          "pipeline_intent",
+          "pipeline_learning_promoter",
+          "pipeline_repair"
+        ],
+        "positiveExamples": [
+          "白话训练验收通过后，按责任 Agent 列表写入 training_memory.json 与 prompt_addendum.md。",
+          "有底座规则、任务规则或检查器 delta 时，只生成候选和 reviewed package 要求。"
+        ],
+        "negativeExamples": [
+          "快试、截图推断或缺 handles/readback 的反馈不得自动写全局规则。",
+          "不能用截图或一次通过冒充真实 CAD 几何证明。",
+          "不能把需要人工复审的底座规则 delta 静默写入长期规则。"
+        ],
+        "evidenceBoundary": "promotion gate 只记录沉淀决策和 A-to-A 校准输入；表 C、资产 verified、原任务回测必须另有证据。"
+      },
+      "blockedReasons": []
+    }
   },
   "agent_check": {
     "status": "pass",
@@ -158,7 +293,7 @@
       {
         "name": "training_sources_declared",
         "status": "pass",
-        "detail": "trainingSources=30"
+        "detail": "trainingSources=32"
       },
       {
         "name": "training_source_paths_exist",
@@ -173,7 +308,7 @@
       {
         "name": "training_source_summary_portable_policy_declared",
         "status": "pass",
-        "detail": "recommendationCode=restore_remote_evidence_before_retraining restorePaths=['output/training_queues/**', 'output/training_learning/**', 'agents/**/training_memory.json', 'agents/**/prompt_addendum.md', 'docs/training/training-sources.json']"
+        "detail": "recommendationCode=local_training_evidence_available restorePaths=['output/training_queues/**', 'output/training_learning/**', 'agents/**/training_memory.json', 'agents/**/prompt_addendum.md', 'docs/training/training-sources.json']"
       },
       {
         "name": "accepted_training_sources_registered",
@@ -238,7 +373,7 @@
       {
         "name": "snapshot_generated_after_coverage",
         "status": "pass",
-        "detail": "snapshot=2026-06-06T08:53:16+00:00, coverage=2026-06-06T08:53:16Z"
+        "detail": "snapshot=2026-06-06T15:58:37+00:00, coverage=2026-06-06T15:58:37Z"
       },
       {
         "name": "sync_boundary_declared",
@@ -283,7 +418,7 @@
       {
         "name": "workbench_v3_source_registry_declared",
         "status": "pass",
-        "detail": "sourceRegistry=30"
+        "detail": "sourceRegistry=32"
       },
       {
         "name": "workbench_v3_command_center_declared",
@@ -303,7 +438,7 @@
       {
         "name": "workbench_v3_agent_graph_declared",
         "status": "pass",
-        "detail": "nodes=311 edges=1217"
+        "detail": "nodes=313 edges=1248"
       },
       {
         "name": "workbench_v3_evidence_bundles_declared",

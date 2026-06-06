@@ -1,0 +1,162 @@
+{
+  "version": "0.1",
+  "report_id": "table-c-visual-cad-review",
+  "status": "fail",
+  "generated_at": "2026-06-06T15:15:44Z",
+  "screenshot_path": "output/previews/worker-bridge-cad-preview-20260606-151512.png",
+  "execution_summary_path": "output/runs/model-agent-live-collab-proof-20260606-151512/cad_reports/execution_summary.json",
+  "readback_report_path": "output/runs/model-agent-live-collab-proof-20260606-151512/cad_reports/readback_summary.json",
+  "screenshot_role": "visual_aid_only",
+  "capture_result": {
+    "status": "not_run",
+    "screenshotDecision": {
+      "schemaVersion": 1,
+      "taskKind": "visual_review",
+      "evidenceStage": "visual_review",
+      "agentRole": "pipeline_audit",
+      "shouldCapture": true,
+      "required": true,
+      "reason": "formal_or_visual_review_required",
+      "focusSource": "execution_summary.created_handles",
+      "focusKind": "handles",
+      "visualAidOnly": true,
+      "allowedFallbacks": [
+        "execution_summary.created_handles",
+        "execution_summary.target_bbox",
+        "explicit_bbox"
+      ],
+      "recommendedCall": {
+        "capture": "prepare_autocad_for_capture",
+        "preserve_layout": true,
+        "capture_mode": "autocad_window_printwindow",
+        "focusSource": "execution_summary.created_handles",
+        "target_handles": [
+          "D418",
+          "D419",
+          "D41A",
+          "D41B",
+          "D41C",
+          "D41D",
+          "D461"
+        ],
+        "execution_summary": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-151512\\cad_reports\\execution_summary.json"
+      }
+    }
+  },
+  "screenshotDecision": {
+    "schemaVersion": 1,
+    "taskKind": "visual_review",
+    "evidenceStage": "visual_review",
+    "agentRole": "pipeline_audit",
+    "shouldCapture": true,
+    "required": true,
+    "reason": "formal_or_visual_review_required",
+    "focusSource": "execution_summary.created_handles",
+    "focusKind": "handles",
+    "visualAidOnly": true,
+    "allowedFallbacks": [
+      "execution_summary.created_handles",
+      "execution_summary.target_bbox",
+      "explicit_bbox"
+    ],
+    "recommendedCall": {
+      "capture": "prepare_autocad_for_capture",
+      "preserve_layout": true,
+      "capture_mode": "autocad_window_printwindow",
+      "focusSource": "execution_summary.created_handles",
+      "target_handles": [
+        "D418",
+        "D419",
+        "D41A",
+        "D41B",
+        "D41C",
+        "D41D",
+        "D461"
+      ],
+      "execution_summary": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-151512\\cad_reports\\execution_summary.json"
+    }
+  },
+  "visualPreview": {
+    "status": "not_run",
+    "role": "visual_aid_only",
+    "output": "",
+    "mode": "",
+    "occlusion_safe": false,
+    "foreground_first": false,
+    "foreground_fallback": false,
+    "focus": {
+      "status": "not_run"
+    },
+    "screenshotDecision": {
+      "schemaVersion": 1,
+      "taskKind": "visual_review",
+      "evidenceStage": "visual_review",
+      "agentRole": "pipeline_audit",
+      "shouldCapture": true,
+      "required": true,
+      "reason": "formal_or_visual_review_required",
+      "focusSource": "execution_summary.created_handles",
+      "focusKind": "handles",
+      "visualAidOnly": true,
+      "allowedFallbacks": [
+        "execution_summary.created_handles",
+        "execution_summary.target_bbox",
+        "explicit_bbox"
+      ],
+      "recommendedCall": {
+        "capture": "prepare_autocad_for_capture",
+        "preserve_layout": true,
+        "capture_mode": "autocad_window_printwindow",
+        "focusSource": "execution_summary.created_handles",
+        "target_handles": [
+          "D418",
+          "D419",
+          "D41A",
+          "D41B",
+          "D41C",
+          "D41D",
+          "D461"
+        ],
+        "execution_summary": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-151512\\cad_reports\\execution_summary.json"
+      }
+    }
+  },
+  "checks": [
+    {
+      "name": "screenshot_available",
+      "status": "pass",
+      "message": "screenshot exists: C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\previews\\worker-bridge-cad-preview-20260606-151512.png"
+    },
+    {
+      "name": "execution_summary_available",
+      "status": "pass",
+      "message": "loaded C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-151512\\cad_reports\\execution_summary.json"
+    },
+    {
+      "name": "readback_report_available",
+      "status": "pass",
+      "message": "loaded C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-151512\\cad_reports\\readback_summary.json"
+    },
+    {
+      "name": "created_handles_match",
+      "status": "pass",
+      "message": "created handles match"
+    },
+    {
+      "name": "readback_geometry_verified",
+      "status": "fail",
+      "message": "readback_report missing required field: evidence_state"
+    },
+    {
+      "name": "screenshot_role_visual_aid_only",
+      "status": "pass",
+      "message": "screenshot is visual_aid_only and cannot replace CAD readback"
+    }
+  ],
+  "writeback_allowed": false,
+  "notes": [
+    "Visual review is a hard gate for table C writeback in this workflow.",
+    "Screenshots remain visual aids and do not prove geometry without readback."
+  ],
+  "failure_category": "visual_review_failed"
+}

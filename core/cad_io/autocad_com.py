@@ -8,6 +8,7 @@ document.
 from __future__ import annotations
 
 import math
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -80,6 +81,20 @@ AUTOCAD_PROG_IDS = (
 )
 
 
+def _autocad_process_running() -> bool:
+    try:
+        result = subprocess.run(
+            ["tasklist", "/FI", "IMAGENAME eq acad.exe"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except Exception:
+        return False
+    return "acad.exe" in result.stdout.lower()
+
+
 def driver_status() -> str:
     return "autocad_com driver ready"
 
@@ -94,6 +109,10 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
 
         self._win32com = win32com.client
         self._pythoncom = pythoncom
+        try:
+            pythoncom.CoInitialize()
+        except Exception:
+            pass
         self.app = None
         active_errors: list[str] = []
         for prog_id in AUTOCAD_PROG_IDS:
@@ -104,18 +123,32 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
                 active_errors.append(f"{prog_id}: {exc}")
         if self.app is None:
             if connect_existing_only:
-                detail = " | ".join(active_errors)
-                raise RuntimeError(f"No active AutoCAD.Application instance is available. COM detail: {detail}")
-            dispatch_errors: list[str] = []
-            for prog_id in AUTOCAD_PROG_IDS:
-                try:
-                    self.app = win32com.client.Dispatch(prog_id)
-                    break
-                except Exception as exc:
-                    dispatch_errors.append(f"{prog_id}: {exc}")
-            if self.app is None:
-                detail = " | ".join(dispatch_errors)
-                raise RuntimeError(f"Unable to dispatch AutoCAD.Application. COM detail: {detail}")
+                dispatch_errors: list[str] = []
+                if _autocad_process_running():
+                    for prog_id in AUTOCAD_PROG_IDS:
+                        try:
+                            self.app = win32com.client.Dispatch(prog_id)
+                            break
+                        except Exception as exc:
+                            dispatch_errors.append(f"{prog_id}: {exc}")
+                if self.app is not None:
+                    pass
+                else:
+                    detail = " | ".join(active_errors)
+                    if dispatch_errors:
+                        detail = f"{detail} || Dispatch fallback: " + " | ".join(dispatch_errors)
+                    raise RuntimeError(f"No active AutoCAD.Application instance is available. COM detail: {detail}")
+            else:
+                dispatch_errors: list[str] = []
+                for prog_id in AUTOCAD_PROG_IDS:
+                    try:
+                        self.app = win32com.client.Dispatch(prog_id)
+                        break
+                    except Exception as exc:
+                        dispatch_errors.append(f"{prog_id}: {exc}")
+                if self.app is None:
+                    detail = " | ".join(dispatch_errors)
+                    raise RuntimeError(f"Unable to dispatch AutoCAD.Application. COM detail: {detail}")
         self.doc = self.app.ActiveDocument
         self.model_space = self.doc.ModelSpace
         self._ensured_layers: set[str] = set()

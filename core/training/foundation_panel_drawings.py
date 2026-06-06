@@ -203,7 +203,8 @@ def draw_foundation_item(
     drawer = PanelDrawer(driver, streaming_recorder=streaming_recorder)
     x, y, z = origin
     cid = item["capabilityId"]
-    title = f"{index + 11:02d} {PANEL_TITLE_OVERRIDES.get(cid, item['name'])}"
+    display_number = int(item.get("displayIndex", index + 11))
+    title = f"{display_number:02d} {PANEL_TITLE_OVERRIDES.get(cid, item['name'])}"
     drawer.rect([x, y, z], [x + PANEL_WIDTH, y - PANEL_HEIGHT, z])
     drawer.text(title, [x + 70, y - 150, z], height=95)
     drawer.text("已检查：句柄 / 边界框 / 图层 / 中文标注", [x + 70, y - PANEL_HEIGHT + 150, z], height=62)
@@ -211,7 +212,67 @@ def draw_foundation_item(
     left = x + 180
     top = y - 300
     bottom = y - 860
-    if cid == "cad-polyline-width-cleanup":
+    if cid == "cad-primitives":
+        drawer.line([left, top, z], [left + 520, top - 220, z])
+        drawer.rect([left + 660, top, z], [left + 1120, top - 300, z])
+        drawer.circle([left + 1450, top - 170, z], 140)
+        drawer.arc([left + 1780, top - 220, z], 150, 20, 250)
+        drawer.polyline([[left, top - 470, z], [left + 420, top - 650, z], [left + 760, top - 470, z]], closed=False)
+        drawer.text("线 / 矩形 / 圆 / 圆弧 / 多段线", [left, bottom, z], height=70)
+    elif cid == "cad-selection-edit":
+        drawer.rect([left, top, z], [left + 420, top - 280, z])
+        drawer.rect([left + 650, top, z], [left + 1070, top - 280, z])
+        drawer.line([left + 470, top - 140, z], [left + 610, top - 140, z])
+        drawer.rect([left + 1280, top, z], [left + 1680, top - 280, z])
+        drawer.line([left + 1280, top - 360, z], [left + 1680, top - 360, z])
+        drawer.text("选择 / 移动 / 复制 / 删除边界", [left, bottom, z], height=70)
+    elif cid == "cad-transform":
+        drawer.rect([left, top, z], [left + 440, top - 280, z])
+        drawer.rect([left + 650, top - 80, z], [left + 1080, top - 360, z])
+        drawer.line([left + 1240, top, z], [left + 1240, top - 520, z])
+        drawer.rect([left + 1340, top, z], [left + 1680, top - 240, z])
+        drawer.rect([left + 1780, top, z], [left + 1950, top - 120, z])
+        drawer.text("旋转 / 镜像 / 缩放基点", [left, bottom, z], height=70)
+    elif cid == "cad-offset-trim":
+        drawer.rect([left, top, z], [left + 520, top - 360, z])
+        drawer.rect([left + 85, top - 85, z], [left + 435, top - 275, z])
+        drawer.line([left + 760, top, z], [left + 1240, top - 420, z])
+        drawer.line([left + 760, top - 420, z], [left + 1240, top, z])
+        drawer.line([left + 1040, top - 420, z], [left + 1480, top - 420, z])
+        drawer.text("偏移 / 修剪 / 延伸后洁净", [left, bottom, z], height=70)
+    elif cid == "cad-layer-discipline":
+        drawer.rect([left, top, z], [left + 520, top - 340, z])
+        drawer.line([left + 700, top, z], [left + 1300, top - 340, z])
+        drawer.circle([left + 1600, top - 180, z], 150)
+        drawer.text("只写预览图层；正式图层保护", [left, bottom, z], height=70)
+    elif cid == "cad-closure-constraints":
+        drawer.polyline([[left, top, z], [left + 520, top, z], [left + 520, top - 380, z], [left, top - 380, z]], closed=True)
+        drawer.rect([left + 520, top, z], [left + 1040, top - 380, z])
+        drawer.line([left + 1200, top - 80, z], [left + 1580, top - 80, z])
+        drawer.line([left + 1200, top - 250, z], [left + 1580, top - 250, z])
+        drawer.text("闭合 / 对齐 / 共享边去重", [left, bottom, z], height=70)
+    elif cid == "cad-readback-audit":
+        drawer.rect([left, top, z], [left + 640, top - 360, z])
+        drawer.circle([left + 920, top - 180, z], 150)
+        drawer.line([left + 1180, top, z], [left + 1650, top - 360, z])
+        drawer.text("句柄回读：类型 / 边界框 / 图层", [left, bottom, z], height=70)
+    elif cid == "cad-units-scale":
+        drawer.rect([left, top, z], [left + 780, top - 360, z])
+        drawer.dimension([left, top - 500, z], [left + 780, top - 500, z], [left + 390, top - 650, z])
+        drawer.text("毫米单位 / 图纸比例 / 标注边界", [left + 900, top - 260, z], height=66)
+    elif cid == "cad-coordinate-input":
+        drawer.line([left, top - 520, z], [left + 1250, top - 520, z])
+        drawer.line([left, top - 520, z], [left, top, z])
+        for offset in (260, 520, 780, 1040):
+            drawer.circle([left + offset, top - 520 + (offset % 520) * 0.35, z], 34)
+        drawer.text("绝对坐标 / 相对坐标 / 极坐标点", [left + 160, bottom, z], height=70)
+    elif cid == "cad-osnap-ortho-polar":
+        drawer.line([left, top - 520, z], [left + 900, top - 520, z])
+        drawer.line([left + 450, top - 80, z], [left + 450, top - 780, z])
+        drawer.circle([left + 450, top - 520, z], 54)
+        drawer.line([left + 1040, top - 520, z], [left + 1580, top - 120, z])
+        drawer.text("端点捕捉 / 正交 / 极轴方向", [left, bottom, z], height=70)
+    elif cid == "cad-polyline-width-cleanup":
         drawer.polyline([[left, top, z], [left + 620, top, z], [left + 620, top - 360, z], [left, top - 360, z]], closed=True)
         drawer.line([left + 760, top, z], [left + 1280, top - 360, z])
         drawer.text("闭合多段线 + 清理后端点", [left, bottom, z], height=70)

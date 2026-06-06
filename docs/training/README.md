@@ -1,6 +1,6 @@
 # Agent 训练阶段（方案 A）
 
-最后更新：2026-06-06（ARCH-CONVERGENCE-01：正式对象训练暂缓，先做架构归并画布）
+最后更新：2026-06-07（ARCH-CONVERGENCE-01：正式对象训练暂缓；adaptive capability growth 已落为 focused / formal 复训门禁，不等于恢复整批训练）
 
 Core Lab 施工已收口。本目录是训练入口：用 CAD Designer Agent 成长路径和真实/脱敏案例训 Agent「指哪打哪」，而不是再开 V-PROOF / 三轨施工包。
 
@@ -81,6 +81,10 @@ Core Lab 施工已收口。本目录是训练入口：用 CAD Designer Agent 成
 | `formal_acceptance` | “验收”“沉淀”“训练通过”“记入工作台”“整批”“全部”“刷新队列”“推进表 C” | 不设总时长；每个子动作仍受 30 秒 watchdog | 完整计划、validate / dry-run、`CODEX_PREVIEW`、readback / audit、必要截图、Agent 自检、报告、post-sync / coverage（按口令） | 无 | 未经证据不得声称完成 |
 
 升级条件：`quick_trial` 若预计新增对象超过 20 个、需要修改已有实体、涉及正式图层 / 保存 / 删除、用户要求“完成 / 准确 / 训练通过”、关键回读失败，或超过 2 分钟仍无法给出关键证据，必须先说明原因并升级到 `focused_retraining` / `formal_acceptance`，或暂停让用户确认。轻链路最终回复不超过 3 句，必须写明“快试未沉淀”。
+
+**自适应能力成长复训：** 当用户说“之前训练过但又退回烟测表达”“加深这项能力”“按历史经验改进”时，不是自动整批重训，而是先用 `capability_growth_profile` 从仓库内 active / protected 事实源生成画像，再由 `growth_replay` 对点名能力提高表达要求。画像不得使用 `output/debug`、工作台派生快照、diagnostic / retention / sync report、外部路径、缺失文件、截图或模型 pass 作为 hard baseline；报告必须包含正例、反例、required / observed features、表达差异和原任务回测边界。缺这些证据时只能 `blocked` / `not_verified`，不能说训练已经变聪明。
+
+主 Agent 的认知提升不能只靠“写入了训练记录”证明。训练若声称让主 Agent 更聪明，必须证明后续真实任务中的分流、提问、工具选择、Agent 派发、阻断或 replay 表达因此改变；否则只能说训练机制更完整。
 
 **临场复合任务：** 训练地图只列原子能力和代表性课程，不穷举所有组合。用户可以随时要求“截图里的沙发标注尺寸”“按参考图补门洞开启方向”“把已有柜体改宽并重标尺寸”等复合任务。Agent 默认把它们拆成已有能力节点来编排，而不是新增一条训练计划：视觉 / 读图输入 → 对象与参照识别 → 尺度来源判断 → 绘图或标注意图 → `CAD_PLAN` / 结构化意图 → validate / dry-run → `CODEX_PREVIEW` → handles 回读 / 审计 → 交付或修复。
 

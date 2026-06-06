@@ -1,0 +1,50 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "cadagent",
+  "main": "workers/orchestrator/src/index.ts",
+  // Wrangler 4.85.0 local workerd supports up to 2026-05-01.
+  // Bump this after upgrading Wrangler, then rerun `wrangler types`.
+  "compatibility_date": "2026-05-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "DEFAULT_WORKSPACE_ID": "cad-agent-core-lab",
+    "DEFAULT_BRIDGE_ID": "bridge_local_smoke",
+    "ALLOWED_WORKSPACE_IDS": "cad-agent-core-lab",
+    "ALLOWED_BRIDGE_IDS": "bridge_local_smoke,bridge_revoke_smoke,bridge_unregistered_smoke",
+    "ALLOWED_ORIGINS": "",
+    "ORCHESTRATOR_VERSION": "mvp-0.2.0",
+    "ENVIRONMENT": "cloudflare-initial",
+    "COMPATIBILITY_DATE": "2026-05-01",
+    "COMPATIBILITY_FLAGS": "nodejs_compat",
+    "ORCHESTRATOR_DISABLED": "false",
+    "RUN_CREATE_DISABLED": "false",
+    "BRIDGE_LEASING_DISABLED": "false",
+    "SUBMIT_DISABLED": "false",
+    "MAX_PENDING_TASKS": "100",
+    "MAX_RUNNING_TASKS": "25",
+    "MAX_RETRY_TASKS": "50",
+    "MAX_DLQ_ITEMS": "50",
+    "MUTATION_RATE_LIMIT_PER_MINUTE": "120"
+  },
+  "secrets": {
+    "required": ["WORKER_API_TOKEN", "BRIDGE_API_TOKEN", "ADMIN_API_TOKEN"]
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "RUN_STATE",
+        "class_name": "RunStateDurableObject"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["RunStateDurableObject"]
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "run-package-user-request/v1",
+  "runId": "model-agent-live-collab-proof-20260606-151512",
+  "writtenAt": "2026-06-06T15:15:12Z",
+  "userRequest": {
+    "text": "Worker bridge channel safe CAD preview smoke: draw a tiny preview-only test symbol.",
+    "requestKind": "draw"
+  }
+}

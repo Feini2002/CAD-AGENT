@@ -1,0 +1,24 @@
+{
+  "name": "cad-agent-worker-orchestrator",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "worker:dev": "node workers/orchestrator/scripts/run-wrangler.mjs dev --local --ip 127.0.0.1 --port 8787",
+    "worker:dry-run": "node workers/orchestrator/scripts/run-wrangler.mjs deploy --dry-run",
+    "worker:deploy:cadagent": "node workers/orchestrator/scripts/run-wrangler.mjs deploy --strict",
+    "worker:types": "node workers/orchestrator/scripts/run-wrangler.mjs types workers/orchestrator/src/worker-configuration.d.ts",
+    "worker:smoke": "node workers/orchestrator/test/orchestrator-smoke.mjs",
+    "worker:test": "node workers/orchestrator/scripts/run-worker-test.mjs",
+    "worker:typecheck": "tsc -p workers/orchestrator/tsconfig.json --noEmit",
+    "worker:secret-scan": "node workers/orchestrator/scripts/secret-scan.mjs",
+    "worker:boundary-check": "node workers/orchestrator/scripts/boundary-check.mjs",
+    "worker:check": "npm run worker:boundary-check && npm run worker:test && npm run worker:typecheck && npm run worker:secret-scan && npm run worker:types && npm run worker:dry-run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.16.13",
+    "@types/node": "^22.15.30",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.8",
+    "wrangler": "4.85.0"
+  }
+}

@@ -3,6 +3,24 @@
   "description": "训练事实源清单。这里登记可被工作台、learning promotion 和 Agent check 读取的事实源；capability-map-data.js 和 capability-map.html 只是派生快照。",
   "sources": [
     {
+      "id": "cad-foundation-all-31-queue-state",
+      "kind": "training_queue_state",
+      "role": "fact_source",
+      "path": "output/training_queues/cad-foundation-all-31/queue_state.json",
+      "status": "active",
+      "owner": "cad_designer",
+      "desc": "重新训练完整 31 项基础 CAD 操作后的队列状态；仅证明本轮测试 DWG 的 CODEX_PREVIEW 训练输出和回读。"
+    },
+    {
+      "id": "cad-foundation-all-31-report",
+      "kind": "training_acceptance_report",
+      "role": "fact_source",
+      "path": "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json",
+      "status": "active",
+      "owner": "cad_designer",
+      "desc": "重新训练完整 31 项基础 CAD 操作的真实 CAD 批量验收报告；用于工作台阶段、learning promotion 和 Prompt 沉淀。"
+    },
+    {
       "id": "cad-foundation-first-10-queue-state",
       "kind": "training_queue_state",
       "role": "fact_source",

@@ -2,7 +2,59 @@
 
 这个文件记录 CAD Agent 测试工作区的结构、规则、Schema、脚本和重要决策变化。
 
+## 2026-06-07
+
+### MAIN-AGENT-COGNITION-PROOF-TEMP-PLAN-01：主 Agent 认知提升证明临时计划
+
+- **触发**：用户指出系统可能持续堆规则、Prompt、测试和训练记录，但主 Agent 未必真的在后续任务中改变判断；如果没有这个评价维度，所谓“变聪明”可能只是机制变厚。
+- **硬口径**：任何声称主 Agent 变聪明的改动，都必须证明它改变了主 Agent 在真实任务中的判断；否则只能叫机制建设，不能叫认知提升。
+- **同步**：将该口径写入 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`AGENTS.md`、`CORE_STATUS.md`、`README.md`、`agents/pipeline/README.md`、`docs/governance/cad-agent-rules.md`、`docs/training/README.md`、`docs/architecture/cad-agent-task-chain.md` 和 `docs/status/current.md`。
+- **临时计划**：新增 `output/debug/main-agent-cognition-proof-temp.md`，规划 `MAIN-AGENT-COGNITION-PROOF`，专测主 Agent 是否因历史经验、模型判断或上下文证据改变 route、dispatch、tool choice、blocking、requiredAgents、learningCandidate 或下一次 replay。
+- **边界**：该临时 MD 不是事实源，不证明真实 CAD 能力、不提升表 C、不部署 Worker、不代表主 Agent 已经 Codex-like；后续若执行，应迁移为正式 OpenSpec change。
+
+### ADAPTIVE-CAPABILITY-GROWTH-TRAINING-01：自适应能力成长训练闭环与临时 MD 删除
+
+- **触发**：用户要求把 adaptive capability growth 临时调研稿里关于“训练过的能力不能只回到烟测表达”的问题做仓库级收尾，补齐安全边界、反面论证、未实现项和验证后删除临时 MD。
+- **实现**：新增 `core/training/capability_growth_profile.py`、`core/training/adaptive_replay_planner.py`、`core/training/expression_regression_gate.py` 和 `core/training/adaptive_growth_closeout.py`；`foundation_batch_training` 与 `scripts/run_cad_foundation_remaining_training.py` 接入 `--replay-mode smoke_replay|growth_replay|standard_replay` 和 repo-local `--capability-profile`。`growth_replay` 会把能力画像、历史 lessons、required features、negative examples 和 retest boundary 写入 adaptive replay 证据。
+- **安全边界**：能力画像只接受仓库内 active / protected 事实源；`output/debug`、工作台派生数据、诊断报告、外部路径、缺失文件、截图和模型 pass 都不能当 hard baseline。缺正例、反例、原任务回测或 required / observed feature 对比时，closeout 只能 `blocked` / `not_verified`。
+- **临时 MD 收尾**：OpenSpec change `adaptive-capability-growth-training` 的任务清单已完成；临时调研稿在事实回写后删除，不登记为训练事实源。
+- **边界**：本包不连接真实 AutoCAD、不保存 / 修改 DWG、不部署 Worker、不写训练事实源、不刷新工作台、不提升表 C；只证明 no-CAD / fake-CAD runner、路由、回归门禁和完成声明边界。
+
 ## 2026-06-06
+
+### WORKER-RUNTIME-TRACE-WORKBENCH-MVP-01：训练工作台链路追踪小面板
+
+- **触发**：用户希望在当前训练工作台页面里看到从 Codex 白话、Worker 通道、Agent 拆分、validate / dry-run、本地 bridge / CAD-MCP 到 CAD 预览和收尾门禁的链路状态、耗时、卡点和证据路径，用于后续调试。
+- **实现**：新增 `scripts/build_runtime_trace_snapshot.py`，从最近一次 `model-agent-live-collab-proof-*` run package、Worker 部署清单、CAD preview/readback 报告、截图和视觉复核报告生成 `output/runtime_traces/latest.json`；`start_training_workbench.bat` 在刷新训练台快照后同步生成该链路快照，失败不阻断页面打开。
+- **前端**：`capability-map.html` 的训练飞控台新增“链路追踪”面板，展示总状态、总耗时、通过步骤、阻断数、Worker version/runId、每一步 owner/status/duration/evidence/blocker，并在本地 HTTP 页面中每 5 秒刷新快照。
+- **白话化加固**：面板改为新手可读的“现在发生了什么 / 下一步看这里 / 记录会不会膨胀 / 紧凑步骤小窗”结构，状态翻译为“已通过 / 卡住了 / 未检查”，并把 `storagePolicy` 显示为“只覆盖 latest.json，不追加历史；原始 CAD 证据包由仓库保留策略单独治理”。长证据路径改为悬停提示，不再占用主窗口正文。
+- **验证**：`scripts/build_runtime_trace_snapshot.py` 通过 `py_compile` 并生成 `traceStatus=blocked` 快照；本地训练台 HTTP `200`；Chrome headless 截图 `output/previews/runtime-trace-workbench-compact-20260606.png` 已确认面板渲染、文本可读且状态卡片未明显重叠。
+- **边界**：该面板是只读本地快照，不主动执行 CAD、不调用 Worker、不证明真实 `gpt-5.5` provider、不提升表 C；当前显示的 `blocked` 来自上一轮 closeout / visual review 缺字段，不是新训练失败。
+
+### WORKER-BRIDGE-CAD-PREVIEW-SMOKE-01：Worker 通道与本机 CAD 安全预览 quick smoke
+
+- **触发**：用户已打开 CAD，要求把通道测试、安全预览和少量 CAD 模拟绘制连续跑完，但不进入正式训练。
+- **远程通道**：使用用户 Wrangler OAuth 登录态重新部署 `cadagent`，通过临时 secrets-file 注入本轮 `WORKER_API_TOKEN`、`BRIDGE_API_TOKEN`、`ADMIN_API_TOKEN`，临时文件删除且 secret 未提交；最新 version 为 `21fc6755-27d0-4e97-b13a-ef1e660c8401`。
+- **smoke 加固**：远程 Durable Object 会持久记录 revoked bridge，因此 `workers/orchestrator/test/orchestrator-smoke.mjs` 新增 `WORKER_SMOKE_SKIP_REVOKE=true` 模式，让远程 smoke 避免永久污染测试 bridge；本地 runtime tests 仍覆盖 revoked bridge 行为。
+- **远程验证**：远程 smoke pass，`runId=run_20260606151438_worker_orchestration_ready_f6260886`、`state=completed`，覆盖 health、auth negative、bridge register/list/offline、lease、heartbeat、submit、idempotency conflict、dangerous result block、diagnostics。
+- **CAD 预览**：运行 `scripts/run_model_agent_live_collab_proof.py --fixture-model --driver-mode autocad_existing`；本机 AutoCAD 当前文档 `测试文件.dwg` 中只写 `CODEX_PREVIEW`，`createdHandleCount=7`、`readbackEntityCount=7`、`cadGeometryVerified=true`、`savedCurrentDwg=false`，run package 为 `output/runs/model-agent-live-collab-proof-20260606-151512/`。
+- **截图与边界**：截图 `output/previews/worker-bridge-cad-preview-20260606-151512.png` 已按本次 7 个 handles 聚焦，角色为 `visual_aid_only`。本包不是正式训练，不提升表 C，不证明真实 `gpt-5.5` provider；表 C 视觉复核脚本因 readback 报告缺旧字段 `evidence_state` 未作为正式 closeout 放行。
+
+### WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01：Cloudflare Worker 初始远程部署与 smoke
+
+- **部署**：用户授权后使用 Wrangler OAuth 登录态部署 Worker。Cloudflare / Wrangler 要求 Worker `name` 为小写字母数字加短横线，因此用户指定的 `CADAgent` 规范化为 `cadagent`。部署 URL：`https://cadagent.cmw1196466375.workers.dev`；当前 version：`ecf455d4-89f0-4b14-92aa-0c3885c7c491`。
+- **配置**：`wrangler.jsonc` 改为 `name=cadagent`、`ENVIRONMENT=cloudflare-initial`；`package.json` 新增受控部署脚本；`run-wrangler.mjs` 只在 `CADAGENT_DEPLOY_APPROVED=true` 且 `deploy --strict --secrets-file` 时允许真实部署，继续阻断裸 deploy、`secret put` 和 `dev --remote`。
+- **secret**：部署时临时生成 `WORKER_API_TOKEN`、`BRIDGE_API_TOKEN`、`ADMIN_API_TOKEN`，通过 `wrangler deploy --strict --secrets-file <temporary-json>` 上传；临时文件部署后删除，真实 secret 未写入仓库。
+- **验证**：部署前 `npm.cmd run worker:check` pass；远程 smoke 首次立即运行遇到 Cloudflare `1042` 传播 / 路由瞬态，重新部署并等待 30 秒后通过。最终远程 smoke 输出 `status=pass`、`runId=run_20260606144204_worker_orchestration_ready_06e12cd1`、`state=completed`。
+- **边界**：本包只证明远程 Worker / Durable Object 编排激活；未接 Queue / Workflows、未启动真实 local bridge runner、未调用真实 `gpt-5.5` runner、未连接 AutoCAD / CAD-MCP、未写 / 保存 DWG，不提升表 C。
+
+### WORKER-ORCHESTRATOR-PREDEPLOY-HARDENING-01：Cloudflare Worker 预部署编排层落地与临时 playMD 删除
+
+- **实现**：新增 `workers/orchestrator/**`、根级 `wrangler.jsonc`、`package.json` / `package-lock.json` worker 脚本和 `.gitignore` 规则，形成 Cloudflare Worker + Durable Object run state 的预部署编排层。当前覆盖 run / task graph、bridge 注册 / lease / heartbeat / submit、heartbeat token、bridge token、idempotency、timeout / retry / DLQ、bridge stale / offline、backpressure、circuit breaker、kill switch、redaction 和严格 JSON API 边界。
+- **加固**：submit 必须绑定 lease identity、attempt、result hash 和 `heartbeatToken`；revoked bridge 的 lease / heartbeat / submit replay 会在 idempotency 之前被阻断；task graph 写入前拒绝重复 `taskId`、缺失依赖和循环依赖；wrapper 只允许本地 `dev --local`、`types` 和 `deploy --dry-run`，阻断真实 deploy、`secret put` 和 `dev --remote`；secret scan 覆盖 `.dev.vars*`。
+- **文档收尾**：删除本轮临时 Worker 执行 playMD；保留 `WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md` 作为远程部署前停闸清单；同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md` 和 `CORE_STATUS.md`。
+- **验证**：`npm.cmd run worker:check` 通过，其中 runtime tests 14 pass，TypeScript `--noEmit`、secret scan、wrangler types 和 `wrangler deploy --dry-run` 均通过；本地 `wrangler dev --local` HTTP smoke 通过，包含 wrong submit `heartbeatToken`、idempotency conflict、dangerous CAD intent、backpressure 和 cleanup；wrapper 负向验证确认真实 deploy、`secret put`、`dev --remote` 被阻断。
+- **边界**：本包只到 local / dry-run 预部署骨架；未执行 Cloudflare remote deploy，未写真实 Cloudflare secret，未接 Queue / Workflows，未运行 bridge-owned Codex config，未触发真实 `gpt-5.5` runner，未连接 AutoCAD / CAD-MCP，未写 / 保存 DWG，不提升表 C。
 
 ### ARCH-CONVERGENCE-01：架构归并画布与旧指标降级
 

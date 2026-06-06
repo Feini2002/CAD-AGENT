@@ -1,9 +1,7 @@
 # CAD Agent Core PlanMD（唯一主线）
-最后更新：2026-06-06
-状态：系统宪章 / 架构路由器版。Core 底座施工已收口；当前优先进入 **ARCH-CONVERGENCE-01 架构归并画布工程**，先把探索式长出的底座、训练、资产、多 Agent、模型桥和旧指标重新挂到统一任务生命周期，再恢复正式对象训练。
-
+最后更新：2026-06-07
+状态：系统宪章 / 架构路由器版。Core 底座施工已收口；当前优先保持 **ARCH-CONVERGENCE-01 架构归并画布工程**，先把探索式长出的底座、训练、资产、多 Agent、模型桥、adaptive capability growth 和旧指标重新挂到统一任务生命周期，再恢复正式对象训练。**认知提升硬口径**：任何声称主 Agent 变聪明的改动，都必须证明它改变了主 Agent 在真实任务中的判断；否则只能叫机制建设，不能叫认知提升。
 ## 0. 本文职责
-
 - 本文是唯一 `PlanMD`。用户说 `plan.md`、主计划、主 PlanMD、开发主线，默认指这里。
 - 本文决定“下一类工作该走哪条架构路线”，不记录每个已完成包的长证据、单次训练流水、OpenSpec completed 任务列表或表 C 历史数字。
 - 近期执行计数和用户口令镜像写入 `docs/planning/任务清单.md`；训练细节写入 `docs/training/**`；状态和风险写入 `docs/status/**`；机器证据在 `output/validation_runs/**`、`output/runs/**`。
@@ -46,6 +44,7 @@ User Request / DWG / screenshot / feedback
 | A-to-A | 高风险任务必须生成 `a_to_a_task_contract`，列出 required agents 和 hard gates；缺输出、缺字段或 gate fail 时只能 blocked。 |
 | 系统资产 | reference/raw 只能作输入；`verified` 必须有 registry、native visible evidence、reuseWorkflowProbe 或 reuseReplay，不得用截图或 metadata-only 冒充。 |
 | 训练 | `quick_trial` 不沉淀；`focused_retraining` 不扩大范围；`formal_acceptance` 才允许完整验收、promotion 和工作台同步。 |
+| 能力成长复训 | `growth_replay` 只能由 focused / formal 路由触发，且只能读取仓库内 active / protected 事实源；不得把 debug、派生快照、诊断报告、截图、模型 pass 或外部路径当作 hard baseline。 |
 | 证据 / 表 C | 截图、dry-run、fake driver、no-CAD draft、模型 pass、工作台页面都不能冒充真实 CAD 几何证明；表 A/B/C 三套口径不得互相替代。 |
 | OpenSpec | 只作为单个复杂变更契约层，不承载第二套主计划、全局 backlog 或根级 `openspec/tasks.md`。 |
 | 数据治理 | 训练收尾、系统资产、仓库级清理或正式工作台同步前后，必须保护 active fact source，先做 evidence-closure / retention dry-run。 |
@@ -72,12 +71,13 @@ User Request / DWG / screenshot / feedback
 | --- | --- | --- |
 | 架构归并画布 | 当前仓库级主工程；旧表格、训练、资产、多 Agent、模型桥和工作台已分片生长，需要统一主构图 | `docs/architecture/system-architecture-convergence.md`、`CORE_RESTRUCTURE_PLAN.md`、状态 / 规则 / 训练入口同步；OpenSpec `unify-system-architecture-canvas` valid；关键脚本审计完成并阻止旧“真实 CAD 实力”作为端到端能力主叙事 |
 | 模型型 Agent 本地硬化（网络外） | 网络 / OpenAI provider 暂不可用，但需要先加固模型桥数据边界、可审计决策链、Agent 连续性、ToolIntent fixture 和 closeout 状态机 | 按 `docs/architecture/model-agent-local-hardening-plan.md` 完成本地 no-network proof：`export_manifest` 阻断未授权上下文、repo-external cwd / context leak audit 可测、`handoff_packet` 全链路可引用、错误 taxonomy 清晰、closeout state machine 不越权放行；不要求真实模型或真实 CAD。 |
-| Worker 编排 + 本地活体模型桥 MVP | 需要先打好长期远程触发、多状态机、队列、retry、heartbeat 和多 Agent 依赖编排框架，再证明至少一个模型型 Agent 真正调用 `gpt-5.5`，并把 prompt / context / schema 输出接回系统 decision | 架构记录已从独立 MD 收口到本文和 `core/orchestrator/local_live_model_bridge*.py`。当前本地 stand-in 已覆盖 run id、task envelope、bridge 注册 / lease / heartbeat / submit、idempotency、timeout / retry、circuit breaker、security gate、single-agent live、multi-agent live、CAD preview-only Tool Contract 和分层诊断；运行能力必须由 feature gates 分层放行。后续真 Worker 版仍需迁移到 Cloudflare Worker / Durable Object / Queue，并保持同一 `worker_orchestration_ready -> local_bridge_connected -> single_agent_live -> multi_agent_live -> cad_mcp_preview_live` 完成声明。 |
+| Worker 编排 + 本地活体模型桥 MVP | 需要先打好长期远程触发、多状态机、队列、retry、heartbeat 和多 Agent 依赖编排框架，再证明至少一个模型型 Agent 真正调用 `gpt-5.5`，并把 prompt / context / schema 输出接回系统 decision | 架构记录已从独立 MD 收口到本文和 `core/orchestrator/local_live_model_bridge*.py`；Cloudflare Worker 已按平台命名规则部署为 `cadagent`（用户原始名 `CADAgent` 因 Wrangler 只能小写而规范化），URL `https://cadagent.cmw1196466375.workers.dev`，最新远程 smoke 通过 `run_20260606151438_worker_orchestration_ready_f6260886`，Worker version `21fc6755-27d0-4e97-b13a-ef1e660c8401`。本机 quick CAD preview 已用 fixture agent 链写入并回读 7 个 `CODEX_PREVIEW` handles，`savedCurrentDwg=false`；当前不声明 Queue / Workflows、长期真实 local bridge runner、真实 `gpt-5.5` provider 或正式训练集成；后续仍按 `local_bridge_connected -> single_agent_live -> multi_agent_live -> cad_mcp_preview_live` 分层证明。 |
 | 模型型 Agent 活体协作证明 | 设计判断、主观复审、复杂分流或多 Agent 依赖链 | 下游 `agent_outputs/*.json` 显式引用上游输出；schema、trace、blocked 原因和 closeout gate 可审计；模型不越权执行 CAD；活体调用证明按 `single_agent_live` / `multi_agent_live` / `cad_mcp_preview_live` 分层声明。 |
 | 资产智能 verified reuse | 用户要求调用 / 复用 / 沉淀系统资产，或语义强匹配系统库 | 有 sourceSpec、native evidence、reuseWorkflowProbe 或 reuseReplay、created handles readback；`savedCurrentDwg=false`；候选不能冒充 verified。 |
 | 高风险 A-to-A hard gate 实战化 | 资产沉淀、资产 DWG 仓库布局、删除 / 局部修复、视觉验收、正式工作台收尾 | `a_to_a_task_contract` 覆盖 required agents；缺任一 hard gate 输出即阻断；视觉截图不能替代非截图证据。 |
 | 证据与数据治理 | 文档 / output 膨胀、路径断链、派生快照堆积、资产或训练收尾 | retention / evidence-closure dry-run 分类 `protected/candidate/blocked/derived`；不删除 active fact source，不让 `report_path_missing` 变差。 |
 | 真实案例 / 复合任务小闭环 | 用户给 DWG、截图、对象组合、修改 / 标注 / 尺度推断类任务 | 声明 evidence_source；走结构化意图或 `CAD_PLAN`、validate、dry-run、`CODEX_PREVIEW`、readback、audit、必要局部修复和反馈闭合。 |
+| 自适应能力成长复训 | 用户要求“训练某项 / 加深 / 别再只做烟测 / 按历史经验提高表达”，或 formal acceptance 需要验证训练经验是否影响下一次表达 | 使用 `core.training.capability_growth_profile` 生成 repo-local inventory / profile，`adaptive_replay_planner` 选择 `growth_replay`，`expression_regression_gate` 比对上一轮 required / observed features；缺事实源、debug 派生源、外部路径、缺少正反例或缺原任务回测时只能 blocked / not_verified。 |
 | 表 C / 真实 CAD 回归 | 改 capability registry、showcase、验证证据、真实 CAD 能力口径 | 复跑 coverage；真实 CAD 能力只按 registry + evidence + coverage JSON；`刷新表 C` 只跑 coverage，不新开包。 |
 | 文档治理 | 活跃控制文档超预算、入口漂移、历史包回流到主计划 | `scripts/run_doc_governance_audit.py --fail-on-findings` 通过；完成细节迁往 changelog / handoff / history / output。 |
 
@@ -87,11 +87,11 @@ User Request / DWG / screenshot / feedback
 
 原独立本地活体模型桥架构 MD 已删除，剩余路线只在本文维护：
 
-- **Cloudflare 迁移**：把当前本地 stand-in 状态机迁移到 Worker API + Durable Object run state；Queue / Workflows 可后接，但必须保留 lease、heartbeat、timeout、retry、audit event、idempotency 和 `featureGates` 语义。
+- **Cloudflare Worker 初始远程部署（已落地，非 CAD）**：`workers/orchestrator/**` 已部署为 `cadagent`，远程 smoke 证明 Worker API + Durable Object run state、bridge 注册 / lease / heartbeat / submit、heartbeat token、idempotency、dangerous result block 和 diagnostics redaction 可远程运行；`WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md` 继续作为生产、真实 bridge、Queue / Workflows 和 CAD-MCP 前的停闸清单。
 - **Bridge 安全配置**：建立 bridge-owned `CODEX_HOME` / Codex config，避免 `--ignore-user-config` 连带丢 MCP 配置；Worker 永远只传 task envelope，不传 shell 命令。
 - **真实活体复验**：每次声明 `single_agent_live` / `multi_agent_live` 都必须有 `traceRef` 指向完整 trace 包，且 diagnostics 能验证 `trace_review.json`、`trace_manifest.json`、sanitized `codex.cmd exec --model gpt-5.5`、`normalized_output.json.modelProviderStatus.route=codex_cli_local`。
 - **CAD preview 证明分层**：`fake_driver_preflight` 只能给 `runtimeStatus=completed`、`proofStatus=not_verified`；只有真实 CAD / CAD-MCP created handles readback 通过，才能把 `cad_mcp_preview_live` 的几何证明说成 verified。
-- **生产保护**：DLQ / backpressure / kill switch / 日志脱敏 / bridge token / replay 防护仍是 Cloudflare 版本上线前硬门槛；这些保护不被本地 fixture pass 替代。
+- **生产保护**：DLQ / backpressure / kill switch / 日志脱敏 / bridge token / replay 防护已有本地实现和测试覆盖；Cloudflare 版本上线前仍需用真实环境、真实 secret、真实观测和回滚流程复验，这些保护不被本地 fixture pass 替代。
 
 ## 4. Decision Gates
 

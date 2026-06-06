@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "run-package-state/v1",
+  "runId": "model-agent-live-collab-proof-20260606-151512",
+  "runDir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\model-agent-live-collab-proof-20260606-151512",
+  "status": "blocked",
+  "currentStage": "blocked",
+  "createdAt": "2026-06-06T15:15:12Z",
+  "updatedAt": "2026-06-06T15:15:12Z",
+  "stages": {
+    "created": {
+      "status": "completed",
+      "inputFiles": [
+        "user_request.json"
+      ],
+      "outputFiles": [
+        "user_request.json",
+        "context_pack.json",
+        "task_contract.json",
+        "dispatch_plan.json",
+        "state.json",
+        "final_report.md",
+        "agent_outputs",
+        "cad_reports",
+        "screenshots",
+        "model_traces"
+      ],
+      "blockingReason": ""
+    },
+    "context_collected": {
+      "status": "pending",
+      "inputFiles": [],
+      "outputFiles": [],
+      "blockingReason": ""
+    },
+    "orchestrator_reviewed": {
+      "status": "pending",
+      "inputFiles": [],
+      "outputFiles": [],
+      "blockingReason": ""
+    },
+    "dispatch_ready": {
+      "status": "completed",
+      "inputFiles": [
+        "user_request.json",
+        "context_pack.json"
+      ],
+      "outputFiles": [
+        "dispatch_plan.json",
+        "task_contract.json",
+        "required_agents.json",
+        "risk_assessment.json",
+        "rule_context_pack.json",
+        "rule_context_packs/pipeline_design_director.json",
+        "agent_outputs/pipeline_design_director.json",
+        "agent_outputs/pipeline_design_director.handoff.json",
+        "rule_context_packs/pipeline_style_generator.json",
+        "agent_outputs/pipeline_style_generator.json",
+        "agent_outputs/pipeline_style_generator.handoff.json",
+        "rule_context_packs/pipeline_design_reviewer.json",
+        "agent_outputs/pipeline_design_reviewer.json",
+        "agent_outputs/pipeline_design_reviewer.handoff.json",
+        "agent_outputs/pipeline_intent.json",
+        "agent_outputs/pipeline_audit.json",
+        "agent_outputs/pipeline_delivery.chain.json",
+        "model_agent_chain_result.json"
+      ],
+      "blockingReason": ""
+    },
+    "cad_executed": {
+      "status": "pending",
+      "inputFiles": [],
+      "outputFiles": [],
+      "blockingReason": ""
+    },
+    "visual_reviewed": {
+      "status": "pending",
+      "inputFiles": [],
+      "outputFiles": [],
+      "blockingReason": ""
+    },
+    "repair_needed": {
+      "status": "pending",
+      "inputFiles": [],
+      "outputFiles": [],
+      "blockingReason": ""
+    },
+    "blocked": {
+      "status": "blocked",
+      "inputFiles": [
+        "user_request.json",
+        "context_pack.json"
+      ],
+      "outputFiles": [
+        "model_agent_chain_result.json",
+        "agent_outputs/pipeline_visual_intent.json",
+        "agent_outputs/pipeline_intent.json",
+        "agent_outputs/pipeline_audit.json",
+        "agent_outputs/pipeline_delivery.json",
+        "candidate_outputs/cad_plan.candidate.json",
+        "cad_reports/validation_report.json",
+        "cad_reports/dry_run_report.json",
+        "cad_reports/cad_preview_tool_report.json",
+        "cad_reports/execution_summary.json",
+        "cad_reports/readback_summary.json",
+        "closeout_decision.json",
+        "final_report.md",
+        "model_agent_live_collab_completion_audit.json"
+      ],
+      "blockingReason": "visual_acceptance_review missing; neighbor_protection missing"
+    },
+    "ready_for_delivery": {
+      "status": "pending",
+      "inputFiles": [],
+      "outputFiles": [],
+      "blockingReason": ""
+    },
+    "delivered": {
+      "status": "pending",
+      "inputFiles": [],
+      "outputFiles": [],
+      "blockingReason": ""
+    }
+  },
+  "events": [
+    {
+      "at": "2026-06-06T15:15:12Z",
+      "stage": "created",
+      "status": "completed",
+      "inputFiles": [
+        "user_request.json"
+      ],
+      "outputFiles": [
+        "user_request.json",
+        "context_pack.json",
+        "task_contract.json",
+        "dispatch_plan.json",
+        "state.json",
+        "final_report.md",
+        "agent_outputs",
+        "cad_reports",
+        "screenshots",
+        "model_traces"
+      ],
+      "blockingReason": ""
+    },
+    {
+      "at": "2026-06-06T15:15:12Z",
+      "stage": "blocked",
+      "status": "blocked",
+      "inputFiles": [
+        "user_request.json",
+        "context_pack.json"
+      ],
+      "outputFiles": [
+        "dispatch_plan.json",
+        "task_contract.json",
+        "required_agents.json",
+        "risk_assessment.json",
+        "rule_context_pack.json",
+        "model_trigger_decision.json"
+      ],
+      "blockingReason": "request_kind='draw' requires cad_policy.allow_cad=true"
+    },
+    {
+      "at": "2026-06-06T15:15:12Z",
+      "stage": "dispatch_ready",
+      "status": "completed",
+      "inputFiles": [
+        "user_request.json",
+        "context_pack.json"
+      ],
+      "outputFiles": [
+        "dispatch_plan.json",
+        "task_contract.json",
+        "required_agents.json",
+        "risk_assessment.json",
+        "rule_context_pack.json",
+        "rule_context_packs/pipeline_design_director.json",
+        "agent_outputs/pipeline_design_director.json",
+        "agent_outputs/pipeline_design_director.handoff.json",
+        "rule_context_packs/pipeline_style_generator.json",
+        "agent_outputs/pipeline_style_generator.json",
+        "agent_outputs/pipeline_style_generator.handoff.json",
+        "rule_context_packs/pipeline_design_reviewer.json",
+        "agent_outputs/pipeline_design_reviewer.json",
+        "agent_outputs/pipeline_design_reviewer.handoff.json",
+        "agent_outputs/pipeline_intent.json",
+        "agent_outputs/pipeline_audit.json",
+        "agent_outputs/pipeline_delivery.chain.json",
+        "model_agent_chain_result.json"
+      ],
+      "blockingReason": ""
+    },
+    {
+      "at": "2026-06-06T15:15:12Z",
+      "stage": "blocked",
+      "status": "blocked",
+      "inputFiles": [
+        "cad_reports/dry_run_report.json",
+        "cad_reports/readback_summary.json",
+        "cad_reports/validation_report.json",
+        "dispatch_plan.json",
+        "state.json",
+        "task_contract.json"
+      ],
+      "outputFiles": [
+        "closeout_decision.json"
+      ],
+      "blockingReason": "visual_acceptance_review missing; neighbor_protection missing"
+    },
+    {
+      "at": "2026-06-06T15:15:12Z",
+      "stage": "blocked",
+      "status": "blocked",
+      "inputFiles": [
+        "user_request.json",
+        "context_pack.json"
+      ],
+      "outputFiles": [
+        "model_agent_chain_result.json",
+        "agent_outputs/pipeline_visual_intent.json",
+        "agent_outputs/pipeline_intent.json",
+        "agent_outputs/pipeline_audit.json",
+        "agent_outputs/pipeline_delivery.json",
+        "candidate_outputs/cad_plan.candidate.json",
+        "cad_reports/validation_report.json",
+        "cad_reports/dry_run_report.json",
+        "cad_reports/cad_preview_tool_report.json",
+        "cad_reports/execution_summary.json",
+        "cad_reports/readback_summary.json",
+        "closeout_decision.json",
+        "final_report.md",
+        "model_agent_live_collab_completion_audit.json"
+      ],
+      "blockingReason": "visual_acceptance_review missing; neighbor_protection missing"
+    }
+  ]
+}

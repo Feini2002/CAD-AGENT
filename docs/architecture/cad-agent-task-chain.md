@@ -1,6 +1,6 @@
 # CAD Agent 系统任务链路
 
-最后更新：2026-06-06（接入 ARCH-CONVERGENCE-01 七层架构归并画布）
+最后更新：2026-06-07（接入 ARCH-CONVERGENCE-01 七层架构归并画布；补入 adaptive capability growth 复训路由）
 
 ## 目标
 
@@ -12,6 +12,8 @@
 两条链路互相补充。执行链路保证当轮任务不从白话直接跳 CAD；训练链路保证失败和新能力不会只停留在一次对话、截图或临时脚本里。
 
 本链路现在归入 `docs/architecture/system-architecture-convergence.md` 的七层画布：输入分流属于系统入口层；语义拆分和单一子任务属于任务对象层；Orchestrator / A-to-A / Worker / bridge 属于决策编排层；registry、表 A/B/C、训练事实源和资产 evidence 属于能力与证据层；`CAD_PLAN`、validate、dry-run、Tool Contract、`CODEX_PREVIEW` 和 readback 属于执行工具层；audit / repair / closeout 属于审计修复层；learning promotion、资产、工作台和 changelog 属于沉淀成长层。旧表 C 只能作为能力与证据层的 `Core Proof Coverage`，不得越层代表执行结果或训练成熟度。
+
+主 Agent 认知提升是跨层声明，必须有 before / after proof。只有证明历史经验改变了后续真实任务的 route、dispatch、tool choice、blocking、requiredAgents 或 replay 结果，才能说主 Agent 变聪明；否则只是机制建设。
 
 ## 总链路
 
@@ -42,6 +44,7 @@
 | `asset_reuse` | 调用、复用、插入、放一个已沉淀对象，或强匹配系统资产 | 查系统资产库，生成跨 DWG 复用 workflow |
 | `asset_sedimentation` | 沉淀、收进资产库、通用资产 | 走系统资产四件套，必要时保存并打开系统资产 DWG |
 | `focused_retraining` | 训练某项、任务 X、加深、某图案比例 | 只覆盖点名能力，记录 `scope.mode=focused` |
+| `adaptive_growth_replay` | 之前训练过但又退回烟测、按历史经验提高表达、加深某能力 | 构建 repo-local capability profile，选择 `growth_replay`，比对 required / observed features |
 | `formal_acceptance` | 验收、训练通过、记入工作台、整批、推进表 C | 完整校验、证据、同步和状态回写 |
 | `local_repair` | 不对、这里错、继续修、局部反馈 | 优先按 handles / bbox 原位局部修复 |
 
@@ -56,6 +59,7 @@
 - 证据边界：截图推断、比例估算、真实 DWG readback、用户明确尺寸、not_checked。
 - 安全边界：是否允许删除、是否保存、是否写正式图层、是否跨 DWG、是否打开系统资产 DWG。
 - 规则命中：训练轻重链路、资产复用规则、系统资产沉淀协议、原位局部修复、中文编码前置门禁。
+- 能力成长：若命中 `adaptive_growth_replay`，必须声明 profile source role、正反例、required / observed features、表达比较和原任务回测边界；debug / derived / external / missing sources 只能导致 candidate 或 blocked，不能放行。
 
 输出可以是 `CAD_PLAN`、`retrieval_pack`、`system_asset_reuse_workflow`、`repair_plan`、focused training scope 或文档任务计划，但必须是结构化结果，不能只保留一段白话解释。
 
