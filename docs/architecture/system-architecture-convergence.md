@@ -138,6 +138,15 @@
 3. **再选：单项真实 CAD preview 链**  
    目标是只写 `CODEX_PREVIEW`，验证同一 `CAD_PLAN` 的 validate、dry-run、execute、created handles readback、closeout gate。它证明单项执行链，不证明整批训练或项目交付。
 
+### 8.1 当前残项裁决
+
+| 残项 | 是否阻断下一步 | 裁决 |
+| --- | --- | --- |
+| 真实 AutoCAD 当前未连接 | 不阻断无 CAD 仓库治理链；阻断单项真实 CAD preview 链和正式训练恢复 | 先跑 no-CAD 测试链；进入真实 CAD preview 前再重连 AutoCAD 并跑 created handles readback |
+| 工作台 flightdeck 还有观察视图 follow-up | 不阻断测试性链 | 作为可视化润色 / 观察性改进排期，不当作主训练链 hard gate |
+| 工作区存在未提交变化 | 阻断任何新测试链 | 先提交或清理成干净基线；只有 `git status` 干净后再开始测试 |
+| 架构还想继续补满 | 默认不阻断 | 除非发现第二套 PlanMD、缺 hard gate、证据边界无法分类，否则先用测试链暴露真实缺口 |
+
 ## 9. 仍需补满的架构缺口
 
 当前系统不是“空架构”，但还没有到“所有大链路都可正式恢复”的状态。剩余缺口主要是三类：

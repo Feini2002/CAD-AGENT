@@ -93,3 +93,12 @@ After architecture convergence, the system SHALL distinguish architecture cleanl
 - **THEN** the answer SHALL check repository cleanliness, single PlanMD status, OpenSpec contract status, A-to-A gate availability, execution evidence boundaries, and sedimentation boundaries
 - **AND** it SHALL recommend a minimal testing chain before formal training
 - **AND** it SHALL NOT present architecture-document cleanup as proof of Agent task maturity or project delivery readiness.
+
+#### Scenario: Classifying residual follow-ups before testing
+
+- **GIVEN** architecture convergence has produced residual follow-ups
+- **WHEN** the system decides whether to continue architecture polishing or start a test chain
+- **THEN** it SHALL classify each follow-up as blocking, stage-specific blocking, or non-blocking
+- **AND** it SHALL treat dirty Git state as blocking for any new test chain
+- **AND** it SHALL treat missing real AutoCAD connectivity as blocking only for real-CAD preview / training chains, not for no-CAD governance tests
+- **AND** it SHALL treat flightdeck observation polish as non-blocking unless it is part of the selected test chain's hard gate.
