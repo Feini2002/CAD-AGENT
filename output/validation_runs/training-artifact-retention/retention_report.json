@@ -1,7 +1,7 @@
 {
   "version": "0.1",
   "status": "pass",
-  "generatedAt": "2026-06-06T08:37:53+00:00",
+  "generatedAt": "2026-06-06T08:45:57+00:00",
   "write": false,
   "policy": {
     "mode": "archive_unreferenced_old_screenshots",
@@ -35,7 +35,7 @@
     "capability-map-data.js"
   ],
   "candidateCount": 26,
-  "protectedArtifactCount": 5151,
+  "protectedArtifactCount": 5167,
   "referenceFileCount": 1315,
   "keptCount": 26,
   "archivePlannedCount": 0,
@@ -18209,6 +18209,16 @@
       "suffix": ".json"
     },
     {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-19877329cdec4191bbac14488c644593/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-19877329cdec4191bbac14488c644593/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
       "path": "output/test_artifacts/project_sample_loader/loader-path-escape-399ce1b9ec0b436d9ab238a83f97fc41/escape_sample/sample.manifest.json",
       "reason": "protected_suffix",
       "suffix": ".json"
@@ -18249,6 +18259,31 @@
       "suffix": ".json"
     },
     {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-db278627f000420784474e20b9c064eb/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_loader/loader-path-escape-db278627f000420784474e20b9c064eb/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-316bb8c6a196465ab8972371f6d41df3/leak_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-316bb8c6a196465ab8972371f6d41df3/leak_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-316bb8c6a196465ab8972371f6d41df3/leak_sample/source/secret.dwg",
+      "reason": "protected_suffix",
+      "suffix": ".dwg"
+    },
+    {
       "path": "output/test_artifacts/project_sample_protocol/dwg-present-57ebb7a55be3454faac21e61d60cc746/leak_sample/input/shell.manual.json",
       "reason": "protected_suffix",
       "suffix": ".json"
@@ -18275,6 +18310,21 @@
     },
     {
       "path": "output/test_artifacts/project_sample_protocol/dwg-present-98a8a36d26c044d1a3feb30eda3cccce/leak_sample/source/secret.dwg",
+      "reason": "protected_suffix",
+      "suffix": ".dwg"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-a082889bc5ff4f5a96a44d93318fd521/leak_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-a082889bc5ff4f5a96a44d93318fd521/leak_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/dwg-present-a082889bc5ff4f5a96a44d93318fd521/leak_sample/source/secret.dwg",
       "reason": "protected_suffix",
       "suffix": ".dwg"
     },
@@ -18324,12 +18374,32 @@
       "suffix": ".dwg"
     },
     {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-194540775df84a0e82280c0898271455/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-194540775df84a0e82280c0898271455/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
       "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-44c5302470bc42ba864030587fe670b4/escape_sample/sample.manifest.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
     {
       "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-44c5302470bc42ba864030587fe670b4/outside.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-516b0823057c4754bc8fabd6760719f6/escape_sample/sample.manifest.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/manifest-input-escape-516b0823057c4754bc8fabd6760719f6/outside.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -18375,6 +18445,16 @@
     },
     {
       "path": "output/test_artifacts/project_sample_protocol/missing-manifest-6fb3f404a3fa43f59e929d329b8297a4/bad_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/missing-manifest-a49543a3dad3411f95ca14e2428b799f/bad_sample/input/shell.manual.json",
+      "reason": "protected_suffix",
+      "suffix": ".json"
+    },
+    {
+      "path": "output/test_artifacts/project_sample_protocol/missing-manifest-c4b91fc38b174668ab07a53dff2905dc/bad_sample/input/shell.manual.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
@@ -24759,7 +24839,7 @@
       "suffix": ".json"
     },
     {
-      "path": "output/test_artifacts/training_queue_post_sync_e4b2b258afb1489e831fd1ebd3924d0b/queue_state.json",
+      "path": "output/test_artifacts/training_queue_post_sync_5e09f26647bb4ffc9b0d33d89c6a2e6f/queue_state.json",
       "reason": "protected_suffix",
       "suffix": ".json"
     },
