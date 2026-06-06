@@ -33,6 +33,7 @@ User Request / DWG / screenshot / feedback
 总设计文档：`docs/architecture/system-architecture-convergence.md`。OpenSpec 契约：`openspec/changes/unify-system-architecture-canvas/`。七层画布为：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。
 旧表 C 历史旧称“真实 CAD 实力”，现统一降级为 `Core Proof Coverage`：只说明底座证据覆盖，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。
 当前执行：先同步主控文档、规则、状态、训练入口和 OpenSpec；后续新对话按 OpenSpec `tasks.md` 审计 coverage / workbench / doc governance / A-to-A gate 等脚本。归并完成前，不默认新开正式训练、表 C 推进或系统资产大沉淀；用户明确覆盖时仍走 quick / focused / formal 边界。
+架构归并完成后的下一步不是直接恢复大训练，而是先进入**测试性链环节**：从无 CAD 仓库治理链、模型型 Agent no-CAD 链、单项真实 CAD preview 链三者中选一条最小闭环。判断标准见 `docs/architecture/system-architecture-convergence.md` §8；只有测试链证明任务对象、A-to-A gate、执行证据、closeout 和沉淀边界能闭合后，才恢复 focused training 或更重链路。
 
 ## 1. 不可破坏边界
 

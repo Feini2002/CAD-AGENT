@@ -88,3 +88,64 @@
 5. 工作台仍是派生显示器，不是训练事实源。
 
 满足这些条件后，再恢复对象训练和案例训练；训练结果仍必须靠真实 CAD readback、审计、局部修复闭环、用户反馈和可复用资产 replay 逐步建立。
+
+## 7. 给非架构读者的读法
+
+可以把当前系统理解成一条有闸门的流水线，而不是一堆并列功能：
+
+```text
+想做什么
+  -> 变成一个可追踪任务
+  -> 决定谁负责、要过哪些门
+  -> 查已有能力和风险
+  -> 只让确定性工具执行
+  -> 审计结果，不准就修
+  -> 稳定后才沉淀为训练、资产或规则
+```
+
+这条线里最容易混淆的是三件事：
+
+- **架构干净**：每个模块知道自己属于哪一层，不能替代别的层。
+- **测试链可跑**：可以选一条小链路，用现有 gate、测试、审计和 artifact 验证它是否闭合。
+- **正式训练 / 项目交付可恢复**：不仅能跑链路，还要有真实 CAD readback、用户反馈、修复闭环和沉淀规则。
+
+所以，“架构归并完成”只表示系统的路标和闸门已经摆正；它不自动表示 CAD Designer Agent 已经成熟，也不表示可以直接进入真实项目交付。
+
+## 8. 测试性链准入判断
+
+当前架构已经可以进入**测试性链环节**，但建议从最小闭环开始，不要直接恢复整批正式训练。
+
+测试性链的准入条件如下：
+
+| 检查项 | 当前要求 | 不满足时的处理 |
+| --- | --- | --- |
+| 工作区状态 | Git 工作区干净，当前分支明确 | 先停止测试，清理或提交基线 |
+| 主计划 | `CORE_RESTRUCTURE_PLAN.md` 仍是唯一 PlanMD | 先修文档治理，避免第二套 next |
+| 变更契约 | OpenSpec 作为 change contract，不能当主 backlog | 先更新 OpenSpec / PlanMD 边界 |
+| 任务链 | 测试任务能归入七层生命周期 | 先补任务对象和责任分发 |
+| A-to-A | 高风险链路有 required agents 和 hard gates | 缺 gate 时只能 blocked |
+| 执行证据 | CAD 链路必须有 validate / dry-run / readback 边界 | 只能跑 no-CAD 或 blocked 预检 |
+| 沉淀边界 | quick / test output 不写训练事实源 | 只保留为 derived / diagnostic |
+
+建议下一步选择**一条测试性链**，而不是同时开训练、资产、模型桥和真实 CAD：
+
+1. **首选：仓库级无 CAD 测试链**  
+   目标是验证架构 gate 是否稳：OpenSpec validate、doc governance、PlanMD governance、A-to-A gate、workbench agent check。它证明系统路标干净，不证明真实 CAD 几何。
+
+2. **次选：模型型 Agent no-CAD 链**  
+   目标是验证模型桥 / Prompt Pack / trace / closeout gate / tool intent 的证据传递。它证明模型型 Agent 的判断链可审计，不证明 CAD 输出。
+
+3. **再选：单项真实 CAD preview 链**  
+   目标是只写 `CODEX_PREVIEW`，验证同一 `CAD_PLAN` 的 validate、dry-run、execute、created handles readback、closeout gate。它证明单项执行链，不证明整批训练或项目交付。
+
+## 9. 仍需补满的架构缺口
+
+当前系统不是“空架构”，但还没有到“所有大链路都可正式恢复”的状态。剩余缺口主要是三类：
+
+| 缺口 | 为什么重要 | 建议处理 |
+| --- | --- | --- |
+| 测试链分层记录还不够集中 | 现在证据分散在 tests、scripts、output 和状态文档里，外行很难一眼判断该跑哪条链 | 新增或整理一份 `testing-chain-readiness` 小文档 / 报告入口 |
+| 正式训练恢复门槛还需要一次实跑证明 | 文档已经说明训练暂停和恢复条件，但还缺“从测试性链到 focused training”的桥接样例 | 先跑一个 focused、单项、可回读的训练恢复 rehearsal |
+| 真实 CAD project readiness 仍缺端到端案例 | 表 C、基础训练、对象 replay 都不是完整施工图交付 | 后续用一个小 DWG 案例建立端到端任务成熟度证据 |
+
+因此当前判断是：**可以进入下一步测试性链；不建议直接进入正式整批训练或真实项目交付。**

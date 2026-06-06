@@ -81,3 +81,15 @@ The implementation SHALL identify and update scripts or derived displays that st
 - **WHEN** the convergence implementation updates the workbench generation scripts
 - **THEN** the UI or generated data SHALL label those values as Core proof / evidence coverage
 - **AND** SHALL avoid implying Agent task maturity or project delivery readiness.
+
+### Requirement: Testing Chain Admission After Convergence
+
+After architecture convergence, the system SHALL distinguish architecture cleanliness from readiness for formal training or project delivery.
+
+#### Scenario: Deciding whether to run the next test chain
+
+- **GIVEN** the architecture convergence tasks are complete
+- **WHEN** a user asks whether the system is clean enough for the next testing stage
+- **THEN** the answer SHALL check repository cleanliness, single PlanMD status, OpenSpec contract status, A-to-A gate availability, execution evidence boundaries, and sedimentation boundaries
+- **AND** it SHALL recommend a minimal testing chain before formal training
+- **AND** it SHALL NOT present architecture-document cleanup as proof of Agent task maturity or project delivery readiness.

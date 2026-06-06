@@ -1,7 +1,7 @@
 {
   "version": "0.1",
   "status": "pass",
-  "generated_at": "2026-06-06T08:38:47+00:00",
+  "generated_at": "2026-06-06T08:53:16+00:00",
   "root": "C:\\Users\\User\\Desktop\\CAD-AGENT",
   "coverage": {
     "status": "pass",
@@ -238,7 +238,7 @@
       {
         "name": "snapshot_generated_after_coverage",
         "status": "pass",
-        "detail": "snapshot=2026-06-06T08:38:47+00:00, coverage=2026-06-06T08:38:47Z"
+        "detail": "snapshot=2026-06-06T08:53:16+00:00, coverage=2026-06-06T08:53:16Z"
       },
       {
         "name": "sync_boundary_declared",
