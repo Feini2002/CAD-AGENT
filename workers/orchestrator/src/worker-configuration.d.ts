@@ -3592,7 +3592,7 @@ type AiSearchChatCompletionsRequest = {
     [key: string]: unknown;
 };
 // ============ AI Search Multi-Instance Types (Namespace-Scoped) ============
-/** `ai_search_options` shape for multi-instance requests â€?requires `instance_ids`. */
+/** `ai_search_options` shape for multi-instance requests â€” requires `instance_ids`. */
 type AiSearchMultiSearchOptions = AiSearchOptions & {
     /** Instance IDs to search across (1-10). */
     instance_ids: string[];
@@ -4154,9 +4154,9 @@ declare abstract class AiSearchInstance {
      * @returns Statistics with counts per status, last activity time, and engine details.
      */
     stats(): Promise<AiSearchStatsResponse>;
-    /** Items collection â€?list, upload, and manage items in this instance. */
+    /** Items collection â€” list, upload, and manage items in this instance. */
     get items(): AiSearchItems;
-    /** Jobs collection â€?list, create, and inspect indexing jobs. */
+    /** Jobs collection â€” list, create, and inspect indexing jobs. */
     get jobs(): AiSearchJobs;
 }
 /**
@@ -4206,7 +4206,7 @@ declare abstract class AiSearchNamespace {
     list(params?: AiSearchListInstancesParams): Promise<AiSearchListResponse>;
     /**
      * Create a new instance within the bound namespace.
-     * @param config Instance configuration. Only `id` is required â€?omit `type` and `source` to create with built-in storage.
+     * @param config Instance configuration. Only `id` is required â€” omit `type` and `source` to create with built-in storage.
      * @returns Instance service for the newly created instance.
      *
      * @example
@@ -10069,7 +10069,7 @@ declare abstract class AiGateway {
 // Licensed under the Apache 2.0 license found in the LICENSE file or at:
 //     https://opensource.org/licenses/Apache-2.0
 /**
- * Artifacts â€?Git-compatible file storage on Cloudflare Workers.
+ * Artifacts â€” Git-compatible file storage on Cloudflare Workers.
  *
  * Provides programmatic access to create, manage, and fork repositories,
  * and to issue and revoke scoped access tokens.
@@ -10097,7 +10097,7 @@ interface ArtifactsRepoInfo {
     /** HTTPS git remote URL. */
     remote: string;
 }
-/** Result of creating a repository â€?includes the initial access token. */
+/** Result of creating a repository â€” includes the initial access token. */
 interface ArtifactsCreateRepoResult {
     /** Unique repository ID. */
     id: string;
@@ -10182,7 +10182,7 @@ interface ArtifactsRepo extends ArtifactsRepoInfo {
         defaultBranchOnly?: boolean;
     }): Promise<ArtifactsCreateRepoResult>;
 }
-/** Artifacts binding â€?namespace-level operations. */
+/** Artifacts binding â€” namespace-level operations. */
 interface Artifacts {
     /**
      * Create a new repository with an initial access token.
@@ -10222,7 +10222,7 @@ interface Artifacts {
     }): Promise<ArtifactsCreateRepoResult>;
     /**
      * List repositories with cursor-based pagination.
-     * @param opts Optional: limit (1â€?00, default 50), cursor for next page.
+     * @param opts Optional: limit (1â€“200, default 50), cursor for next page.
      */
     list(opts?: {
         limit?: number;
@@ -10429,8 +10429,8 @@ interface BasicImageTransformations {
     gravity?: 'face' | 'left' | 'right' | 'top' | 'bottom' | 'center' | 'auto' | 'entropy' | BasicImageTransformationsGravityCoordinates;
     /**
      * Background color to add underneath the image. Applies only to images with
-     * transparency (such as PNG). Accepts any CSS color (#RRGGBB, rgba(â€?,
-     * hsl(â€?, etc.)
+     * transparency (such as PNG). Accepts any CSS color (#RRGGBB, rgba(â€¦),
+     * hsl(â€¦), etc.)
      */
     background?: string;
     /**
