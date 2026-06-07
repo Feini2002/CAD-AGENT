@@ -19,6 +19,7 @@ from core.maintenance.doc_governance import (
     check_doc_source_of_truth,
     check_handoff_files,
     check_handoff_document,
+    check_immortal_doc_bloat,
     check_markdown_links,
     check_root_migration_stubs,
     check_table_c_values,
@@ -93,6 +94,24 @@ class DocGovernanceTests(unittest.TestCase):
             "schema: spec-driven\ncontext: CORE_RESTRUCTURE_PLAN.md remains primary.\n",
             encoding="utf-8",
         )
+        (root / "openspec" / "changes" / "scoped-change" / ".openspec.yaml").write_text(
+            "\n".join(
+                [
+                    "schema: spec-driven",
+                    "metadataVersion: 2",
+                    "created: 2026-06-07",
+                    "lifecycle:",
+                    "  status: active",
+                    "  archiveReady: false",
+                    "dependencies:",
+                    "  dependsOn: []",
+                    "  blockedBy: []",
+                    "  supersedes: []",
+                    "openQuestions: []",
+                ]
+            ),
+            encoding="utf-8",
+        )
         (root / "openspec" / "changes" / "scoped-change" / "proposal.md").write_text(
             "This change is scoped and does not carry global next.\n",
             encoding="utf-8",
@@ -102,6 +121,124 @@ class DocGovernanceTests(unittest.TestCase):
 
         self.assertEqual(report["status"], "pass", report["findings"])
         self.assertEqual(report["summary"]["active_change_file_count"], 1)
+
+    def test_openspec_metadata_check_flags_missing_lifecycle_and_archive_reason(self) -> None:
+        root = artifact_path("doc_governance", "openspec_metadata_missing")
+        (root / "openspec" / "changes" / "missing-metadata").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "changes" / "missing-lifecycle").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "changes" / "complete-without-reason").mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "config.yaml").write_text(
+            "schema: spec-driven\ncontext: CORE_RESTRUCTURE_PLAN.md remains primary.\n",
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "missing-lifecycle" / ".openspec.yaml").write_text(
+            "schema: spec-driven\ncreated: 2026-06-07\n",
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "complete-without-reason" / ".openspec.yaml").write_text(
+            "\n".join(
+                [
+                    "schema: spec-driven",
+                    "metadataVersion: 2",
+                    "created: 2026-06-07",
+                    "lifecycle:",
+                    "  status: complete",
+                    "  archiveReady: false",
+                    "dependencies:",
+                    "  dependsOn: []",
+                    "  blockedBy: []",
+                    "  supersedes: []",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        report = doc_governance.check_openspec_contracts(root)
+
+        codes = {finding["code"] for finding in report["findings"]}
+        self.assertIn("openspec_change_metadata_missing", codes)
+        self.assertIn("openspec_metadata_missing_version", codes)
+        self.assertIn("openspec_metadata_missing_lifecycle_status", codes)
+        self.assertIn("openspec_complete_change_missing_archive_reason", codes)
+
+    def test_openspec_metadata_check_flags_unresolved_questions_and_bad_links(self) -> None:
+        root = artifact_path("doc_governance", "openspec_metadata_relationships")
+        for change in ["alpha", "beta", "gamma"]:
+            (root / "openspec" / "changes" / change).mkdir(parents=True, exist_ok=True)
+        (root / "openspec" / "config.yaml").write_text(
+            "schema: spec-driven\ncontext: CORE_RESTRUCTURE_PLAN.md remains primary.\n",
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "alpha" / ".openspec.yaml").write_text(
+            "\n".join(
+                [
+                    "schema: spec-driven",
+                    "metadataVersion: 2",
+                    "created: 2026-06-07",
+                    "lifecycle:",
+                    "  status: complete",
+                    "  archiveReady: false",
+                    "  archiveReason: docs still reference active change path",
+                    "dependencies:",
+                    "  dependsOn:",
+                    "    - change:beta",
+                    "  blockedBy:",
+                    "    - change:missing-change",
+                    "  supersedes:",
+                    "    - change:missing-old-change",
+                    "openQuestions:",
+                    "  - id: oq-001",
+                    "    status: open",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "beta" / ".openspec.yaml").write_text(
+            "\n".join(
+                [
+                    "schema: spec-driven",
+                    "metadataVersion: 2",
+                    "created: 2026-06-07",
+                    "lifecycle:",
+                    "  status: active",
+                    "  archiveReady: false",
+                    "dependencies:",
+                    "  dependsOn:",
+                    "    - change:gamma",
+                    "  blockedBy: []",
+                    "  supersedes: []",
+                    "openQuestions: []",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "openspec" / "changes" / "gamma" / ".openspec.yaml").write_text(
+            "\n".join(
+                [
+                    "schema: spec-driven",
+                    "metadataVersion: 2",
+                    "created: 2026-06-07",
+                    "lifecycle:",
+                    "  status: active",
+                    "  archiveReady: false",
+                    "dependencies:",
+                    "  dependsOn:",
+                    "    - change:alpha",
+                    "  blockedBy: []",
+                    "  supersedes: []",
+                    "openQuestions: []",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        report = doc_governance.check_openspec_contracts(root)
+
+        codes = {finding["code"] for finding in report["findings"]}
+        self.assertIn("openspec_complete_change_has_unresolved_open_question", codes)
+        self.assertIn("openspec_metadata_dependency_missing", codes)
+        self.assertIn("openspec_metadata_supersedes_missing", codes)
+        self.assertIn("openspec_metadata_dependency_cycle", codes)
 
     def test_build_doc_governance_report_includes_openspec_contracts(self) -> None:
         root = artifact_path("doc_governance", "openspec_contract_report")
@@ -569,6 +706,136 @@ class DocGovernanceTests(unittest.TestCase):
         self.assertIn("handoff", report)
         self.assertIn("root_stubs", report)
         self.assertIn("training_context", report)
+
+    def test_immortal_doc_bloat_flags_current_context_sprawl(self) -> None:
+        root = artifact_path("doc_governance", "immortal_doc_bloat")
+        root.mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "governance").mkdir(parents=True, exist_ok=True)
+        (root / "coverage.json").write_text(
+            json.dumps({"cad_strength_headline_percent": 0.0}),
+            encoding="utf-8",
+        )
+        (root / "CORE_CONTEXT_BRIEF.md").write_text(
+            "\n".join(["# Brief"] + ["line"] * 125 + [f"- **ACTIVE-FACT-{idx:02d}**：still active" for idx in range(12)] + ["- **DONE-FACT-01**：已完成，等待归档"]),
+            encoding="utf-8",
+        )
+        (root / "AGENTS.md").write_text(
+            "\n".join(
+                [
+                    "CAD_PLAN gate: natural language must become CAD_PLAN before CAD write.",
+                    "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 is active.",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "CORE_STATUS.md").write_text(
+            "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 remains active.\n",
+            encoding="utf-8",
+        )
+        (root / "README.md").write_text(
+            "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 is also repeated here.\n",
+            encoding="utf-8",
+        )
+        (root / "docs" / "status").mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "status" / "current.md").write_text(
+            "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 is copied into current status too.\n",
+            encoding="utf-8",
+        )
+        (root / "docs" / "governance" / "cad-agent-rules.md").write_text(
+            "CAD_PLAN gate: natural language must become CAD_PLAN before CAD write.\n",
+            encoding="utf-8",
+        )
+        (root / "ARCH_SIDE_TASK.md").write_text(
+            "# Side task\n\nThis active root sidecar has no lifecycle owner.\n",
+            encoding="utf-8",
+        )
+        (root / "DOC_GOVERNANCE_SIDE_TASK.md").write_text(
+            "# Governance side task\n\n本文讨论文档治理和同步，但没有四动作记录模板。\n",
+            encoding="utf-8",
+        )
+
+        bloat = check_immortal_doc_bloat(root)
+
+        codes = {finding["code"] for finding in bloat.get("findings", [])}
+        self.assertIn("core_context_brief_requires_review", codes)
+        self.assertIn("active_fact_id_repeated", codes)
+        self.assertIn("governance_rule_signal_repeated", codes)
+        self.assertIn("brief_active_fact_count_high", codes)
+        self.assertIn("completed_package_in_brief", codes)
+        self.assertIn("merge_action_template_missing", codes)
+        self.assertIn("root_sidecar_missing_exit_path", codes)
+
+    def test_cli_adds_immortal_doc_bloat_warnings(self) -> None:
+        root = artifact_path("doc_governance", "immortal_doc_bloat_cli")
+        root.mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "governance").mkdir(parents=True, exist_ok=True)
+        (root / "coverage.json").write_text(
+            json.dumps({"cad_strength_headline_percent": 0.0}),
+            encoding="utf-8",
+        )
+        (root / "CORE_CONTEXT_BRIEF.md").write_text(
+            "\n".join(["# Brief"] + ["line"] * 125 + [f"- **ACTIVE-FACT-{idx:02d}**：still active" for idx in range(12)] + ["- **DONE-FACT-01**：已完成，等待归档"]),
+            encoding="utf-8",
+        )
+        (root / "AGENTS.md").write_text(
+            "\n".join(
+                [
+                    "CAD_PLAN gate: natural language must become CAD_PLAN before CAD write.",
+                    "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 is active.",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "CORE_STATUS.md").write_text(
+            "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 remains active.\n",
+            encoding="utf-8",
+        )
+        (root / "README.md").write_text(
+            "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 is also repeated here.\n",
+            encoding="utf-8",
+        )
+        (root / "docs" / "status").mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "status" / "current.md").write_text(
+            "ARCH-GOVERNANCE-HARDENING-MINI-TASK-01 is copied into current status too.\n",
+            encoding="utf-8",
+        )
+        (root / "docs" / "governance" / "cad-agent-rules.md").write_text(
+            "CAD_PLAN gate: natural language must become CAD_PLAN before CAD write.\n",
+            encoding="utf-8",
+        )
+        (root / "ARCH_SIDE_TASK.md").write_text(
+            "# Side task\n\nThis active root sidecar has no lifecycle owner.\n",
+            encoding="utf-8",
+        )
+        (root / "DOC_GOVERNANCE_SIDE_TASK.md").write_text(
+            "# Governance side task\n\n本文讨论文档治理和同步，但没有四动作记录模板。\n",
+            encoding="utf-8",
+        )
+
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "scripts" / "run_doc_governance_audit.py"),
+                "--root",
+                str(root),
+                "--coverage",
+                str(root / "coverage.json"),
+            ],
+            cwd=PROJECT_ROOT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            capture_output=True,
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        report = json.loads(completed.stdout)
+        bloat = report.get("immortal_doc_bloat", {})
+        codes = {finding["code"] for finding in bloat.get("findings", [])}
+        self.assertIn("core_context_brief_requires_review", codes)
+        self.assertIn("active_fact_id_repeated", codes)
+        self.assertIn("governance_rule_signal_repeated", codes)
+        self.assertIn("root_sidecar_missing_exit_path", codes)
 
     def test_current_repository_keeps_required_doc_architecture(self) -> None:
         report = build_doc_governance_report(PROJECT_ROOT)

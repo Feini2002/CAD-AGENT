@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "agentId": "pipeline_intent",
   "learningState": "prompt_updated",
-  "updatedAt": "2026-06-06T15:56:30+00:00",
+  "updatedAt": "2026-06-06T18:19:02+00:00",
   "sourceReports": [
     "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
   ],
@@ -60,7 +60,7 @@
         "readbackCount": 15,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -90,7 +90,7 @@
         "readbackCount": 24,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -120,7 +120,7 @@
         "readbackCount": 18,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -151,7 +151,7 @@
         "readbackCount": 14,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -182,7 +182,7 @@
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -212,7 +212,7 @@
         "readbackCount": 13,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -242,7 +242,7 @@
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -272,7 +272,7 @@
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -302,7 +302,7 @@
         "readbackCount": 31,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -332,7 +332,7 @@
         "readbackCount": 8,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -362,7 +362,7 @@
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -392,7 +392,7 @@
         "readbackCount": 16,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -422,7 +422,7 @@
         "readbackCount": 8,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -452,7 +452,7 @@
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -482,7 +482,7 @@
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -512,7 +512,7 @@
         "readbackCount": 15,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -542,7 +542,7 @@
         "readbackCount": 15,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -572,7 +572,7 @@
         "readbackCount": 13,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -602,7 +602,7 @@
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -632,7 +632,7 @@
         "readbackCount": 15,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -662,7 +662,7 @@
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -692,7 +692,7 @@
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -722,7 +722,7 @@
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -752,7 +752,7 @@
         "readbackCount": 12,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -782,7 +782,7 @@
         "readbackCount": 9,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -812,7 +812,7 @@
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -842,7 +842,7 @@
         "readbackCount": 11,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",
@@ -872,7 +872,7 @@
         "readbackCount": 8,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_intent",

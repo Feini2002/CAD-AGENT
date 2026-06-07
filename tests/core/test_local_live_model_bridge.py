@@ -36,6 +36,20 @@ def _state_patch(label: str) -> dict[str, object]:
     }
 
 
+def _soft_judgment() -> dict[str, object]:
+    return {
+        "confidence": 0.81,
+        "acceptableForCurrentScope": True,
+        "betterAlternativeAvailable": False,
+        "needsUserTasteChoice": False,
+        "riskLevel": "low",
+        "suggestedRepairScope": "none",
+        "selfUncertainty": ["fixture output does not prove live CAD geometry"],
+        "riskNote": "unit-test design review soft judgment; not CAD proof",
+        "whatWouldChangeMyMind": ["created handles readback fails"],
+    }
+
+
 def _design_director_model_output() -> dict[str, object]:
     return {
         "status": "pass",
@@ -103,6 +117,7 @@ def _design_reviewer_model_output() -> dict[str, object]:
         "contentMatchesDesignPurpose": True,
         "needsUserChoice": False,
         "repairOrRegenerateRecommendation": {},
+        "softJudgment": _soft_judgment(),
         "learningCandidate": _learning_candidate(),
         "statePatch": _state_patch("multi_agent_live_review"),
         "finalResponseAllowedClaims": ["review output is schema-valid"],

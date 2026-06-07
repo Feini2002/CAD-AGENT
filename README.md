@@ -2,11 +2,15 @@
 
 CAD Agent Core Lab 是一个可迁移的 CAD Agent 开发包。它训练的不是“把一句话直接丢给 AutoCAD 的脚本”，而是一个能把极端白话需求拆成任务、责任、证据、执行和修复闭环的电子设计师系统。
 
-当前主线是 **ARCH-CONVERGENCE-01 架构归并画布**：把旧表 A/B/C、能力证明、RCAD、训练地图、资产、多 Agent、模型桥、Worker、截图和工作台，统一归入一条任务生命周期。旧表 C 只保留为 `Core Proof Coverage`，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。
+当前主线是 **架构归并画布**：把旧表 A/B/C、能力证明、RCAD、训练地图、资产、多 Agent、模型桥、Worker、截图和工作台，统一归入一条任务生命周期。旧表 C 只保留为 `Core Proof Coverage`，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。
 
-最新训练底座补强是 `ADAPTIVE-CAPABILITY-GROWTH-TRAINING-01`：系统现在能把“某项能力训练过但输出又退回烟测”的问题拆成 repo-local 能力画像、`growth_replay` 路由、表达回归门禁和 closeout claim gate。它是 focused / formal 复训的安全底座，不等于恢复整批训练、真实 CAD 几何验证、Worker 部署或表 C 提升。
+最新训练底座补强已经把“某项能力训练过但输出又退回烟测”的问题拆成 repo-local 能力画像、`growth_replay` 路由、表达回归门禁和 closeout claim gate。它是 focused / formal 复训的安全底座，不等于恢复整批训练、真实 CAD 几何验证、Worker 部署或表 C 提升。
 
 主 Agent 认知提升还有更硬的一条：任何声称“主 Agent 变聪明”的改动，都必须证明它改变了真实任务里的判断；否则只是机制建设。
+
+当前下一步最自然的试金石不是整批训练，而是一条最小测试链。若从家具开始，默认做一个家具族 / 一个点名能力的 `focused rehearsal`：先验证主 Agent 的分流、历史读取、scope、工具选择和阻断边界，CAD 可用时再只写 `CODEX_PREVIEW` 并回读 handles。
+
+旧入口收编、权限安全与训练回归加固已从临时方案收口为机器包：事实源是 `config/entrypoint_custody_manifest.json`、`core/entrypoint_custody/**`、`scripts/run_entrypoint_custody_audit.py`、`scripts/run_training_report_claim_audit.py` 和 `scripts/run_model_trace_claim_audit.py`。它负责说明旧脚本、诊断、训练、资产、工作台、历史专项入口和训练 replay 路径的归属、写入边界、证据边界和防退化门禁，不新增第二套主计划。
 
 ## 一眼看懂
 

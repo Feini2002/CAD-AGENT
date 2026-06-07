@@ -1,7 +1,7 @@
 # Training Workbench Sync Report
 
 - status: `pass`
-- generated_at: `2026-06-06T15:58:37+00:00`
+- generated_at: `2026-06-07T06:02:30+00:00`
 - coverage_status: `pass`
 - learning_promotion: `promoted`
 - data_output: `C:\Users\User\Desktop\CAD-AGENT\capability-map-data.js`
@@ -47,7 +47,7 @@
 - `pass` coverage_source_exists: output/validation_runs/capability-lab/cad_capability_coverage.json
 - `pass` table_c_headline_matches_coverage: data=90.99, coverage=90.99
 - `pass` table_c_three_maturity_boundary_declared: Core Proof Coverage 机器快照 Core Proof Coverage 旧表 C 这是 registry 和 coverage JSON 的底座证据覆盖机器快照；旧表 C 字段保留兼容，但不代表 Agent Task Maturity 或 Project Delivery Readiness。 Agent Task Maturity Project Delivery Readiness
-- `pass` snapshot_generated_after_coverage: snapshot=2026-06-06T15:58:37+00:00, coverage=2026-06-06T15:58:37Z
+- `pass` snapshot_generated_after_coverage: snapshot=2026-06-07T06:02:30+00:00, coverage=2026-06-07T06:02:30Z
 - `pass` sync_boundary_declared: workbenchSync.mode=static_snapshot
 - `pass` sync_command_declared: $py scripts\sync_training_workbench.py
 - `pass` launcher_declared: start_training_workbench.bat

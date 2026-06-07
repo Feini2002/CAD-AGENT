@@ -18,6 +18,7 @@
     "visualProblems",
     "lookHereFirst",
     "repairRecommendation",
+    "softJudgment",
     "statePatch",
     "finalResponseAllowedClaims",
     "evidenceUsed",
@@ -122,6 +123,9 @@
           }
         }
       }
+    },
+    "softJudgment": {
+      "$ref": "#/$defs/softJudgment"
     },
     "statePatch": {
       "type": "object",
@@ -265,6 +269,60 @@
     }
   },
   "$defs": {
+    "softJudgment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confidence",
+        "acceptableForCurrentScope",
+        "betterAlternativeAvailable",
+        "needsUserTasteChoice",
+        "riskLevel",
+        "suggestedRepairScope",
+        "selfUncertainty",
+        "riskNote",
+        "whatWouldChangeMyMind"
+      ],
+      "properties": {
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "acceptableForCurrentScope": {
+          "type": "boolean"
+        },
+        "betterAlternativeAvailable": {
+          "type": "boolean"
+        },
+        "needsUserTasteChoice": {
+          "type": "boolean"
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "suggestedRepairScope": {
+          "type": "string",
+          "enum": ["none", "local", "regenerate", "ask_user", "escalate"]
+        },
+        "selfUncertainty": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "riskNote": {
+          "type": "string"
+        },
+        "whatWouldChangeMyMind": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "toolIntent": {
       "type": "object",
       "additionalProperties": false,

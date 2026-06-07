@@ -52,6 +52,8 @@
 
 主 Agent 认知提升必须可观察：如果一次改动没有改变 `pipeline_orchestrator` 的 route、dispatch、requiredAgents、tool choice、blocking reason、learningCandidate 或下一次 replay 结果，就只能称为机制建设，不能称为主脑变聪明。
 
+后续主 Agent 认知证明优先用 no-CAD fixture 或家具 focused rehearsal 固定：先看 Orchestrator 是否因历史 profile / 风险边界改变分流和派发，再决定是否进入真实 CAD preview；不能用 Prompt Pack ready 或 memory 更新直接当作认知提升。
+
 ## 当前真实度分层
 
 当前系统已经越过“只有死规则”的阶段，但还没到“所有 Agent 都真实独立协作”的终态。后续判断 Agent 是否真实，统一按这四层表达：

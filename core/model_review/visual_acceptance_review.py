@@ -38,6 +38,7 @@ VISUAL_ACCEPTANCE_REQUIRED_FIELDS = (
     "visualProblems",
     "lookHereFirst",
     "repairRecommendation",
+    "softJudgment",
     *COMMON_MODEL_REVIEW_FIELDS,
 )
 PASS_STATUSES = {"pass", "ready", "ok", "complete", "complete_for_current_scope"}

@@ -1,0 +1,28 @@
+{
+  "allowedClaims": [
+    "handoff fixture only"
+  ],
+  "decisionSummary": "pass pass",
+  "downstreamInstructions": [],
+  "evidenceMissing": [],
+  "evidenceRefs": [
+    "fake_model_trace/normalized_output.json"
+  ],
+  "forbiddenClaims": [
+    "must not invent evidence",
+    "must not claim CAD geometry without created handles/readback",
+    "must not claim user acceptance",
+    "must not authorize CAD writes, deletes, saves, registry mutation, or table C claims"
+  ],
+  "fromAgentId": "pipeline_design_director",
+  "openQuestions": [],
+  "schemaVersion": "handoff_packet/v1",
+  "sha256OfSourceOutput": "e95623f0eb4ef967a47a5529e05b8b035b7a64e2ff22d954428c2b61e860df1d",
+  "statePatch": {
+    "phase": "local_proof"
+  },
+  "status": "ready",
+  "toAgentIds": [
+    "pipeline_style_generator"
+  ]
+}

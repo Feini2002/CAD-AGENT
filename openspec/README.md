@@ -8,6 +8,8 @@
 openspec.cmd list --json
 openspec.cmd status --change <change-name> --json
 openspec.cmd validate --all --strict --json --no-interactive
+$py = "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"
+& $py scripts\run_doc_governance_audit.py
 ```
 
 注意：`openspec.cmd status --json` 不带 `--change` 会报缺少参数，这是 CLI 用法边界，不是 OpenSpec 初始化失败。
@@ -17,6 +19,22 @@ openspec.cmd validate --all --strict --json --no-interactive
 - `openspec/changes/<change>/`：具体变更契约。完成态 change 可以暂时留在这里，作为仍被仓库文档引用的活跃历史。
 - `openspec/specs/`：归档后沉淀的稳定规格。若 `openspec.cmd list --specs --json` 暂时为空，不代表 OpenSpec 不可用。
 - `openspec/changes/archive/`：归档后的历史 change。归档前要确认稳定 spec 和仓库引用同步。
+
+## Change Metadata
+
+活跃 change 应保留 `.openspec.yaml`，至少写明：
+
+- `schema`
+- `metadataVersion`
+- `created`
+- `lifecycle.status`
+- `lifecycle.archiveReady`
+- `dependencies.dependsOn` / `blockedBy` / `supersedes`
+- `openQuestions`
+
+`scripts/run_doc_governance_audit.py` 会只读检查 metadata 缺失、生命周期状态、完成态 tasks、未闭环 open questions、缺失依赖目标和依赖 / supersedes 环。该审计不自动归档、不修改 metadata，也不证明任何 CAD 能力。
+
+第一轮暂不检查结构化 impact 冲突、`impact.breaking` 传播、schema 目标存在性或 Agent 目标存在性；这些属于后续扩展，不应为了通过 metadata v2 审计而一次性补满所有历史 change。
 
 ## 使用边界
 

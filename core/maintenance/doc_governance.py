@@ -46,6 +46,82 @@ ACTIVE_DOC_LINE_BUDGETS = {
     "docs/handoffs/package-index.md": 140,
 }
 
+IMMORTAL_DOC_LINE_BASELINES = {
+    "README.md": 140,
+    "AGENTS.md": 220,
+    "CORE_CONTEXT_BRIEF.md": 120,
+    "CORE_RESTRUCTURE_PLAN.md": 140,
+    "CORE_STATUS.md": 180,
+    "docs/governance/cad-agent-rules.md": 260,
+}
+
+IMMORTAL_DOC_ACTIVE_IGNORED_PARTS = {
+    ".git",
+    ".codegraph",
+    ".codex",
+    ".agents",
+    ".pytest_cache",
+    "__pycache__",
+    "archive",
+    "history",
+    "node_modules",
+    "output",
+}
+
+IMMORTAL_FACT_SCAN_DOCS = {
+    "AGENTS.md",
+    "ARCH_DOC_GOVERNANCE_BOUNDARY_PACKAGE.md",
+    "CORE_CONTEXT_BRIEF.md",
+    "CORE_RESTRUCTURE_PLAN.md",
+    "CORE_STATUS.md",
+    "README.md",
+    "docs/architecture/system-architecture-convergence.md",
+    "docs/governance/cad-agent-rules.md",
+    "docs/handoffs/current.md",
+    "docs/handoffs/package-index.md",
+    "docs/planning/任务清单.md",
+    "docs/status/current.md",
+    "docs/status/issues.md",
+}
+
+PERMANENT_ROOT_MARKDOWN = {
+    "AGENTS.md",
+    "CORE_CONTEXT_BRIEF.md",
+    "CORE_RESTRUCTURE_PLAN.md",
+    "CORE_STATUS.md",
+    "MODEL_DATA_EXPORT_AUTHORIZATION.md",
+    "README.md",
+    "WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md",
+}
+
+FACT_OR_CHANGE_ID_RE = re.compile(r"\b[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){1,}-[0-9]{2,}\b")
+ROOT_SIDECAR_EXIT_MARKERS = (
+    "archive",
+    "closeout",
+    "deprecate",
+    "exit path",
+    "move to",
+    "superseded by",
+    "退出路径",
+    "归档",
+    "收口",
+    "完成后",
+)
+MAX_DUPLICATE_ID_FINDINGS = 20
+BRIEF_ACTIVE_FACT_RE = re.compile(r"(?m)^-\s+\*\*([^*]+)\*\*")
+COMPLETED_FACT_MARKERS = ("completed", "done", "已完成", "收口", "归档")
+MERGE_ACTION_REQUIRED_FIELDS = (
+    "factId",
+    "authoritySource",
+    "add",
+    "replace",
+    "demote",
+    "reference",
+    "touchedFiles",
+    "skippedFiles",
+    "evidence",
+)
+
 ROOT_MIGRATION_STUB_TARGETS = {
     "CAD卡壳排障入口.md": "docs/runbooks/blocker-playbook.md",
     "CAD符号语法入口.md": "docs/architecture/symbol-grammar.md",
@@ -151,6 +227,20 @@ OPENSPEC_TASK_BACKLOG_MARKERS = (
     "global backlog",
     "global next",
 )
+
+OPENSPEC_METADATA_REQUIRED_STATUSES = {
+    "proposed",
+    "active",
+    "implemented",
+    "complete",
+    "archive-ready",
+    "archived",
+    "superseded",
+}
+
+OPENSPEC_METADATA_RELATION_KEYS = ("dependsOn", "blockedBy", "supersedes")
+
+OPENSPEC_OPEN_QUESTION_OPEN_STATUSES = {"open", ""}
 
 TABLE_C_SUBJECT_MARKERS = (
     "表 C",
@@ -416,6 +506,152 @@ def _finding(code: str, path: str, message: str, *, severity: str = "medium") ->
     return {"code": code, "severity": severity, "path": path, "message": message}
 
 
+def _parse_openspec_scalar(value: str) -> Any:
+    text = value.strip()
+    if not text:
+        return ""
+    if text in {"[]", "{}", "null", "Null", "NULL"}:
+        return [] if text == "[]" else None
+    if text.lower() == "true":
+        return True
+    if text.lower() == "false":
+        return False
+    if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
+        return text[1:-1]
+    if re.fullmatch(r"-?\d+", text):
+        try:
+            return int(text)
+        except ValueError:
+            return text
+    return text
+
+
+def _parse_openspec_change_ref(value: str) -> str:
+    text = str(_parse_openspec_scalar(value)).strip()
+    if text.startswith("change:"):
+        return text.split(":", 1)[1].strip()
+    return text
+
+
+def _parse_openspec_metadata(text: str) -> dict[str, Any]:
+    """Parse the constrained .openspec.yaml subset used by this repository."""
+
+    data: dict[str, Any] = {
+        "top": {},
+        "lifecycle": {},
+        "dependencies": {key: [] for key in OPENSPEC_METADATA_RELATION_KEYS},
+        "openQuestions": [],
+    }
+    section = ""
+    current_relation_key = ""
+    current_question: dict[str, Any] | None = None
+
+    for raw_line in text.splitlines():
+        line = raw_line.split("#", 1)[0].rstrip()
+        if not line.strip():
+            continue
+
+        indent = len(line) - len(line.lstrip(" "))
+        stripped = line.strip()
+
+        if indent == 0:
+            current_relation_key = ""
+            current_question = None
+            if ":" not in stripped:
+                continue
+            key, value = stripped.split(":", 1)
+            key = key.strip()
+            value = value.strip()
+            if value:
+                data["top"][key] = _parse_openspec_scalar(value)
+                section = key if key in {"lifecycle", "dependencies", "openQuestions"} else ""
+                if key == "openQuestions" and data["top"][key] == []:
+                    data["openQuestions"] = []
+            else:
+                section = key
+            continue
+
+        if section == "lifecycle" and indent >= 2 and ":" in stripped:
+            key, value = stripped.split(":", 1)
+            data["lifecycle"][key.strip()] = _parse_openspec_scalar(value)
+            continue
+
+        if section == "dependencies":
+            if indent == 2 and ":" in stripped:
+                key, value = stripped.split(":", 1)
+                key = key.strip()
+                if key in OPENSPEC_METADATA_RELATION_KEYS:
+                    current_relation_key = key
+                    parsed_value = _parse_openspec_scalar(value)
+                    if isinstance(parsed_value, list):
+                        data["dependencies"][key] = parsed_value
+                    elif parsed_value:
+                        data["dependencies"][key] = [_parse_openspec_change_ref(str(parsed_value))]
+                continue
+
+            if indent >= 4 and stripped.startswith("-") and current_relation_key:
+                ref = _parse_openspec_change_ref(stripped[1:].strip())
+                if ref:
+                    data["dependencies"][current_relation_key].append(ref)
+                continue
+
+        if section == "openQuestions":
+            if indent >= 2 and stripped.startswith("-"):
+                item = stripped[1:].strip()
+                current_question = {}
+                data["openQuestions"].append(current_question)
+                if ":" in item:
+                    key, value = item.split(":", 1)
+                    current_question[key.strip()] = _parse_openspec_scalar(value)
+                continue
+
+            if current_question is not None and indent >= 4 and ":" in stripped:
+                key, value = stripped.split(":", 1)
+                current_question[key.strip()] = _parse_openspec_scalar(value)
+
+    return data
+
+
+def _openspec_tasks_all_checked(tasks_path: Path) -> bool:
+    if not tasks_path.is_file():
+        return False
+    for line in _read_text(tasks_path).splitlines():
+        stripped = line.strip()
+        if stripped.startswith("- [ ]"):
+            return False
+    return True
+
+
+def _has_openspec_dependency_cycle(graph: dict[str, list[str]]) -> list[str]:
+    visited: set[str] = set()
+    visiting: set[str] = set()
+    stack: list[str] = []
+    cycle_nodes: set[str] = set()
+
+    def visit(node: str) -> None:
+        if node in visiting:
+            if node in stack:
+                cycle_nodes.update(stack[stack.index(node) :])
+            else:
+                cycle_nodes.add(node)
+            return
+        if node in visited:
+            return
+        visiting.add(node)
+        stack.append(node)
+        for target in graph.get(node, []):
+            if target in graph:
+                visit(target)
+        stack.pop()
+        visiting.remove(node)
+        visited.add(node)
+
+    for change in sorted(graph):
+        visit(change)
+
+    return sorted(cycle_nodes)
+
+
 def check_doc_source_of_truth(root: Path) -> dict[str, Any]:
     root = root.resolve()
     findings: list[dict[str, str]] = []
@@ -612,6 +848,10 @@ def check_openspec_contracts(root: Path) -> dict[str, Any]:
     openspec_dir = root / "openspec"
     findings: list[dict[str, str]] = []
     active_change_file_count = 0
+    active_change_count = 0
+    metadata_by_change: dict[str, dict[str, Any]] = {}
+    active_change_names: set[str] = set()
+    known_change_names: set[str] = set()
 
     if not openspec_dir.exists():
         return {
@@ -619,6 +859,7 @@ def check_openspec_contracts(root: Path) -> dict[str, Any]:
             "summary": {
                 "openspec_present": False,
                 "active_change_file_count": 0,
+                "active_change_count": 0,
                 "finding_count": 0,
             },
             "findings": findings,
@@ -658,9 +899,94 @@ def check_openspec_contracts(root: Path) -> dict[str, Any]:
 
     changes_dir = openspec_dir / "changes"
     if changes_dir.is_dir():
+        archive_dir = changes_dir / "archive"
+        if archive_dir.is_dir():
+            known_change_names.update(path.name for path in archive_dir.iterdir() if path.is_dir())
+
         for change_dir in sorted(path for path in changes_dir.iterdir() if path.is_dir()):
             if change_dir.name == "archive":
                 continue
+            active_change_count += 1
+            active_change_names.add(change_dir.name)
+            known_change_names.add(change_dir.name)
+
+            metadata_path = change_dir / ".openspec.yaml"
+            if not metadata_path.is_file():
+                findings.append(
+                    _finding(
+                        "openspec_change_metadata_missing",
+                        _rel(metadata_path, root),
+                        "Active OpenSpec changes must include .openspec.yaml metadata.",
+                    )
+                )
+            else:
+                metadata = _parse_openspec_metadata(_read_text(metadata_path))
+                metadata_by_change[change_dir.name] = metadata
+                top = metadata.get("top", {})
+                lifecycle = metadata.get("lifecycle", {})
+
+                if "metadataVersion" not in top:
+                    findings.append(
+                        _finding(
+                            "openspec_metadata_missing_version",
+                            _rel(metadata_path, root),
+                            "OpenSpec change metadata must include metadataVersion.",
+                        )
+                    )
+
+                status = str(lifecycle.get("status", "")).strip()
+                if not status:
+                    findings.append(
+                        _finding(
+                            "openspec_metadata_missing_lifecycle_status",
+                            _rel(metadata_path, root),
+                            "OpenSpec change metadata must include lifecycle.status.",
+                        )
+                    )
+                elif status not in OPENSPEC_METADATA_REQUIRED_STATUSES:
+                    findings.append(
+                        _finding(
+                            "openspec_metadata_invalid_lifecycle_status",
+                            _rel(metadata_path, root),
+                            "OpenSpec lifecycle.status must use a known value.",
+                        )
+                    )
+
+                if status in {"complete", "archive-ready"} and not _openspec_tasks_all_checked(
+                    change_dir / "tasks.md"
+                ):
+                    findings.append(
+                        _finding(
+                            "openspec_complete_change_tasks_not_checked",
+                            _rel(change_dir / "tasks.md", root),
+                            "OpenSpec changes marked complete or archive-ready must have all tasks checked.",
+                        )
+                    )
+
+                archive_ready = lifecycle.get("archiveReady")
+                archive_reason = str(lifecycle.get("archiveReason", "")).strip()
+                if status == "complete" and archive_ready is False and not archive_reason:
+                    findings.append(
+                        _finding(
+                            "openspec_complete_change_missing_archive_reason",
+                            _rel(metadata_path, root),
+                            "Completed OpenSpec changes left outside archive with archiveReady=false must include lifecycle.archiveReason.",
+                        )
+                    )
+
+                if status in {"complete", "archive-ready"}:
+                    for question in metadata.get("openQuestions", []):
+                        question_status = str(question.get("status", "")).strip().lower()
+                        if question_status in OPENSPEC_OPEN_QUESTION_OPEN_STATUSES:
+                            findings.append(
+                                _finding(
+                                    "openspec_complete_change_has_unresolved_open_question",
+                                    _rel(metadata_path, root),
+                                    "OpenSpec changes marked complete or archive-ready must not keep openQuestions with status=open.",
+                                )
+                            )
+                            break
+
             for md_path in sorted(change_dir.rglob("*.md")):
                 active_change_file_count += 1
                 for line in _read_text(md_path).splitlines():
@@ -683,11 +1009,81 @@ def check_openspec_contracts(root: Path) -> dict[str, Any]:
                         )
                         break
 
+    dependency_graph: dict[str, list[str]] = {change: [] for change in active_change_names}
+    for change_name, metadata in sorted(metadata_by_change.items()):
+        metadata_path = changes_dir / change_name / ".openspec.yaml"
+        dependencies = metadata.get("dependencies", {})
+        lifecycle = metadata.get("lifecycle", {})
+
+        for relation_key in ("dependsOn", "blockedBy"):
+            for target in dependencies.get(relation_key, []):
+                if target not in known_change_names:
+                    findings.append(
+                        _finding(
+                            "openspec_metadata_dependency_missing",
+                            _rel(metadata_path, root),
+                            f"OpenSpec change references missing {relation_key} target: {target}.",
+                        )
+                    )
+                elif relation_key == "dependsOn":
+                    dependency_graph.setdefault(change_name, []).append(target)
+
+        for target in dependencies.get("supersedes", []):
+            if target not in known_change_names:
+                findings.append(
+                    _finding(
+                        "openspec_metadata_supersedes_missing",
+                        _rel(metadata_path, root),
+                        f"OpenSpec change references missing supersedes target: {target}.",
+                    )
+                )
+                continue
+
+            dependency_graph.setdefault(change_name, []).append(target)
+            target_metadata = metadata_by_change.get(target)
+            target_status = (
+                str(target_metadata.get("lifecycle", {}).get("status", "")).strip()
+                if target_metadata
+                else "archived"
+            )
+            if target_status not in {"archived", "superseded"}:
+                findings.append(
+                    _finding(
+                        "openspec_metadata_supersedes_target_not_closed",
+                        _rel(metadata_path, root),
+                        f"OpenSpec supersedes target should be archived or superseded before closeout: {target}.",
+                        severity="low",
+                    )
+                )
+
+        status = str(lifecycle.get("status", "")).strip()
+        if status == "superseded" and not dependencies.get("supersedes"):
+            findings.append(
+                _finding(
+                    "openspec_superseded_change_missing_supersedes_ref",
+                    _rel(metadata_path, root),
+                    "OpenSpec lifecycle.status=superseded should include a supersedes reference explaining the replacement.",
+                    severity="low",
+                )
+            )
+
+    cycle_nodes = _has_openspec_dependency_cycle(dependency_graph)
+    for change_name in cycle_nodes:
+        findings.append(
+            _finding(
+                "openspec_metadata_dependency_cycle",
+                f"openspec/changes/{change_name}/.openspec.yaml",
+                "OpenSpec dependsOn / supersedes metadata must not form a cycle.",
+                severity="high",
+            )
+        )
+
     return {
         "status": "pass" if not findings else "findings",
         "summary": {
             "openspec_present": True,
             "active_change_file_count": active_change_file_count,
+            "active_change_count": active_change_count,
             "finding_count": len(findings),
         },
         "findings": findings,
@@ -1070,6 +1466,255 @@ def check_active_doc_size_budgets(root: Path) -> dict[str, Any]:
     }
 
 
+def _immortal_bloat_finding(
+    code: str,
+    path: str,
+    message: str,
+    *,
+    severity: str = "warning",
+    **extra: Any,
+) -> dict[str, Any]:
+    return {"code": code, "severity": severity, "path": path, "message": message, **extra}
+
+
+def _is_immortal_active_markdown(path: Path, root: Path) -> bool:
+    if path.suffix.lower() != ".md":
+        return False
+    parts = path.resolve().relative_to(root.resolve()).parts
+    return not any(part in IMMORTAL_DOC_ACTIVE_IGNORED_PARTS for part in parts)
+
+
+def _iter_immortal_active_markdown(root: Path) -> list[Path]:
+    return [
+        path
+        for path in sorted(root.rglob("*.md"))
+        if _is_immortal_active_markdown(path, root)
+    ]
+
+
+def _iter_immortal_fact_scan_markdown(root: Path) -> list[Path]:
+    return [
+        root / rel_path
+        for rel_path in sorted(IMMORTAL_FACT_SCAN_DOCS)
+        if (root / rel_path).is_file()
+    ]
+
+
+def _governance_rule_signals(text: str) -> set[str]:
+    lowered = text.lower()
+    signals: set[str] = set()
+    if "cad_plan" in lowered and (
+        "natural language" in lowered or "白话" in text or "直接跳到 cad" in lowered
+    ):
+        signals.add("cad_plan_gate")
+    if "codex_preview" in lowered and ("only" in lowered or "只写" in text or "默认" in text):
+        signals.add("codex_preview_write_boundary")
+    if "core proof coverage" in lowered and (
+        "agent task maturity" in lowered or "project delivery readiness" in lowered
+    ):
+        signals.add("table_c_maturity_boundary")
+    if "data_bloat_governance" in lowered and ("hard gate" in lowered or "门禁" in text):
+        signals.add("data_bloat_hard_gate")
+    return signals
+
+
+def _check_immortal_line_baselines(root: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    rows: list[dict[str, Any]] = []
+    findings: list[dict[str, Any]] = []
+    for rel_path, baseline_lines in sorted(IMMORTAL_DOC_LINE_BASELINES.items()):
+        path = root / rel_path
+        if not path.is_file():
+            continue
+        line_count = len(_read_text(path).splitlines())
+        rows.append(
+            {
+                "path": rel_path,
+                "lineCount": line_count,
+                "baselineLines": baseline_lines,
+                "deltaLines": line_count - baseline_lines,
+            }
+        )
+        if line_count <= baseline_lines:
+            continue
+        if rel_path == "CORE_CONTEXT_BRIEF.md":
+            findings.append(
+                _immortal_bloat_finding(
+                    "core_context_brief_requires_review",
+                    rel_path,
+                    f"CORE_CONTEXT_BRIEF.md has {line_count} lines, over the immortal-doc baseline of {baseline_lines}; shrink it or require review before treating it as the stable short context.",
+                    severity="require_review",
+                    lineCount=line_count,
+                    baselineLines=baseline_lines,
+                )
+            )
+        else:
+            findings.append(
+                _immortal_bloat_finding(
+                    "immortal_doc_over_baseline",
+                    rel_path,
+                    f"Immortal document has {line_count} lines, over the baseline of {baseline_lines}. Move volatile or completed detail into archive/status/history surfaces.",
+                    lineCount=line_count,
+                    baselineLines=baseline_lines,
+                )
+            )
+    return rows, findings
+
+
+def _check_repeated_fact_ids(root: Path) -> list[dict[str, Any]]:
+    occurrences: dict[str, set[str]] = {}
+    for path in _iter_immortal_fact_scan_markdown(root):
+        rel_path = _rel(path, root)
+        for token in set(FACT_OR_CHANGE_ID_RE.findall(_read_text(path))):
+            occurrences.setdefault(token, set()).add(rel_path)
+
+    findings: list[dict[str, Any]] = []
+    for token, paths in sorted(occurrences.items()):
+        if len(paths) <= 3:
+            continue
+        sorted_paths = sorted(paths)
+        findings.append(
+            _immortal_bloat_finding(
+                "active_fact_id_repeated",
+                sorted_paths[0],
+                f"All-caps fact/change id {token} appears in {len(sorted_paths)} active documents; keep durable fact ownership narrow and move repeated narration to references.",
+                factId=token,
+                paths=sorted_paths,
+                occurrenceDocumentCount=len(sorted_paths),
+            )
+        )
+        if len(findings) >= MAX_DUPLICATE_ID_FINDINGS:
+            break
+    return findings
+
+
+def _check_repeated_governance_rule_signals(root: Path) -> list[dict[str, Any]]:
+    agents_path = root / "AGENTS.md"
+    rules_path = root / "docs" / "governance" / "cad-agent-rules.md"
+    if not agents_path.is_file() or not rules_path.is_file():
+        return []
+
+    repeated = sorted(
+        _governance_rule_signals(_read_text(agents_path))
+        & _governance_rule_signals(_read_text(rules_path))
+    )
+    return [
+        _immortal_bloat_finding(
+            "governance_rule_signal_repeated",
+            "AGENTS.md",
+            f"Governance rule signal {signal} appears in both AGENTS.md and docs/governance/cad-agent-rules.md; keep one owner and leave the other as a pointer when possible.",
+            signal=signal,
+            paths=["AGENTS.md", "docs/governance/cad-agent-rules.md"],
+        )
+        for signal in repeated
+    ]
+
+
+def _check_brief_active_fact_count(root: Path) -> list[dict[str, Any]]:
+    path = root / "CORE_CONTEXT_BRIEF.md"
+    if not path.is_file():
+        return []
+    text = _read_text(path)
+    active_facts = BRIEF_ACTIVE_FACT_RE.findall(text)
+    findings: list[dict[str, Any]] = []
+    if len(active_facts) > 10:
+        findings.append(
+            _immortal_bloat_finding(
+                "brief_active_fact_count_high",
+                "CORE_CONTEXT_BRIEF.md",
+                f"CORE_CONTEXT_BRIEF.md has {len(active_facts)} active fact bullets; keep only the facts needed for the next session and link to current/status/history for the rest.",
+                activeFactCount=len(active_facts),
+                maxRecommendedActiveFactCount=10,
+            )
+        )
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("- **"):
+            continue
+        lowered = stripped.lower()
+        if any(marker in lowered or marker in stripped for marker in COMPLETED_FACT_MARKERS):
+            findings.append(
+                _immortal_bloat_finding(
+                    "completed_package_in_brief",
+                    "CORE_CONTEXT_BRIEF.md",
+                    "CORE_CONTEXT_BRIEF.md active facts include completed/archive wording; completed packages should usually be demoted to changelog, handoff, or history references.",
+                    line=stripped[:180],
+                )
+            )
+            break
+    return findings
+
+
+def _check_merge_action_templates(root: Path) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    for path in sorted(root.glob("*.md")):
+        if path.name in PERMANENT_ROOT_MARKDOWN:
+            continue
+        text = _read_text(path)
+        if "治理" not in text and "同步" not in text and "governance" not in text.lower():
+            continue
+        missing = [field for field in MERGE_ACTION_REQUIRED_FIELDS if field not in text]
+        if not missing:
+            continue
+        findings.append(
+            _immortal_bloat_finding(
+                "merge_action_template_missing",
+                path.name,
+                "Governance sidecar mentions document sync/governance but lacks the full add/replace/demote/reference record template.",
+                missingFields=missing,
+            )
+        )
+    return findings
+
+
+def _check_root_sidecar_exit_paths(root: Path) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    immortal_roots = {Path(path).name for path in IMMORTAL_DOC_LINE_BASELINES if "/" not in path}
+    permanent_roots = immortal_roots | PERMANENT_ROOT_MARKDOWN
+    for path in sorted(root.glob("*.md")):
+        if path.name in permanent_roots:
+            continue
+        text = _read_text(path)
+        lowered = text.lower()
+        has_exit_path = any(marker in lowered or marker in text for marker in ROOT_SIDECAR_EXIT_MARKERS)
+        if has_exit_path:
+            continue
+        findings.append(
+            _immortal_bloat_finding(
+                "root_sidecar_missing_exit_path",
+                path.name,
+                "Root sidecar Markdown file has no explicit exit/archive path. Add a closeout route or move the content under the owned docs surface.",
+            )
+        )
+    return findings
+
+
+def check_immortal_doc_bloat(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    baseline_rows, baseline_findings = _check_immortal_line_baselines(root)
+    findings = [
+        *baseline_findings,
+        *_check_repeated_fact_ids(root),
+        *_check_repeated_governance_rule_signals(root),
+        *_check_brief_active_fact_count(root),
+        *_check_merge_action_templates(root),
+        *_check_root_sidecar_exit_paths(root),
+    ]
+    severity_counts: dict[str, int] = {}
+    for finding in findings:
+        severity = str(finding.get("severity", "warning"))
+        severity_counts[severity] = severity_counts.get(severity, 0) + 1
+    return {
+        "status": "pass" if not findings else "findings",
+        "summary": {
+            "finding_count": len(findings),
+            "baseline_doc_count": len(baseline_rows),
+            "severity_counts": severity_counts,
+        },
+        "line_baselines": baseline_rows,
+        "findings": findings,
+    }
+
+
 def check_table_c_values(root: Path, *, coverage_path: Path) -> dict[str, Any]:
     root = root.resolve()
     coverage = _load_coverage_values(coverage_path)
@@ -1220,6 +1865,7 @@ def build_doc_governance_report(
     openspec_contracts = check_openspec_contracts(root)
     architecture_hardening = check_architecture_hardening_index(root)
     data_bloat_governance = check_data_bloat_governance_manifest(root)
+    immortal_doc_bloat = check_immortal_doc_bloat(root)
     reports = {
         "doc_registry": registry,
         "source_of_truth": source,
@@ -1234,6 +1880,7 @@ def build_doc_governance_report(
         "openspec_contracts": openspec_contracts,
         "architecture_hardening": architecture_hardening,
         "data_bloat_governance": data_bloat_governance,
+        "immortal_doc_bloat": immortal_doc_bloat,
     }
     finding_count = sum(report["summary"].get("finding_count", 0) for report in reports.values())
     return {

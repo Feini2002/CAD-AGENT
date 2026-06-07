@@ -96,6 +96,22 @@ class OrchestratorHostRuntimeTests(unittest.TestCase):
             self.assertIn(agent_id, report["requiredAgents"]["agentIds"])
         for gate in ("asset_governance", "asset_dwg_curation", "asset_reuse_audit", "data_bloat_governance"):
             self.assertIn(gate, report["dispatchPlan"]["hardGates"])
+        self.assertEqual(report["dispatchPlan"]["complexityAssessment"]["riskLevel"], "high")
+        self.assertIn("data_bloat_governance", report["dispatchPlan"]["routeBudget"]["mustKeepHardGates"])
+
+    def test_quick_trial_gets_cheapest_route_budget_without_skipping_hard_gates(self) -> None:
+        from core.orchestrator.orchestrator_host_runtime import run_orchestrator_host_runtime
+
+        run_dir = self._run_package(user_request="试一下画一个小茶几，先看看，不沉淀。")
+
+        report = run_orchestrator_host_runtime(run_dir, config=CodexCliReviewConfig(enabled=False))
+
+        self.assertEqual(report["dispatchPlan"]["route"], "quick_trial")
+        self.assertEqual(report["dispatchPlan"]["complexityAssessment"]["complexity"], "low")
+        self.assertEqual(report["dispatchPlan"]["routeBudget"]["mode"], "quick_draw")
+        self.assertIn("preview_only_boundary", report["dispatchPlan"]["routeBudget"]["mustKeepHardGates"])
+        self.assertIn("cad_readback", report["dispatchPlan"]["routeBudget"]["mustKeepHardGates"])
+        self.assertIn("pipeline_design_director", report["dispatchPlan"]["routeBudget"]["skippableAgents"])
 
     def test_unregistered_agent_is_candidate_not_effective_required_agent(self) -> None:
         from core.orchestrator.orchestrator_host_runtime import run_orchestrator_host_runtime

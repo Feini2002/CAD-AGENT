@@ -23,6 +23,20 @@ def _state_patch(phase: str) -> dict[str, object]:
     }
 
 
+def _soft_judgment() -> dict[str, object]:
+    return {
+        "confidence": 0.82,
+        "acceptableForCurrentScope": True,
+        "betterAlternativeAvailable": False,
+        "needsUserTasteChoice": False,
+        "riskLevel": "low",
+        "suggestedRepairScope": "none",
+        "selfUncertainty": ["unit test output does not inspect real CAD pixels"],
+        "riskNote": "unit-test no-CAD soft judgment; not CAD proof",
+        "whatWouldChangeMyMind": ["CAD readback contradicts the design intent"],
+    }
+
+
 def _fake_output_for_schema(schema_path: str) -> dict[str, object]:
     name = Path(schema_path).name
     learning_candidate = {
@@ -115,6 +129,7 @@ def _fake_output_for_schema(schema_path: str) -> dict[str, object]:
             "contentMatchesDesignPurpose": True,
             "needsUserChoice": False,
             "repairOrRegenerateRecommendation": {},
+            "softJudgment": _soft_judgment(),
             **common,
         }
     raise AssertionError(f"unexpected schema path: {schema_path}")
@@ -182,11 +197,23 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
             )
 
             self.assertEqual(result["status"], "ready")
+            self.assertEqual(result["virtualCognitiveRolesRef"], "virtual_cognitive_roles.json")
             self.assertFalse(result["cadExecutionAuthorized"])
+            virtual_roles = json.loads((run_dir / "virtual_cognitive_roles.json").read_text(encoding="utf-8"))
+            self.assertEqual(virtual_roles["status"], "spike")
+            self.assertEqual(virtual_roles["roles"][0]["roleId"], "design_brain")
+            self.assertEqual(virtual_roles["roles"][0]["schemaMergeStatus"], "not_started")
             for agent_id in ("pipeline_design_director", "pipeline_style_generator", "pipeline_design_reviewer"):
                 self.assertTrue((run_dir / "agent_outputs" / f"{agent_id}.json").is_file(), agent_id)
                 self.assertTrue((run_dir / "agent_outputs" / f"{agent_id}.handoff.json").is_file(), agent_id)
 
+            design_prompt = (
+                run_dir
+                / "model_traces"
+                / "pipeline_design_director"
+                / "pipeline-design-director"
+                / "prompt.md"
+            ).read_text(encoding="utf-8")
             style_prompt = (
                 run_dir
                 / "model_traces"
@@ -206,6 +233,9 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
             self.assertIn("agent_outputs/pipeline_style_generator.json", review_prompt)
             self.assertIn("agent_outputs/pipeline_style_generator.handoff.json", review_prompt)
             self.assertIn("ruleContextPack", style_prompt)
+            self.assertIn("virtual-cognitive-role-context/v1", design_prompt)
+            self.assertIn("virtual-cognitive-role-context/v1", style_prompt)
+            self.assertIn("preserve_original_agent_ids_schemas_handoffs_and_a_to_a_gates", review_prompt)
             upstream = result["upstreamOutputs"]
             self.assertTrue(any(item.get("handoffPath") == "agent_outputs/pipeline_design_director.handoff.json" for item in upstream))
             self.assertTrue(any(item.get("handoffSha256") for item in upstream if item.get("agentId") == "pipeline_design_director"))
@@ -307,7 +337,8 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
                 schema_path = command[command.index("--output-schema") + 1]
                 output_path = Path(command[command.index("--output-last-message") + 1])
                 payload = _fake_output_for_schema(schema_path)
-                if schema_path.endswith("design_director_review.schema.json"):
+                is_self_correction = "tool-self-correction-context/v1" in input
+                if schema_path.endswith("design_director_review.schema.json") and not is_self_correction:
                     payload["toolIntent"] = {
                         "schemaVersion": "tool-intent/v1",
                         "toolIntentId": "intent-read-run-package",
@@ -341,6 +372,21 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
             self.assertEqual(trace["orchestratorDecision"], "allowed")
             self.assertEqual(trace["executionStatus"], "executed")
             self.assertEqual(trace["result"]["toolStage"], "stage1_read_only")
+            self.assertEqual(result["cognitiveLoopSummary"]["maxRounds"], 2)
+            self.assertEqual(result["cognitiveLoopSummary"]["roundCount"], 2)
+            self.assertEqual(result["cognitiveLoopSummary"]["events"][0]["agentId"], "pipeline_design_director")
+            self.assertEqual(result["cognitiveLoopSummary"]["events"][0]["toolTraceRef"], "tool_traces/pipeline_design_director.intent-read-run-package.json")
+            self.assertIn("behaviorChangeProof", result["cognitiveLoopSummary"]["events"][0])
+            self_correction_prompt = (
+                run_dir
+                / "model_traces"
+                / "pipeline_design_director"
+                / "pipeline-design-director-self-correction"
+                / "prompt.md"
+            ).read_text(encoding="utf-8")
+            self.assertTrue((run_dir / "agent_outputs" / "pipeline_design_director.round1.json").is_file())
+            self.assertIn("tool-self-correction-context/v1", self_correction_prompt)
+            self.assertIn("tool_traces/pipeline_design_director.intent-read-run-package.json", self_correction_prompt)
             style_prompt = (
                 run_dir
                 / "model_traces"
@@ -349,6 +395,77 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
                 / "prompt.md"
             ).read_text(encoding="utf-8")
             self.assertIn("tool_traces/pipeline_design_director.intent-read-run-package.json", style_prompt)
+
+    def test_self_correction_does_not_execute_nested_tool_intent(self) -> None:
+        from core.orchestrator.model_agent_chain_runtime import run_no_cad_model_agent_chain
+
+        with temporary_artifact_dir("model_agent_chain_nested_tool") as root:
+            context = build_request_context(
+                context_id="model-chain-nested-tool",
+                request_kind="draw",
+                user_request="先做 no-CAD 设计链路，并读取 run package 上下文。",
+                available_inputs=["cad_plan"],
+                allow_cad=False,
+            )
+            state = create_run_package(
+                "model-chain-nested-tool",
+                user_request={"text": context["user_request"], "requestKind": "draw"},
+                context_pack={
+                    "schemaVersion": "run-package-context-pack/v1",
+                    "runId": "model-chain-nested-tool",
+                    "requestContext": context,
+                },
+                root_dir=root,
+            )
+            run_dir = Path(state["runDir"])
+
+            def fake_runner(
+                command: list[str],
+                *,
+                input: str,
+                cwd: Path,
+                text: bool,
+                encoding: str,
+                errors: str,
+                capture_output: bool,
+                timeout: int,
+                check: bool,
+            ) -> subprocess.CompletedProcess[str]:
+                schema_path = command[command.index("--output-schema") + 1]
+                output_path = Path(command[command.index("--output-last-message") + 1])
+                payload = _fake_output_for_schema(schema_path)
+                if schema_path.endswith("design_director_review.schema.json"):
+                    is_self_correction = "tool-self-correction-context/v1" in input
+                    payload["toolIntent"] = {
+                        "schemaVersion": "tool-intent/v1",
+                        "toolIntentId": "intent-nested-read" if is_self_correction else "intent-read-run-package",
+                        "requestedByAgentId": "pipeline_design_director",
+                        "toolName": "read_run_package",
+                        "purpose": "read run package context",
+                        "inputs": {"runId": "model-chain-nested-tool"},
+                        "targetScope": {
+                            "scopeType": "run_package",
+                            "scopeRef": "output/runs/model-chain-nested-tool",
+                        },
+                        "riskLevel": "low",
+                        "permissionClass": "read_only",
+                        "expectedEvidence": ["run package context"],
+                        "forbiddenEffects": ["cad_write", "dwg_save", "delete_entities"],
+                    }
+                output_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+                return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+            result = run_no_cad_model_agent_chain(
+                run_dir,
+                config=CodexCliReviewConfig(enabled=True, model="gpt-5.5"),
+                runner=fake_runner,
+                cwd=root,
+            )
+
+            self.assertEqual(result["status"], "blocked")
+            self.assertIn("pipeline_design_director nested_tool_intent_not_allowed", result["blockingReasons"])
+            self.assertTrue((run_dir / "tool_traces" / "pipeline_design_director.intent-read-run-package.json").is_file())
+            self.assertFalse((run_dir / "tool_traces" / "pipeline_design_director.intent-nested-read.json").exists())
 
     def test_chain_executes_safe_generation_tool_intent_only_in_candidate_zone(self) -> None:
         from core.orchestrator.model_agent_chain_runtime import run_no_cad_model_agent_chain
@@ -388,7 +505,8 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
                 schema_path = command[command.index("--output-schema") + 1]
                 output_path = Path(command[command.index("--output-last-message") + 1])
                 payload = _fake_output_for_schema(schema_path)
-                if schema_path.endswith("style_generation_review.schema.json"):
+                is_self_correction = "tool-self-correction-context/v1" in input
+                if schema_path.endswith("style_generation_review.schema.json") and not is_self_correction:
                     payload["toolIntent"] = {
                         "schemaVersion": "tool-intent/v1",
                         "toolIntentId": "intent-write-draft-intent",
@@ -468,7 +586,8 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
                 schema_path = command[command.index("--output-schema") + 1]
                 output_path = Path(command[command.index("--output-last-message") + 1])
                 payload = _fake_output_for_schema(schema_path)
-                if schema_path.endswith("style_generation_review.schema.json"):
+                is_self_correction = "tool-self-correction-context/v1" in input
+                if schema_path.endswith("style_generation_review.schema.json") and not is_self_correction:
                     payload["toolIntent"] = {
                         "schemaVersion": "tool-intent/v1",
                         "toolIntentId": "intent-write-cad-plan-candidate",
@@ -485,7 +604,7 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
                         "expectedEvidence": ["candidate CAD_PLAN"],
                         "forbiddenEffects": ["cad_write", "dwg_save", "delete_entities"],
                     }
-                if schema_path.endswith("design_review.schema.json"):
+                if schema_path.endswith("design_review.schema.json") and not is_self_correction:
                     payload["toolIntent"] = {
                         "schemaVersion": "tool-intent/v1",
                         "toolIntentId": "intent-validate-cad-plan",
@@ -522,6 +641,15 @@ class ModelAgentChainRuntimeTests(unittest.TestCase):
             self.assertEqual(trace["executionStatus"], "executed")
             self.assertEqual(trace["result"]["toolStage"], "stage3_deterministic_verify")
             self.assertEqual(trace["result"]["reportPath"], "cad_reports/validation_report.json")
+            self_correction_prompt = (
+                run_dir
+                / "model_traces"
+                / "pipeline_design_reviewer"
+                / "pipeline-design-reviewer-self-correction"
+                / "prompt.md"
+            ).read_text(encoding="utf-8")
+            self.assertIn("tool-self-correction-context/v1", self_correction_prompt)
+            self.assertIn("cad_reports/validation_report.json", self_correction_prompt)
             upstream = audit_output["evidenceBundle"]["upstreamOutputs"]
             self.assertTrue(any(item.get("reportPath") == "cad_reports/validation_report.json" for item in upstream))
 

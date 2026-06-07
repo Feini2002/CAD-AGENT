@@ -1,6 +1,6 @@
 # CAD Agent 架构归并画布
 
-最后更新：2026-06-06
+最后更新：2026-06-07
 
 本文是仓库级架构归并说明。它只回答“系统各部分属于哪一层、如何流转、不能越过什么边界”；不替代唯一 PlanMD：`CORE_RESTRUCTURE_PLAN.md`，也不承载执行台账。具体 next 仍看 `CORE_RESTRUCTURE_PLAN.md` 与 `docs/planning/任务清单.md`。
 
@@ -16,6 +16,8 @@
 ```
 
 每个新增模块、脚本、状态页和训练入口，都必须能说明自己属于哪一层、输入是什么、输出给谁、不能替代哪一层。
+
+本轮架构整理新增一个跨层判断：**主 Agent 认知证明**不是第八层，而是贯穿系统入口、决策编排、能力与证据、审计修复和沉淀成长的质量门。任何“主 Agent 变聪明”的声明，都必须说明历史经验如何改变了后续真实任务里的 route、dispatch、tool choice、blocking、requiredAgents、learningCandidate 或 replay 结果；否则只能称为机制建设，不能称为认知提升。
 
 ## 2. 七层生命周期
 
@@ -38,6 +40,7 @@
 | 表 C / 旧称“真实 CAD 实力” | 能力与证据层 | 改为 `Core Proof Coverage`，即底座证据覆盖 |
 | `cad_capability_registry` | 能力与证据层 | 原子能力和历史证据数据库 |
 | CAD Designer Agent | 系统入口 + 决策编排 + 沉淀成长 | 未来主训练主体和任务人格，不是外挂训练文档 |
+| 主 Agent 认知证明 | 决策编排 + 能力与证据 + 审计修复 + 沉淀成长 | 用 before / after 证明历史经验改变判断；不是表 C、不是 CAD 几何证据、不是“规则写多了”的自我安慰 |
 | V2 训练地图 | 任务对象 + 沉淀成长 | 训练任务生成器，不是能力成绩单 |
 | `CAD_PLAN` / validate / dry-run | 执行工具层 | 所有 CAD 写入的执行脊柱 |
 | A-to-A / Orchestrator | 决策编排层 | 分发责任和 hard gate，不替代执行证据 |
@@ -86,6 +89,7 @@
 3. coverage JSON 字段保持机器兼容，但 UI / 文档不再把旧表 C 说成端到端能力。
 4. A-to-A 和仓库级治理任务具备 `system_architecture_canvas` 或等价 hard gate。
 5. 工作台仍是派生显示器，不是训练事实源。
+6. 若训练目标涉及“让主 Agent 更聪明”，先完成可观察的 before / after 认知证明，而不是只写 memory、Prompt 或学习记录。
 
 满足这些条件后，再恢复对象训练和案例训练；训练结果仍必须靠真实 CAD readback、审计、局部修复闭环、用户反馈和可复用资产 replay 逐步建立。
 
@@ -133,10 +137,12 @@
    目标是验证架构 gate 是否稳：OpenSpec validate、doc governance、PlanMD governance、A-to-A gate、workbench agent check。它证明系统路标干净，不证明真实 CAD 几何。
 
 2. **次选：模型型 Agent no-CAD 链**  
-   目标是验证模型桥 / Prompt Pack / trace / closeout gate / tool intent 的证据传递。它证明模型型 Agent 的判断链可审计，不证明 CAD 输出。
+   目标是验证模型桥 / Prompt Pack / trace / closeout gate / tool intent 的证据传递。`prove-main-agent-cognition-loop` 已补 no-CAD 认知闭环：工具 trace 可回喂同一 Agent，run result 写 `cognitiveLoopSummary`，并把行为改变证明、evidence portfolio、`selfUncertainty` 和 route budget 纳入机器测试。它证明判断链和机制边界可审计，不证明 CAD 输出。
 
 3. **再选：单项真实 CAD preview 链**  
    目标是只写 `CODEX_PREVIEW`，验证同一 `CAD_PLAN` 的 validate、dry-run、execute、created handles readback、closeout gate。它证明单项执行链，不证明整批训练或项目交付。
+
+若下一步做家具测试，推荐把它定义为**家具 focused rehearsal**，而不是正式整批训练。默认只选一个家具族或一个点名能力，先验证主 Agent 是否正确分流、读取历史 profile、选择 quick / focused / formal、派发必要 Agent、阻断越权完成；真实 CAD 可用时再进入 `CODEX_PREVIEW` + handles readback。只有这条小链闭合，才把结果追加为训练证据或继续扩大到对象课程。
 
 ### 8.1 当前残项裁决
 
@@ -154,6 +160,7 @@
 | 缺口 | 为什么重要 | 建议处理 |
 | --- | --- | --- |
 | 测试链分层记录还不够集中 | 现在证据分散在 tests、scripts、output 和状态文档里，外行很难一眼判断该跑哪条链 | 新增或整理一份 `testing-chain-readiness` 小文档 / 报告入口 |
+| 主 Agent 认知证明仍需真实任务续证 | no-CAD fixture 已证明工具结果可进入同一 Agent 二轮修正，并能记录 before / after 行为改变边界；但真实用户任务里历史经验是否稳定改变 route / dispatch / blocking / replay 仍需后续案例 | 下一步若做家具测试，使用 focused rehearsal 验证真实任务 route / scope / memory 命中与阻断是否因历史经验改变 |
 | 正式训练恢复门槛还需要一次实跑证明 | 文档已经说明训练暂停和恢复条件，但还缺“从测试性链到 focused training”的桥接样例 | 先跑一个 focused、单项、可回读的训练恢复 rehearsal |
 | 真实 CAD project readiness 仍缺端到端案例 | 表 C、基础训练、对象 replay 都不是完整施工图交付 | 后续用一个小 DWG 案例建立端到端任务成熟度证据 |
 

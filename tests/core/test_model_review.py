@@ -110,10 +110,25 @@ def _valid_visual_acceptance_review(**overrides: object) -> dict[str, object]:
         "visualProblems": [],
         "lookHereFirst": ["整体可读性"],
         "repairRecommendation": {},
+        "softJudgment": _soft_judgment(),
         **_common_model_review_fields(),
     }
     report.update(overrides)
     return report
+
+
+def _soft_judgment() -> dict[str, object]:
+    return {
+        "confidence": 0.76,
+        "acceptableForCurrentScope": True,
+        "betterAlternativeAvailable": False,
+        "needsUserTasteChoice": False,
+        "riskLevel": "low",
+        "suggestedRepairScope": "none",
+        "selfUncertainty": ["unit test review may miss real user-visible CAD issues"],
+        "riskNote": "unit-test soft judgment; hard gates remain separate",
+        "whatWouldChangeMyMind": ["new readback evidence", "user rejects visual result"],
+    }
 
 
 def _common_model_review_fields() -> dict[str, object]:
@@ -745,6 +760,7 @@ class ModelReviewTests(unittest.TestCase):
                 "blockingReasons": [],
                 "visualProblems": [],
                 "repairRecommendation": {},
+                "softJudgment": _soft_judgment(),
                 **_common_model_review_fields(),
             }
         )
@@ -787,6 +803,7 @@ class ModelReviewTests(unittest.TestCase):
                     "blockingReasons": ["A2 text is unreadable at warehouse overview scale"],
                     "visualProblems": ["A2 looks like compressed proof panel"],
                     "repairRecommendation": {"mode": "focused_relayout", "targetZone": "A2_ANNOTATION_STYLES"},
+                    "softJudgment": _soft_judgment(),
                     **_common_model_review_fields(),
                 }
             ),

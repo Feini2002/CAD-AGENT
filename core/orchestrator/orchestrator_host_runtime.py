@@ -36,6 +36,7 @@ NEARBY_TERMS = ("旁边", "相邻", "附近", "邻区", "nearby", "adjacent", "n
 ASSET_REUSE_TERMS = ("调用", "复用", "插入", "套用", "asset reuse", "reuse asset")
 ASSET_TERMS = ("资产", "系统资产", "通用资产", "asset", "system asset")
 SEDIMENTATION_TERMS = ("沉淀", "收进资产库", "收入资产库", "作为通用资产", "作为系统资产", "systemize asset")
+NEGATED_SEDIMENTATION_TERMS = ("不沉淀", "先别沉淀", "不要沉淀", "别沉淀", "不进资产库", "先不收进资产库")
 FOCUSED_TRAINING_TERMS = ("训练", "复训", "加深", "任务 ", "任务", "focused retraining")
 FORMAL_ACCEPTANCE_TERMS = ("验收", "训练通过", "记入工作台", "刷新队列", "formal acceptance")
 REPOSITORY_GOVERNANCE_TERMS = ("压缩", "同步状态", "文档治理", "清理仓库", "data bloat", "artifact governance")
@@ -234,9 +235,63 @@ def _has_any(text: str, terms: tuple[str, ...]) -> bool:
     return any(term.casefold() in lowered for term in terms)
 
 
-def _route_for(request_text: str, request_context: dict[str, Any], task_kind: str) -> str:
+def _has_sedimentation_intent(text: str, task_kind: str) -> bool:
+    if _has_any(text, NEGATED_SEDIMENTATION_TERMS):
+        return False
+    if task_kind == "system_asset_sedimentation":
+        return True
+    return _has_any(text, SEDIMENTATION_TERMS)
+
+
+def _complexity_assessment(request_text: str, request_context: dict[str, Any], task_kind: str) -> dict[str, Any]:
     text = request_text or str(request_context.get("user_request", ""))
-    if task_kind == "system_asset_sedimentation" or _has_any(text, SEDIMENTATION_TERMS):
+    quick_requested = _has_any(text, QUICK_TRIAL_TERMS)
+    high_risk = (
+        _has_sedimentation_intent(text, task_kind)
+        or (_has_any(text, ASSET_REUSE_TERMS) and _has_any(text, ASSET_TERMS))
+        or _has_any(text, FORMAL_ACCEPTANCE_TERMS)
+        or _has_any(text, DELETE_TERMS)
+    )
+    focused = _has_any(text, FOCUSED_TRAINING_TERMS)
+    if high_risk:
+        complexity = "high"
+        risk_level = "high"
+        recommended_route = "full_gate_route"
+    elif quick_requested and not focused:
+        complexity = "low"
+        risk_level = "low"
+        recommended_route = "quick_draw"
+    else:
+        complexity = "normal"
+        risk_level = "normal"
+        recommended_route = "standard_draw"
+    return {
+        "schemaVersion": "orchestrator-complexity-assessment/v1",
+        "complexity": complexity,
+        "riskLevel": risk_level,
+        "recommendedRouteClass": recommended_route,
+        "signals": {
+            "quickRequested": quick_requested,
+            "highRisk": high_risk,
+            "focusedTraining": focused,
+            "negatedSedimentation": _has_any(text, NEGATED_SEDIMENTATION_TERMS),
+        },
+        "evidenceBoundary": [
+            "complexity assessment can reduce soft-judgment work only",
+            "complexity assessment cannot remove CAD hard gates",
+        ],
+    }
+
+
+def _route_for(
+    request_text: str,
+    request_context: dict[str, Any],
+    task_kind: str,
+    *,
+    complexity_assessment: dict[str, Any] | None = None,
+) -> str:
+    text = request_text or str(request_context.get("user_request", ""))
+    if _has_sedimentation_intent(text, task_kind):
         return "system_asset_sedimentation"
     if _has_any(text, ASSET_REUSE_TERMS) and _has_any(text, ASSET_TERMS):
         return "asset_reuse"
@@ -244,13 +299,46 @@ def _route_for(request_text: str, request_context: dict[str, Any], task_kind: st
         return "repository_artifact_governance"
     if _has_any(text, FORMAL_ACCEPTANCE_TERMS):
         return "formal_acceptance"
-    if _has_any(text, QUICK_TRIAL_TERMS):
+    if _has_any(text, QUICK_TRIAL_TERMS) or (complexity_assessment or {}).get("recommendedRouteClass") == "quick_draw":
         return "quick_trial"
     if _has_any(text, DELETE_TERMS) or _has_any(text, REPAIR_TERMS):
         return "local_repair"
     if _has_any(text, FOCUSED_TRAINING_TERMS):
         return "focused_retraining"
     return "standard_draw"
+
+
+def _route_budget_for(route: str, complexity: dict[str, Any], hard_gates: list[str]) -> dict[str, Any]:
+    if route == "quick_trial":
+        mode = "quick_draw"
+        skippable_agents = [
+            "pipeline_design_director",
+            "pipeline_style_generator",
+            "pipeline_design_reviewer",
+            "pipeline_learning_promoter",
+        ]
+        max_self_repair_rounds = 0
+    elif complexity.get("riskLevel") == "high":
+        mode = "full_gate_route"
+        skippable_agents = []
+        max_self_repair_rounds = 2
+    else:
+        mode = "standard"
+        skippable_agents = []
+        max_self_repair_rounds = 1
+    return {
+        "schemaVersion": "route-budget/v1",
+        "mode": mode,
+        "skippableAgents": skippable_agents,
+        "maxSelfRepairRounds": max_self_repair_rounds,
+        "mustKeepHardGates": list(hard_gates),
+        "hardGateIsolation": "hard_gates_are_never_removed_by_cheapest_route",
+        "cadPolicy": {
+            "previewOnly": True,
+            "savedCurrentDwg": False,
+            "deleteRequiresExplicitVictimSet": True,
+        },
+    }
 
 
 def _needs_delete_scope(text: str) -> bool:
@@ -393,6 +481,8 @@ def _build_dispatch_plan(
     hard_gates: list[str],
     additional_requests: list[dict[str, str]],
     request_gate: dict[str, Any],
+    complexity_assessment: dict[str, Any],
+    route_budget: dict[str, Any],
 ) -> dict[str, Any]:
     blocking_reasons: list[str] = []
     if request_gate.get("status") in {"blocked", "needs_clarification"}:
@@ -424,6 +514,8 @@ def _build_dispatch_plan(
         "requiredAgents": agent_ids,
         "tasks": tasks,
         "hardGates": hard_gates,
+        "complexityAssessment": complexity_assessment,
+        "routeBudget": route_budget,
         "needsUserConfirmation": False,
         "blockedBeforeExecution": bool(blocking_reasons),
         "blockingReasons": blocking_reasons,
@@ -650,22 +742,27 @@ def run_orchestrator_host_runtime(
     semantic_asset_route = resolve_semantic_asset_route(request_context)
     a_to_a_contract = build_a_to_a_task_contract(request_context, semantic_asset_route=semantic_asset_route)
     request_gate = evaluate_request_gate(request_context)
-    route = _route_for(request_text, request_context, str(a_to_a_contract.get("taskKind") or "ordinary_orchestration"))
+    task_kind = str(a_to_a_contract.get("taskKind") or "ordinary_orchestration")
+    complexity = _complexity_assessment(request_text, request_context, task_kind)
+    route = _route_for(request_text, request_context, task_kind, complexity_assessment=complexity)
     agent_ids, additional_requests = _required_agent_ids(
         route=route,
         contract=a_to_a_contract,
         registered_agent_ids=set(registered_agents),
     )
     hard_gates = _hard_gates_for(route, request_text=request_text, contract=a_to_a_contract)
+    route_budget = _route_budget_for(route, complexity, hard_gates)
     dispatch_plan = _build_dispatch_plan(
         run_id=run_id,
         route=route,
-        task_kind=str(a_to_a_contract.get("taskKind") or "ordinary_orchestration"),
+        task_kind=task_kind,
         request_text=request_text,
         agent_ids=agent_ids,
         hard_gates=hard_gates,
         additional_requests=additional_requests,
         request_gate=request_gate,
+        complexity_assessment=complexity,
+        route_budget=route_budget,
     )
     required_agents = _build_required_agents_report(
         run_id=run_id,

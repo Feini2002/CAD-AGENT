@@ -20,6 +20,7 @@ EXPECTED_PROMPT_PACKS = {
     "pipeline_design_director",
     "pipeline_style_generator",
     "pipeline_design_reviewer",
+    "pipeline_learning_promoter",
 }
 
 DESIGN_PROMPT_PACKS = {
@@ -97,6 +98,20 @@ def _common_model_fields() -> dict[str, object]:
     }
 
 
+def _soft_judgment() -> dict[str, object]:
+    return {
+        "confidence": 0.78,
+        "acceptableForCurrentScope": True,
+        "betterAlternativeAvailable": False,
+        "needsUserTasteChoice": False,
+        "riskLevel": "low",
+        "suggestedRepairScope": "none",
+        "selfUncertainty": ["synthetic fixture may miss real CAD visual issues"],
+        "riskNote": "unit-test soft judgment only; hard gates still rely on evidence",
+        "whatWouldChangeMyMind": ["missing CAD readback", "user reports visual mismatch"],
+    }
+
+
 def _valid_visual_acceptance_model_output() -> dict[str, object]:
     return {
         "status": "pass",
@@ -120,6 +135,78 @@ def _valid_visual_acceptance_model_output() -> dict[str, object]:
             "targetZone": "none",
             "targetHandles": [],
             "nextChecks": [],
+        },
+        "softJudgment": _soft_judgment(),
+        **_common_model_fields(),
+    }
+
+
+def _valid_learning_promotion_model_output() -> dict[str, object]:
+    return {
+        "status": "pass",
+        "learningPromotionDecision": "proposal_ready",
+        "promotionMode": "proposal_only",
+        "targetAgentIds": ["pipeline_design_reviewer"],
+        "memoryPatchProposals": [
+            {
+                "targetAgentId": "pipeline_design_reviewer",
+                "memoryLayer": "decision_exemplars",
+                "action": "add",
+                "errorPattern": "delivery tried to claim user acceptance before visual evidence",
+                "correctPattern": "delivery must block until visual acceptance and readback evidence are present",
+                "promptDelta": "Check visual acceptance evidence before final allowed claims.",
+                "checkerDelta": "",
+                "evidenceRefs": ["model_traces/pipeline_delivery/trace.json"],
+                "supersedes": [],
+                "retireCandidate": False,
+                "changedDecision": True,
+            }
+        ],
+        "promptPatchProposals": [
+            {
+                "targetAgentId": "pipeline_design_reviewer",
+                "patchType": "prompt_addendum",
+                "proposal": "Block user-review claims when visual evidence is absent.",
+                "evidenceRefs": ["model_traces/pipeline_delivery/trace.json"],
+                "writeAllowed": False,
+            }
+        ],
+        "checkerCandidateProposals": [
+            {
+                "checkerScope": "delivery_claims",
+                "candidate": "Detect user acceptance claims without visual acceptance evidence.",
+                "evidenceRefs": ["model_traces/pipeline_delivery/trace.json"],
+                "retestRequired": True,
+            }
+        ],
+        "behaviorChangeEvidence": {
+            "beforeDecision": "ready_to_ask_user_review",
+            "afterDecision": "blocked_until_visual_acceptance",
+            "changedRoute": False,
+            "changedRequiredAgents": False,
+            "changedToolChoice": False,
+            "changedBlockingReason": True,
+            "retestedOriginalTask": True,
+            "memoryAppliedInFutureRun": False,
+            "predictionReconciliation": {
+                "statement": "User will reject unsupported acceptance claims.",
+                "reconciled": False,
+                "outcome": "pending",
+            },
+        },
+        "retestPlan": {
+            "retestOriginalTask": True,
+            "targetTaskRef": "output/runs/mock/model_trace.json",
+            "why": "The proposed patch must prove it blocks the original unsupported claim.",
+        },
+        "evidenceBoundary": {
+            "writePolicy": "proposal_only",
+            "notProofOf": [
+                "training passed",
+                "memory written",
+                "CAD geometry verified",
+                "Project Delivery Readiness",
+            ],
         },
         **_common_model_fields(),
     }
@@ -206,8 +293,11 @@ class ModelPromptLibraryTests(unittest.TestCase):
         design_review = json.loads(
             Path("core/model_review/schemas/design_review.schema.json").read_text(encoding="utf-8")
         )
+        learning_promotion = json.loads(
+            Path("core/model_review/schemas/learning_promotion_review.schema.json").read_text(encoding="utf-8")
+        )
 
-        for field in ("canAskUserToReview", "lookHereFirst"):
+        for field in ("canAskUserToReview", "lookHereFirst", "softJudgment"):
             self.assertIn(field, visual["properties"])
             self.assertIn(field, visual["required"])
 
@@ -275,10 +365,37 @@ class ModelPromptLibraryTests(unittest.TestCase):
             "contentMatchesDesignPurpose",
             "needsUserChoice",
             "repairOrRegenerateRecommendation",
+            "softJudgment",
             "learningCandidate",
         ):
             self.assertIn(field, design_review["properties"])
             self.assertIn(field, design_review["required"])
+        self.assertEqual(design_review["$defs"]["softJudgment"]["properties"]["confidence"]["minimum"], 0)
+        self.assertEqual(design_review["$defs"]["softJudgment"]["properties"]["confidence"]["maximum"], 1)
+        for schema in (
+            design_review,
+            json.loads(Path("core/model_review/schemas/visual_acceptance_review.schema.json").read_text(encoding="utf-8")),
+            json.loads(Path("core/model_review/schemas/visual_layout_review.schema.json").read_text(encoding="utf-8")),
+            json.loads(Path("core/model_review/schemas/delivery_claims_review.schema.json").read_text(encoding="utf-8")),
+        ):
+            self.assertIn("selfUncertainty", schema["$defs"]["softJudgment"]["required"])
+            self.assertIn("selfUncertainty", schema["$defs"]["softJudgment"]["properties"])
+
+        for field in (
+            "learningPromotionDecision",
+            "promotionMode",
+            "memoryPatchProposals",
+            "promptPatchProposals",
+            "checkerCandidateProposals",
+            "behaviorChangeEvidence",
+            "retestPlan",
+        ):
+            self.assertIn(field, learning_promotion["properties"])
+            self.assertIn(field, learning_promotion["required"])
+        self.assertEqual(learning_promotion["properties"]["promotionMode"]["enum"], ["proposal_only"])
+        behavior = learning_promotion["$defs"]["behaviorChangeEvidence"]
+        self.assertIn("retestedOriginalTask", behavior["required"])
+        self.assertIn("predictionReconciliation", behavior["required"])
 
     def test_prompt_pack_review_writes_trace_and_converted_agent_output(self) -> None:
         from core.model_review.codex_cli_client import CodexCliReviewConfig
@@ -322,6 +439,125 @@ class ModelPromptLibraryTests(unittest.TestCase):
             context = json.loads((trace_dir / "prompt_pack_context.json").read_text(encoding="utf-8"))
             self.assertEqual(context["promptPackId"], "pipeline_visual_acceptance_reviewer")
             self.assertEqual(context["schemaPath"], "core/model_review/schemas/visual_acceptance_review.schema.json")
+
+    def test_prompt_pack_review_export_manifest_allowlists_payload_evidence_refs(self) -> None:
+        from core.model_review.codex_cli_client import CodexCliReviewConfig
+        from core.model_review.prompt_library import run_prompt_pack_review
+
+        with temporary_artifact_dir("prompt_pack_export_refs") as root:
+            run_dir = root / "run"
+            evidence_path = run_dir / "cad_reports" / "readback_summary.json"
+            evidence_path.parent.mkdir(parents=True, exist_ok=True)
+            evidence_path.write_text(
+                json.dumps({"status": "pass", "createdHandleCount": 2}, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            payload = _prompt_payload()
+            payload["evidenceRefs"] = [str(evidence_path)]
+            output_path = run_dir / "agent_outputs" / "pipeline_visual_acceptance_reviewer.json"
+            runner_called = False
+
+            def fake_runner(
+                command: list[str],
+                **_kwargs: object,
+            ) -> subprocess.CompletedProcess[str]:
+                nonlocal runner_called
+                runner_called = True
+                output_index = command.index("--output-last-message") + 1
+                Path(command[output_index]).write_text(
+                    json.dumps(_valid_visual_acceptance_model_output(), ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+            report = run_prompt_pack_review(
+                agent_id="pipeline_visual_acceptance_reviewer",
+                payload=payload,
+                run_dir=run_dir,
+                output_path=output_path,
+                config=CodexCliReviewConfig(enabled=True),
+                runner=fake_runner,
+                cwd=root,
+                trace_id="visual-export-refs",
+            )
+
+            trace_dir = run_dir / "model_traces" / "pipeline_visual_acceptance_reviewer" / "visual-export-refs"
+            export_manifest = json.loads((trace_dir / "export_manifest.json").read_text(encoding="utf-8"))
+            trace_manifest = json.loads((trace_dir / "trace_manifest.json").read_text(encoding="utf-8"))
+            expected_ref = str(evidence_path.resolve().relative_to(Path.cwd().resolve())).replace("\\", "/")
+
+            self.assertTrue(runner_called)
+            self.assertEqual(report["status"], "pass")
+            self.assertEqual(export_manifest["status"], "pass")
+            self.assertIn(expected_ref, trace_manifest["inputs"]["summaryRefs"])
+            self.assertTrue(
+                any(
+                    item.get("kind") == "payload_ref"
+                    and item.get("path") == expected_ref
+                    and item.get("status") == "present"
+                    for item in export_manifest["sentArtifacts"]
+                )
+            )
+
+    def test_learning_promoter_prompt_pack_outputs_proposal_only_patch(self) -> None:
+        from core.model_review.codex_cli_client import CodexCliReviewConfig
+        from core.model_review.prompt_library import run_prompt_pack_review
+
+        with temporary_artifact_dir("prompt_pack_learning_promoter") as root:
+            run_dir = root / "run"
+            evidence_path = run_dir / "model_traces" / "pipeline_delivery" / "trace.json"
+            evidence_path.parent.mkdir(parents=True, exist_ok=True)
+            evidence_path.write_text(
+                json.dumps({"status": "blocked", "blockingReasons": ["unsupported acceptance claim"]}, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            payload = {
+                "userRequest": "复审这次失败是否应该沉淀学习补丁。",
+                "taskContext": {
+                    "taskKind": "model_trace_learning",
+                    "route": "training_data_bloat_governance",
+                },
+                "evidenceRefs": [str(evidence_path)],
+                "statePatchRequest": {
+                    "phase": "learning_reviewed",
+                    "phaseLabelForUser": "学习补丁提案已复审",
+                },
+                "agentSpecific": {
+                    "writePolicy": "proposal_only",
+                },
+            }
+            output_path = run_dir / "agent_outputs" / "pipeline_learning_promoter.json"
+
+            def fake_runner(
+                command: list[str],
+                **_kwargs: object,
+            ) -> subprocess.CompletedProcess[str]:
+                output_index = command.index("--output-last-message") + 1
+                Path(command[output_index]).write_text(
+                    json.dumps(_valid_learning_promotion_model_output(), ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+            report = run_prompt_pack_review(
+                agent_id="pipeline_learning_promoter",
+                payload=payload,
+                run_dir=run_dir,
+                output_path=output_path,
+                config=CodexCliReviewConfig(enabled=True),
+                runner=fake_runner,
+                cwd=root,
+                trace_id="learning-proposal",
+            )
+
+            trace_dir = run_dir / "model_traces" / "pipeline_learning_promoter" / "learning-proposal"
+            export_manifest = json.loads((trace_dir / "export_manifest.json").read_text(encoding="utf-8"))
+
+            self.assertEqual(report["status"], "pass")
+            self.assertEqual(report["promotionMode"], "proposal_only")
+            self.assertTrue(output_path.is_file())
+            self.assertFalse((root / "agents" / "pipeline" / "design_reviewer" / "training_memory.json").exists())
+            self.assertEqual(export_manifest["status"], "pass")
 
     def test_probe_dry_run_can_target_prompt_pack_without_model_invocation(self) -> None:
         from scripts.probe_codex_cli_model_review import main

@@ -1,6 +1,6 @@
 ﻿# 当前交接包窗口
-## ADAPTIVE-CAPABILITY-GROWTH-TRAINING-01
-**交接摘要**：自适应能力成长训练已落为 `core/training/*growth*`、`adaptive_replay_planner`、`expression_regression_gate`、`adaptive_growth_closeout`、runner `--replay-mode growth_replay`、OpenSpec `adaptive-capability-growth-training` 和测试；临时调研稿已删除。验证与边界以最新终端结果、changelog 和 OpenSpec 为准：本包不运行真实 CAD、不部署 Worker、不写训练事实源、不提升表 C，后续真实 focused retraining 仍需独立 CAD readback / closeout 证据。
+## ENTRYPOINT-CUSTODY-PERMISSION-SELFTRAINING-01 — 入口 custody manifest、runtime guard / lease 权限位、denylist / kill switch、route custody 摘要、all-31 replay fail-closed、training claim audit 和 model trace claim audit 已收口为机器包；临时架构 MD 已删除，事实源见 `config/entrypoint_custody_manifest.json`、`core/entrypoint_custody/**`、`scripts/run_entrypoint_custody_audit.py`、`scripts/run_training_report_claim_audit.py`、`scripts/run_model_trace_claim_audit.py` 与 `tests/core/test_legacy_entrypoint_custody_closure.py`。收尾真实 CAD smoke 只写 `CODEX_PREVIEW`，10/10 handles 回读，`saved_dwg=false`；边界是不提升表 C、不恢复正式训练、不表示所有脚本都已强制接 runtime guard。
+## 自适应能力成长训练包 — 已落为 `core/training/*growth*`、runner `--replay-mode growth_replay`、OpenSpec 与测试；不运行真实 CAD、不部署 Worker、不写训练事实源、不提升表 C。handoff 索引见 `docs/handoffs/package-index.md`，完整历史 ID 见 `docs/status/changelog.md`。
 ## WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01
 1. **包名**：`WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01`
 2. **修改文件列表**：更新 `wrangler.jsonc`、`package.json`、`workers/orchestrator/scripts/run-wrangler.mjs`、`workers/orchestrator/src/worker-configuration.d.ts`、`WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`。
@@ -23,8 +23,8 @@
 8. **结论分类**：local / dry-run `worker_orchestration_ready` 预部署骨架已加固并收尾；临时 playMD 已删除，长期事实源已回写。未声明 Cloudflare remote deploy、真实 secret、Queue / Workflows、真实 bridge runner、真实模型活体调用或 CAD-MCP preview verified。
 9. **剩余风险**：远程 Cloudflare 环境、`wrangler secret put`、Queue / Workflows、bridge-owned Codex config、真实 local bridge / `gpt-5.5` runner、多 Agent live 和真实 CAD-MCP preview handles readback 仍需后续分层证明。
 ---
-## ARCH-CONVERGENCE-01
-1. **包名**：`ARCH-CONVERGENCE-01`
+## 架构归并画布包
+1. **包名**：架构归并画布、三成熟度口径与工作台表 C 收口；包 ID 见 `CORE_RESTRUCTURE_PLAN.md` §0.2
 2. **修改文件列表**：重写 `docs/architecture/system-architecture-convergence.md`，调整 `docs/architecture/README.md` 的入口顺序；更新 `core/maintenance/doc_governance.py`、`tests/core/test_doc_governance.py`、`agents/pipeline/pipeline_manifest.json`、`scripts/run_a_to_a_orchestration_gate_check.py`、`tests/core/test_a_to_a_task_contract.py`、`core/verification/capability_coverage.py`、`scripts/build_capability_map_data.py`、`scripts/run_training_workbench_agent_check.py`、`capability-map.html`、`capability-map-data.js`、`output/validation_runs/capability-lab/cad_capability_coverage.json`、`docs/status/issues.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md` 和 `openspec/changes/unify-system-architecture-canvas/tasks.md`。
 3. **关键设计说明**：本包把 `system-architecture-convergence.md` 收束为七层任务生命周期：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。旧表格、底座、训练、资产、多 Agent、Worker / bridge、截图和工作台全部归位到这些层内；旧表 C / 90.99% 统一改称 `Core Proof Coverage`，只代表底座证据覆盖，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。OpenSpec 仍是单个复杂变更契约，不成为第二套主计划。
 4. **新增/修改测试**：新增文档治理语义测试，阻断活跃状态文档把表 C 写成端到端真实 CAD 能力；新增 OpenSpec tasks 不能宣称全局 backlog 的回归测试；新增 A-to-A manifest 测试，要求仓库级治理任务具备 `system_architecture_canvas` hard gate。
@@ -36,9 +36,9 @@
 
 ---
 
-## LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01
+## 本地模型桥收口包
 
-1. **包名**：`LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01`
+1. **包名**：本地模型桥安全加固与独立 MD 收口；handoff 索引见 `docs/handoffs/package-index.md`，完整历史 ID 见 `docs/status/changelog.md`
 2. **修改文件列表**：更新 `core/orchestrator/local_live_model_bridge.py`、`core/orchestrator/local_live_model_bridge_state.py`、`core/orchestrator/local_live_model_bridge_diagnostics.py`、`tests/core/test_local_live_model_bridge.py`、`tests/core/test_local_live_model_bridge_flows.py`、`tests/core/test_local_live_model_bridge_diagnostics.py`；同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`README.md`、`agents/pipeline/README.md`、`docs/architecture/README.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、`docs/planning/任务清单.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`；删除原独立本地活体模型桥架构 MD。
 3. **关键设计说明**：本包把上一轮讨论出的偏差收束为 runtime hard gate：未知 `target_stage` 直接失败，同秒 run id 防碰撞，live 阶段未登记 / 能力不匹配 bridge 不能 lease，`submit_result` 校验 lease identity；diagnostics 必须追到 `traceRef` 对应的完整 model trace 包；CAD fake preflight 拆分 `runtimeStatus` 与 `proofStatus`，fake driver 只能 `proofStatus=not_verified`。独立架构 MD 的剩余路线迁入 `CORE_RESTRUCTURE_PLAN.md` §3.1，避免形成第二套主计划。
 4. **新增/修改测试**：新增 / 更新本地 live bridge、flows 和 diagnostics 测试，覆盖未知阶段、run id 碰撞、bridge registration / capability gate、submit identity、trace missing / bad route / missing codex exec、fake CAD proof 状态。
@@ -67,7 +67,7 @@
 ## LOCAL-LIVE-MODEL-BRIDGE-ARCHITECTURE-01
 
 1. **包名**：`LOCAL-LIVE-MODEL-BRIDGE-ARCHITECTURE-01`
-2. **修改文件列表**：曾新增独立本地活体模型桥架构 MD，并同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`README.md`、`agents/pipeline/README.md`、`docs/architecture/README.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、`docs/planning/任务清单.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`；该独立 MD 已在 `LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01` 中迁移后删除。
+2. **修改文件列表**：曾新增独立本地活体模型桥架构 MD，并同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_STATUS.md`、`README.md`、`agents/pipeline/README.md`、`docs/architecture/README.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/status/issues.md`、`docs/planning/任务清单.md`、`docs/handoffs/current.md` 和 `docs/handoffs/package-index.md`；该独立 MD 已在本地模型桥收口包中迁移后删除。
 3. **关键设计说明**：本包把“长期先接 Cloudflare Worker 编排层，再用本地 bridge 执行 Codex CLI / GPT-5.5”沉淀为架构路线：Worker 产品分工、API 最小端点、`task_envelope` / `agent_output` / `run_state` 数据合同、Worker 侧系统角色、模型型 Agent Prompt 合同、队列 / 依赖 / 状态机规则、超时 / 熔断 / retry / DLQ / backpressure / kill switch、安全与数据边界，以及 W0-W5 执行目标计划。完成声明分为 `worker_orchestration_ready`、`local_bridge_connected`、`single_agent_live`、`multi_agent_live`、`cad_mcp_preview_live` 和 `formal_training_integrated`；这些剩余路线当前维护在 `CORE_RESTRUCTURE_PLAN.md` §3.1。
 4. **新增/修改测试**：未新增测试；这是架构文档与状态同步包。
 5. **实际运行的命令和结果**：`scripts/run_doc_governance_audit.py --fail-on-findings` pass，`finding_count=0`。

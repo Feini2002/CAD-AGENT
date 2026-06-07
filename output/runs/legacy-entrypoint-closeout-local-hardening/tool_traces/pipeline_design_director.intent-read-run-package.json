@@ -1,0 +1,47 @@
+{
+  "blockingReasons": [],
+  "deterministicEntryPoint": "core.orchestrator.tool_contract.allowlisted_readers.read_run_package",
+  "downstreamArtifactPath": "tool_traces/pipeline_design_director.intent-read-run-package.json",
+  "downstreamReadableSummary": "read_run_package is allowlisted; execution and pass/fail remain orchestrator-owned.",
+  "evidenceBoundary": [
+    "tool intent gate only permits orchestrator-owned allowlisted execution",
+    "model requests cannot authorize CAD writes outside controlled CODEX_PREVIEW execution, deletes, saves, registry mutations, or table C claims",
+    "allowed verification or controlled-CAD intent only means the orchestrator may run the relevant gate; the model cannot decide pass/fail"
+  ],
+  "executionStatus": "executed",
+  "expectedEvidence": [
+    "tool trace"
+  ],
+  "generatedAt": "2026-06-07T05:57:55Z",
+  "orchestratorDecision": "allowed",
+  "permissionClass": "read_only",
+  "requestedByAgentId": "pipeline_design_director",
+  "result": {
+    "evidenceBoundary": [
+      "read-only run package summary; does not execute or mutate files"
+    ],
+    "readFiles": [
+      {
+        "declaredStatus": "",
+        "keys": [
+          "userRequest"
+        ],
+        "path": "user_request.json",
+        "status": "pass"
+      }
+    ],
+    "status": "pass",
+    "toolStage": "stage1_read_only"
+  },
+  "resultStatus": "pass",
+  "riskLevel": "low",
+  "runId": "legacy-entrypoint-closeout-local-hardening",
+  "schemaVersion": "tool-trace/v1",
+  "targetScope": {
+    "scopeRef": "current_run",
+    "scopeType": "run_package"
+  },
+  "toolIntentId": "intent-read-run-package",
+  "toolName": "read_run_package",
+  "toolSchemaVersion": "tool-intent/v1"
+}

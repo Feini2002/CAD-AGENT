@@ -100,6 +100,17 @@
       "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_design_reviewer/negative_examples.md",
       "inputSchemaPath": "core/model_review/prompt_packs/pipeline_design_reviewer/input_schema.json",
       "outputSchemaPath": "core/model_review/schemas/design_review.schema.json"
+    },
+    {
+      "agentId": "pipeline_learning_promoter",
+      "taskType": "learning_promotion_review",
+      "version": 1,
+      "converter": "identity",
+      "promptPath": "core/model_review/prompt_packs/pipeline_learning_promoter/prompt.md",
+      "boundaryRulesPath": "core/model_review/prompt_packs/pipeline_learning_promoter/boundary_rules.md",
+      "negativeExamplesPath": "core/model_review/prompt_packs/pipeline_learning_promoter/negative_examples.md",
+      "inputSchemaPath": "core/model_review/prompt_packs/pipeline_learning_promoter/input_schema.json",
+      "outputSchemaPath": "core/model_review/schemas/learning_promotion_review.schema.json"
     }
   ],
   "plannedPacks": [
@@ -150,12 +161,6 @@
       "taskType": "asset_reuse_audit_review",
       "priority": "P2",
       "purpose": "Review whether reuse evidence is plan-only, ready probe, or real replay with created handles/readback."
-    },
-    {
-      "agentId": "pipeline_learning_promoter",
-      "taskType": "learning_promotion_review",
-      "priority": "P2",
-      "purpose": "Review model/user/machine failures and decide memory, prompt delta, checker candidate, base rule, task rule, and retest targets."
     },
     {
       "agentId": "pipeline_execute",

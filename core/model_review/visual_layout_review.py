@@ -32,6 +32,7 @@ VISUAL_REQUIRED_FIELDS = (
     "blockingReasons",
     "visualProblems",
     "repairRecommendation",
+    "softJudgment",
     *COMMON_MODEL_REVIEW_FIELDS,
 )
 PASS_STATUSES = {"pass", "ready", "ok", "complete", "complete_for_current_scope"}

@@ -1,2 +1,16 @@
 schema: spec-driven
+metadataVersion: 2
 created: 2026-06-05
+
+lifecycle:
+  status: active
+  statusReason: one agentGraph edge follow-up remains unchecked in tasks.md
+  archiveReady: false
+  archiveReason: active follow-up remains before archive readiness
+
+dependencies:
+  dependsOn: []
+  blockedBy: []
+  supersedes: []
+
+openQuestions: []

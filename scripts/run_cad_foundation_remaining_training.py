@@ -66,6 +66,96 @@ def _driver(fake_cad: bool) -> Any:
     return AutoCADComDriver(connect_existing_only=True)
 
 
+def resolve_cli_replay_mode(
+    *,
+    batch_preset: str,
+    requested_replay_mode: str,
+    profile_source: Path | None,
+    explicit_smoke: bool = False,
+    selected_capability_ids: list[str] | None = None,
+) -> dict[str, Any]:
+    """Resolve CLI replay intent without silently downgrading retraining to smoke."""
+
+    if requested_replay_mode not in {"auto", "smoke_replay", "growth_replay", "standard_replay"}:
+        return {
+            "status": "blocked",
+            "reasonCode": "unsupported_replay_mode",
+            "requestedReplayMode": requested_replay_mode,
+        }
+    if requested_replay_mode == "smoke_replay" and batch_preset == "all-31" and not explicit_smoke:
+        return {
+            "status": "blocked",
+            "reasonCode": "all_31_cannot_use_smoke_replay_without_explicit_smoke_flag",
+            "requestedReplayMode": requested_replay_mode,
+            "batchPreset": batch_preset,
+            "operatorAction": "Pass --explicit-smoke for a smoke-only probe, or provide --profile-source for growth/standard replay.",
+        }
+    if requested_replay_mode in {"growth_replay", "standard_replay"} and profile_source is None:
+        return {
+            "status": "blocked",
+            "reasonCode": "profile_source_required_for_growth_or_standard_replay",
+            "requestedReplayMode": requested_replay_mode,
+            "batchPreset": batch_preset,
+            "operatorAction": "Provide a repo-local --profile-source or choose an explicit smoke-only probe.",
+        }
+    if requested_replay_mode != "auto":
+        return {
+            "status": "pass",
+            "route": "quick_trial" if requested_replay_mode == "smoke_replay" else "focused_retraining",
+            "replayMode": requested_replay_mode,
+            "requestedReplayMode": requested_replay_mode,
+            "explicitSmoke": explicit_smoke,
+            "batchPreset": batch_preset,
+        }
+    if explicit_smoke:
+        return {
+            "status": "pass",
+            "route": "quick_trial",
+            "replayMode": "smoke_replay",
+            "requestedReplayMode": "auto",
+            "explicitSmoke": True,
+            "batchPreset": batch_preset,
+            "acceptedLowExpression": True,
+        }
+    if batch_preset == "all-31":
+        if profile_source is None:
+            return {
+                "status": "blocked",
+                "reasonCode": "all_31_auto_requires_profile_source_or_explicit_smoke",
+                "requestedReplayMode": "auto",
+                "batchPreset": batch_preset,
+                "operatorAction": "Provide --profile-source for growth replay, or pass --explicit-smoke for a smoke-only probe.",
+            }
+        return {
+            "status": "pass",
+            "route": "batch_replay",
+            "replayMode": "growth_replay",
+            "requestedReplayMode": "auto",
+            "explicitSmoke": False,
+            "batchPreset": batch_preset,
+            "profileSourceRequired": True,
+        }
+    if selected_capability_ids and profile_source is not None:
+        return {
+            "status": "pass",
+            "route": "focused_retraining",
+            "replayMode": "growth_replay",
+            "requestedReplayMode": "auto",
+            "explicitSmoke": False,
+            "batchPreset": batch_preset,
+            "profileSourceRequired": True,
+        }
+    return {
+        "status": "pass",
+        "route": "legacy_remaining_21_smoke",
+        "replayMode": "smoke_replay",
+        "requestedReplayMode": "auto",
+        "explicitSmoke": False,
+        "batchPreset": batch_preset,
+        "evidenceBoundary": ["smoke_only", "not_growth_replay"],
+    }
+
+
 def run_remaining_training(
     *,
     output_dir: Path = DEFAULT_OUTPUT_DIR,
@@ -92,6 +182,7 @@ def run_remaining_training(
     profile_source: Path | None = None,
     allow_low_expression: bool = False,
     project_root: Path | None = PROJECT_ROOT,
+    adaptive_training_route: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     streaming_config = (
         StreamingCadDemoConfig.hybrid(
@@ -121,6 +212,8 @@ def run_remaining_training(
         allow_low_expression=allow_low_expression,
         project_root=project_root,
     )
+    if adaptive_training_route is not None:
+        report["adaptiveTrainingRoute"] = adaptive_training_route
     report["postTrainingSync"] = {"status": "not_required", "reason": "Training report did not pass."}
     report["postTrainingArtifactRetention"] = {
         "status": "not_required",
@@ -200,9 +293,14 @@ def main() -> int:
     parser.add_argument("--stream-no-zoom", action="store_true", help="Disable per-item zoom during streaming demo mode.")
     parser.add_argument(
         "--replay-mode",
-        choices=["smoke_replay", "growth_replay", "standard_replay"],
-        default="smoke_replay",
-        help="Adaptive replay contract mode. Defaults to legacy smoke replay.",
+        choices=["auto", "smoke_replay", "growth_replay", "standard_replay"],
+        default="auto",
+        help="Adaptive replay contract mode. Defaults to auto; all-31 will not silently downgrade to smoke.",
+    )
+    parser.add_argument(
+        "--explicit-smoke",
+        action="store_true",
+        help="Allow a smoke-only probe, including all-31 smoke. This cannot claim growth or formal retraining.",
     )
     parser.add_argument(
         "--profile-source",
@@ -253,6 +351,17 @@ def main() -> int:
     if training_options and "cad-hatch-boundary" not in (args.only or []):
         parser.error("hatch focused options require --only cad-hatch-boundary")
 
+    adaptive_training_route = resolve_cli_replay_mode(
+        batch_preset=batch_preset,
+        requested_replay_mode=args.replay_mode,
+        profile_source=args.profile_source,
+        explicit_smoke=args.explicit_smoke,
+        selected_capability_ids=args.only,
+    )
+    if adaptive_training_route.get("status") == "blocked":
+        print(json.dumps({"status": "blocked", "adaptiveTrainingRoute": adaptive_training_route}, ensure_ascii=False, indent=2))
+        return 1
+
     report = run_remaining_training(
         output_dir=output_dir,
         fake_cad=args.fake_cad,
@@ -271,10 +380,11 @@ def main() -> int:
         artifact_retention=not args.no_artifact_retention,
         artifact_retention_write=args.artifact_retention_write,
         batch_preset=batch_preset,
-        replay_mode=args.replay_mode,
+        replay_mode=str(adaptive_training_route["replayMode"]),
         profile_source=args.profile_source,
         allow_low_expression=args.allow_low_expression,
         project_root=PROJECT_ROOT,
+        adaptive_training_route=adaptive_training_route,
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     sync_status = report.get("postTrainingSync", {}).get("status")

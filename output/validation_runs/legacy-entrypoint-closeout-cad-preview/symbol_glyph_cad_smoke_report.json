@@ -1,0 +1,333 @@
+{
+  "version": "0.1",
+  "status": "geometry_verified",
+  "failure_category": "",
+  "generated_at": "2026-06-07T13:59:41",
+  "active_document": "测试文件.dwg",
+  "layer": "CODEX_PREVIEW",
+  "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\legacy-entrypoint-closeout-cad-preview",
+  "symbol_id": "symbol-desk-1400-plan",
+  "symbol_readability_status": "symbol_readable",
+  "symbol_readability_report": {
+    "version": "0.1",
+    "report_id": "symbol-readability-symbol-desk-1400-plan",
+    "symbol_id": "symbol-desk-1400-plan",
+    "archetype": "surface",
+    "object_type": "desk",
+    "source_object_id": "object-desk-1400x700",
+    "readability_status": "symbol_readable",
+    "fallback_policy_mode": "symbol_readable",
+    "part_kinds": [
+      "inner_offset",
+      "leg_marker",
+      "orientation_marker",
+      "outline"
+    ],
+    "part_count": 4,
+    "checks": [
+      {
+        "name": "not_single_bbox",
+        "status": "pass",
+        "message": "symbol includes non-bbox readability parts"
+      },
+      {
+        "name": "archetype_grammar",
+        "status": "pass",
+        "message": "archetype required parts and placement rules satisfied"
+      },
+      {
+        "name": "min_part_count",
+        "status": "pass",
+        "message": "symbol has at least 2 parts"
+      },
+      {
+        "name": "min_footprint",
+        "status": "pass",
+        "message": "footprint meets minimum readable size"
+      },
+      {
+        "name": "orientation_cue",
+        "status": "pass",
+        "message": "facing or orientation_marker is present"
+      },
+      {
+        "name": "no_text_or_dimension_labels",
+        "status": "pass",
+        "message": "readability does not rely on text or dimensions"
+      },
+      {
+        "name": "symbol_spec_valid",
+        "status": "pass",
+        "message": "SYMBOL_SPEC schema and semantic guards pass"
+      }
+    ],
+    "failed_check_count": 0,
+    "geometry_verified": true,
+    "evidence_state": "readback_geometry_verified",
+    "limitations": [
+      "readability_status does not imply geometry_verified",
+      "visual review may still be required for aesthetic clarity"
+    ]
+  },
+  "expected": {
+    "base_point": [
+      76000.0,
+      42000.0,
+      0.0
+    ],
+    "type_counts": {
+      "circle": 1,
+      "line": 9
+    },
+    "glyph_primitive_count": 4
+  },
+  "geometry_verified": true,
+  "created_handles": [
+    "D923",
+    "D924",
+    "D925",
+    "D926",
+    "D927",
+    "D928",
+    "D929",
+    "D92A",
+    "D92B",
+    "D92C"
+  ],
+  "created_handle_count": 10,
+  "actual": {
+    "entity_count": 10,
+    "type_counts": {
+      "circle": 1,
+      "line": 9
+    },
+    "layer_counts": {
+      "CODEX_PREVIEW": 10
+    },
+    "bbox": {
+      "min": [
+        76000.0,
+        42000.0
+      ],
+      "max": [
+        77400.0,
+        42700.0
+      ],
+      "size": [
+        1400.0,
+        700.0
+      ]
+    },
+    "created_handles": [
+      "D923",
+      "D924",
+      "D925",
+      "D926",
+      "D927",
+      "D928",
+      "D929",
+      "D92A",
+      "D92B",
+      "D92C"
+    ],
+    "created_handle_scope": {
+      "input_handles": [
+        "D923",
+        "D924",
+        "D925",
+        "D926",
+        "D927",
+        "D928",
+        "D929",
+        "D92A",
+        "D92B",
+        "D92C"
+      ],
+      "input_handle_count": 10,
+      "hit_count": 10,
+      "miss_count": 0,
+      "extra_entity_count": 0,
+      "hit_handles": [
+        "D923",
+        "D924",
+        "D925",
+        "D926",
+        "D927",
+        "D928",
+        "D929",
+        "D92A",
+        "D92B",
+        "D92C"
+      ],
+      "miss_handles": [],
+      "extra_handles": []
+    }
+  },
+  "checks": [
+    {
+      "name": "active_document_read",
+      "status": "pass",
+      "message": "测试文件.dwg"
+    },
+    {
+      "name": "layer_policy",
+      "status": "pass",
+      "message": "Smoke layer is CODEX_PREVIEW."
+    },
+    {
+      "name": "layer_ensure",
+      "status": "pass",
+      "message": "Layer CODEX_PREVIEW is available."
+    },
+    {
+      "name": "glyph_primitive_handles",
+      "status": "pass",
+      "message": "10 handle(s) returned from execute_plan."
+    },
+    {
+      "name": "created_handles_scope",
+      "status": "pass",
+      "message": "Scoped readback matches created handles: input=10 hit=10 miss=0 extra=0"
+    },
+    {
+      "name": "handle_readback_count",
+      "status": "pass",
+      "message": "hit=10 miss=[]"
+    },
+    {
+      "name": "readback_layer_scope",
+      "status": "pass",
+      "message": "Layer counts: {'CODEX_PREVIEW': 10}"
+    },
+    {
+      "name": "readback_type_counts",
+      "status": "pass",
+      "message": "expected={'circle': 1, 'line': 9} actual={'circle': 1, 'line': 9}"
+    },
+    {
+      "name": "no_text_or_dimension_entities",
+      "status": "pass",
+      "message": "forbidden entities present: {}"
+    },
+    {
+      "name": "symbol_readability_status",
+      "status": "pass",
+      "message": "readability_status=symbol_readable"
+    },
+    {
+      "name": "preview_only_audit",
+      "status": "pass",
+      "message": "Preview-only safety audit fields are present and valid."
+    }
+  ],
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "allowed_layers": [
+      "CODEX_DIAGNOSTIC",
+      "CODEX_PREVIEW"
+    ],
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false,
+    "writes_only_preview_layer": true,
+    "writes_only_allowed_layers": true,
+    "saves_dwg": false,
+    "deletes_entities": false,
+    "modifies_formal_layers": false
+  },
+  "execution_summary": {
+    "status": "executed",
+    "plan": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\validation_runs\\legacy-entrypoint-closeout-cad-preview\\symbol_glyph_smoke_plan.json",
+    "intent": "draw_symbol_glyph",
+    "object_type": "symbol_glyph",
+    "object_name": "desk surface",
+    "symbol_id": "symbol-desk-1400-plan",
+    "archetype": "surface",
+    "base_point": [
+      76000.0,
+      42000.0,
+      0.0
+    ],
+    "layer": "CODEX_PREVIEW",
+    "semantic_layer": null,
+    "preview_only": true,
+    "geometry_accuracy": "not_verified_without_cad_readback",
+    "glyph_primitive_count": 4,
+    "glyph_primitive_types": {
+      "rectangle": 2,
+      "circle": 1,
+      "line": 1
+    },
+    "expected_readback_type_counts": {
+      "circle": 1,
+      "line": 9
+    },
+    "entities": {
+      "rectangle": 2,
+      "circle": 1,
+      "line": 1
+    },
+    "created_handles": [
+      "D923",
+      "D924",
+      "D925",
+      "D926",
+      "D927",
+      "D928",
+      "D929",
+      "D92A",
+      "D92B",
+      "D92C"
+    ],
+    "safety": {
+      "layer": "CODEX_PREVIEW",
+      "allowed_layers": [
+        "CODEX_DIAGNOSTIC",
+        "CODEX_PREVIEW"
+      ],
+      "saved_dwg": false,
+      "deleted_entities": false,
+      "modified_formal_layers": false,
+      "writes_only_preview_layer": true,
+      "writes_only_allowed_layers": true,
+      "saves_dwg": false,
+      "deletes_entities": false,
+      "modifies_formal_layers": false
+    }
+  },
+  "created_handle_scope": {
+    "input_handles": [
+      "D923",
+      "D924",
+      "D925",
+      "D926",
+      "D927",
+      "D928",
+      "D929",
+      "D92A",
+      "D92B",
+      "D92C"
+    ],
+    "input_handle_count": 10,
+    "hit_count": 10,
+    "miss_count": 0,
+    "extra_entity_count": 0,
+    "hit_handles": [
+      "D923",
+      "D924",
+      "D925",
+      "D926",
+      "D927",
+      "D928",
+      "D929",
+      "D92A",
+      "D92B",
+      "D92C"
+    ],
+    "miss_handles": [],
+    "extra_handles": []
+  },
+  "evidence_state": "readback_geometry_verified",
+  "geometry_accuracy": "verified_by_cad_readback",
+  "screenshot_role": "not_applicable"
+}

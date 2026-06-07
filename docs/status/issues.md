@@ -1,10 +1,34 @@
+## 2026-06-07 架构治理小任务不能膨胀成第二套 PlanMD
+
+现象：`docs/planning/architecture-governance-hardening-mini-task.md` 已进入 active sidecar，用于继续治理 Python 项目身份、schema 单源、repo inventory、产物分类和文档控制面。它位于 `docs/planning/`，如果后续不断追加 next、退出标准和长期 backlog，容易与唯一 PlanMD `CORE_RESTRUCTURE_PLAN.md` 形成第二套控制面。
+
+影响：系统可能再次出现“主线在 PlanMD、实际执行在辅助 MD”的分裂；入口 custody、repo inventory、文档治理和体积整理也可能被误读为 CAD 能力提升、训练恢复或表 C 推进。
+
+修复 / 计划：本小任务只作为 active sidecar 存在；后续实现时优先扩展既有 `config/entrypoint_custody_manifest.json`，新增 `config/repo_inventory_manifest.json` 和对应 checker。若它改变优先级、退出标准或长期路线，必须回写 `CORE_RESTRUCTURE_PLAN.md`；若完成，应由用户或正式收口包决定是否归档。
+
+以后规则：辅助治理 MD 可以承载一组局部任务，但不得抢 `CORE_RESTRUCTURE_PLAN.md` 的唯一 PlanMD 职责。repo inventory 和 custody manifest 是索引 / 门禁，不是 CAD proof、训练事实源或能力成熟度指标。
+
+相关文件：`docs/planning/architecture-governance-hardening-mini-task.md`、`CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/status/current.md`
+
+## 2026-06-07 主 Agent 认知提升不能被规则厚度冒充
+
+现象：系统已经有 A-to-A 合同、Prompt Pack、模型桥、Worker 编排、learningCandidate、adaptive growth 和训练 memory，但这些机制存在本身并不证明主 Agent 已经像 Codex 一样会主动理解、分发、读取历史、自我修正和越做越聪明。如果后续任务里的 route、dispatch、tool choice、blocking、requiredAgents 或 replay 没有因历史经验改变，所谓“变聪明”只是规则变厚。
+
+影响：继续盲目训练可能只会堆 MD、JSON、Prompt addendum 和测试通过记录，用户实际看到的任务判断仍停留在烟测或固定路由。这样会让家具测试、对象训练或正式案例训练被过早放大，掩盖主 Agent 是否真的会用历史经验。
+
+修复 / 计划：将主 Agent 认知证明纳入架构归并画布，作为跨层质量门。下一步优先用 no-CAD fixture 或家具 focused rehearsal 证明 before / after：历史 profile 是否被读取，route 是否改变，requiredAgents 是否补齐，风险工具是否降级为 preview-only，证据不足是否 blocked，完成后是否输出 learningCandidate 或 `not_required`。
+
+以后规则：任何“主 Agent 变聪明 / 更像 Codex / 已经学会判断”的声明，都必须有真实任务 before / after proof。没有 proof 时只能说机制建设、可训练性建设或测试链准备完成，不能称为认知提升。
+
+相关文件：`CORE_RESTRUCTURE_PLAN.md`、`docs/architecture/system-architecture-convergence.md`、`docs/architecture/cad-agent-task-chain.md`、`docs/training/README.md`、`agents/pipeline/README.md`
+
 ## 2026-06-06 旧能力百分比和探索式架构分片会误导真实训练判断
 
 现象：早期开发阶段形成的表 A / B / C、V-PROOF、RCAD 和“真实 CAD 实力 90%”等口径，在当时用于追踪底座施工、registry 和 evidence 覆盖。但系统后续继续加入 CAD Designer Agent 训练、资产库、A-to-A、多 Agent、GPT-5.5 模型桥、Worker 编排、截图和工作台后，这些旧指标仍停留在主叙事位置，容易让用户误以为系统端到端真实绘图能力已经接近 90%。用户实际感受更接近：底座材料很厚，但真实任务成熟度仍可能只有 5%-10%。
 
 影响：如果继续把旧表 C 当作“真实 CAD 实力”，训练前判断会被高估；系统也会继续在画布上分片加模块，而不是把旧模块归入统一生命周期。这样会导致训练、资产、模型桥、工作台和能力证明并列存在，却不知道谁服务谁、谁不能越过谁。
 
-修复 / 计划：新增 `ARCH-CONVERGENCE-01` 架构归并画布工程。旧表 C 降级为 `Core Proof Coverage`，只表示底座证据覆盖；新增 `Agent Task Maturity` 和 `Project Delivery Readiness` 作为真实训练和交付判断口径。正式对象训练暂缓，先同步 `docs/architecture/system-architecture-convergence.md`、`CORE_RESTRUCTURE_PLAN.md`、`docs/planning/任务清单.md`、规则、状态和 OpenSpec 契约 `openspec/changes/unify-system-architecture-canvas/`。
+修复 / 计划：新增架构归并画布工程。旧表 C 降级为 `Core Proof Coverage`，只表示底座证据覆盖；新增 `Agent Task Maturity` 和 `Project Delivery Readiness` 作为真实训练和交付判断口径。正式对象训练暂缓，先同步 `docs/architecture/system-architecture-convergence.md`、`CORE_RESTRUCTURE_PLAN.md`、`docs/planning/任务清单.md`、规则、状态和 OpenSpec 契约 `openspec/changes/unify-system-architecture-canvas/`。
 
 以后规则：任何模块、脚本、Agent、资产、训练项或工作台显示，都必须能归入七层画布：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。旧表 A/B/C 可以作为历史和底座回归，但不得作为端到端真实 CAD 能力主指标。训练恢复前要完成脚本和派生显示口径审计。
 
@@ -16,7 +40,7 @@
 
 影响：如果把 `modelInvoked=true` 当成 CAD 已验证，系统会再次用模型 pass 替代 validate、dry-run、created handles、bbox / layer / entity audit、visual acceptance、neighbor protection、sourceSpec、reuseReplay 或用户验收。反过来，如果模型因缺 CAD_PLAN / readback / screenshot 证据而返回 `needs_more_evidence` 或 `unavailable`，也可能被误判为“模型没活”，从而掩盖正确的业务阻断。
 
-修复 / 计划：`LOCAL-LIVE-MODEL-BRIDGE-HARDENING-MD-CLOSEOUT-01` 已把独立架构 MD 的剩余路线迁入 `CORE_RESTRUCTURE_PLAN.md` §3.1，并在本地 runtime 加固完成声明分层：`worker_orchestration_ready`、`local_bridge_connected`、`single_agent_live`、`multi_agent_live`、`cad_mcp_preview_live` 和 `formal_training_integrated`。Worker 编排证据必须有 run state、task envelope、队列 / retry、heartbeat 和结果回传；本地活体证据必须有 `modelInvoked=true`、`modelUnavailable=false`、`schemaValid=true`、sanitized `codex.cmd exec --model gpt-5.5` trace、完整 trace 包 diagnostics 和下游 decision；CAD 证据仍按原链路独立验证。
+修复 / 计划：本地模型桥收口包已把独立架构 MD 的剩余路线迁入 `CORE_RESTRUCTURE_PLAN.md` §3.1，并在本地 runtime 加固完成声明分层：`worker_orchestration_ready`、`local_bridge_connected`、`single_agent_live`、`multi_agent_live`、`cad_mcp_preview_live` 和 `formal_training_integrated`。Worker 编排证据必须有 run state、task envelope、队列 / retry、heartbeat 和结果回传；本地活体证据必须有 `modelInvoked=true`、`modelUnavailable=false`、`schemaValid=true`、sanitized `codex.cmd exec --model gpt-5.5` trace、完整 trace 包 diagnostics 和下游 decision；CAD 证据仍按原链路独立验证。
 
 以后规则：Worker 编排只证明任务系统可远程触发和可排队；模型活体调用只证明“Agent 真在思考 / 复审 / 决策”，不证明 CAD 几何、不提升表 C、不等于用户验收。接入 CAD-MCP 前还要确认 Codex 配置不会被 `--ignore-user-config` 连带忽略 MCP；优先使用 bridge-owned Codex config。Worker 是长期编排入口，但不能保存 Codex 登录态、不能直接执行 `codex.cmd`、不能成为任意 shell 代理。
 

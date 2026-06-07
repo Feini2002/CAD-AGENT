@@ -116,7 +116,7 @@
     {
       "name": "training_sources_declared",
       "status": "pass",
-      "detail": "trainingSources=30"
+      "detail": "trainingSources=32"
     },
     {
       "name": "training_source_paths_exist",
@@ -131,7 +131,7 @@
     {
       "name": "training_source_summary_portable_policy_declared",
       "status": "pass",
-      "detail": "recommendationCode=restore_remote_evidence_before_retraining restorePaths=['output/training_queues/**', 'output/training_learning/**', 'agents/**/training_memory.json', 'agents/**/prompt_addendum.md', 'docs/training/training-sources.json']"
+      "detail": "recommendationCode=local_training_evidence_available restorePaths=['output/training_queues/**', 'output/training_learning/**', 'agents/**/training_memory.json', 'agents/**/prompt_addendum.md', 'docs/training/training-sources.json']"
     },
     {
       "name": "accepted_training_sources_registered",
@@ -196,7 +196,7 @@
     {
       "name": "snapshot_generated_after_coverage",
       "status": "pass",
-      "detail": "snapshot=2026-06-06T08:49:44+00:00, coverage=2026-06-06T08:44:53Z"
+      "detail": "snapshot=2026-06-07T06:02:30+00:00, coverage=2026-06-07T06:02:30Z"
     },
     {
       "name": "sync_boundary_declared",
@@ -241,7 +241,7 @@
     {
       "name": "workbench_v3_source_registry_declared",
       "status": "pass",
-      "detail": "sourceRegistry=30"
+      "detail": "sourceRegistry=32"
     },
     {
       "name": "workbench_v3_command_center_declared",
@@ -261,7 +261,7 @@
     {
       "name": "workbench_v3_agent_graph_declared",
       "status": "pass",
-      "detail": "nodes=311 edges=1217"
+      "detail": "nodes=313 edges=1248"
     },
     {
       "name": "workbench_v3_evidence_bundles_declared",

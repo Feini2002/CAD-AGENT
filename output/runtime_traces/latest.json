@@ -1,6 +1,6 @@
 {
   "schemaVersion": "cad-agent-runtime-trace/v1",
-  "generatedAt": "2026-06-06T15:41:58Z",
+  "generatedAt": "2026-06-07T04:53:35Z",
   "status": "blocked",
   "runId": "model-agent-live-collab-proof-20260606-151512",
   "worker": {
@@ -10,7 +10,7 @@
     "workerVersion": "21fc6755-27d0-4e97-b13a-ef1e660c8401"
   },
   "runDir": "output/runs/model-agent-live-collab-proof-20260606-151512",
-  "totalDurationMs": 114500,
+  "totalDurationMs": 59,
   "steps": [
     {
       "id": "codex_plaintext",
@@ -19,7 +19,7 @@
       "status": "pass",
       "detail": "由当前 Codex 会话把白话转成受控 quick smoke，不作为独立后台事实源。",
       "durationMs": null,
-      "at": "2026-06-06T15:15:12Z",
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "output/runs/model-agent-live-collab-proof-20260606-151512/user_request.json"
     },
@@ -29,8 +29,8 @@
       "owner": "worker",
       "status": "pass",
       "detail": "run_20260606151438_worker_orchestration_ready_f6260886 · version 21fc6755-27d0-4e97-b13a-ef1e660c8401",
-      "durationMs": null,
-      "at": "2026-06-06T15:17:06Z",
+      "durationMs": 32,
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md"
     },
@@ -40,8 +40,8 @@
       "owner": "codex-agent",
       "status": "not_checked",
       "detail": "0 个输出；本轮使用 fixture model，不证明真实 gpt-5.5 provider。",
-      "durationMs": 18,
-      "at": "2026-06-06T15:15:12Z",
+      "durationMs": null,
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "output/runs/model-agent-live-collab-proof-20260606-151512/model_agent_chain_result.json"
     },
@@ -51,8 +51,8 @@
       "owner": "pipeline_audit",
       "status": "pass",
       "detail": "validate_plan 通过后才允许进入受控 CAD preview。",
-      "durationMs": 2,
-      "at": "2026-06-06T15:15:12Z",
+      "durationMs": null,
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "output/runs/model-agent-live-collab-proof-20260606-151512/cad_reports/validation_report.json"
     },
@@ -62,8 +62,8 @@
       "owner": "pipeline_audit",
       "status": "pass",
       "detail": "只预演 CAD_PLAN，不写正式图层。",
-      "durationMs": 255,
-      "at": "2026-06-06T15:15:12Z",
+      "durationMs": null,
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "output/runs/model-agent-live-collab-proof-20260606-151512/cad_reports/dry_run_report.json"
     },
@@ -73,8 +73,8 @@
       "owner": "local-bridge/cad",
       "status": "pass",
       "detail": "7 created handles · layer CODEX_PREVIEW · savedCurrentDwg=False",
-      "durationMs": null,
-      "at": "2026-06-06T15:15:12Z",
+      "durationMs": 1,
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "output/runs/model-agent-live-collab-proof-20260606-151512/cad_reports/cad_preview_tool_report.json"
     },
@@ -84,8 +84,8 @@
       "owner": "local-bridge/cad",
       "status": "pass",
       "detail": "7 readback entities · savedCurrentDwg=False",
-      "durationMs": 16269,
-      "at": "2026-06-06T15:15:12Z",
+      "durationMs": null,
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "output/runs/model-agent-live-collab-proof-20260606-151512/cad_reports/readback_summary.json"
     },
@@ -95,8 +95,8 @@
       "owner": "pipeline_audit",
       "status": "pass",
       "detail": "截图只是 visual_aid_only，不能替代 handles/readback。",
-      "durationMs": 15426,
-      "at": "2026-06-06T15:15:28Z",
+      "durationMs": 34,
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "",
       "evidence": "output/previews/worker-bridge-cad-preview-20260606-151512.png"
     },
@@ -107,7 +107,7 @@
       "status": "blocked",
       "detail": "visual_acceptance_review missing; neighbor_protection missing; readback_report missing required field: evidence_state",
       "durationMs": null,
-      "at": "2026-06-06T15:15:44Z",
+      "at": "2026-06-06T17:50:45Z",
       "blocker": "visual_acceptance_review missing; neighbor_protection missing; readback_report missing required field: evidence_state",
       "evidence": "output/validation_runs/worker-bridge-cad-preview-20260606-151512/visual-review/visual_review_report.json"
     }

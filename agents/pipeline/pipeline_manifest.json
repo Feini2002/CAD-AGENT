@@ -603,7 +603,7 @@
       {
         "agentId": "pipeline_learning_promoter",
         "priority": "P2",
-        "promptPackStatus": "planned",
+        "promptPackStatus": "ready",
         "judgmentScenes": ["training_pass", "training_fail", "model_trace_learning", "feedback_promotion"],
         "modelRole": "Review what should become memory, prompt delta, checker candidate, base rule, task rule, or retest target.",
         "learningTarget": "Learn to turn errors into durable Agent growth instead of only recording pass/fail."

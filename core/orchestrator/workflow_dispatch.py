@@ -18,6 +18,7 @@ from core.orchestrator.semantic_asset_route import resolve_semantic_asset_route
 from core.orchestrator.route_audit_report import build_route_audit_report, write_route_audit_report
 from core.orchestrator.scene_registry import DEFAULT_SCENE_ID, load_scene_registry
 from core.path_safety import resolve_under_project_output, resolve_under_project_root
+from core.entrypoint_custody.manifest import load_entrypoint_manifest, manifest_entry_for
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -44,6 +45,39 @@ def _input_paths(context: dict[str, Any]) -> dict[str, str]:
         return {}
     paths = inputs.get("paths", {})
     return dict(paths) if isinstance(paths, dict) else {}
+
+
+def _entrypoint_custody_summary(entrypoint: str) -> dict[str, Any]:
+    if not entrypoint:
+        return {
+            "status": "not_applicable",
+            "entrypoint": "",
+            "registered": False,
+            "reason": "no entrypoint selected",
+        }
+    manifest = load_entrypoint_manifest()
+    entry = manifest_entry_for(entrypoint, manifest)
+    if not entry:
+        return {
+            "status": "blocked",
+            "entrypoint": entrypoint,
+            "registered": False,
+            "reasonCode": "workflow_route_entrypoint_unregistered",
+            "manifestRef": manifest.get("manifestPath", ""),
+        }
+    return {
+        "status": "registered",
+        "entrypoint": entrypoint,
+        "registered": True,
+        "custodyStatus": entry.get("custodyStatus"),
+        "architectureLayer": entry.get("architectureLayer"),
+        "directInvocationPolicy": entry.get("directInvocationPolicy"),
+        "requiresCustodyGate": bool(entry.get("requiresCustodyGate")),
+        "requiresLease": bool(entry.get("requiresLease")),
+        "allowedWriteScope": entry.get("allowedWriteScope", []),
+        "evidenceBoundary": entry.get("evidenceBoundary", []),
+        "manifestRef": f"{manifest.get('manifestPath', '')}#{entrypoint}",
+    }
 
 
 def load_workflow_routes(path: Path | None = None) -> dict[str, Any]:
@@ -81,16 +115,19 @@ def resolve_workflow_route(
             "reason": f"no workflow route for request_kind={request_context.get('request_kind')!r}",
             "entrypoint": "",
             "requires_cad": False,
+            "entrypointCustody": _entrypoint_custody_summary(""),
         }
     route = routes[0]
+    entrypoint = str(route.get("entrypoint", ""))
     return {
         "workflow_id": str(route.get("workflow_id", "")),
         "status": DISPATCH_READY,
         "reason": f"matched route priority={route.get('priority')}",
-        "entrypoint": str(route.get("entrypoint", "")),
+        "entrypoint": entrypoint,
         "default_workflow_path": route.get("default_workflow_path"),
         "requires_cad": bool(route.get("requires_cad")),
         "route": route,
+        "entrypointCustody": _entrypoint_custody_summary(entrypoint),
     }
 
 
@@ -239,6 +276,14 @@ def orchestrate_request(
             **dispatch,
             "status": DISPATCH_BLOCKED,
             "reason": f"a-to-a hard gate status=blocked: {reason_text}",
+        }
+
+    entrypoint_custody = dispatch.get("entrypointCustody", {})
+    if isinstance(entrypoint_custody, dict) and entrypoint_custody.get("status") == "blocked":
+        dispatch = {
+            **dispatch,
+            "status": DISPATCH_BLOCKED,
+            "reason": f"entrypoint custody blocked: {entrypoint_custody.get('reasonCode')}",
         }
 
     if bool(dispatch.get("requires_cad")) and not bool(request_context.get("cad_policy", {}).get("allow_cad")):

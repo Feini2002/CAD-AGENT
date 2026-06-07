@@ -4,6 +4,55 @@
 
 ## 2026-06-07
 
+### MAIN-AGENT-COGNITION-LOOP-PROOF-01：主 Agent 认知优化 no-CAD 机器闭环
+
+- **触发**：用户要求将主 Agent 认知优化临时方案通过多 Agent 辅助审查后实施，并从开发、系统治理和安全边界角度完成自检交验。
+- **OpenSpec**：新增 `openspec/changes/prove-main-agent-cognition-loop/`，把临时方案拆成 no-CAD cognitive loop、evidence portfolio、behavior-change proof、soft gate uncertainty、cheapest-route hard-gate isolation 和 Agent Task Maturity 边界；独立临时 MD 已吸收进系统记录并删除。
+- **实现**：新增 `core/model_review/evidence_portfolio.py`，只写净化摘要和显式 refs；新增 `core/orchestrator/agent_cognition.py`，区分 `mechanism_only` 与 `behavior_change_evidence` 并汇总 Agent Task Maturity 指标。`run_no_cad_model_agent_chain()` 现在输出 `cognitiveLoopSummary`，记录 tool trace 回喂同一 Agent 的二轮 self-correction、maxRounds=2、before/after proof 和 no-CAD 边界。
+- **Schema / 路由**：model review soft judgement schema 增加 `selfUncertainty`；`learning_promotion_review` 增加 `retestedOriginalTask` 和 prediction reconciliation。`orchestrator_host_runtime` 增加 `complexityAssessment` / `routeBudget` 元数据，并修复 `不沉淀` 被子串误判为系统资产沉淀的问题；route budget 不删除 hard gates。
+- **验证**：聚焦 no-CAD 单测 34 项通过；扩展到 `test_model_review`、`test_workflow_dispatch`、`test_training_learning_promotion`、`test_local_live_model_bridge*` 等回归共 88 项通过。`run_entrypoint_custody_audit.py --fail-on-blocked`、`run_model_trace_claim_audit.py --fail-on-blocked`、`run_doc_governance_audit.py`、`run_a_to_a_orchestration_gate_check.py` 和 OpenSpec strict validation 通过；当前正式训练事实源范围的 training report claim audit 通过。全仓 `run_data_bloat_audit.py` 仍被既有 `coverage_report_path_missing` 阻断，全仓 `--reports output` 训练声明审计仍命中历史 `output/test_artifacts/adaptive-growth-*` bad fixtures，本轮不把这些历史产物当作通过证据。边界：未运行真实 CAD、不保存 / 删除 DWG、不提升表 C、不声称真实任务层面已经稳定变聪明。
+
+### DOC-GOVERNANCE-BOUNDARY-PACKAGE-01：永生文档瘦身与事实源边界
+
+- **触发**：用户转交 CC 对系统文档治理的审查，指出同一事实散落在多份永生文档、Brief 过长、rules / AGENTS 重复、changelog 膨胀以及融合动作只有追加缺少替代。
+- **文档**：新增根目录 `ARCH_DOC_GOVERNANCE_BOUNDARY_PACKAGE.md`，定义永生 / 半永生文档清单、当前基线快照、权威源 / 引用源规则、四动作模板、P0-P4 完成定义、多 Agent 分工和退出路径；同步临时 CC 评审稿的退出路径。
+- **实现**：`core/maintenance/doc_governance.py` 新增 `immortal_doc_bloat` 审计，`scripts/run_doc_governance_audit.py` 作为薄 CLI 输出；测试覆盖 Brief 膨胀、重复事实、启动规则重复、root sidecar 退出路径和 CLI 输出。
+- **瘦身**：`CORE_CONTEXT_BRIEF.md` 从 119 行压到 70 行；`docs/governance/cad-agent-rules.md` 从 487 行压到 152 行，改为长期治理规则索引，不再复写启动卡片细则；handoff 索引与 current 窗口重新对齐。
+- **验证**：`tests.core.test_doc_governance` 35 项通过；`scripts/run_doc_governance_audit.py` 总体 `pass`、`immortal_doc_bloat.finding_count=0`、`handoff.finding_count=0`。本包不运行 CAD、不训练、不提升表 C。
+
+### ENTRYPOINT-CUSTODY-PERMISSION-SELFTRAINING-01：旧入口收编收尾与临时 MD 删除
+
+- **收尾**：临时方案 `docs/architecture/legacy-entrypoint-custody-permission-safety-hardening.md` 已不再作为事实源；其内容已并入 `config/entrypoint_custody_manifest.json`、`core/entrypoint_custody/**`、`core/training/report_claim_audit.py`、`core/model_review/trace_claim_audit.py`、runner scripts、tests、状态页和交接页。
+- **新增门禁**：补齐 `scripts/run_model_trace_claim_audit.py`，扩展 training report claim audit，阻断 trace-summary-only live claim、growth replay 缺 renderer / live reasoning / memory no-downgrade / template lock / model suggestion disposition 等声明风险。
+- **验证**：入口 custody audit 当前 `registeredEntrypoints=163`、`repoEntrypointsScanned=156`、`warningCount=0`；相关单测 `74 OK`；model trace claim audit 扫描 `418` 条 claim、`blockedCount=0`；当前 all-31 训练报告目录 claim audit `blockedCount=0`；历史 bad fixtures 仍被 audit 正确阻断。
+- **真实 CAD**：收尾 smoke 生成并校验 `output/validation_runs/legacy-entrypoint-closeout-cad-preview/`，`validate_plan` / `dry_run_plan` 通过，AutoCAD 当前文档 `测试文件.dwg` 只写 `CODEX_PREVIEW`，created handles `10/10` 回读，type count `circle=1,line=9`，`saved_dwg=false`；截图 `symbol_glyph_preview.png` 仅作为视觉辅助。
+- **边界**：本收尾不提升表 C、不恢复正式训练、不证明任意脚本都已物理接入 runtime guard；后续 Python 身份、repo inventory、schema 单源和最高风险入口 fail-closed 继续由 `docs/planning/architecture-governance-hardening-mini-task.md` 承接。
+
+### ARCH-GOVERNANCE-HARDENING-MINI-TASK-01：架构治理硬化小任务进入 active sidecar
+
+- **触发**：用户要求把关于 Python 项目身份缺失、本机 venv 路径、schema 双源、根目录 DWG / log / 派生快照、repo inventory 和文档控制面的讨论，整理成可继续推进的独立小任务，并允许做最小系统同步。
+- **文档**：更新 `docs/planning/architecture-governance-hardening-mini-task.md`，将状态调整为 `ACTIVE-SIDECAR-TASK`；吸收 CC 审查和临时 doc reviewer 视角，纠偏为“扩展既有 `config/entrypoint_custody_manifest.json`”，不另起 `entrypoint-custody.json`；repo inventory 建议落到 `config/repo_inventory_manifest.json`，扫描报告进入 `output/diagnostics/**` 或 `output/validation_runs/**`。
+- **同步**：最小同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/status/current.md`、`docs/status/issues.md`、`docs/planning/任务清单.md` 和 `docs/governance/cad-agent-rules.md`，只记录本小任务进入 active sidecar 阶段。
+- **边界**：本轮不运行 CAD、不训练、不提升表 C、不清理历史证据、不刷新工作台派生快照、不新增全局 Agent，也不把该小任务升级为第二套 PlanMD。
+
+### ENTRYPOINT-CUSTODY-PERMISSION-SELFTRAINING-01：旧入口收编、权限安全与训练回归加固
+
+- **触发**：用户指出当前仓库不是架构薄弱，而是“架构约束很多、入口遗留也很多”；下一步最值钱的不是继续加规则，而是证明旧入口被中枢收编，或明确标成历史 / 旁路 / 只读诊断 / 派生显示。
+- **多 Agent 审查**：按开发落地、使用者 / 运维、安全红队、系统架构四个方向并行审阅，再由主 Agent 收束为最小可执行包；共同结论是先做 manifest、runtime guard、denylist / kill switch、训练 replay fail-closed 和 claim audit，暂缓 live reasoning、完整 memory 重构、全仓强制 guard 和真实 CAD 训练恢复。
+- **实现**：新增 `core/entrypoint_custody/**`、`config/entrypoint_custody_manifest.json`、`config/entrypoint_denylist.json`、`config/entrypoint_kill_switch.json` 和 `scripts/run_entrypoint_custody_audit.py`；实现 manifest 读取、custody lease、`argvHash`、runtime guard、`permissionClass` / `mayWrite*` 授权位校验、denylist / kill switch 和活跃文档 / route / repo script 入口审计。
+- **编排接入**：`core.orchestrator.workflow_dispatch` 增加 `entrypointCustody` 摘要；route 指向未登记或 blocked custody 入口时不再继续形成可执行口吻。
+- **训练回归加固**：`scripts/run_cad_foundation_remaining_training.py` 增加 `--replay-mode auto` 和 `--explicit-smoke`；`--all-31` 无显式 smoke 或无 profile 时 fail-closed，不能静默降级为 `smoke_replay`。`core.training.foundation_batch_training` 对 growth / standard replay 增加 active profile source hard gate，并写入 `passType`、`memoryWriteMode` 和 `claimBoundaries`。
+- **声明审计**：新增 `core/training/report_claim_audit.py` 和 `scripts/run_training_report_claim_audit.py`，阻断 smoke 被抬成 growth、缺 `passType`、generated default profile、profile 缺源和 memory downgrade 风险。
+- **测试与边界**：新增 `tests/core/test_entrypoint_custody.py` 覆盖 manifest / workflow route、runtime guard、lease / argv hash / lease 权限位、denylist / kill switch、all-31 replay 阻断、growth profile 缺失阻断和 claim audit。本包不运行真实 CAD、不保存 DWG、不提升表 C；全仓 155 个 script 尚未全部强制接 guard，入口审计当前允许未分类脚本以 warning 暴露。
+
+### ARCH-CONVERGENCE-COGNITION-FURNITURE-READY-01：架构归并后的认知证明与家具测试准入
+
+- **触发**：用户要求在 adaptive growth 临时稿收尾和架构升级后，做一轮仓库级架构整理，并判断下一步是否可以进入家具测试或继续找问题。
+- **架构同步**：`docs/architecture/system-architecture-convergence.md` 正式补入“主 Agent 认知证明”作为跨层质量门；它不新增第八层，而是约束系统入口、决策编排、能力证据、审计修复和沉淀成长之间的完成声明。
+- **主计划同步**：`CORE_RESTRUCTURE_PLAN.md` 新增 `主 Agent 认知证明测试链` 与 `家具 focused rehearsal` 路由；下一步允许跑最小测试性链，但不默认恢复整批训练、表 C 推进或系统资产大沉淀。
+- **训练入口同步**：`docs/training/README.md` 明确家具测试默认只选一个家具族或点名能力，先验证 route、scope、历史读取、工具选择和阻断边界；真实 CAD 可用时只写 `CODEX_PREVIEW` 并回读 handles。
+- **边界**：本轮是架构和规则整理，不证明主 Agent 已经变聪明、不证明家具能力已通过、不提升表 C、不部署 Worker、不执行 CAD。
+
 ### MAIN-AGENT-COGNITION-PROOF-TEMP-PLAN-01：主 Agent 认知提升证明临时计划
 
 - **触发**：用户指出系统可能持续堆规则、Prompt、测试和训练记录，但主 Agent 未必真的在后续任务中改变判断；如果没有这个评价维度，所谓“变聪明”可能只是机制变厚。

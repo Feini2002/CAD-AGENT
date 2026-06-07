@@ -1,0 +1,30 @@
+{
+  "command": [
+    "codex.cmd",
+    "exec",
+    "--model",
+    "gpt-5.5",
+    "--sandbox",
+    "read-only",
+    "--ephemeral",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "--ignore-rules",
+    "--output-schema",
+    "C:\\Users\\User\\Desktop\\CAD-AGENT\\core\\model_review\\schemas\\design_review.schema.json",
+    "--output-last-message",
+    "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\runs\\legacy-entrypoint-closeout-live-collab-fixture\\agent_outputs\\pipeline_design_reviewer.raw_model_review.json",
+    "-"
+  ],
+  "cwd": "C:\\Users\\User\\AppData\\Local\\Temp\\cad-agent-model-bridge\\pipeline-design-reviewer",
+  "eventsStream": {
+    "path": "events.jsonl",
+    "requested": false,
+    "status": "reserved_for_codex_exec_json"
+  },
+  "sanitized": true,
+  "schemaVersion": 1,
+  "status": "built",
+  "stdinRef": "prompt.md",
+  "timeoutSeconds": 120
+}

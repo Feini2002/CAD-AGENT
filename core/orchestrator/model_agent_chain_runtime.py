@@ -9,7 +9,9 @@ from pathlib import Path
 from typing import Any
 
 from core.model_review.codex_cli_client import CodexCliReviewConfig, Runner
+from core.model_review.evidence_portfolio import build_evidence_portfolio
 from core.model_review.prompt_library import run_prompt_pack_review
+from core.orchestrator.agent_cognition import build_behavior_change_proof
 from core.orchestrator.agent_handoff import build_handoff_packet, validate_handoff_packet
 from core.orchestrator.orchestrator_host_runtime import run_orchestrator_host_runtime
 from core.orchestrator.reviewer_host_runtime import run_reviewer_host_closeout_runtime
@@ -29,6 +31,16 @@ MODEL_CHAIN = [
     "pipeline_style_generator",
     "pipeline_design_reviewer",
 ]
+VIRTUAL_COGNITIVE_ROLES = {
+    "design_brain": {
+        "roleLabel": "Design Brain",
+        "memberAgentIds": MODEL_CHAIN,
+        "purpose": "Share design-stage evidence and reasoning context while preserving registered Agent responsibilities.",
+        "schemaMergeStatus": "not_started",
+        "handoffMergeStatus": "not_started",
+        "gatePolicy": "preserve_original_agent_ids_schemas_handoffs_and_a_to_a_gates",
+    }
+}
 TASK_TYPES = {
     "pipeline_design_director": "design_director_review",
     "pipeline_style_generator": "style_generation_review",
@@ -56,6 +68,70 @@ def _read_json(path: Path) -> dict[str, Any]:
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _unique(items: list[str]) -> list[str]:
+    result: list[str] = []
+    seen: set[str] = set()
+    for item in items:
+        if item and item not in seen:
+            seen.add(item)
+            result.append(item)
+    return result
+
+
+def _virtual_cognitive_role_manifest() -> dict[str, Any]:
+    return {
+        "schemaVersion": "virtual-cognitive-roles/v1",
+        "status": "spike",
+        "roles": [
+            {
+                "roleId": role_id,
+                **role,
+                "evidenceBoundary": [
+                    "virtual role grouping does not merge schemas",
+                    "virtual role grouping does not replace handoff packets",
+                    "virtual role grouping does not alter A-to-A hard gates",
+                ],
+            }
+            for role_id, role in VIRTUAL_COGNITIVE_ROLES.items()
+        ],
+    }
+
+
+def _virtual_cognitive_role_context(agent_id: str, upstream_outputs: list[dict[str, Any]]) -> dict[str, Any]:
+    for role_id, role in VIRTUAL_COGNITIVE_ROLES.items():
+        members = [str(item) for item in role.get("memberAgentIds", [])]
+        if agent_id not in members:
+            continue
+        refs: list[str] = ["virtual_cognitive_roles.json"]
+        upstream_agent_ids: list[str] = []
+        for item in upstream_outputs:
+            upstream_agent = str(item.get("agentId") or "")
+            if upstream_agent:
+                upstream_agent_ids.append(upstream_agent)
+            for key in ("path", "handoffPath", "reportPath"):
+                value = str(item.get(key) or "")
+                if value and value not in refs:
+                    refs.append(value)
+        return {
+            "schemaVersion": "virtual-cognitive-role-context/v1",
+            "roleId": role_id,
+            "roleLabel": str(role.get("roleLabel") or role_id),
+            "currentAgentId": agent_id,
+            "memberAgentIds": members,
+            "upstreamAgentIds": upstream_agent_ids,
+            "sharedContextRefs": refs,
+            "purpose": str(role.get("purpose") or ""),
+            "preservationPolicy": str(role.get("gatePolicy") or ""),
+            "schemaMergeStatus": str(role.get("schemaMergeStatus") or "not_started"),
+            "handoffMergeStatus": str(role.get("handoffMergeStatus") or "not_started"),
+            "evidenceBoundary": [
+                "This is a virtual cognitive grouping only.",
+                "Keep each registered Agent's schema, prompt pack, handoff packet, and gate responsibility intact.",
+            ],
+        }
+    return {}
 
 
 def _request_text(run_dir: Path) -> str:
@@ -161,12 +237,12 @@ def _handle_tool_intent(
     run_id: str,
     agent_id: str,
     output: dict[str, Any],
-) -> tuple[list[str], list[str], list[dict[str, Any]]]:
+) -> tuple[list[str], list[str], list[dict[str, Any]], list[dict[str, Any]]]:
     intent = output.get("toolIntent")
     if intent is None:
-        return [], [], []
+        return [], [], [], []
     if not isinstance(intent, dict):
-        return [f"{agent_id} toolIntent is not a JSON object"], [], []
+        return [f"{agent_id} toolIntent is not a JSON object"], [], [], []
     trace = run_tool_intent(run_dir, intent, run_id=run_id)
     written = [str(trace.get("downstreamArtifactPath") or "")]
     decision = str(trace.get("orchestratorDecision") or "")
@@ -185,10 +261,152 @@ def _handle_tool_intent(
     ]
     if decision == "blocked":
         reasons = [str(item) for item in trace.get("blockingReasons", []) if str(item)]
-        return [f"{agent_id} tool intent blocked: {reason}" for reason in reasons], written, summaries
+        return [f"{agent_id} tool intent blocked: {reason}" for reason in reasons], written, summaries, [trace]
     if decision == "needs_more_evidence":
-        return [f"{agent_id} tool intent needs_more_evidence"], written, summaries
-    return [], written, summaries
+        return [f"{agent_id} tool intent needs_more_evidence"], written, summaries, [trace]
+    return [], written, summaries, [trace]
+
+
+def _compact_summary(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        return {}
+    keys = (
+        "status",
+        "resultStatus",
+        "toolStage",
+        "reportPath",
+        "readbackStatus",
+        "cadGeometryVerified",
+        "savedCurrentDwg",
+        "targetLayer",
+        "createdHandleCount",
+        "orchestratorDecision",
+        "executionStatus",
+        "blockingReasons",
+        "issues",
+        "errors",
+        "warnings",
+    )
+    return {key: payload[key] for key in keys if key in payload}
+
+
+def _decision_snapshot(
+    *,
+    dispatch_plan: dict[str, Any],
+    output: dict[str, Any],
+    trace: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    tool_choice: list[str] = []
+    if trace is not None and trace.get("toolName"):
+        tool_choice.append(str(trace.get("toolName")))
+    reasons = output.get("blockingReasons")
+    return {
+        "route": str(dispatch_plan.get("route") or ""),
+        "requiredAgents": [str(item) for item in dispatch_plan.get("requiredAgents", [])],
+        "toolChoice": tool_choice,
+        "blockingReasons": [str(item) for item in reasons] if isinstance(reasons, list) else [],
+    }
+
+
+def _tool_self_correction_context(
+    *,
+    run_dir: Path,
+    agent_id: str,
+    round1_output_ref: str,
+    trace: dict[str, Any],
+) -> dict[str, Any]:
+    result = trace.get("result") if isinstance(trace.get("result"), dict) else {}
+    report_path = str(result.get("reportPath") or "")
+    report = _read_json(run_dir / report_path) if report_path else {}
+    trace_ref = str(trace.get("downstreamArtifactPath") or "")
+    return {
+        "schemaVersion": "tool-self-correction-context/v1",
+        "status": "ready",
+        "agentId": agent_id,
+        "round1OutputRef": round1_output_ref,
+        "toolTraceRef": trace_ref,
+        "toolIntentId": str(trace.get("toolIntentId") or ""),
+        "toolName": str(trace.get("toolName") or ""),
+        "orchestratorDecision": str(trace.get("orchestratorDecision") or ""),
+        "executionStatus": str(trace.get("executionStatus") or ""),
+        "resultStatus": str(trace.get("resultStatus") or result.get("status") or ""),
+        "reportPath": report_path,
+        "blockingReasons": [str(item) for item in trace.get("blockingReasons", []) if str(item)],
+        "toolResultSummary": _compact_summary(result),
+        "reportSummary": _compact_summary(report),
+        "instructions": [
+            "Use this tool result to revise your own previous judgement.",
+            "Do not request another tool in this self-correction pass.",
+            "Do not override orchestrator blocking reasons with unsupported pass claims.",
+        ],
+        "evidenceBoundary": [
+            "tool trace is orchestrator-owned evidence",
+            "self-correction remains no-CAD and cannot authorize save/delete/formal-layer writes",
+        ],
+    }
+
+
+def _run_agent_self_correction_after_tool(
+    *,
+    run_dir: Path,
+    agent_id: str,
+    request_text: str,
+    request_context: dict[str, Any],
+    dispatch_plan: dict[str, Any],
+    rule_context_pack: dict[str, Any],
+    upstream_outputs: list[dict[str, Any]],
+    round1_output: dict[str, Any],
+    trace: dict[str, Any],
+    evidence_portfolio_ref: str | None,
+    config: CodexCliReviewConfig,
+    runner: Runner | None,
+    cwd: str | Path | None,
+) -> tuple[dict[str, Any], list[str], list[str]]:
+    round1_rel = f"agent_outputs/{agent_id}.round1.json"
+    _write_json(run_dir / round1_rel, round1_output)
+    context = _tool_self_correction_context(
+        run_dir=run_dir,
+        agent_id=agent_id,
+        round1_output_ref=round1_rel,
+        trace=trace,
+    )
+    extra_refs = [round1_rel]
+    if context.get("toolTraceRef"):
+        extra_refs.append(str(context["toolTraceRef"]))
+    if context.get("reportPath"):
+        extra_refs.append(str(context["reportPath"]))
+    output = run_prompt_pack_review(
+        agent_id=agent_id,
+        payload=_payload(
+            agent_id=agent_id,
+            request_text=request_text,
+            request_context=request_context,
+            dispatch_plan=dispatch_plan,
+            rule_context_pack=rule_context_pack,
+            upstream_outputs=upstream_outputs,
+            self_correction_context=context,
+            extra_evidence_refs=extra_refs,
+            evidence_portfolio_ref=evidence_portfolio_ref,
+        ),
+        run_dir=run_dir,
+        output_path=run_dir / "agent_outputs" / f"{agent_id}.json",
+        raw_output_path=run_dir / "agent_outputs" / f"{agent_id}.self_correction.raw_model_review.json",
+        config=config,
+        runner=runner,
+        cwd=cwd or PROJECT_ROOT,
+        trace_id=f"{agent_id.replace('_', '-')}-self-correction",
+    )
+    output = _ensure_learning_decision(run_dir, agent_id, output)
+    blocking: list[str] = []
+    if output.get("toolIntent") is not None:
+        blocking.append(f"{agent_id} nested_tool_intent_not_allowed")
+        updated = dict(output)
+        reasons = [str(item) for item in updated.get("blockingReasons", []) if str(item)] if isinstance(updated.get("blockingReasons"), list) else []
+        reasons.append("nested_tool_intent_not_allowed")
+        updated["blockingReasons"] = reasons
+        _write_json(run_dir / "agent_outputs" / f"{agent_id}.json", updated)
+        output = updated
+    return output, [round1_rel, f"agent_outputs/{agent_id}.json"], blocking
 
 
 def _payload(
@@ -199,6 +417,9 @@ def _payload(
     dispatch_plan: dict[str, Any],
     rule_context_pack: dict[str, Any],
     upstream_outputs: list[dict[str, Any]],
+    self_correction_context: dict[str, Any] | None = None,
+    extra_evidence_refs: list[str] | None = None,
+    evidence_portfolio_ref: str | None = None,
 ) -> dict[str, Any]:
     rule_pack_ref = f"rule_context_packs/{agent_id}.json"
     upstream_refs = []
@@ -207,6 +428,18 @@ def _payload(
             upstream_refs.append(str(item.get("path")))
         if item.get("handoffPath"):
             upstream_refs.append(str(item.get("handoffPath")))
+    virtual_role_context = _virtual_cognitive_role_context(agent_id, upstream_outputs)
+    evidence_refs = [
+        "user_request.json",
+        "context_pack.json",
+        "dispatch_plan.json",
+        "virtual_cognitive_roles.json",
+        rule_pack_ref,
+        *upstream_refs,
+        *[str(item) for item in extra_evidence_refs or []],
+    ]
+    if evidence_portfolio_ref:
+        evidence_refs.append(evidence_portfolio_ref)
     return {
         "userRequest": request_text,
         "taskContext": {
@@ -216,13 +449,7 @@ def _payload(
             "dispatchPlanRef": "dispatch_plan.json",
             "noCadChain": True,
         },
-        "evidenceRefs": [
-            "user_request.json",
-            "context_pack.json",
-            "dispatch_plan.json",
-            rule_pack_ref,
-            *upstream_refs,
-        ],
+        "evidenceRefs": _unique(evidence_refs),
         "statePatchRequest": {
             "phase": "orchestrator_reviewed",
             "phaseLabelForUser": "模型型 Agent 只读设计链路",
@@ -242,6 +469,9 @@ def _payload(
                 for item in upstream_outputs
                 if item.get("handoffPath")
             ],
+            "virtualCognitiveRole": virtual_role_context,
+            "selfCorrectionContext": self_correction_context or {},
+            "evidencePortfolioRef": evidence_portfolio_ref or "",
             "cadExecutionAuthorized": False,
             "savedCurrentDwg": False,
         },
@@ -939,13 +1169,37 @@ def run_no_cad_model_agent_chain(
         upstream_outputs.append(_agent_output_summary(run_root, "pipeline_orchestrator"))
 
     blocking_reasons: list[str] = []
+    cognitive_loop_events: list[dict[str, Any]] = []
     written_files = [
         "dispatch_plan.json",
         "task_contract.json",
         "required_agents.json",
         "risk_assessment.json",
         "rule_context_pack.json",
+        "virtual_cognitive_roles.json",
     ]
+    _write_json(run_root / "virtual_cognitive_roles.json", _virtual_cognitive_role_manifest())
+    portfolio = build_evidence_portfolio(
+        run_dir=run_root,
+        user_request=request_text,
+        route=str(dispatch_plan.get("route") or ""),
+        task_kind=str(dispatch_plan.get("taskKind") or ""),
+        hard_gates=[str(item) for item in dispatch_plan.get("hardGates", [])],
+        evidence_refs=[
+            "dispatch_plan.json",
+            "task_contract.json",
+            "required_agents.json",
+            "risk_assessment.json",
+            "rule_context_pack.json",
+        ],
+        memory_refs=[],
+        history_refs=["docs/status/issues.md"],
+    )
+    evidence_portfolio_ref = str(portfolio.get("portfolioRef") or "")
+    if evidence_portfolio_ref:
+        written_files.append(evidence_portfolio_ref)
+    if portfolio.get("status") == "blocked":
+        blocking_reasons.extend(str(item) for item in portfolio.get("blockingReasons", []))
 
     for index, agent_id in enumerate(MODEL_CHAIN):
         rule_pack = build_rule_context_pack(
@@ -980,6 +1234,7 @@ def run_no_cad_model_agent_chain(
                 dispatch_plan=dispatch_plan,
                 rule_context_pack=rule_pack,
                 upstream_outputs=upstream_outputs,
+                evidence_portfolio_ref=evidence_portfolio_ref,
             ),
             run_dir=run_root,
             output_path=run_root / "agent_outputs" / f"{agent_id}.json",
@@ -991,6 +1246,64 @@ def run_no_cad_model_agent_chain(
         output = _ensure_learning_decision(run_root, agent_id, output)
         written_files.append(f"agent_outputs/{agent_id}.json")
         output_path = run_root / "agent_outputs" / f"{agent_id}.json"
+        tool_blocking, tool_written, tool_summaries, tool_traces = _handle_tool_intent(
+            run_dir=run_root,
+            run_id=run_id,
+            agent_id=agent_id,
+            output=output,
+        )
+        blocking_reasons.extend(tool_blocking)
+        written_files.extend(path for path in tool_written if path)
+        upstream_outputs.extend(summary for summary in tool_summaries if summary.get("path"))
+        if tool_traces:
+            round1_output = dict(output)
+            trace = tool_traces[0]
+            output, correction_written, correction_blocking = _run_agent_self_correction_after_tool(
+                run_dir=run_root,
+                agent_id=agent_id,
+                request_text=request_text,
+                request_context=request_context,
+                dispatch_plan=dispatch_plan,
+                rule_context_pack=rule_pack,
+                upstream_outputs=upstream_outputs,
+                round1_output=round1_output,
+                trace=trace,
+                evidence_portfolio_ref=evidence_portfolio_ref,
+                config=cfg,
+                runner=runner,
+                cwd=cwd,
+            )
+            written_files.extend(correction_written)
+            blocking_reasons.extend(correction_blocking)
+            output_path = run_root / "agent_outputs" / f"{agent_id}.json"
+            proof = build_behavior_change_proof(
+                agent_id=agent_id,
+                before_decision=_decision_snapshot(dispatch_plan=dispatch_plan, output=round1_output, trace=trace),
+                after_decision=_decision_snapshot(dispatch_plan=dispatch_plan, output=output, trace=trace),
+                memory_applied_in_future_run=False,
+                retested_original_task=False,
+            )
+            cognitive_loop_events.append(
+                {
+                    "schemaVersion": "agent-cognitive-loop-event/v1",
+                    "agentId": agent_id,
+                    "roundCount": 2,
+                    "maxRounds": 2,
+                    "toolName": str(trace.get("toolName") or ""),
+                    "toolTraceRef": str(trace.get("downstreamArtifactPath") or ""),
+                    "round1Decision": str(round1_output.get("decision") or round1_output.get("status") or ""),
+                    "finalDecision": str(output.get("decision") or output.get("status") or ""),
+                    "decisionChanged": str(round1_output.get("decision") or round1_output.get("status") or "")
+                    != str(output.get("decision") or output.get("status") or ""),
+                    "changedBlockingReason": proof["changedBlockingReason"],
+                    "behaviorChangeProof": proof,
+                    "evidenceBoundary": [
+                        "self-correction is no-CAD",
+                        "tool trace is orchestrator-owned evidence",
+                        "behavior proof does not replace CAD validation/readback",
+                    ],
+                }
+            )
         to_agent_ids = MODEL_CHAIN[index + 1 :] or ["pipeline_intent", "pipeline_audit", "pipeline_delivery"]
         handoff_packet = build_handoff_packet(
             output,
@@ -1004,15 +1317,6 @@ def run_no_cad_model_agent_chain(
         written_files.append(handoff_rel)
         if handoff_validation["status"] != "pass":
             blocking_reasons.append(f"handoff_invalid: {agent_id}")
-        tool_blocking, tool_written, tool_summaries = _handle_tool_intent(
-            run_dir=run_root,
-            run_id=run_id,
-            agent_id=agent_id,
-            output=output,
-        )
-        blocking_reasons.extend(tool_blocking)
-        written_files.extend(path for path in tool_written if path)
-        upstream_outputs.extend(summary for summary in tool_summaries if summary.get("path"))
         if not _status_passes(output):
             blocking_reasons.append(f"{agent_id} model output not pass")
         upstream_outputs.append(_agent_output_summary(run_root, agent_id))
@@ -1031,7 +1335,20 @@ def run_no_cad_model_agent_chain(
         "runId": str(dispatch_plan.get("runId") or run_root.name),
         "route": dispatch_plan.get("route"),
         "agentsCalled": MODEL_CHAIN,
+        "virtualCognitiveRolesRef": "virtual_cognitive_roles.json",
         "upstreamOutputs": upstream_outputs,
+        "cognitiveLoopSummary": {
+            "schemaVersion": "agent-cognitive-loop-summary/v1",
+            "status": "observed" if cognitive_loop_events else "not_triggered",
+            "roundCount": 2 if cognitive_loop_events else 1,
+            "maxRounds": 2,
+            "events": cognitive_loop_events,
+            "toolTraceRefs": [str(item.get("toolTraceRef") or "") for item in cognitive_loop_events if item.get("toolTraceRef")],
+            "evidenceBoundary": [
+                "cognitive loop summary is no-CAD",
+                "no save/delete/formal-layer permission is implied",
+            ],
+        },
         "blockingReasons": blocking_reasons,
         "cadExecutionAuthorized": False,
         "savedCurrentDwg": False,

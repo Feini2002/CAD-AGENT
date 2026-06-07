@@ -11,6 +11,10 @@ context: |
   The status command requires --change; a missing-change error is not an initialization failure.
   Completed changes may remain under openspec/changes/ while repository docs still reference them.
   Archive only when stable specs and repository references are updated together, or explicitly skip specs.
+  Before archiving a completed change, confirm whether docs still reference openspec/changes/<change>.
+  Do not treat an empty openspec/specs list as an initialization failure when completed changes validate.
+  Active changes should include .openspec.yaml metadataVersion and lifecycle.status.
+  Completed changes left under openspec/changes/ with archiveReady=false should record an archive reason.
   Real CAD completion claims still require CAD_PLAN validation, dry-run, CODEX_PREVIEW execution,
   created-handle readback, entity checks, and screenshots when needed.
 
@@ -22,6 +26,3 @@ rules:
     - Keep tasks scoped to one OpenSpec change; do not duplicate the global PlanMD backlog.
   specs:
     - Specs describe stable capability behavior, not transient implementation chores.
-  archive:
-    - Before archiving a completed change, confirm whether docs still reference openspec/changes/<change>.
-    - Do not treat an empty openspec/specs list as an initialization failure when completed changes validate.

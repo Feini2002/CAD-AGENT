@@ -1,0 +1,11 @@
+{
+  "status": "pass",
+  "path": "output\\validation_runs\\legacy-entrypoint-closeout-cad-preview\\symbol_glyph_preview.png",
+  "size": [
+    2560,
+    1392
+  ],
+  "nonBlackPixels": 601864,
+  "cyanPreviewLikePixels": 32511,
+  "visualAidOnly": true
+}

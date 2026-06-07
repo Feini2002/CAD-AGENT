@@ -1,479 +1,154 @@
-# CAD Agent 长期规则
+# CAD Agent 长期治理规则
 
-这些规则用于约束后续开发和绘图行为。规则可以被修改，但每次修改都要写入 `docs/status/changelog.md`，如果是因为错误或测试失败导致的修改，还要写入 `docs/status/issues.md`。
+本文件只保留长期、可复用、跨任务的治理规则。它不是 `PlanMD`，不承载全局 backlog，也不记录短期进度。会话启动卡片、用户口令和即时安全边界以根目录 `AGENTS.md` 为入口；本文件负责说明这些规则的长期归属、迁移原则和收口标准。
 
-## 0. 通用开发包定位
+修改本文件时必须同步记录到 `docs/status/changelog.md`；若修改来自失败、回归、误判或安全边界收紧，还要记录到 `docs/status/issues.md`。纯文档治理不证明 CAD 能力提升。
 
-本文件夹是通用 CAD Agent 开发包，不绑定当前家装图、不绑定当前 DWG、不绑定当前电脑。
+## 0. 事实源与反膨胀原则
 
-本仓库也不绑定单一 agent 软件。Codex、Cursor 或其它同类 agent 工具都应遵守同一套 `CAD_PLAN`、Core、训练、验证和交接规则；文档中的具体工具名只代表可选载体、历史文件名或某个工具专属能力，不得被解释为强制单一软件。
+每个事实只允许有一个权威源文档，其它文档只能放一句摘要和链接。若同一事实需要合并，必须使用四动作记录：
 
-任何规则、Schema、脚本和对象库都应优先服务可迁移能力。具体项目的信息必须进入项目上下文文件，例如 `cad_context.json`，不要写死在通用规则里。
+| 动作 | 含义 |
+| --- | --- |
+| `add` | 新事实进入权威源 |
+| `replace` | 新段落替代旧段落，旧段落删除或降级 |
+| `demote` | 已完成、历史性或低频信息迁入历史 / 状态 / changelog |
+| `reference` | 非权威文档只保留一句话和链接 |
 
-适用范围包括但不限于：
+长期文档的职责如下：
 
-- 住宅家装
-- 商业工装
-- 零售店铺
-- 办公空间
-- 餐饮空间
-- 展厅展陈
-- 其他 CAD 平面绘制、布置、标注和修改场景
+| 文档 | 职责 |
+| --- | --- |
+| `AGENTS.md` | 会话启动卡片、用户口令、即时安全边界 |
+| `CORE_CONTEXT_BRIEF.md` | 短上下文入口，只放下一轮需要直接引用的活跃事实 |
+| `CORE_RESTRUCTURE_PLAN.md` | 唯一 `PlanMD`、主线顺序、退出标准 |
+| `CORE_STATUS.md` | 能力矩阵、成熟度和证据摘要 |
+| `docs/status/current.md` | 当前状态，不堆长历史 |
+| `docs/status/changelog.md` | 历史流水和完整包 ID 记录 |
+| `docs/status/issues.md` | 失败、回归、风险和教训 |
+| `docs/architecture/**` | 架构解释、协议和长期设计 |
+| `docs/planning/**` | 辅助执行清单，不成为第二套主计划 |
 
-## 0.1 默认中文沟通
+根目录新增临时 Markdown 必须写明退出路径：归档、迁移到 `docs/**`、合并到权威源，或在完成后删除。否则它不能变成长期入口。
 
-面向用户的说明、状态汇报、方案讨论、追问和最终结论默认使用中文。代码、命令、路径、文件名、Schema 字段、JSON key、工具名和 API 名称可以保留英文或原文。
+## 1. 仓库定位
 
-如果外部 Skill、插件或工具模板提供英文流程，Codex 应先理解其含义，再用中文转述给用户；除非用户明确要求英文，不要把英文模板原样作为面向用户的输出。
+本仓库是通用 CAD Agent Core Lab，不绑定某张 DWG、某类家装图纸、某台电脑或某个 agent 软件。`core/` 放通用能力，`agents/<scenario>/` 放轻量场景差异，`libraries/` 放跨场景资源，`projects/` 放真实或样例项目资料。
 
-## 0.2 上下文缓存友好入口
+场景能力不得绕开 Core 直接执行 CAD。新增场景能力必须说明它复用哪个 Core 能力、需要哪些场景词汇 / 偏好 / 对象表，以及验证证据在哪里。
 
-日常 CAD Agent 开发、状态恢复和普通调试默认先读取 `AGENTS.md` 与 `CORE_CONTEXT_BRIEF.md`，再按任务读取详细文件。不要每轮都无差别全文读取计划、变更流水和历史问题记录。
+## 2. 主计划与架构归并
 
-需要完整展开上下文的情况：
+`CORE_RESTRUCTURE_PLAN.md` 是唯一主计划。任何新增待办、优先级调整、退出门槛变化或复杂治理包，都先回写主计划，再更新辅助文档的引用。
 
-- 用户要求完整状态汇报、交接、审计或复盘。
-- 要执行或修改 `CORE_RESTRUCTURE_PLAN.md` 中的 Phase。
-- 遇到卡壳、测试失败、绘图不准、CAD 环境问题或回归。
-- 要修改规则、状态、变更记录或问题记录。
+当前仓库级主线是架构归并画布工程；权威执行入口见 `CORE_RESTRUCTURE_PLAN.md` §0.2，架构解释见 `docs/architecture/system-architecture-convergence.md`。归并期内，正式对象训练、整批训练、表 C 推进和系统资产大沉淀处于暂停或显式授权状态。
 
-`CORE_CONTEXT_BRIEF.md` 必须保持短、稳定、可扫读；详细历史继续留在 `docs/status/changelog.md` 和 `docs/status/issues.md`，不要搬进短入口。
+旧表 A/B/C、V-PROOF、RCAD、训练地图、资产库、多 Agent、Worker / bridge、模型桥、截图和工作台都必须能映射到统一任务生命周期：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。
 
-## 0.3 单一 PlanMD 与开发状态文档职责
+## 3. 绘图链路
 
-当前唯一 `PlanMD` / 开发主线文件是 `CORE_RESTRUCTURE_PLAN.md`。根目录没有独立 `plan.md`；用户提到 `PlanMD`、`plan.md`、主计划或主 plan 时，默认指 `CORE_RESTRUCTURE_PLAN.md`。
+用户自然描述必须先形成结构化绘图意图或 `CAD_PLAN`，再进入校验、dry-run、预览绘制、readback / audit。低风险快试可以走轻量链路，但必须说明它未沉淀，不能说成正式训练或交付准确。
 
-`CORE_RESTRUCTURE_PLAN.md` 负责决定当前活跃工作队列、Phase 顺序、优先级、Decision Gate 和退出标准。其他 Markdown 只能作为辅助文档：可以补充状态、证据、规则、执行剧本、设计依据、历史和问题教训，但不得形成第二套“下一步”。如果辅助 MD 需要新增待办、调整优先级或改变退出标准，先同步 `CORE_RESTRUCTURE_PLAN.md`。
+任何 CAD 交付声明都需要说明：
 
-`PlanMD` 不得改变系统根方向：通用 Core Lab、Core 优先、`CAD_PLAN` 中间层、真实 CAD 证据门槛、场景 Agent 轻量化和保护用户 DWG。若文档治理与这些边界冲突，以边界为准，先修文档，不改方向。
+- 预期对象、尺寸、基点、图层、文字 / 标注和允许误差。
+- `validate`、dry-run、执行报告、created handles、bbox / layer / entity type 回读。
+- 实际输出与结构化意图的差异。
+- 截图只作为视觉辅助，不能替代实体回读和几何证据。
 
-开发状态文档按职责维护：
+若影响 CAD 落图、截图、训练、runner、验证、资产复用 / 沉淀、局部修复或真实 CAD 证据链，单元测试外还要跑一条代表性实际链路。真实 CAD / GUI / COM 不可用时，结论必须写 `not_run`、`not_verified` 或 `blocked`。
 
-- `CORE_CONTEXT_BRIEF.md`：短上下文入口，只写当前结论、目标入口和按需展开表。
-- `CORE_RESTRUCTURE_PLAN.md`：唯一 PlanMD、主计划和下一阶段执行路线。
-- `CORE_STATUS.md`：Core 能力矩阵和成熟度。
-- `docs/status/current.md`：当前进展页，不堆长历史。
-- `docs/status/changelog.md`：历史变更流水。
-- `docs/status/issues.md`：失败、回归、风险和排障教训。
-- `docs/decisions/cad-agent-decisions.md`：方向和架构决策。
-- `docs/planning/phases/*.md`：Phase 辅助执行剧本，只展开主计划中的工作项。
+## 4. DWG 安全边界
 
-模型型 Agent / Host runtime / closeout gate 相关开发必须优先使用文件化事实源：一次任务对应一个 `output/runs/<run_id>/` 运行包，`state.json` 记录当前阶段、阶段输入、阶段输出、状态和阻断原因。后续 Agent 不得只靠“上一轮聊天记忆”判断任务是否已经收集上下文、分发、执行、复审或可交付；中断恢复应先读 `state.json` 和对应 JSON / Markdown reports。
+常规写入使用启动卡片指定的预览层；不得无授权保存当前业务 DWG、覆盖原图、修改正式图层、清空全模型空间或删除全部可见对象。
 
-focused / formal CAD 可见交付还必须有 `closeout_decision.json` 或等价 closeout 决策，至少核对 validate、dry-run、created handles readback、`savedCurrentDwg=false`、`targetLayer=CODEX_PREVIEW`、visual acceptance、neighbor protection，以及按需 delete scope / asset source gate。删除范围与邻区保护报告的当前 Core 入口是 `core.orchestrator.delete_neighbor_gates`，运行包事实源为 `cad_reports/delete_scope_gate.json` 和 `cad_reports/neighbor_protection.json`。截图只能是 `visual_aid_only`，不能替代 readback、visual acceptance 或用户验收；证据不足时 closeout 必须输出 `not_verified` / `blocked`，不得输出完成口吻。
+删除、替换、清理和局部修复必须先声明 `target_handles` 或 `scope_bbox`，生成 victim set preview / dry-run，并列出受影响对象的 handle、layer、bbox、entity type 和所属 zone。没有精确范围时只能阻断或做只读分析。
 
-### 0.3.1 5.5 模型桥准确性优先扩展
+局部错误优先原位修复：读取上一轮 execution summary、created handles 和当前 CAD readback，生成 `repair_plan`，只对证据锁定的对象做 `update`、`delete_replace` 或 `add_missing`。只有旧 handles 缺失、对象被删除 / 炸开、局部修复会破坏整体结构，或根因是全局坐标 / 比例 / 布局错误时，才允许整块重画。
 
-用户已明确选择准确性优先，不要求按额度分档。后续所有登记在 `agents/pipeline/pipeline_manifest.json` 的 `model_bridge_expansion` 节点，都应把 `gpt-5.5` 模型桥作为只读判断层：复审视觉质量、语义拆分、资产来源、修复建议、交付声明、训练沉淀和场景常识。扩展清单、P0-P3 顺序和初步 Prompt 规范收口在 `CORE_RESTRUCTURE_PLAN.md` 与 `pipeline_manifest.json`；不得再新增第二套根级 PlanMD。
+## 5. 状态口径
 
-设计阶段是模型桥核心范围。创造性或样式敏感任务必须先经过 `pipeline_design_director` 的设计判断，再由 `pipeline_style_generator` 按语义决定 waiver、单方案或 2-3 套参数化候选，CAD readback 后由 `pipeline_design_reviewer` 做专业图纸复核；“新样式 / A/B/C / 发后选”是分发信号，不是每次都必须生成三套方案的死规则。没有设计策略或显式低风险豁免时，不得从 brief 直接跳到 CAD_PLAN 并声称具备创造性设计能力。
+普通交付用自然段说明本轮结果、证据和风险，不主动附进度表。只有用户点名状态、进度、交接、审计、表 A/B/C、覆盖率或刷新表 C 时，才展开表格。
 
-当前 Prompt Pack ready 节点包括 `pipeline_visual_acceptance_reviewer`、`pipeline_delivery`、`pipeline_repair`、`pipeline_orchestrator`、`pipeline_design_director`、`pipeline_style_generator`、`pipeline_design_reviewer`、`pipeline_asset_governor` 和 `pipeline_visual_layout_reviewer`；P1 / P2 / P3 其它节点按 manifest 中的 `promptPackStatus` 逐步补 Prompt Pack。`pipeline_execute` 只能接收执行前安全守卫式模型复审，不得接收模型生成的 CAD 命令或执行授权。
+成熟度必须拆成三层：
 
-模型桥输出必须是 strict JSON，并带 `modelProviderStatus`、`evidenceUsed`、`evidenceMissing`、`blockingReasons`、`repairRecommendation`、`statePatch`、`finalResponseAllowedClaims` 和 `learningCandidate`。模型 pass 不能替代 UTF-8 编码门禁、validate / dry-run、created handles readback、bbox / layer / overlap 审计、sourceSpec、reuseReplay、表 C 或用户验收；模型 fail、schema invalid、provider unavailable 或 required 字段缺失时，不得静默通过。
+- 底座证据覆盖：机器 coverage、registry、benchmark、真实 CAD 证据覆盖。
+- Agent 任务成熟度：端到端任务、训练案例、用户反馈、局部修复和学习闭环。
+- 项目交付准备度：真实项目 / 完整施工图交付边界，不能由底座 coverage 自动推出。
 
-多 Agent 活体协作还必须证明“不是多个 Agent 各说各话”。若声称已经真实协同，至少要有一个 run package 记录连续模型调用，关键 Agent 的 `modelInvoked=true`，下游 prompt / payload 显式引用上游 `agent_outputs/*.json`，并把冲突、互审结论和阻断原因写入 `task_contract.json`、`dispatch_plan.json`、`closeout_decision.json` 或等价报告。缺少上游输出引用时，只能声称“单 Agent 模型调用”或“Prompt Pack ready”，不得声称“多 Agent 活体协作已跑通”。
+任何百分比都不能替代测试、benchmark、截图、created handles 回读或 `geometry_verified`。历史百分比留在 changelog、history 或明确标注为历史快照的状态段落中。
 
-所有模型桥 Agent 都是可自动升级的训练对象。模型 fail、用户反馈 fail、机器审计 fail、closeout blocked 或修复成功后，必须记录 `learningCandidate` 或显式 `not_required`，包括 `errorPattern`、`correctPattern`、`promptDelta`、`checkerDelta`、`retestOriginalTask` 和 `responsibleAgentIds`。`pipeline_learning_promoter` 负责把可沉淀经验写回责任 Agent 的 `training_memory.json` / `prompt_addendum.md`，并在需要时提出基础规则、单项规则、检查器和原任务回测候选；该沉淀不提升表 C，不替代真实 CAD 证据。
+## 6. 训练链路
 
-任何声称主 Agent 变聪明、具备更强认知、已经学会某类判断或已经接近 Codex-like 主脑的改动，都必须提供 before / after proof：同类真实任务中 route、dispatch、requiredAgents、tool choice、blocking reason、learningCandidate、原任务回测或下一次 replay 结果确实因历史经验而改变。没有这类证据时，只能称为机制建设、提示词建设、规则建设或可训练性建设，不能称为认知提升。
+训练和复训按最小充分原则路由：
 
-如果未来判断根目录 Markdown 过多，优先迁移到 `docs/history/`、`docs/architecture/`、`docs/decisions/` 或 `docs/verification/`，不要直接删除仍有历史依据的文档。
+| 模式 | 触发语义 | 必需证据 | 不自动执行 |
+| --- | --- | --- | --- |
+| `quick_trial` | 试一下、快画、小动作、先看看、不进训练 | 最小结构化意图、一次写入、一次关键回读 | 完整校验、截图、自检、工作台同步、learning promotion |
+| `focused_retraining` | 训练某项、任务 X、加深、某图案 / 比例测试 | 点名能力、focused 报告、局部落图、关键 readback | 整批队列、覆盖整批验收、完整工作台同步 |
+| `formal_acceptance` | 验收、沉淀、训练通过、整批、全部、刷新队列、推进表 C | 完整计划、校验、dry-run、落图、audit、截图、自检、报告、同步 / coverage | 无 |
 
-### 0.3.2 架构归并画布优先
+用户点名单项时不得静默扩大成整批。若现有脚本只有整批入口，应先补 focused 参数，或询问是否允许放大范围。
 
-当前仓库级主工程是 `ARCH-CONVERGENCE-01` 架构归并画布工程。它的目标不是删除旧模块，而是把过去探索式开发形成的表 A/B/C、V-PROOF、RCAD、训练地图、资产库、多 Agent、Worker / bridge、GPT-5.5 模型桥、截图和工作台，归入统一任务生命周期。总设计入口是 `docs/architecture/system-architecture-convergence.md`，执行主线写入 `CORE_RESTRUCTURE_PLAN.md` §0.2，OpenSpec 契约为 `openspec/changes/unify-system-architecture-canvas/`。
+训练脚本、CAD 调用、截图、回读、工作台同步和 Agent check 都要有 30 秒子动作 watchdog。一次有限自救后仍失败，应熔断并记录 `timeoutSeconds`、`selfRecoveryAttempted`、`circuitBreakerTriggered`、`blockedReason`、保留证据和下一步。
 
-架构归并期默认暂缓正式对象训练、整批训练、表 C 推进和系统资产大沉淀。若用户明确覆盖暂停，仍必须遵守 quick / focused / formal 训练边界、`CAD_PLAN`、validate / dry-run、`CODEX_PREVIEW`、created handles readback、sourceSpec 和 no-save 规则。
+基础训练通过不代表永久封存。后续复杂任务暴露基础能力不稳时，要回流到对应基础项，追加新证据和 learning promotion；旧证据保留为历史版本。
 
-所有新旧模块必须能映射到七层画布之一：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。无法说明层级、输入输出和禁止越权关系的新增框架，不得进入主线。
+## 7. 证据保留与数据瘦身
 
-## 0.4 开发状态查询与进度口径
+训练计划、案例反馈、Agent memory、Prompt addendum、learning ledger、registry 和最终验收报告是长期事实源。`capability-map-data.js`、HTML、sync report、retention report、debug report 和 data-bloat audit 只能作为派生或诊断展示。
 
-后续每次完成 CAD Agent 相关改动后，Codex 可以在内部判断是否影响开发进度、任务台账或表 C，但**不要在普通最终回复里默认输出进度表、表单或百分比表格**。普通交付优先用自然段说明本轮完成内容、验证证据和风险边界。
+正式训练、复训、队列推进、正式工作台同步、资产沉淀或仓库级治理会生成新证据前，必须判断哪些产物是长期事实源、哪些是短期候选、哪些是派生快照、哪些因仍被引用而不可清理。
 
-只有用户明确点名 **开发状态查询 / 进度 / 完整状态 / 交接 / 审计 / 表 A / 表 B / 表 C / Core Proof Coverage / 刷新表 C / 报进度表** 时，最终回复才使用进度表格。若用户问“真实 CAD 实力”，必须先区分 `Core Proof Coverage`、`Agent Task Maturity` 和 `Project Delivery Readiness`，不能直接把旧表 C 当作端到端真实能力。
+清理 / 归档写入前必须先跑 retention dry-run 或等价 evidence-closure gate。若 active fact source 缺失、引用根未覆盖、候选仍被引用，或清理会让报告路径缺失变差，必须阻断。
 
-**Agent 训练期：** 见 `AGENTS.md`、`docs/training/README.md` 与 `docs/training/cad-common-sense-upgrade.md`——未点名开发状态或表 C 时，不附进度表；训练交付回复必须说明本轮结论、相对上一轮变化、机器证据证明了什么、没证明什么、请用户重点看哪里，禁止只堆 handles、arc 数、gap / overlap 数字或截图。
+## 8. 系统资产沉淀与复用
 
-**训练期 / CAD 会话截图默认：**
+用户明确要求沉淀通用资产时，执行系统资产四件套：
 
-1. **默认保留布局**：左 CAD / 右 IDE 分屏时，**不要**把 AutoCAD 全屏或强置顶；仅当窗口最小化时 `SW_RESTORE`。
-2. **再**按本次任务目标重取景：局部修复时优先 `target_handles`、`repair_plan.target_handles`、`repair_plan.target_bbox` 或显式 `target_bbox`；没有局部目标时才退到整批 `execution_summary.created_handles`。用户中途误拖 / 误缩也须自动拉回。
-3. **只截** AutoCAD 客户区（`--capture-autocad-window` + 默认 **`PrintWindow`**，IDE 挡在 CAD 上也不会被拍进去）；禁止默认整屏 `--capture-screen`（仅 fallback）。
-4. **仅当 PrintWindow 失败或 CAD 完全被遮挡**时，才用 `--force-foreground` 置顶一次并重试。
-5. 截完后用户可立即切到其它软件；Agent 不得长时间占前台。
-
-推荐：`prepare_autocad_for_capture` / CLI 一条命令（默认 `preserve_layout`）。截图仍 `visual_aid_only`。
-
-**状态查询必须保留：**
-
-- **Core Proof Coverage / 旧表 C 主指标**：`cad_strength_headline_percent`，机器值以 `output/validation_runs/capability-lab/cad_capability_coverage.json` 为准；只证明底座证据覆盖。
-- **Agent Task Maturity**：CAD Designer Agent 端到端任务成熟度，必须靠训练案例、用户 feedback、真实 readback、局部修复闭环和学习沉淀判断，不能由表 C 自动推导。
-- **Project Delivery Readiness**：真实项目 / 完整施工图交付准备度，必须单独说明当前未由底座 coverage 证明。
-- **本轮证据**：说明跑了哪些测试、benchmark、coverage、CAD readback；百分比不得替代证据。
-- **表 A 折叠值**：`总进度`，可括号附 `Core` / `Agent`。
-- **表 B 相关轨道**：只报本轮触达的中文轨道名（能力证明 / 代码轨 / CAD 补验）；未触达时写“本轮未改变任务台账”即可。
-
-**完整展开条件：**
-
-只有用户明确要求完整状态汇报、交接、审计、进度盘点、对比、开发状态、表 A/B/C、表 C、Core Proof Coverage 或刷新表 C 时，才展开进度表格。完成开发包、修改 registry / showcase / coverage、处理回归、绘图不准或口径争议时，不自动触发表格；普通回复只说明本轮结果、证据和风险。用户说「真实 CAD 实力」时，先说明该词已拆成三层口径，再按需要展开历史表 C。
-
-**完整表 A — 工程节奏**
-
-- `总进度`、`Core 底座开发进度`、`Agent 多场景实现进度`（默认 `总进度 = Core × 70% + Agent × 30%`）。
-
-**完整表 B — 任务清单三指令执行进度**（`docs/planning/任务清单.md` §0）
-
-- `能力证明`（§3）、`一键推进`（§4 代码轨）、`RCAD 烟囱包`（§5）；展开时须带 `done/总量` 或 §5 的 `verified` 包数/总量。
-- 口径：`done 包数 ÷ 该板块任务包总量`；新增需求入表时分母变大，百分比可能下降。
-- 表 B ≠ 表 A；亦 ≠ 表 C（真实 CAD 实力）。
-
-**完整表 C — Core Proof Coverage（历史旧名：真实 CAD 实力）**（`scripts/run_capability_coverage.py`）
-
-- `cad_proof_coverage_percent`、`cad_strength_index_percent`、`scene_fragment_strength_percent`、`showcase_readiness_percent`、**`cad_strength_headline_percent`（主指标）**。
-- 主指标 = `min(实力指数, L3+片段, showcase)`；`showcase_count=0` 时主指标为 0%，须同时报加权指数与 L3+ 子指标。
-- 表 C ≠ RCAD 烟囱完成度；primitive 矩形 smoke verified 不计为「施工图能力」。
-- 表 C ≠ `Agent Task Maturity`，也 ≠ `Project Delivery Readiness`。
-
-**用户口令「真实 CAD 实力」/「推进表 C」**（`docs/planning/任务清单.md` §0.1）：编排 §3 `V-PROOF` + 链式 RCAD + registry 回写 + 复跑 coverage；**不是** §4 一键推进。「刷新表 C」只复跑 coverage、不新开包。
-
-当前基准估算见 `CORE_STATUS.md`、`docs/status/current.md` 与 `output/validation_runs/capability-lab/cad_capability_coverage.json`。本规则文件不写死“当前表 C”百分比；历史百分比只允许出现在 `docs/status/changelog.md`、`docs/history/`、`docs/planning/archive/` 或明确标注为历史快照的段落中。
-
-## 0.5 能力证明体系（路线 F）
-
-- 架构：`docs/planning/capability-proof-architecture.md`；任务包：`docs/planning/任务清单.md` §3（`V-PROOF-00`~`79`）。
-- 每个可声称能力须在 `cad_capability_registry.json` 占一行，含 `claim_level`（`none` / `deferred` / `smoke` / `verified` / `showcase`）。
-- **路线 E / RCAD** 只负责真实 CAD 执行；通过后须回写 registry，不得只留报告不入表。
-- 新能力：**先登记（V-PROOF-01）再开发或 RCAD**，禁止「只写代码不登记」。
-- 对外声称 CAD 已通过：仅当对应行 `claim_level` 为 `verified` 或 `showcase`，且有可复跑 `cad_case` 与 `geometry_verified` 路径。
-
-估算规则：
-
-- 新增一个测试或一次 CAD 截图通过，不得直接大幅提高百分比；只有形成可复验能力、文档同步和明确边界后，才小幅上调。
-- 发现回归、验证缺口或之前结论夸大时，可以下调百分比。
-- 百分比变化达到约 2 个百分点以上，或用户要求状态汇报时，同步 `CORE_STATUS.md` / `docs/status/current.md`。
-- 任何百分比都不得替代真实验证证据；涉及 CAD 几何准确仍必须看 `readback_report.json`、`cad_capability_probe.json` 和关键 checks。
-
-## 0.5 Core / 场景 Agent 边界
-
-当前仓库存在多个 `agents/<scenario>/` 目录和 scene benchmark，但它们的成熟度必须分级表达：
-
-- `Core 底座`：通用 schema、workflow、`CAD_PLAN`、CAD IO、验证、benchmark、读图、对象、图块和安全门禁。
-- `Scene Alpha 壳层`：场景 preferences、词汇、默认参数、排序权重、解释模板和边界扫描，只证明多场景可复用同一 Core。
-- `Scene Beta 能力包`：某个场景有对象体系、微场景、失败样本和 non-CAD benchmark，可证明场景语义可跑通。
-- `Scene Product 场景产品`：某个真实业务场景有脱敏样本、图块策略、真实 CAD smoke、用户确认流和交付边界，才可接近可用 Agent。
-
-因此，不得把 `office/residential/restaurant` 的 preferences、rules、Alpha 验收或 scene beta non-CAD benchmark 写成“多场景 Agent 已产品化完成”。真正的场景开发要进入该场景的对象体系、业务规则、图块 metadata、项目样本、失败样本、真实 CAD readback 和用户确认闭环。
-
-以工装为例，只有当开放办公、会议室、前台接待等子场景的办公桌 / 工位组 / 会议桌 / 文件柜 / 前台等对象、规则、图块和真实 CAD smoke 都有证据后，才可以提升为工装 Scene Product。详细边界见 `docs/architecture/core-scene-agent-boundaries.md`。
-
-未来场景能力采用“主底座中控按需调用”的架构：
-
-- `Core Orchestrator` 是唯一主中控。
-- `Scene Router` 只在用户明确场景或项目 manifest 指定场景时启用场景。
-- 没有明确场景时必须返回 `no_scene`，只调用通用 Core。
-- 场景能力以 `Scene Capability Module` 形式独立放在 `agents/<scenario>/`，可包含 registry、preferences、对象清单、微场景、图块映射和解释模板。
-- 场景模块不得直接执行 CAD、做通用几何、碰撞、回读或验证；这些仍归 Core。
-- 如果未来允许场景专属 adapter 函数，必须先在 `CORE_RESTRUCTURE_PLAN.md` 登记接口、边界扫描和测试，不能直接绕开当前 `agents/` 无 `.py` 的 Alpha 规则。
-
-## 1. 不直接从白话画 CAD
-
-用户用白话或语音提出需求后，Codex 必须先生成 `CAD_PLAN`。
-
-只有以下情况可以直接画：
-
-- 用户明确要求做快速临时测试。
-- 图形非常简单，并且只画在测试图层。
-- 已经说明这是一次临时验证，不作为正式流程。
-
-## 2. 默认保护原图
-
-- 不直接覆盖原始 DWG。
-- 不默认保存当前 DWG。
-- 不默认修改正式图层。
-- 默认画到 `CODEX_PREVIEW` 图层。
-- 大批量绘制前必须先 dry-run。
-
-## 2.1 默认不落文字和尺寸标注
-
-面向用户生产或交付的 CAD 输出，默认不生成中文文字标注、不生成英文文字标注，也不默认生成尺寸标注。
-
-这不是删除能力。`include_label`、`include_dimensions`、`draw_text`、`add_dimension` 等文字和尺寸能力必须保留；只有在用户明确要求加名称、编号、说明、文字、尺寸、尺寸线或标注时，才在对应 `CAD_PLAN` 中显式启用。
-
-能力探针、回归测试、benchmark 或专门验证文字 / 尺寸能力时可以启用这些开关，但必须把它们标记为测试或能力证据，不能当成普通生产出图默认值。
-
-能力探针、回归测试和 benchmark 如果必须绘制文字、尺寸、箭头或说明性对象，必须写入 `CODEX_DIAGNOSTIC` 或等价诊断层；`CODEX_PREVIEW` 用户可见生成层默认只保留本轮几何结果。验证报告应分别统计预览层和诊断层，截图或交付口径不得把诊断层残留当成用户生成图块的一部分。
-
-写入 `CODEX_DIAGNOSTIC` 时必须显式标记 `layer_role="diagnostic"`；没有诊断角色的诊断层写入应被 guard 拦截，避免 `CODEX_DIAGNOSTIC` 演变成第二个普通出图层。
-
-对话、dry-run 报告和验证报告仍应说明对象、尺寸、基点、图层和允许误差；这类说明不等于在 DWG 中落文字实体或尺寸实体。
-
-## 2.2 原位局部修复优先
-
-当用户指出局部错误，或机器审计 / Agent 自检发现局部对象不对时，Codex 不得默认在旁边新开区域完整重画一份。优先动作是读取上一轮 `execution_summary`、created handles 和当前 CAD readback，生成 `repair_plan`，在原位置只修错的对象。
-
-`repair_plan` 至少写清：
-
-- `target_handles` / `target_bbox`：要编辑或删除的实体句柄和范围。
-- `entity_types`：文字、尺寸、线、hatch、block reference、polyline 等实体类型。
-- `failure_reason`：乱码、样式不对、缺线、错线、重叠、位置偏差、比例错误等。
-- `operation`：`update`、`delete_replace`、`add_missing` 或 `no_change`。
-- `neighbor_guard`：相邻对象或表格线、样例线、参考对象是否必须保持不动。
-- `verification`：修复后需要回读的 handles、bbox、属性、图层和截图视角。
-
-用户明确开放删除 / 编辑命令时，只表示允许 Codex 对 `CODEX_PREVIEW` 中被证据锁定的错误对象做局部删改；不得扩大为清空整张图、删除全模型空间、删除全部可见对象、修改正式图层、保存、覆盖或执行不可逆操作。若错误只是文字乱码，应只更新文字内容 / text style，或删除对应文字句柄后在原 bbox 内补回；没有错误的表格线、样例线、hatch、标注和参考对象不得重画。
-
-只有在旧 handles 缺失、对象被炸开或删除、局部修复会破坏整体拓扑，或根因来自全局坐标系、比例、布局框架错误时，才允许整块重画。整块重画前必须说明局部修复为什么不可行，并尽量先清理或替换同一范围内的旧错误对象，而不是把新图无限向旁边漂移。
-
-## 2.3 修复交付必须运行实际链路
-
-所有修复默认要在交付前运行覆盖原问题的最小实际链路。普通代码、文档或规则修复至少运行对应单元测试、校验、审计或格式检查；CAD 相关修复不能只停在单元测试或报告字段检查。
-
-凡改动影响 CAD 落图、截图、训练、runner、验证、资产复用 / 沉淀、局部修复或真实 CAD 证据链，必须在单元测试外再运行一条代表性实际链路。若 AutoCAD 可用，优先在当前真实 CAD 会话中复验；写入仍只允许 `CODEX_PREVIEW` 或诊断层，默认不保存当前业务 DWG、不修改正式图层、不扩大删除范围。若修复只影响截图或只读视觉复核，至少运行 `scripts/render_preview.py --check`，并在 CAD 可用时运行 `scripts/render_preview.py --capture-autocad-window`；有 `execution_summary`、`target_handles`、`target_bbox` 或 `repair_plan` 时必须传入，证明截图聚焦的是本次任务或局部修复对象。
-
-如果真实 CAD / GUI / COM 因沙箱、权限、窗口、授权、文件锁或活动 DWG 不可用而失败，Agent 不能直接把问题交回用户，也不能把修复称为完成。必须先按 `docs/runbooks/blocker-playbook.md` 自救：读取 stdout / stderr、最近报告和 CAD 会话状态，必要时申请外部执行；仍不可用时，报告写 `blocked` / `not_run` / `not_verified`，并列出已运行命令、失败原因、保留证据和下一步。
-
-## 3. 每个 CAD 动作都要可解释
-
-执行前要能说明：
-
-- 画什么。
-- 画在哪。
-- 尺寸是多少。
-- 图层是什么。
-- 哪些信息是用户明确说的。
-- 哪些信息是 Codex 推断的。
-
-## 4. 每次开发都要更新记录
-
-只要创建、移动、修改了 CAD Agent 相关文件，就更新：
-
-- `docs/status/current.md`：当前到哪一步。
-- `docs/status/changelog.md`：改了什么，为什么改。
-- `docs/status/issues.md`：如果遇到问题，记录现象、原因、修复。
-
-## 5. 先小闭环，再扩展
-
-新能力按这个顺序开发：
-
-```text
-白话例子
--> CAD_PLAN 示例
--> Schema 校验
--> dry-run 输出
--> 预览绘制
--> 回读验证
--> 扩展到更多对象
-```
-
-不要先做大系统。
-
-## 6. 文件职责要清楚
-
-- `core/` 放通用 CAD Agent 底座能力，是后续主要开发区域。
-- `agents/` 放轻量场景 Agent，只写场景差异、默认偏好和专用 workflow。
-- `libraries/` 放跨场景资源，例如块、对象、风格、材料、尺寸、人体工学和图层标准。
-- `projects/` 放真实或样例项目资料，不污染通用规则。
-- `scripts/` 放兼容旧命令的薄包装器，真实实现逐步迁入 `core/`。
-- `drivers/` 放兼容旧导入的薄包装器，真实驱动逐步迁入 `core/cad_io/`。
-- `schemas/` 放过渡期 schema 兼容副本，正式 schema 逐步迁入 `core/schemas/`。
-- `docs/` 放架构、路线、决策、治理、验证、历史和 Phase 辅助执行剧本；不承载独立 PlanMD。
-- `skills/` 放给 Codex 使用的 CAD Skill 草稿，后续逐步对齐 Core 架构。
-
-## 7. 跑偏检查
-
-如果某个功能不能回答下面问题，就暂停开发：
-
-```text
-1. 它是否是两个以上场景会复用的通用能力？
-2. 如果是，为什么不放在 core？
-3. 如果不是，它属于哪个 agents/<scenario>？
-4. 它需要的共享资源是否应该进入 libraries？
-5. 它的项目资料是否应该进入 projects？
-6. 它最终如何转成 CAD_PLAN 或明确结构化绘图意图？
-7. 校验、dry-run、执行和验证结果怎么看？
-```
-
-## 7.1 自动化训练超时与熔断保护
-
-自动化训练 CAD 任务不得依赖无上限等待。训练脚本、CAD 调用、截图、回读、工作台同步和 Agent check 都必须按子动作设置默认 30 秒 watchdog；确需更长等待时，必须提前写明原因、分段检查点和最长等待。
-
-30 秒超时后，Codex / Agent 先自救，不直接把问题丢给用户：读取 stdout / stderr、最近报告、队列状态和 CAD 会话状态，判断是否是 CAD 窗口、COM 可见性、文件锁、路径、依赖、截图工具或快照过期等问题；随后只做有限恢复，例如重连、刷新、重取景、重跑该子步骤或改用 deferred。相同子动作最多重试 1 次，或最多连续执行 2 个相邻恢复动作。
-
-出现以下任一情况必须熔断暂停：同一训练项连续 2 次 30 秒超时；同一队列连续 3 个子动作超时 / 失败；超时后无法确认 CAD 输出是否安全。熔断时进入 `blocked` / `needs_user_review` 或等价状态，记录 `timeoutSeconds: 30`、`selfRecoveryAttempted`、`circuitBreakerTriggered`、`blockedReason`、卡点、自救动作、保留证据和下一步建议。
-
-熔断后不得继续无人值守落图、保存 DWG、覆盖原图、删除实体或改正式图层；不得把 partial output、过期快照或未完成 post-sync 说成训练通过、工作台已同步或真实 CAD 能力已证明。
-
-## 7.2 基础训练允许回流复训
-
-训练项进入 `systemized/pass` 只代表当时的训练输入、机器证据、Agent 自检和沉淀记录通过，不是永久封存的交付状态。CAD Designer Agent 在后续对象课程、复杂场景或真实 CAD 案例中，仍可能暴露基础命令、图层纪律、闭合、回读、block 引用、layout / plot 或安全回滚等基本功不稳。
-
-出现这类问题时，不得用“基础项已经训练完成”来跳过修复。Agent 必须做回流判断：把复杂任务中的失败归因到一个或多个基础训练项，记录触发案例、失败症状和缺失证据；必要时修改基础脚本、Prompt addendum、检查器、规则或训练数据；随后重新跑对应基础项的二次 / 三次加强训练，并回测原复杂任务是否因此改善。
-
-复训应追加新的验收报告、learning promotion 和工作台同步结果。旧 `pass` 证据保留为历史版本，不直接删除或覆盖；如果新证据推翻旧假设，应在 `docs/training/training-errors.md` 或 `docs/status/issues.md` 说明口径变化。
-
-复训停放区应尊重用户移动后的查看位置。若上一轮训练报告或 execution summary 记录了 created handles，后续复训先回读这些 handles 的当前位置和 bbox，并把它们作为训练停放区参考；不得因为用户移动了面板，就退回按全画布最右侧继续外扩。只有旧 handles 无法回读时，才使用全局 `CODEX_PREVIEW` bbox 选择新的空白区。报告中应记录 `parking_anchor` / 等价字段，便于判断本轮是跟随 `previous_handles`、退回 `global_preview_bbox`，还是从 `origin` 开始。
-
-## 7.3 复训范围不得自动放大
-
-用户点名单个训练项、某个子主题或截图里的局部模式时，Agent 必须按最小充分范围执行 focused retraining。例如“任务 12 加深训练”只允许重训第 12 项；“这个填充图案做不同比例测试”只允许围绕该 hatch pattern 和比例组生成对比，不得重新跑整批 21 项或 31 项。
-
-整批训练只在用户明确说“全部 / 整批 / 重新跑所有 / 刷新整个队列”时执行。若当前只有整批脚本，没有 focused 入口，正确动作是先补 `--only` / `selected_capability_ids` / 子范围参数，或询问用户是否同意扩大范围；不得静默把轻量级需求扩大成完整队列。
-
-focused 训练报告必须写入 `scope.mode=focused`、`requestedCapabilityIds`、`scopeReason` 和必要的子参数（如 hatch pattern / scales）。focused 证据可追加到训练事实源或 learning ledger，但不应覆盖 full-batch `completed` 证据，也不得冒充“整批重新验收通过”。
-
-## 7.4 训练轻重链路量化路由
-
-训练期 CAD 动作按最轻可证明原则路由。用户语义较轻时，不得默认套完整训练闭环；用户要求沉淀或验收时，才进入完整链路。
-
-| 模式 | 触发词 / 语义 | 默认预算 | 必跑证据 | 默认跳过 |
-| --- | --- | ---: | --- | --- |
-| `quick_trial` | “试一下”“快画”“小动作”“先看看”“先别沉淀”“不进训练”“只画这个” | ≤ 2 分钟 | 最小结构化意图；只写 `CODEX_PREVIEW`；1 次 CAD 写入；1 次关键回读（handles / bbox / 图层 / hatch pattern / scale） | 完整 validate / dry-run、截图、自检文档、工作台同步、learning promotion、coverage |
-| `focused_retraining` | “训练某项”“任务 X”“加深”“某图案”“某比例测试” | ≤ 8 分钟 | 只覆盖点名能力；focused 校验或 dry-run；局部落图；关键 readback；`scope.mode=focused` 报告 | 整批队列、覆盖整批验收、完整工作台同步 |
-| `formal_acceptance` | “验收”“沉淀”“训练通过”“记入工作台”“整批”“全部”“刷新队列”“推进表 C” | 不设总时长；子动作仍受 30 秒 watchdog | 完整计划、validate / dry-run、`CODEX_PREVIEW`、readback / audit、必要截图、Agent 自检、报告、post-sync / coverage | 无 |
-
-`quick_trial` 回复不超过 3 句，必须说明“快试未沉淀”，不得声称训练通过、工作台已更新、表 C 提升或可交付准确。若快试预计新增对象超过 20 个、需要修改已有实体、涉及正式图层 / 保存 / 删除、关键回读失败、超过 2 分钟仍无关键证据，或用户要求正式准确性，必须先说明原因并升级到 `focused_retraining` / `formal_acceptance`，不得静默执行重链路。
-
-训练收尾必须经过 `promotionGate`。正式训练或复训通过后，gate 至少要声明 `updateTrainingSource`、`updateWorkbench`、`updateAgentCalibration`、`updateBaseRules`、`updateTaskRules`、`updateChecker` 和 `retestOriginalTask` 七项决策。`quick_trial` 必须保持 `promotionLevel=observation`，不得写 Agent 校准或工作台已沉淀状态；底座规则、单项规则和检查器 delta 必须标为 `needs_reviewed_package`，不能由训练脚本静默写入长期规则。
-
-## 7.4.1 自适应能力成长复训边界
-
-当用户指出“这个能力之前训练过但输出又退回烟测”或明确要求“加深 / 按历史经验提高表达”时，默认进入 adaptive capability growth 判断，而不是直接重跑完整队列。系统应优先构建 repo-local `capability_growth_profile`：只读取仓库内 active / protected 事实源、final report、learning ledger、Agent memory / Prompt addendum、registry evidence 和明确引用的训练报告；`output/debug`、工作台派生快照、sync report、retention report、diagnostic report、外部路径、缺失文件、截图和模型 pass 只能是 diagnostic / derived，不能作为 hard baseline。
-
-`growth_replay` 只允许在 `focused_retraining` 或显式 `formal_acceptance` 中使用。它必须记录 `requestedCapabilityIds`、`scopeReason`、profile source roles、positive / negative lesson、required features、observed features、expression comparison 和 original task retest boundary；缺任一关键项时 closeout 只能 `blocked` / `not_verified`。`smoke_replay` 允许最小表达豁免，但必须写明 `acceptedExemption=explicit_minimal_smoke`，不得把豁免烟测说成能力成长。
-
-能力成长复训不能自动修改基础规则、单项规则、检查器、Agent memory、训练事实源、工作台、Worker 或表 C。任何可迁移 lesson 先进入 review-only candidate；要长期沉淀必须再经过 `promotionGate`、reviewed package、必要原任务回测和对应文档 / 事实源同步。没有真实 CAD created handles readback 时，不得声称几何能力已经增强。
-
-## 7.5 未列入计划的复合任务动态编排
-
-训练计划只列原子能力、代表性课程和必要验收器，不穷举所有业务组合。用户可能临场提出多个已有能力的组合任务，例如“截图里的沙发标注尺寸”“按参考图画对象并补尺寸”“识别已有门洞后补开启方向”。这类任务默认走动态编排，不因为计划中没有同名条目就拒绝，也不把每个组合追加进 V2 训练地图。
-
-Agent 必须先拆解复合任务：
-
-```text
-输入来源
--> 对象 / 场景识别
--> 尺度来源判断
--> 绘图 / 修改 / 标注意图
--> CAD_PLAN 或结构化意图
--> validate / dry-run
--> CODEX_PREVIEW
--> readback / audit / checked-not_checked
-```
-
-`evidence_source` 必须写清：只有截图时只能说明视觉定位和推断；截图 + 已知参照尺寸只能说明比例估算；DWG、created handles、原 `CAD_PLAN` 或用户明确尺寸才能进入对应几何 / 标注审计。视觉识别、截图裁剪或比例估算不得被写成真实 CAD readback。
-
-复合任务的沉淀规则：单次成功或失败优先写入案例反馈、`training-errors.md` 或 learning ledger；只有重复失败、可机器检查、可泛化为课程族、或需要新增稳定验收器时，才升级为训练项、benchmark、规则包或 Core 检查器。
-
-完整系统任务链路见 `docs/architecture/cad-agent-task-chain.md`。复合任务不能只停在“执行成功”或“训练通过”单侧闭环；凡涉及新失败模式、精准复训、资产复用 / 沉淀或 Agent 分工变化，都要判断是否需要同步底座规则、单一任务规则、检查器、Prompt / memory 和 A-to-A 校准。
-
-训练、复训、正式收尾型工作台同步、资产沉淀或仓库级治理还必须带数据防膨胀与证据闭合判断。主 Agent 不能只说“清理 output”：必须先区分 `protected`（active 事实源、final report、queue state、learning ledger、Agent memory / Prompt addendum、表 C / registry / 系统资产证据和仍被状态文档引用的路径）、`candidate`（短期 debug、test artifacts、retry、dry-run、execution summary、旧截图和临时报告）、`blocked`（事实源缺失、引用根未覆盖、候选仍被引用或证据断链会变差）和 `derived`（`capability-map-data.js`、HTML、sync report、retention report、data-bloat audit）。`derived` 不得反向登记为训练事实源；清理 / 归档写入前必须先有 retention dry-run 或等价 evidence-closure gate。A-to-A 合同若涉及训练收尾、正式工作台收尾或系统资产沉淀，应显式包含 `data_bloat_governance` hard gate；缺该 gate 时不得声称 A-to-A 已打通或产物治理完成。只为查看而刷新派生工作台快照属于轻量 `workbench_snapshot_refresh`，不得借此宣称正式训练 / 资产收尾完成。
-
-## 7.0 模型型 Agent 主机与 Trace 门禁
-
-模型型 Agent 的长期方向是“少数主脑 + 可审计子 Agent”，不是让所有角色无约束地自行动手。`pipeline_orchestrator` 可升级为 Orchestrator Host，负责理解用户请求、生成 run package、风险分类、A-to-A 合同和分发计划；Reviewer Host / delivery 复审链路负责读取截图、CAD readback、执行报告、模型 reviewer 输出和修复历史，决定是否能交付。二者都必须通过 `core/model_review`、`codex.cmd exec` 或等价 SDK 桥输出 schema 化 JSON，且默认只读。
-
-模型型 Agent 运行时必须先补 Trace，再补 Prompt。凡通过本地 Codex CLI 或未来模型 provider 调用的 Agent，必须至少记录 `traceId`、`agentId`、任务类型、最终 prompt、schema 快照、sanitized CLI command、cwd、timeout、模型策略、输入图片 / 摘要引用、stdout/stderr、`last_message.json`、schema 校验结果、normalized Agent output、`modelProviderStatus` 和 A-to-A gate decision；支持 `codex exec --json` 时还应保存事件流。每次 trace 还必须生成机器可读 `trace_review.json` 和给用户看的 `trace_summary.md`，由 Agent / trace reviewer 总结本次调用是否可用、输入是否足够、模型输出是否可信、gate 为什么通过或阻断、下一步修哪里。推荐路径为 `output/model_reviews/traces/<timestamp>_<agentId>_<traceId>/`。没有 Trace 或自动复盘摘要时，不得声称模型型 Agent 已经真实、可审计地参与本轮判断。
-
-模型型 Agent 事实源采用 JSON / Markdown / reports。`output/runs/<run_id>/**`、`output/model_reviews/traces/**`、训练事实源、资产 registry、状态文档和最终报告可以作为事实源；`capability-map-data.js`、`capability-map.html` 和工作台同步报告只作为 derived / diagnostic 展示，不得反向证明 Agent 调用、训练通过、视觉验收通过或能力晋升。
-
-模型输出只能用于理解、分发、复审、分类、修复建议和交付建议。模型不得直接授权 CAD 写入、删除、移动、保存、正式图层编辑、覆盖 DWG、verified 资产晋升或表 C 声明；模型 `pass` 不能替代 UTF-8 编码预检、validate / dry-run、created handles 回读、bbox / layer / entity type 审计、系统资产 sourceSpec、reuse replay、保存状态或用户人工验收。
-
-模型型 Agent 如需工具，必须输出 `toolIntent`，由 `core.orchestrator.tool_contract` 统一校验 schema、permission class、risk level、target scope 和 forbidden effects。Stage 1 只读工具只能读 run package / rule context / schema / 上游 JSON / trace summary；Stage 2 只能写当前 run 的 `candidate_outputs/` 候选；Stage 3 只能执行确定性验证工具并写 JSON 报告，例如 `cad_reports/validation_report.json`、`cad_reports/dry_run_report.json`、`cad_reports/preview_only_audit.json` 和 `closeout_decision.json`。模型只能请求验证，不能决定验证通过；工具返回 fail 或 `needs_more_evidence` 时，trace 和下游 closeout 必须 blocked / not_verified。Stage 4 受控 CAD tool intent 只允许 `preview_cad_execute` / `execute_cad_plan_preview` 这类 orchestrator-owned 入口处理，且必须先有同一 CAD_PLAN 的 validate + dry-run pass 报告；执行只能 preview-only 写 `CODEX_PREVIEW`，写出 `cad_reports/execution_summary.json`、`cad_reports/readback_summary.json` 和 `cad_reports/cad_preview_tool_report.json`，保持 `savedCurrentDwg=false`。fake-driver 预检只能证明工具编排，必须标 `cadGeometryVerified=false`；真实 AutoCAD / COM / handle readback 不可用时只能 blocked / not_verified。
-
-focused / formal CAD 可见交付必须逐步升级为 closeout hard gate：如果本轮有截图、有新增可见对象、有旁边放置、有训练结果复画、有资产仓库布局、有局部修复、有删除 / 清理，或用户要求准确交付，则应要求 `visual_acceptance_review` / Reviewer Host 输出。缺视觉验收输出、缺模型 trace、`modelInvoked=false`、schema 不合格、关键布尔字段为 false、`blockingReasons` 非空，或 evidence boundary 未覆盖非截图证据时，最终回复只能是 `blocked` / `not_verified`，不得进入完成口吻。
-
-删除 / 清理还必须先过 scope gate。所有 `delete`、`purge`、`delete_replace`、`cleanup`、`clear_previous` 必须声明 `target_handles` 或 `scope_bbox`，并生成 victim set preview / dry-run，列出将被影响对象的 handle、layer、bbox、entity type 和所属 zone。无 `target_handles` / `scope_bbox` 时只能 blocked 或做图层归一化，不得清空 `CODEX_PREVIEW`、全模型空间、全部可见对象、训练面板或全局预览 bbox。旁边 / adjacent / nearby 放置必须先做 occupied bbox 检查；执行后还要做 target zone 与 adjacent / protected zone readback diff，防止 A2 局部修复误删 A1 这类邻区损伤。
-
-## 7.1 系统资产沉淀协议
-
-当用户明确说“沉淀 XX 资产 / 把这个作为通用资产 / 收进资产库”时，Codex 必须执行系统资产沉淀协议，而不是只保存截图或当前 DWG 预览结果。
-
-系统资产沉淀采用四件套：
-
-| 职责 | 事实源 |
+| 层 | 事实源 |
 | --- | --- |
 | 机器契约 | 分类 `assets.json` / 标准 JSON |
-| CAD 原生资产位置 | 分类 `*_assets.dwg` / `.dwt` |
-| 应用 / 验收工具 | `scripts/sediment_system_asset.py` 或后续 `ensure_*` / `verify_*` |
+| CAD 原生资产 | 分类 `*_assets.dwg` / `.dwt` |
+| 应用 / 验收工具 | `scripts/sediment_system_asset.py` 或对应 ensure / verify 工具 |
 | 全局索引 | `libraries/system_library/registry.json` |
 
-同类资产必须进入稳定分类包。例如沙发进入 `libraries/system_library/furniture/seating/sofas/`，沙发 A / B 追加到同一个 `assets.json` 和同一个 `sofa_assets.dwg` 位置；绘图标准进入 `libraries/system_library/drawing_standards/basic/`，线宽、线型、尺寸样式、文字和引线样式共用 `standard_assets.dwg` 位置。
+`metadata_only` / `candidate` 只能表示候选。声称 native 写入时，必须有可见 native 证据、created/readback 数量、报告、截图和保存状态；声称 `verified` 时，还必须有复用 workflow probe 或真实 reuse replay。
 
-当前协议可以先登记合同并标记 `nativeDwgExists=false`。这只证明系统资产位置、机器契约和索引已建立；不得声称已经导出原生 DWG、已保存当前 DWG、或新 CAD 文件自动具备该资产。用户说“沉淀 XX 资产 / 通用资产 / 收进资产库”时，默认授权 Codex 对对应分类的系统资产 DWG 执行必要的创建、打开 / 激活、写入和保存；只要本轮向该系统资产 DWG 添加、替换或修复了原生 CAD 内容，必须保存并回读活动文档路径、`Saved=true` 和关键实体 / 样式证据。沉淀收尾时默认打开 / 激活对应系统资产 DWG，供用户人工复审。此授权不覆盖用户当前业务 DWG、原始图纸、正式图层、全模型空间清理或非系统资产文件的保存 / 覆盖；这些操作仍需另行明确授权和 CAD readback 验收。
+对象资产导出前必须过来源边界：只允许 `selected_handles`、`created_handles`、`active_dwg_handles`、`explicit_bbox` 或 `named_block`。不得把全模型空间、当前屏幕、全部可见对象、训练面板或全局预览 bbox 直接打成 block。
 
-真沉淀必须过可见 native 与复用联通门禁。`metadata_only` / `candidate` 可以只登记合同；但 `style_standard` 只写不可见 DimStyle、文字样式或线型定义时，不能说“资产 DWG 里已经有可复审资产”。一旦资产记录 `native_style_definition_written` 或 `nativeWrite=written_to_standard_assets_dwg`，必须同时登记 `nativeVisiblePanelEvidence` 或等价可见 native 证据：系统资产 DWG 中可见图元 / 面板、created/readback 数量、报告、截图、保存状态和 `savedCurrentDwg=false`。一旦资产标为 `verified`，还必须登记 `reuseWorkflowProbe` 或真实 `reuseReplay`，证明白话复用能经 registry 编码预检、语义匹配、`system_asset_reuse_workflow` 和 `sourceSpec` 生成 ready 计划；否则 `scripts/sediment_system_asset.py --verify` 应返回 fail。
+资产复用必须先查系统资产 registry，再生成结构化复用计划。匹配到资产但缺少精确来源时，返回 `needs_precise_native_source`；不得改成临场重画或硬拷贝。
 
-系统资产 DWG 仓库验收必须过视觉可读性门禁。截图非空、DWG 已保存、created handles 可回读、`visualClearanceAudit.overlapCount=0` 只能证明“脚本写进去了且没有 bbox 相交”，不能证明仓库排版合格。正式通过前必须同时有 `visualReadabilityAudit.status=pass`：A1/A2 与 A2/B 通道满足最小宽度、A1/A2 内容宽度占比不过密、proof content 不在 `CODEX_PREVIEW`、`ASSET_SOURCE_BOUNDARY` 只作为小 source token 而不是框住 proof panel 的大边界，源定义 / proof panel / 标签 / 证据 / 可复制内容分层分角色。A-to-A `pipeline_visual_layout_reviewer` 必须显式输出 `layoutReadabilityAcceptable`、`aisleClearanceAcceptable`、`contentDensityAcceptable`、`sourceProofRolesSeparated`、`layerSemanticsAcceptable`、`nonScreenshotEvidenceChecked`，缺任一字段时不得进入完成口吻。
+仓库式系统资产 DWG 必须有视觉可读性复审：源定义、proof panel、标签、证据和可复制内容分层分角色；截图非空、对象数量正确、DWG 保存或 bbox 不相交都不能单独证明仓库排版合格。
 
-仓库级治理必须使用全量图层普查和证据文件存在性检查。`protectedContentReadback.clusters[*].layerSamples` 只能作为展示样本；正式验收必须有 `layers` / `layerCounts` 或等价 full layer census，并据此阻断任何 A1 / A2 保护内容仍在 `CODEX_PREVIEW` 或混入 `ASSET_SOURCE_BOUNDARY` 的情况。资产合同、`nativeVisiblePanelEvidence`、`reuseWorkflowProbe`、`evidenceLinks.refs` 和 `evidenceRefs` 中引用的本地证据文件必须真实存在；缺报告、缺截图或缺 latest shelf layout report 时，`scripts/run_asset_library_governance_check.py` 必须 fail，不得用 registry 条目或历史口头说明替代。
+## 9. 多 Agent 与模型桥
 
-模型型复审只能作为上述视觉仓库门禁的只读增强。若 workflow 声明 `modelBackedReviewRequired=true`，必须通过 `core/model_review`、`codex.cmd exec` 或等价 SDK 桥产生 schema 化 `modelBackedReview`，并记录是否真实调用模型；模型输出缺字段、schema 不合格、`modelInvoked=false` 或 `blockingReasons` 非空时，`visual_layout_review` 必须阻断。模型 `pass` 不能替代 UTF-8 编码预检、CAD handles / bbox / 图层回读、clearance / readability audit、系统资产 sourceSpec、复用 replay、保存状态或用户人工复审；模型不得执行 CAD 写入、保存、删除、移动或扩大授权。
+模型型 Agent 是只读判断 / 复审 / 建议层，不直接授权 CAD 写入、删除、移动、保存、正式图层编辑、覆盖 DWG、资产晋升或状态百分比声明。
 
-高风险 A-to-A 编排还必须有主 Agent 自检和动态加派决策。`mainAgentSelfCheck` 用于声明主 Agent 身份、任务理解、责任边界和已知限制；`dispatchDecision` 用于说明哪些已登记 Agent 被加派、为什么加派、还缺哪些输出。主 Agent 可以判断是否需要新增全局 Agent，但未登记 Agent 只能进入 `additionalAgentRequests`，状态为 `needs_reviewed_package` 或 `needs_openspec_change`；不得临场激活、不得加入本轮 `effectiveRequiredAgents`、不得替代真实 CAD / 资产 / 视觉复审证据。
+凡声称多 Agent 真实协作，必须有 run package、上游 / 下游 JSON 引用、task contract、dispatch plan、agent outputs、冲突 / 阻断记录和 closeout decision。缺少这些证据时，只能说 Prompt Pack ready、单 Agent 调用或机制建议。
 
-对象资产做 `block_export` 前必须先过来源边界门禁，只允许 `selected_handles`、`created_handles`、`active_dwg_handles`、`explicit_bbox` 或 `named_block` 等精确来源；不得把整个 `CODEX_PREVIEW`、全模型空间、当前屏幕、全部可见对象、训练面板或全局预览 bbox 默认打成 block。来源不清时只能登记为 `metadata_only` / `candidate`，并写明 `includedHandles`、`excludedHandles` 和 `antiContamination` 缺口；线宽、线型、尺寸、文字、引线等样式标准必须走 `style_standard` / `style_export`，不得误做对象 block。
+模型调用必须先有 trace，再有 prompt。trace 至少记录 `traceId`、`agentId`、任务类型、最终 prompt、schema 快照、sanitized command、cwd、timeout、输入摘要、stdout / stderr、schema 校验、normalized output 和 gate decision。
 
-系统资产还必须有晋升门槛：`candidate` 表示候选，`systemized` 表示已沉淀到规则 / Prompt / 检查器或训练证据，`verified` 表示已有复用验收或 CAD readback 证据，`deprecated` 表示历史保留不优先使用。每条资产必须保留 `retrieval`、`native.layoutPlan`、`versioning`、`verification`、`feedbackLoop`、可见 native 证据和复用 workflow / replay 证据。元数据验收通过不等于原生 DWG 几何复用通过；只要 `native DWG geometry`、`native visible asset evidence`、`executable reuse workflow probe` 或 `CAD insertion replay` 仍在 `notChecked`，最终回复不得把对应层级描述为 verified CAD-native asset。重复 asset id 且关键字段冲突时，必须显式选择 `update_existing`、`reject` 或 `new_variant`，不得静默覆盖。
+模型如需工具，必须输出 `toolIntent`，由 orchestrator 校验 schema、permission class、risk level、target scope 和 forbidden effects。只读工具、候选写入、确定性验证和受控 CAD intent 必须分阶段管理；工具返回 fail 或证据不足时，下游 closeout 只能阻断或标记未验证。
 
-系统资产复用也必须走同一资产库，而不是临场重画。用户明确说“从 XX 资产调用 XX / 复用 XX / 插入 XX / 套用 XX / 放到当前 DWG”，或需求语义明显匹配已有资产时，先查 `libraries/system_library/registry.json`，再由 `core.assets.system_asset_reuse` / `scripts/reuse_system_asset.py` 生成复用计划。复用到当前 DWG 默认只写 `CODEX_PREVIEW`，必须回读 created handles 和目标图层，且默认不保存当前业务 DWG。匹配到资产但没有 `includedHandles`、`blockName`、verified `style_standard` 或其它精确来源时，必须返回 `needs_precise_native_source`，不得从全模型空间、当前屏幕、全部可见对象或训练面板硬拷贝。
+主 Agent 认知提升必须有机器可读 before / after 证据：至少能指出 route、requiredAgents、tool choice 或 blocking reason 发生变化。`cognitiveLoopSummary`、`behaviorChangeProof`、prediction reconciliation 和 Agent Task Maturity 指标都只证明 no-CAD 判断链边界；若没有行为改变，只能称为机制建设。`confidence`、`selfUncertainty`、预测准确率、模型 pass 或 no-CAD fixture 不得替代 CAD hard gate、source boundary、no-save/no-delete、表 C 或用户验收。
 
-系统资产复用前还必须经过 `core.assets.semantic_rules` 和 registry 文本编码预检。语义规则库负责记录触发词、路由、禁止行为、验收 hooks 和证据边界；它不能被普通 prompt 记忆替代。若 registry 的资产名、别名、用途、检索字段出现 `??`、`�` 或典型 mojibake，必须返回 `asset_registry_encoding_failed`，不得继续匹配、生成 ready plan 或写 CAD。弱匹配只能作为候选提示，不能自动复用；候选排序优先 `verified` / native / 精确来源可用资产。
+## 10. 复合任务与沉淀边界
 
-跨 DWG 复用请求必须优先生成结构化 workflow，而不是把整句白话压成单个 asset query。复合请求按 `build_system_asset_reuse_workflow` / `scripts/reuse_system_asset.py --workflow` 拆成多个 `asset_reuse_*` 子任务，并分别做候选匹配、精确来源门禁、目标层 / base point 分配、CAD 写入和 handles 回读。没有显式资产动词但强匹配系统资产时，允许以 `implicit_asset_match` 触发检索；没有强匹配时返回 `not_asset_reuse_request`，继续走普通 `CAD_PLAN` 链路。多资产请求允许 `partial`：已准备好的资产可以复用，来源不清的资产必须保留 `needs_precise_native_source`，不得静默改成临场重画或全模型空间拷贝。`style_definition` ready plan 只证明 A-to-A 计划联通，不等于已经写入当前 DWG；单个复用计划只有 copy / import 返回 created handles 且当前 DWG `readbackStatus=ok` 时才算 `asset_reused`；读不回时必须保留 readback blocked 状态，不得晋升为完成。
+临场复合任务不要求预先列入训练地图。Agent 应拆成输入来源、对象识别、尺度来源、绘图 / 修改 / 标注意图、结构化意图、校验、预览、readback / audit。
 
-## 8. 卡壳时先自查，不盲目重试
+证据来源必须写清：只有截图时只能证明视觉定位和推断；截图加已知参照尺寸只能证明比例估算；有 DWG、created handles、原计划或用户明确尺寸，才可进入对应几何 / 标注审计。
 
-当用户说“画不准”“画不出来”，或当前阶段出现执行失败、预览不对、截图缺失、回读验证缺失时，Codex 必须先进入 `docs/runbooks/blocker-playbook.md` 的自查闭环。
+单次成功或失败优先写案例反馈、训练错误或 learning ledger。只有重复失败、可机器检查、可泛化为课程族，或需要新增稳定验收器时，才升级为训练项、benchmark、规则包或 Core 检查器。
 
-最小要求：
+## 11. 收口验证
 
-- 先确认当前阶段和最近变更。
-- 运行或说明为什么不能运行 `scripts/self_check.py`。
-- 对视觉问题先确认 `scripts/render_preview.py --check` 的截图能力。
-- 如果已经绘制到 CAD，优先留下截图或回读证据。
-- 定位问题属于白话理解、`CAD_PLAN`、Schema、dry-run、执行脚本、驱动、CAD 环境还是验证工具。
-- 如果已有上一轮 handles 或 bbox，先生成原位 `repair_plan` 并局部修复；不得默认旁边整套重画。
-- 先做最小复现和最小修复，再扩大到复杂图纸。
-- 修复后运行覆盖原问题的最小实际链路；CAD / 截图 / runner / 训练链路修复默认补一条真实或代表性端到端复验。
-- 修复后更新 `docs/status/current.md`、`docs/status/changelog.md`，失败或踩坑还要更新 `docs/status/issues.md`。
+纯文档治理至少运行相关文档审计、单元测试和 diff 检查。代码或 CAD 链路治理至少运行对应单测、仓库审计和代表性链路。无法运行时必须说明原因、失败点、保留证据和未验证风险。
 
-如果当前没有自检或截图能力，先补自检或截图入口，再继续推进依赖它们的绘图修复。
+治理包收尾前必须确认：
 
-## 9. CAD 层面验证要走自主验证闭环
-
-当用户要求在真实 CAD 环境中按计划做 CAD 层面验证、换机验收或回读补验时，Codex 应优先读取 `docs/runbooks/cad-validation.md`，并运行：
-
-```powershell
-& $py scripts\run_cad_validation.py
-```
-
-不得遇到第一个失败就停止。仓库内可修问题应由 Codex 自己最小复现、最小修复并重新运行验证；只有依赖安装、AutoCAD 授权/窗口/活动 DWG、正式图层/保存/删除/覆盖、或真实项目语义缺失时，才停下来问用户。
-
-验证结果必须以 `output/validation_runs/<timestamp>/report.json`、`report.md`、`readback_report.json` 和 `cad_capability_probe.json` 为证据。没有通过真实 CAD 落图、截图、实体回读和 CAD COM 能力探针时，不得声称几何准确或 CAD 调用底座可用。
-
-## 10. 系统维护与安全重构门禁
-
-执行大型系统维护、代码债排查、BUG 寻找或安全重构时，Codex 必须先冻结当前 dirty tree 与 baseline，再按小任务推进。每个任务要有明确允许文件、禁止范围、红/绿测试或审计断言、验证命令和停止条件。
-
-默认边界：
-
-- 纯文档治理、无 CAD 影响的系统维护可以不连接真实 CAD；一旦修复影响 CAD 落图、截图、训练、runner、验证或资产复用 / 沉淀链路，就必须按 §2.3 运行代表性实际链路。无论是否连接真实 CAD，默认都不保存当前业务 DWG、不覆盖原图、不删除未授权实体、不修改正式图层。
-- 不把无 CAD 验证写成真实 CAD 几何准确。
-- 不回滚未理解的用户或其他 Agent 改动。
-- 不把“文件存在”当作任务完成；必须有红/绿测试、审计报告或验证命令证据。
-- 多 Agent 并行时必须分配互不重叠的写入范围；Review Agent 默认只读，除非用户明确要求它转为实现任务。
-- 临时执行计划完成后，必须把长期规则迁移到 `docs/governance/cad-agent-rules.md`、把审计事实迁移到 `docs/verification/`，再删除临时计划文件。
-
-系统维护完成前至少运行：
-
-```powershell
-& $py -m unittest discover -s tests
-& $py scripts\self_check.py
-& $py scripts\render_preview.py --check
-& $py scripts\run_repo_audit.py --max-python-lines 500
-& $py scripts\run_cad_validation.py --no-cad --output-dir output\validation_runs\<name>-no-cad
-```
-
-日常阻断门禁优先使用 `scripts\run_repo_audit.py --fail-on-severity medium`；`--fail-on-findings` 仍可用于严格收口。若存在 low findings，应把它们登记为剩余治理风险，不能静默忽略。
+- 权威源、引用源和历史源清楚。
+- 短入口没有承载长历史。
+- 临时 sidecar 有退出路径。
+- checker 没有新增永生文档膨胀告警，或剩余告警有明确 owner 和下轮计划。
+- 最终回复不把文档治理、截图、dry-run、no-CAD benchmark 或模型 pass 说成真实 CAD 端到端能力。

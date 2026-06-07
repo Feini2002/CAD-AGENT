@@ -1,0 +1,304 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "learningPromotionDecision",
+    "promotionMode",
+    "targetAgentIds",
+    "memoryPatchProposals",
+    "promptPatchProposals",
+    "checkerCandidateProposals",
+    "behaviorChangeEvidence",
+    "retestPlan",
+    "evidenceBoundary",
+    "learningCandidate",
+    "statePatch",
+    "finalResponseAllowedClaims",
+    "evidenceUsed",
+    "evidenceMissing",
+    "toolIntent",
+    "decision",
+    "assumptions",
+    "alternativesConsidered",
+    "blockingReasons",
+    "nextRequiredEvidence"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["pass", "fail", "unavailable"]
+    },
+    "learningPromotionDecision": {
+      "type": "string",
+      "enum": ["proposal_ready", "no_update", "needs_more_evidence", "blocked"]
+    },
+    "promotionMode": {
+      "type": "string",
+      "enum": ["proposal_only"]
+    },
+    "targetAgentIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "memoryPatchProposals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/memoryPatchProposal" }
+    },
+    "promptPatchProposals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/promptPatchProposal" }
+    },
+    "checkerCandidateProposals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/checkerCandidateProposal" }
+    },
+    "behaviorChangeEvidence": {
+      "$ref": "#/$defs/behaviorChangeEvidence"
+    },
+    "retestPlan": {
+      "$ref": "#/$defs/retestPlan"
+    },
+    "evidenceBoundary": {
+      "$ref": "#/$defs/evidenceBoundary"
+    },
+    "learningCandidate": {
+      "$ref": "#/$defs/learningCandidate"
+    },
+    "statePatch": {
+      "$ref": "#/$defs/statePatch"
+    },
+    "finalResponseAllowedClaims": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidenceUsed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidenceMissing": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "toolIntent": {
+      "anyOf": [
+        { "type": "object" },
+        { "type": "null" }
+      ]
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["pass", "fail", "needs_more_evidence", "unavailable"]
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "alternativesConsidered": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "blockingReasons": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "nextRequiredEvidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "memoryPatchProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetAgentId",
+        "memoryLayer",
+        "action",
+        "errorPattern",
+        "correctPattern",
+        "promptDelta",
+        "checkerDelta",
+        "evidenceRefs",
+        "supersedes",
+        "retireCandidate",
+        "changedDecision"
+      ],
+      "properties": {
+        "targetAgentId": { "type": "string" },
+        "memoryLayer": {
+          "type": "string",
+          "enum": ["common_safety_rules", "capability_lessons", "decision_exemplars", "user_preference_profile"]
+        },
+        "action": {
+          "type": "string",
+          "enum": ["add", "replace", "demote", "reference", "none"]
+        },
+        "errorPattern": { "type": "string" },
+        "correctPattern": { "type": "string" },
+        "promptDelta": { "type": "string" },
+        "checkerDelta": { "type": "string" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "supersedes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "retireCandidate": { "type": "boolean" },
+        "changedDecision": { "type": "boolean" }
+      }
+    },
+    "promptPatchProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetAgentId", "patchType", "proposal", "evidenceRefs", "writeAllowed"],
+      "properties": {
+        "targetAgentId": { "type": "string" },
+        "patchType": {
+          "type": "string",
+          "enum": ["prompt_addendum", "prompt_pack_boundary", "prompt_pack_negative_example", "none"]
+        },
+        "proposal": { "type": "string" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "writeAllowed": { "type": "boolean" }
+      }
+    },
+    "checkerCandidateProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checkerScope", "candidate", "evidenceRefs", "retestRequired"],
+      "properties": {
+        "checkerScope": { "type": "string" },
+        "candidate": { "type": "string" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "retestRequired": { "type": "boolean" }
+      }
+    },
+    "behaviorChangeEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "beforeDecision",
+        "afterDecision",
+        "changedRoute",
+        "changedRequiredAgents",
+        "changedToolChoice",
+        "changedBlockingReason",
+        "retestedOriginalTask",
+        "predictionReconciliation",
+        "memoryAppliedInFutureRun"
+      ],
+      "properties": {
+        "beforeDecision": { "type": "string" },
+        "afterDecision": { "type": "string" },
+        "changedRoute": { "type": "boolean" },
+        "changedRequiredAgents": { "type": "boolean" },
+        "changedToolChoice": { "type": "boolean" },
+        "changedBlockingReason": { "type": "boolean" },
+        "retestedOriginalTask": { "type": "boolean" },
+        "predictionReconciliation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["statement", "reconciled", "outcome"],
+          "properties": {
+            "statement": { "type": "string" },
+            "reconciled": { "type": "boolean" },
+            "outcome": {
+              "type": "string",
+              "enum": ["correct", "incorrect", "pending", "not_applicable"]
+            }
+          }
+        },
+        "memoryAppliedInFutureRun": { "type": "boolean" }
+      }
+    },
+    "retestPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retestOriginalTask", "targetTaskRef", "why"],
+      "properties": {
+        "retestOriginalTask": { "type": "boolean" },
+        "targetTaskRef": { "type": "string" },
+        "why": { "type": "string" }
+      }
+    },
+    "evidenceBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["writePolicy", "notProofOf"],
+      "properties": {
+        "writePolicy": {
+          "type": "string",
+          "enum": ["proposal_only"]
+        },
+        "notProofOf": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "learningCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "trigger",
+        "responsibleAgentIds",
+        "errorPattern",
+        "correctPattern",
+        "promptDelta",
+        "checkerDelta",
+        "retestOriginalTask"
+      ],
+      "properties": {
+        "decision": { "type": "string" },
+        "trigger": { "type": "string" },
+        "responsibleAgentIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "errorPattern": { "type": "string" },
+        "correctPattern": { "type": "string" },
+        "promptDelta": { "type": "string" },
+        "checkerDelta": { "type": "string" },
+        "retestOriginalTask": { "type": "boolean" }
+      }
+    },
+    "statePatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "phaseLabelForUser",
+        "completedEvidence",
+        "pendingEvidence",
+        "pendingUserAction",
+        "blockedReason",
+        "nextSafeAction"
+      ],
+      "properties": {
+        "phase": { "type": "string" },
+        "phaseLabelForUser": { "type": "string" },
+        "completedEvidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pendingEvidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pendingUserAction": { "type": "string" },
+        "blockedReason": { "type": "string" },
+        "nextSafeAction": { "type": "string" }
+      }
+    }
+  }
+}

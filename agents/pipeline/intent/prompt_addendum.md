@@ -1,7 +1,7 @@
 # Training Prompt Addendum
 
 Agent: `pipeline_intent`
-Updated: `2026-06-06T15:56:30+00:00`
+Updated: `2026-06-06T18:19:02+00:00`
 
 ## 共用 Prompt 合同
 - 通用 CAD 安全、证据和视觉反馈规则见 `agents/COMMON_PROMPT_CONTRACT.md`。

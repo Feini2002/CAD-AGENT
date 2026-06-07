@@ -16,6 +16,7 @@
 ## 当前架构边界快照
 
 - `current-module-boundaries.md`：`ARCH-BOUNDARY-HARDENING-01` 的 Stable Core / Training Experiments / Case-Only 分类，以及统一请求链路、模块禁止边界、verification、capability-map、对象资产试点和 `projects/.../runs` 晋升门槛。
+- 旧入口收编、权限安全与训练回归加固已从临时方案收口为机器包：事实源在 `config/entrypoint_custody_manifest.json`、`core/entrypoint_custody/**`、`core/training/report_claim_audit.py`、`core/model_review/trace_claim_audit.py` 和对应 runner / tests；本目录不再保留第二份入口方案 MD。
 
 ## 统一请求链路
 
@@ -63,3 +64,4 @@ User Request
 | reuse readback | 语义命中或 plan-only 被误报为已复用 | `docs/architecture/system-asset-reuse-workflow.md`、`scripts/reuse_system_asset.py` |
 | training promotion gate | quick trial 或单次训练误写事实源 / 工作台 / Agent 校准 | `core.training.promotion_gate`、`docs/training/README.md` |
 | workbench sync | `capability-map.html` 被误读为事实源或最新状态 | `scripts/sync_training_workbench.py`、`scripts/run_training_workbench_agent_check.py` |
+| entrypoint custody / replay custody | 旧脚本、历史专项、诊断入口、派生显示或训练 replay 默认路径绕过中枢，或被活跃文档误当当前 next / 学习后重测 | `config/entrypoint_custody_manifest.json`、`core.entrypoint_custody.guard`、`scripts/run_entrypoint_custody_audit.py`、`scripts/run_training_report_claim_audit.py`、`scripts/run_model_trace_claim_audit.py` |

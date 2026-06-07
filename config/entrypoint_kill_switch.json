@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "entrypoint-kill-switch/v1",
+  "globalEntrypointExecutionDisabled": false,
+  "disabledEntrypoints": [],
+  "disabledReason": ""
+}

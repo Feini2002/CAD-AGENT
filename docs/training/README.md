@@ -10,6 +10,8 @@ Core Lab 施工已收口。本目录是训练入口：用 CAD Designer Agent 成
 
 这不是取消训练。训练恢复条件是：规则、状态、PlanMD、工作台派生显示和关键脚本口径都已区分 `Core Proof Coverage`、`Agent Task Maturity` 和 `Project Delivery Readiness`。用户明确要求覆盖暂停时，仍按 quick / focused / formal 原有边界执行，并且不得把旧表 C 当作训练成熟度。
 
+下一步若进入家具测试，默认按**家具 focused rehearsal**处理，而不是整批正式训练恢复。只选一个家具族或一个点名能力，先证明主 Agent 会正确分流、限定 scope、读取必要历史 profile、选择 quick / focused / formal、阻断越权完成；真实 CAD 可用时再只写 `CODEX_PREVIEW` 并回读 created handles。若测试目标同时声称“主 Agent 更聪明”，还必须留下 route / dispatch / tool choice / blocking / requiredAgents / replay 的 before / after 证据。
+
 ## 30 秒入口边界
 
 - 开基础课：读本节、`cad-designer-growth-path.md` 和 `agents/cad_designer/rules.md` 即可，不默认全文展开旧案例。

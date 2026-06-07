@@ -45,6 +45,7 @@
 | `asset_sedimentation` | 沉淀、收进资产库、通用资产 | 走系统资产四件套，必要时保存并打开系统资产 DWG |
 | `focused_retraining` | 训练某项、任务 X、加深、某图案比例 | 只覆盖点名能力，记录 `scope.mode=focused` |
 | `adaptive_growth_replay` | 之前训练过但又退回烟测、按历史经验提高表达、加深某能力 | 构建 repo-local capability profile，选择 `growth_replay`，比对 required / observed features |
+| `main_agent_cognition_proof` | 用户质疑主 Agent 是否真的变聪明，或任务目标包含“像 Codex 一样会理解、分发、读取历史、自修” | 先产出 before / after 证明计划；验证 route、dispatch、tool choice、blocking、requiredAgents、learningCandidate 或 replay 是否因历史经验改变 |
 | `formal_acceptance` | 验收、训练通过、记入工作台、整批、推进表 C | 完整校验、证据、同步和状态回写 |
 | `local_repair` | 不对、这里错、继续修、局部反馈 | 优先按 handles / bbox 原位局部修复 |
 

@@ -43,6 +43,37 @@ def _project_rel(path: Path) -> str:
     return str(path.resolve().relative_to(PROJECT_ROOT.resolve())).replace("\\", "/")
 
 
+def _strings(value: Any) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(item).strip() for item in value if str(item).strip()]
+
+
+def _payload_ref_for_export(ref: str, run_root: Path) -> str:
+    path = Path(ref)
+    candidates = [path] if path.is_absolute() else [run_root / path, PROJECT_ROOT / path]
+    for candidate in candidates:
+        resolved = candidate.resolve()
+        if not resolved.is_file():
+            continue
+        try:
+            return _project_rel(resolved)
+        except ValueError:
+            return str(resolved)
+    return ref
+
+
+def _payload_input_summary_refs(payload: dict[str, Any], run_root: Path) -> list[str]:
+    refs: list[str] = []
+    seen: set[str] = set()
+    for ref in _strings(payload.get("evidenceRefs")):
+        export_ref = _payload_ref_for_export(ref, run_root)
+        if export_ref not in seen:
+            refs.append(export_ref)
+            seen.add(export_ref)
+    return refs
+
+
 def _registered_pipeline_agent_ids() -> set[str]:
     manifest = _read_json(PIPELINE_MANIFEST)
     agents = manifest.get("agents", [])
@@ -113,7 +144,7 @@ class PromptPack:
                     "- Return strict JSON only. The local bridge attaches modelProviderStatus; do not fabricate it.\n"
                     "- Do not expose raw chain-of-thought. Return visible audit fields only: decision, evidenceUsed, "
                     "evidenceMissing, assumptions, alternativesConsidered, blockingReasons, nextRequiredEvidence, "
-                    "finalResponseAllowedClaims, learningCandidate, and toolIntent.\n"
+                    "finalResponseAllowedClaims, learningCandidate, softJudgment when the schema requires it, and toolIntent.\n"
                     "- Your JSON must include statePatch, finalResponseAllowedClaims, evidenceUsed, evidenceMissing, "
                     "assumptions, alternativesConsidered, blockingReasons, nextRequiredEvidence, learningCandidate, "
                     "and toolIntent. Set toolIntent to null when you are not requesting a tool. When requesting a "
@@ -210,6 +241,7 @@ def run_prompt_pack_review(
         task_type=pack.task_type,
         trace_id=stable_trace_id,
         trace_dir=trace_dir,
+        input_summary_refs=_payload_input_summary_refs(payload, run_root),
     )
     context = {
         "schemaVersion": "prompt-pack-context/v1",

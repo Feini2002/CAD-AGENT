@@ -500,10 +500,17 @@ def _blocked_adaptive_report(
         "batchMode": batch_mode,
         "scope": scope,
         "replayMode": replay_mode,
+        "passType": "not_passed",
         "batchPreset": batch_preset,
         "capabilityProfile": capability_profile,
         "adaptiveReplay": adaptive_replay,
         "regressionGuard": regression_guard,
+        "memoryWriteMode": "no_write",
+        "claimBoundaries": [
+            "adaptive_replay_blocked_before_cad_write",
+            "not_training_acceptance",
+            "not_growth_replay_pass",
+        ],
         "safetyBoundaries": safety_boundaries,
         "timeoutSeconds": 30,
         "selfRecoveryAttempted": False,
@@ -619,6 +626,26 @@ def run_foundation_remaining_training_batch(
         project_root=project_root or Path.cwd(),
         generated_at=generated,
     )
+    if replay_mode != "smoke_replay" and capability_profile.get("status") != "blocked":
+        profile_source_status = str(capability_profile.get("profileSource", {}).get("status", ""))
+        default_profiles = [
+            str(profile.get("capabilityId", ""))
+            for profile in capability_profile.get("profiles", [])
+            if isinstance(profile, dict) and profile.get("status") == "default"
+        ]
+        if profile_source_status != "pass":
+            capability_profile = {
+                **capability_profile,
+                "status": "blocked",
+                "reason": "profile_source_required_for_growth_or_standard_replay",
+            }
+        elif default_profiles:
+            capability_profile = {
+                **capability_profile,
+                "status": "blocked",
+                "reason": "generated_default_profile_used",
+                "defaultProfileCapabilityIds": default_profiles,
+            }
     adaptive_replay = build_adaptive_replay_plan(
         replay_mode=replay_mode,
         scope=scope,
@@ -898,9 +925,13 @@ def run_foundation_remaining_training_batch(
         "batchMode": batch_mode,
         "scope": scope,
         "replayMode": replay_mode,
+        "passType": "smoke_only" if replay_mode == "smoke_replay" else replay_mode,
         "capabilityProfile": capability_profile,
         "adaptiveReplay": adaptive_replay,
         "regressionGuard": regression_guard,
+        "memoryWriteMode": "no_write"
+        if replay_mode == "smoke_replay" or scope_mode == "focused"
+        else "merge_append_required",
         "safetyBoundaries": safety_boundaries,
         "trainingOptions": training_options or {},
         "generated_at": generated,
@@ -968,9 +999,18 @@ def run_foundation_remaining_training_batch(
         "batchMode": batch_mode,
         "scope": scope,
         "replayMode": replay_mode,
+        "passType": "smoke_only" if replay_mode == "smoke_replay" else replay_mode,
         "capabilityProfile": capability_profile,
         "adaptiveReplay": adaptive_replay,
         "regressionGuard": regression_guard,
+        "memoryWriteMode": "no_write"
+        if replay_mode == "smoke_replay" or scope_mode == "focused"
+        else "merge_append_required",
+        "claimBoundaries": (
+            ["smoke_only", "not_growth_replay", "not_formal_acceptance", "not_project_delivery_readiness"]
+            if replay_mode == "smoke_replay"
+            else ["profile_context_only", "current_pass_requires_created_handles_readback"]
+        ),
         "safetyBoundaries": safety_boundaries,
         "trainingOptions": training_options or {},
         "timeoutSeconds": timeout_seconds,

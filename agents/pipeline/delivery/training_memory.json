@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "agentId": "pipeline_delivery",
   "learningState": "prompt_updated",
-  "updatedAt": "2026-06-06T15:56:30+00:00",
+  "updatedAt": "2026-06-06T18:19:02+00:00",
   "sourceReports": [
     "output/training_queues/cad-foundation-all-31/all-31-retrain/all_31_report.json"
   ],
@@ -34,7 +34,7 @@
         "readbackCount": 13,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_execute",
@@ -64,7 +64,7 @@
         "readbackCount": 13,
         "feedback": "中文训练面板已生成；句柄已回读；全部在 CODEX_PREVIEW"
       },
-      "sourceGeneratedAt": "2026-06-06T15:56:30+00:00",
+      "sourceGeneratedAt": "2026-06-06T18:19:02+00:00",
       "responsibleAgentIds": [
         "cad_designer",
         "pipeline_audit",
