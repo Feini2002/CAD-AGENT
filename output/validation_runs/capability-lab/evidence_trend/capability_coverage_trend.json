@@ -2,7 +2,7 @@
   "version": "0.1",
   "report_id": "capability-coverage-trend",
   "status": "pass",
-  "generated_at": "2026-06-07T06:02:30Z",
+  "generated_at": "2026-06-08T15:00:01Z",
   "vocabulary": {
     "evidence_states": [
       "cad_capability_verified",
@@ -38,7 +38,7 @@
       "series_id": "cad_capability_coverage",
       "source_kind": "capability_coverage",
       "source_path": "output/validation_runs/capability-lab/cad_capability_coverage.json",
-      "snapshot_at": "2026-06-07T06:02:30Z",
+      "snapshot_at": "2026-06-08T15:00:01Z",
       "evidence_state_counts": {
         "cad_capability_verified": 0,
         "readback_geometry_verified": 0,
