@@ -1,0 +1,653 @@
+{
+  "status": "pass",
+  "queueId": "cad-foundation-remaining-21",
+  "mode": "focused",
+  "batchMode": "unsupervised_batch_chinese_labels",
+  "scope": {
+    "mode": "focused",
+    "requestedCapabilityIds": [
+      "cad-layer-lineweight-standard"
+    ],
+    "scopeReason": "用户要求在画布周围进行第22项线宽线型专项训练；修正为避让全模型空间旧训练层",
+    "fullBatchAllowed": false,
+    "rule": "点名单项或子图样时只做轻量级 focused retraining；只有用户明确要求全部/整批/重新跑所有时才允许整批训练。",
+    "batchPreset": "remaining-21"
+  },
+  "replayMode": "smoke_replay",
+  "passType": "smoke_only",
+  "capabilityProfile": {
+    "schemaVersion": 1,
+    "status": "pass",
+    "generatedAt": "2026-06-08T16:50:40+00:00",
+    "replayMode": "smoke_replay",
+    "profileSource": {
+      "status": "not_provided",
+      "role": "none",
+      "path": "",
+      "reason": "profile_source_not_provided",
+      "readAttempted": false,
+      "evidenceRole": "profile_input_not_fact_source",
+      "sourceClosure": "not_registered"
+    },
+    "profiles": [
+      {
+        "schemaVersion": 1,
+        "profileId": "cad-layer-lineweight-standard:adaptive-growth",
+        "capabilityId": "cad-layer-lineweight-standard",
+        "title": "线宽线型标准",
+        "stage": "foundation",
+        "category": "cad_foundation_operation",
+        "status": "default",
+        "profileVersion": "generated-default-v1",
+        "sourceRefs": [
+          {
+            "id": "cad-layer-lineweight-standard:profile-source",
+            "kind": "generated_default",
+            "path": "",
+            "status": "not_provided",
+            "role": "profile_input",
+            "evidenceRole": "planning_context_only",
+            "sourceClosure": "not_registered",
+            "hash": "",
+            "generatedAt": "2026-06-08T16:50:40+00:00"
+          }
+        ],
+        "proofLevel": "planning_context_only",
+        "expressionLevel": "smoke",
+        "minimumExpressionLevel": "smoke",
+        "confidence": "low",
+        "evidenceState": "profile_default",
+        "evidenceBoundary": {
+          "checked": [
+            "program metadata mapped"
+          ],
+          "notChecked": [
+            "当前真实 CAD 几何",
+            "用户人工视觉验收",
+            "工作台同步",
+            "项目交付准备度"
+          ],
+          "forbiddenClaims": [
+            "不能用 profile 代替 created handles readback",
+            "不能用历史训练 pass 声称当前任务通过"
+          ]
+        },
+        "deterministicProofBoundaries": {
+          "cadGeometryProof": "not_checked",
+          "projectDeliveryReadiness": "not_checked",
+          "workbenchSync": "not_checked",
+          "workerDeployment": "not_required"
+        },
+        "lastBestEvidence": {
+          "sourceRefId": "cad-layer-lineweight-standard:profile-source",
+          "mode": "profile_context",
+          "scope": "planning_only",
+          "cadReadback": "not_checked",
+          "auditSummary": "not_checked"
+        },
+        "defaultReplayStrategy": {
+          "quickTrial": "smoke_replay",
+          "focusedRetraining": "growth_replay",
+          "formalAcceptance": "standard_replay"
+        },
+        "requiredFeatureSet": [],
+        "optionalFeatureSet": [],
+        "forbiddenShortcuts": [
+          "screenshot_only_pass",
+          "handle_count_only_pass"
+        ],
+        "relatedCapabilities": [],
+        "prerequisites": [],
+        "downstreamAffected": [],
+        "transferableLessons": [],
+        "transferableLessonIds": [],
+        "knownFailureModeIds": [],
+        "validatorIds": [],
+        "promotionState": {
+          "level": "observation",
+          "lastPromotionGateRef": "",
+          "needsReviewedPackage": false
+        },
+        "staleness": {
+          "profileGeneratedAt": "2026-06-08T16:50:40+00:00",
+          "sourceStale": false,
+          "missingActiveRefs": [],
+          "rebuildReason": ""
+        },
+        "dataBloatRole": "profile_input_only"
+      }
+    ]
+  },
+  "adaptiveReplay": {
+    "schemaVersion": 1,
+    "status": "disabled",
+    "replayMode": "smoke_replay",
+    "reason": "smoke replay keeps historical runner behavior and records no adaptive growth.",
+    "items": [],
+    "notChecked": [
+      "能力成长画像",
+      "经验提炼器",
+      "对象训练反哺",
+      "工作台同步"
+    ],
+    "notImplemented": [
+      "Worker adaptive trace",
+      "profile fact-source promotion"
+    ],
+    "safetyBoundaries": {
+      "cadExecution": {
+        "status": "preview_only",
+        "targetLayer": "CODEX_PREVIEW",
+        "saveCurrentDwg": false,
+        "deleteEntities": false,
+        "modifyFormalLayers": false,
+        "requiresValidateAndDryRun": true,
+        "role": "deterministic_runner_unchanged"
+      },
+      "worker": {
+        "status": "not_required",
+        "deployRequired": false,
+        "allowedRole": "future_trace_summary_only",
+        "forbidden": [
+          "local_shell_execution",
+          "cad_mcp_execution",
+          "autocad_control",
+          "current_dwg_save",
+          "full_prompt_or_full_cad_upload"
+        ]
+      },
+      "dataBloat": {
+        "status": "guarded",
+        "factSourceWriteAllowed": false,
+        "workbenchSyncAllowed": false,
+        "derivedArtifactsAreFactSources": false
+      },
+      "modelAndAtoA": {
+        "status": "guarded",
+        "modelMayExecuteTools": false,
+        "unregisteredAgentsMayPassGate": false
+      }
+    }
+  },
+  "regressionGuard": {
+    "schemaVersion": 1,
+    "status": "not_applicable",
+    "replayMode": "smoke_replay",
+    "allowLowExpression": false,
+    "reason": "smoke_replay keeps legacy low-expression smoke behavior.",
+    "acceptedExemption": "explicit_minimal_smoke",
+    "comparisonPolicy": {
+      "semanticFeatures": false,
+      "machineEvidence": false,
+      "scopeAware": true,
+      "screenshotOnly": false,
+      "handleCountOnly": false,
+      "fakeCadOnly": false,
+      "workbenchStateOnly": false
+    },
+    "failures": [],
+    "items": []
+  },
+  "memoryWriteMode": "no_write",
+  "safetyBoundaries": {
+    "cadExecution": {
+      "status": "preview_only",
+      "targetLayer": "CODEX_PREVIEW",
+      "saveCurrentDwg": false,
+      "deleteEntities": false,
+      "modifyFormalLayers": false,
+      "requiresValidateAndDryRun": true,
+      "role": "deterministic_runner_unchanged"
+    },
+    "worker": {
+      "status": "not_required",
+      "deployRequired": false,
+      "allowedRole": "future_trace_summary_only",
+      "forbidden": [
+        "local_shell_execution",
+        "cad_mcp_execution",
+        "autocad_control",
+        "current_dwg_save",
+        "full_prompt_or_full_cad_upload"
+      ]
+    },
+    "dataBloat": {
+      "status": "guarded",
+      "factSourceWriteAllowed": false,
+      "workbenchSyncAllowed": false,
+      "derivedArtifactsAreFactSources": false
+    },
+    "modelAndAtoA": {
+      "status": "guarded",
+      "modelMayExecuteTools": false,
+      "unregisteredAgentsMayPassGate": false
+    }
+  },
+  "trainingOptions": {},
+  "generated_at": "2026-06-08T16:50:40+00:00",
+  "created_handles": [
+    "DA9F",
+    "DAA0",
+    "DAA1",
+    "DAA2",
+    "DAA3",
+    "DAA4",
+    "DAA5",
+    "DAA6",
+    "DAA7",
+    "DAA8",
+    "DAA9",
+    "DAAA"
+  ],
+  "created_handle_count": 12,
+  "readback_count": 12,
+  "readback_entities": [
+    {
+      "handle": "DA9F",
+      "object_name": "AcDbLine",
+      "layer": "CODEX_PREVIEW",
+      "type": "line",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "start_point": [
+        55370.0,
+        2613.0971209884156,
+        0.0
+      ],
+      "end_point": [
+        57570.0,
+        2613.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA0",
+      "object_name": "AcDbLine",
+      "layer": "CODEX_PREVIEW",
+      "type": "line",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "start_point": [
+        57570.0,
+        2613.0971209884156,
+        0.0
+      ],
+      "end_point": [
+        57570.0,
+        1433.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA1",
+      "object_name": "AcDbLine",
+      "layer": "CODEX_PREVIEW",
+      "type": "line",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "start_point": [
+        57570.0,
+        1433.0971209884156,
+        0.0
+      ],
+      "end_point": [
+        55370.0,
+        1433.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA2",
+      "object_name": "AcDbLine",
+      "layer": "CODEX_PREVIEW",
+      "type": "line",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "start_point": [
+        55370.0,
+        1433.0971209884156,
+        0.0
+      ],
+      "end_point": [
+        55370.0,
+        2613.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA3",
+      "object_name": "AcDbText",
+      "layer": "CODEX_PREVIEW",
+      "type": "text",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "text": "22 线宽线型标准",
+      "position": [
+        55440.0,
+        2463.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA4",
+      "object_name": "AcDbText",
+      "layer": "CODEX_PREVIEW",
+      "type": "text",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "text": "已检查：句柄 / 边界框 / 图层 / 中文标注",
+      "position": [
+        55440.0,
+        1583.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA5",
+      "object_name": "AcDbLine",
+      "layer": "CODEX_PREVIEW",
+      "type": "line",
+      "lineweight": 70,
+      "linetype": "Continuous",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "start_point": [
+        55550.0,
+        2313.0971209884156,
+        0.0
+      ],
+      "end_point": [
+        56450.0,
+        2313.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA6",
+      "object_name": "AcDbText",
+      "layer": "CODEX_PREVIEW",
+      "type": "text",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "text": "粗线墙体 零点七毫米 连续线",
+      "position": [
+        56530.0,
+        2283.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA7",
+      "object_name": "AcDbLine",
+      "layer": "CODEX_PREVIEW",
+      "type": "line",
+      "lineweight": 35,
+      "linetype": "CENTER",
+      "linetype_scale": 25.0,
+      "color": 256,
+      "start_point": [
+        55550.0,
+        2153.0971209884156,
+        0.0
+      ],
+      "end_point": [
+        56450.0,
+        2153.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA8",
+      "object_name": "AcDbText",
+      "layer": "CODEX_PREVIEW",
+      "type": "text",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "text": "中线家具 零点三五毫米 中心线",
+      "position": [
+        56530.0,
+        2123.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAA9",
+      "object_name": "AcDbLine",
+      "layer": "CODEX_PREVIEW",
+      "type": "line",
+      "lineweight": 13,
+      "linetype": "DASHED",
+      "linetype_scale": 25.0,
+      "color": 256,
+      "start_point": [
+        55550.0,
+        1993.0971209884156,
+        0.0
+      ],
+      "end_point": [
+        56450.0,
+        1993.0971209884156,
+        0.0
+      ]
+    },
+    {
+      "handle": "DAAA",
+      "object_name": "AcDbText",
+      "layer": "CODEX_PREVIEW",
+      "type": "text",
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetype_scale": 1.0,
+      "color": 256,
+      "text": "细线标注 零点一三毫米 虚线",
+      "position": [
+        56530.0,
+        1963.0971209884156,
+        0.0
+      ]
+    }
+  ],
+  "batch_bbox": {
+    "min": [
+      55370.0,
+      1433.0971209884156
+    ],
+    "max": [
+      57570.0,
+      2613.0971209884156
+    ]
+  },
+  "zoom": {
+    "status": "zoomed_to_bbox",
+    "bbox": {
+      "min": [
+        55040.0,
+        1256.0971209884156
+      ],
+      "max": [
+        57900.0,
+        2790.0971209884156
+      ]
+    },
+    "handle_count": 12
+  },
+  "streamingMode": {
+    "enabled": false,
+    "mode": "disabled",
+    "itemDelaySeconds": 0.0,
+    "operationDelaySeconds": 0.0,
+    "operationBudgetPerItem": 0,
+    "zoomEachItem": false,
+    "delayTelemetryBasis": "measured_sleep",
+    "event_count": 0,
+    "operation_delay_count": 0,
+    "item_delay_count": 0,
+    "operationDelaySecondsTotal": 0.0,
+    "itemDelaySecondsTotal": 0.0,
+    "delaySecondsTotal": 0.0,
+    "refresh_count": 0,
+    "events": []
+  },
+  "toolCallGranularity": {
+    "policy": "unified_quality_chain_latency_optimized",
+    "minimumExternalSubmitUnit": "foundation_item",
+    "preferredExternalSubmitUnit": "foundation_batch",
+    "maxExternalSubmitCalls": 1,
+    "primitiveExternalCallsAllowed": false,
+    "driverBatchMethodAvailable": true,
+    "actualSubmitUnit": "foundation_item",
+    "observedBatchSubmitCalls": 0,
+    "reason": "Training and formal drawing use the same quality chain; CAD calls are grouped at item/batch granularity so titles, frames, text, and sample geometry are not submitted as separate MCP units."
+  },
+  "watchdog": [
+    {
+      "step": "draw:cad-layer-lineweight-standard",
+      "elapsedSeconds": 0.062,
+      "timeoutSeconds": 30,
+      "status": "pass",
+      "demoDelaySeconds": 0.0,
+      "netElapsedSeconds": 0.062
+    },
+    {
+      "step": "zoom_to_handles",
+      "elapsedSeconds": 0.187,
+      "timeoutSeconds": 30,
+      "status": "pass"
+    }
+  ],
+  "output_dir": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-remaining-21\\focused\\cad-layer-lineweight-standard",
+  "visualPreview": {
+    "status": "captured",
+    "role": "visual_aid_only",
+    "output": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-remaining-21\\focused\\cad-layer-lineweight-standard\\remaining_21_preview.png",
+    "mode": "autocad_window_printwindow",
+    "occlusion_safe": true,
+    "foreground_first": false,
+    "foreground_fallback": false,
+    "focus": {
+      "status": "zoomed_to_bbox",
+      "bbox": {
+        "min": [
+          55081.83374301676,
+          1291.4971209884156
+        ],
+        "max": [
+          58059.551731843574,
+          2754.6971209884155
+        ]
+      },
+      "handle_count": 12,
+      "resolved_count": 12,
+      "method": "com_geometric_extents",
+      "source": "execution_summary.created_handles",
+      "handles": [
+        "DA9F",
+        "DAA0",
+        "DAA1",
+        "DAA2",
+        "DAA3",
+        "DAA4",
+        "DAA5",
+        "DAA6",
+        "DAA7",
+        "DAA8",
+        "DAA9",
+        "DAAA"
+      ]
+    },
+    "screenshotDecision": {
+      "schemaVersion": 1,
+      "taskKind": "capture",
+      "evidenceStage": "",
+      "agentRole": "",
+      "shouldCapture": true,
+      "required": false,
+      "reason": "task_scoped_focus_available",
+      "focusSource": "execution_summary.created_handles",
+      "focusKind": "handles",
+      "visualAidOnly": true,
+      "allowedFallbacks": [
+        "execution_summary.created_handles",
+        "execution_summary.target_bbox",
+        "explicit_bbox"
+      ],
+      "recommendedCall": {
+        "capture": "prepare_autocad_for_capture",
+        "preserve_layout": true,
+        "capture_mode": "autocad_window_printwindow",
+        "focusSource": "execution_summary.created_handles",
+        "target_handles": [
+          "DA9F",
+          "DAA0",
+          "DAA1",
+          "DAA2",
+          "DAA3",
+          "DAA4",
+          "DAA5",
+          "DAA6",
+          "DAA7",
+          "DAA8",
+          "DAA9",
+          "DAAA"
+        ],
+        "execution_summary": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-remaining-21\\focused\\cad-layer-lineweight-standard\\remaining_21_execution_summary.json"
+      },
+      "focusStatus": "zoomed_to_bbox"
+    }
+  },
+  "screenshotDecision": {
+    "schemaVersion": 1,
+    "taskKind": "capture",
+    "evidenceStage": "",
+    "agentRole": "",
+    "shouldCapture": true,
+    "required": false,
+    "reason": "task_scoped_focus_available",
+    "focusSource": "execution_summary.created_handles",
+    "focusKind": "handles",
+    "visualAidOnly": true,
+    "allowedFallbacks": [
+      "execution_summary.created_handles",
+      "execution_summary.target_bbox",
+      "explicit_bbox"
+    ],
+    "recommendedCall": {
+      "capture": "prepare_autocad_for_capture",
+      "preserve_layout": true,
+      "capture_mode": "autocad_window_printwindow",
+      "focusSource": "execution_summary.created_handles",
+      "target_handles": [
+        "DA9F",
+        "DAA0",
+        "DAA1",
+        "DAA2",
+        "DAA3",
+        "DAA4",
+        "DAA5",
+        "DAA6",
+        "DAA7",
+        "DAA8",
+        "DAA9",
+        "DAAA"
+      ],
+      "execution_summary": "C:\\Users\\User\\Desktop\\CAD-AGENT\\output\\training_queues\\cad-foundation-remaining-21\\focused\\cad-layer-lineweight-standard\\remaining_21_execution_summary.json"
+    },
+    "focusStatus": "zoomed_to_bbox"
+  }
+}

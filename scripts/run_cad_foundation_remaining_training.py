@@ -66,6 +66,51 @@ def _driver(fake_cad: bool) -> Any:
     return AutoCADComDriver(connect_existing_only=True)
 
 
+def resolve_training_execution_profile(
+    *,
+    optimize_call_granularity: bool = True,
+    post_sync: bool,
+    capture_preview: bool,
+    artifact_retention: bool,
+    stream_demo: bool,
+    timeout_seconds: int,
+    requested_item_count: int,
+) -> dict[str, Any]:
+    """Resolve the unified training/production execution profile.
+
+    Speed is improved by raising CAD submission granularity, not by skipping
+    validation, readback, sync, capture, or other quality links.
+    """
+
+    item_count = max(1, int(requested_item_count))
+    granularity = {
+        "policy": "unified_quality_chain_latency_optimized",
+        "minimumExternalSubmitUnit": "foundation_item" if optimize_call_granularity else "primitive_debug",
+        "preferredExternalSubmitUnit": "foundation_batch" if optimize_call_granularity else "foundation_item",
+        "maxExternalSubmitCalls": item_count if optimize_call_granularity else None,
+        "primitiveExternalCallsAllowed": not optimize_call_granularity,
+        "reason": (
+            "Foundation matrices must be submitted at item or batch level; "
+            "primitive-level MCP/COM submission is only allowed for isolated debugging."
+        ),
+    }
+
+    return {
+        "name": "unified_optimized" if optimize_call_granularity else "unified_debug",
+        "postSync": post_sync,
+        "capturePreview": capture_preview,
+        "artifactRetention": artifact_retention,
+        "streamDemo": stream_demo,
+        "timeoutSeconds": timeout_seconds,
+        "disabledQualityLinks": [],
+        "toolCallGranularity": granularity,
+        "reason": (
+            "Training and formal drawing share one quality chain; latency is reduced by "
+            "batching CAD submission granularity instead of skipping chain links."
+        ),
+    }
+
+
 def resolve_cli_replay_mode(
     *,
     batch_preset: str,
@@ -183,7 +228,18 @@ def run_remaining_training(
     allow_low_expression: bool = False,
     project_root: Path | None = PROJECT_ROOT,
     adaptive_training_route: dict[str, Any] | None = None,
+    optimize_call_granularity: bool = True,
 ) -> dict[str, Any]:
+    requested_item_count = len(selected_capability_ids or _batch_config(batch_preset)["ids"])
+    execution_profile = resolve_training_execution_profile(
+        optimize_call_granularity=optimize_call_granularity,
+        post_sync=post_sync,
+        capture_preview=capture_preview,
+        artifact_retention=artifact_retention,
+        stream_demo=stream_demo,
+        timeout_seconds=timeout_seconds,
+        requested_item_count=requested_item_count,
+    )
     streaming_config = (
         StreamingCadDemoConfig.hybrid(
             item_delay_seconds=stream_item_delay_seconds,
@@ -214,6 +270,8 @@ def run_remaining_training(
     )
     if adaptive_training_route is not None:
         report["adaptiveTrainingRoute"] = adaptive_training_route
+    report["executionProfile"] = execution_profile
+    report["toolCallGranularity"] = execution_profile["toolCallGranularity"]
     report["postTrainingSync"] = {"status": "not_required", "reason": "Training report did not pass."}
     report["postTrainingArtifactRetention"] = {
         "status": "not_required",
@@ -278,6 +336,11 @@ def main() -> int:
     parser.add_argument("--all-31", action="store_true", help="Shortcut for --batch-preset all-31.")
     parser.add_argument("--fake-cad", action="store_true", help="Use the in-memory fake CAD driver for tests.")
     parser.add_argument("--timeout-seconds", type=int, default=30)
+    parser.add_argument(
+        "--no-optimize-call-granularity",
+        action="store_true",
+        help="Debug fallback only: allow primitive-level CAD submission instead of item/batch-level submission.",
+    )
     parser.add_argument("--no-post-sync", action="store_true", help="Skip training workbench sync after pass.")
     parser.add_argument("--no-artifact-retention", action="store_true", help="Skip the training screenshot retention dry-run after pass.")
     parser.add_argument(
@@ -385,6 +448,7 @@ def main() -> int:
         allow_low_expression=args.allow_low_expression,
         project_root=PROJECT_ROOT,
         adaptive_training_route=adaptive_training_route,
+        optimize_call_granularity=not args.no_optimize_call_granularity,
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     sync_status = report.get("postTrainingSync", {}).get("status")

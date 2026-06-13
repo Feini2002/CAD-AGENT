@@ -91,6 +91,66 @@ class FakeCadDriver(PreviewWriteGuardMixin):
             attrs["Color"] = color
         return attrs
 
+    @staticmethod
+    def _handles_from_result(result: Any) -> list[str]:
+        if not isinstance(result, dict):
+            return []
+        handles: list[str] = []
+        for key in ("created_handles", "handles", "boundary_handles"):
+            value = result.get(key)
+            if isinstance(value, list):
+                handles.extend(str(item) for item in value if item)
+        handle = result.get("handle")
+        if handle:
+            handles.append(str(handle))
+        return list(dict.fromkeys(handles))
+
+    def _execute_batch_operation(self, operation: dict[str, Any]) -> dict[str, Any]:
+        method_name = str(operation.get("method") or "")
+        if method_name.startswith("_") or not method_name:
+            raise ValueError(f"Unsupported batch operation method: {method_name!r}")
+        method = getattr(self, method_name)
+        kwargs = operation.get("kwargs") or {}
+        if not isinstance(kwargs, dict):
+            raise ValueError("Batch operation kwargs must be an object.")
+        return method(**kwargs)
+
+    def execute_operation_batch(
+        self,
+        operations: list[dict[str, Any]],
+        *,
+        layer: str = PREVIEW_LAYER,
+        batch_name: str = "",
+    ) -> dict[str, Any]:
+        self._assert_layer(layer)
+        operation_results: list[dict[str, Any]] = []
+        created_handles: list[str] = []
+        for index, operation in enumerate(operations):
+            result = self._execute_batch_operation(operation)
+            handles = self._handles_from_result(result)
+            created_handles.extend(handles)
+            operation_results.append(
+                {
+                    "index": index,
+                    "operation": str(operation.get("operation") or operation.get("method") or ""),
+                    "method": str(operation.get("method") or ""),
+                    "handles": handles,
+                    "result": result,
+                }
+            )
+        entry = {
+            "status": "pass",
+            "batch_name": batch_name,
+            "layer": layer,
+            "operation_count": len(operations),
+            "created_handles": list(dict.fromkeys(created_handles)),
+            "operation_results": operation_results,
+        }
+        log = getattr(self, "batch_execution_log", [])
+        log.append({key: value for key, value in entry.items() if key != "operation_results"})
+        self.batch_execution_log = log
+        return entry
+
     def ensure_controlled_block_definition(
         self,
         block_name: str | None = None,

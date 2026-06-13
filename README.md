@@ -4,6 +4,8 @@ CAD Agent Core Lab 是一个可迁移的 CAD Agent 开发包。它训练的不�
 
 当前主线是 **架构归并画布**：把旧表 A/B/C、能力证明、RCAD、训练地图、资产、多 Agent、模型桥、Worker、截图和工作台，统一归入一条任务生命周期。旧表 C 只保留为 `Core Proof Coverage`，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。
 
+`超级CADAgent系统架构参考文档.md` 与 `CAD工具演进与原生插件引入阶段说明.md` 目前作为 **vNext 目标架构 RFC** 使用：可以吸收其中的中立工程数据内核、Agent Runtime、工具网关、治理控制平面、证据账本和原生插件边界，但不能直接替代 `CORE_RESTRUCTURE_PLAN.md`。当前更合适的路线是保留本仓的真实 CAD 证据底座，用迁移计划把这些 RFC 逐步产品化。
+
 最新训练底座补强已经把“某项能力训练过但输出又退回烟测”的问题拆成 repo-local 能力画像、`growth_replay` 路由、表达回归门禁和 closeout claim gate。它是 focused / formal 复训的安全底座，不等于恢复整批训练、真实 CAD 几何验证、Worker 部署或表 C 提升。
 
 主 Agent 认知提升还有更硬的一条：任何声称“主 Agent 变聪明”的改动，都必须证明它改变了真实任务里的判断；否则只是机制建设。
@@ -137,3 +139,15 @@ flowchart TD
 - `agents/pipeline/README.md`：多 Agent 流水线和模型型 Agent 入口。
 - `docs/planning/任务清单.md`：执行台账和用户口令映射。
 - `capability-map.html`：训练工作台派生视图；刷新用 `scripts/sync_training_workbench.py`。
+
+## 新电脑接手
+
+最小恢复路径：
+
+1. `git clone https://github.com/Feini2002/CAD-AGENT.git`
+2. 先读 `AGENTS.md`、`CORE_CONTEXT_BRIEF.md` 和 `CORE_RESTRUCTURE_PLAN.md`。
+3. 准备 Python 环境；本机 CAD-MCP 常用解释器是 `%USERPROFILE%\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe`。没有该环境时，先用本机 Python 跑 no-CAD 检查。
+4. 轻量验证：`python -m unittest discover -s tests`；进入治理链时再跑 `scripts/run_doc_governance_audit.py` 和 OpenSpec validate。
+5. 真实 CAD、Codex Bridge、Cloudflare secret、AutoCAD 插件和 `.env` / `.dev.vars` 都是本机配置，不随仓库提交。
+
+仓库应提交源码、规则、文档、可复盘证据和必要 DWG 输入；不提交虚拟环境、依赖目录、本机日志、AutoCAD 锁文件和临时运行产物。

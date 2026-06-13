@@ -530,6 +530,33 @@ class CadFoundationRemainingTrainingTests(unittest.TestCase):
             self.assertEqual(second_report["parking_anchor"]["source"], "previous_handles")
             self.assertLess(second_report["batch_bbox"]["min"][0], 30000.0)
 
+    def test_training_parking_avoids_preview_run_layers_not_only_shared_preview_layer(self) -> None:
+        from core.training.foundation_batch_training import run_foundation_remaining_training_batch
+        from core.verification.fake_cad_driver import FakeCadDriver, FakeCadEntity
+
+        driver = FakeCadDriver()
+        driver.entities["OLD_RUN_LAYER"] = FakeCadEntity(
+            handle="OLD_RUN_LAYER",
+            object_name="AcDbLine",
+            layer="CODEX_PREVIEW_RUN_OLD",
+            StartPoint=[50000.0, -1000.0, 0.0],
+            EndPoint=[52000.0, 1000.0, 0.0],
+        )
+        with temporary_artifact_dir("cad_foundation_parking_all_preview_layers") as root:
+            report = run_foundation_remaining_training_batch(
+                programs=self.training_programs(),
+                driver=driver,
+                output_dir=root,
+                generated_at="2026-06-01T00:00:00Z",
+                capture_preview=False,
+                selected_capability_ids=["cad-layer-lineweight-standard"],
+                scope_reason="avoid old run layer",
+            )
+
+            self.assertEqual(report["status"], "pass", report)
+            self.assertGreater(report["batch_bbox"]["min"][0], 52000.0)
+            self.assertEqual(report["parking_anchor"]["source"], "global_modelspace_bbox")
+
     def test_hatch_boundary_training_uses_common_patterns_and_scale_comparison(self) -> None:
         from core.training.foundation_panel_drawings import draw_foundation_item
 
@@ -734,6 +761,68 @@ class CadFoundationRemainingTrainingTests(unittest.TestCase):
             self.assertEqual(report["replayMode"], "growth_replay")
             self.assertTrue(report["regressionGuard"]["allowLowExpression"])
             self.assertEqual(report["adaptiveReplay"]["items"][0]["profileVersionUsed"], "cli-v1")
+
+    def test_resolve_unified_training_profile_keeps_quality_links_while_optimizing_call_granularity(self) -> None:
+        from scripts.run_cad_foundation_remaining_training import resolve_training_execution_profile
+
+        profile = resolve_training_execution_profile(
+            optimize_call_granularity=True,
+            post_sync=True,
+            capture_preview=True,
+            artifact_retention=True,
+            stream_demo=True,
+            timeout_seconds=30,
+            requested_item_count=31,
+        )
+
+        self.assertEqual(profile["name"], "unified_optimized")
+        self.assertTrue(profile["postSync"])
+        self.assertTrue(profile["capturePreview"])
+        self.assertTrue(profile["artifactRetention"])
+        self.assertTrue(profile["streamDemo"])
+        self.assertEqual(profile["timeoutSeconds"], 30)
+        self.assertEqual(profile["disabledQualityLinks"], [])
+        self.assertEqual(profile["toolCallGranularity"]["minimumExternalSubmitUnit"], "foundation_item")
+        self.assertEqual(profile["toolCallGranularity"]["preferredExternalSubmitUnit"], "foundation_batch")
+        self.assertEqual(profile["toolCallGranularity"]["maxExternalSubmitCalls"], 31)
+        self.assertFalse(profile["toolCallGranularity"]["primitiveExternalCallsAllowed"])
+
+    def test_run_remaining_training_unified_optimized_keeps_sync_and_retention_hooks(self) -> None:
+        from scripts.run_cad_foundation_remaining_training import run_remaining_training
+
+        sync_calls: list[dict] = []
+        retention_calls: list[dict] = []
+
+        def sync_func(**kwargs: object) -> dict:
+            sync_calls.append(dict(kwargs))
+            return {"status": "pass", "agent_check": {"status": "pass"}}
+
+        def artifact_retention_func(**kwargs: object) -> dict:
+            retention_calls.append(dict(kwargs))
+            return {"status": "pass"}
+
+        with temporary_artifact_dir("cad_foundation_unified_optimized") as root:
+            report = run_remaining_training(
+                output_dir=root,
+                fake_cad=True,
+                timeout_seconds=30,
+                post_sync=True,
+                capture_preview=False,
+                artifact_retention=True,
+                sync_func=sync_func,
+                artifact_retention_func=artifact_retention_func,
+                optimize_call_granularity=True,
+            )
+
+            self.assertEqual(report["status"], "pass", report)
+            self.assertEqual(report["executionProfile"]["name"], "unified_optimized")
+            self.assertEqual(report["timeoutSeconds"], 30)
+            self.assertEqual(report["postTrainingSync"]["status"], "pass")
+            self.assertEqual(report["postTrainingArtifactRetention"]["status"], "pass")
+            self.assertEqual(len(sync_calls), 1)
+            self.assertEqual(len(retention_calls), 1)
+            self.assertEqual(report["toolCallGranularity"]["minimumExternalSubmitUnit"], "foundation_item")
+            self.assertFalse(report["toolCallGranularity"]["primitiveExternalCallsAllowed"])
 
     def test_focused_retraining_only_generates_requested_foundation_item(self) -> None:
         from core.training.foundation_batch_training import run_foundation_remaining_training_batch

@@ -234,6 +234,20 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
     def _handle(entity: Any) -> str:
         return str(getattr(entity, "Handle", getattr(entity, "handle", "")))
 
+    @staticmethod
+    def _handles_from_result(result: Any) -> list[str]:
+        if not isinstance(result, dict):
+            return []
+        handles: list[str] = []
+        for key in ("created_handles", "handles", "boundary_handles"):
+            value = result.get(key)
+            if isinstance(value, list):
+                handles.extend(str(item) for item in value if item)
+        handle = result.get("handle")
+        if handle:
+            handles.append(str(handle))
+        return list(dict.fromkeys(handles))
+
     def _point(self, values: list[float | int]) -> Any:
         if len(values) != 3:
             raise ValueError("AutoCAD COM points must contain exactly three coordinates.")
@@ -255,6 +269,50 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
             self._pythoncom.VT_ARRAY | self._pythoncom.VT_DISPATCH,
             tuple(values),
         )
+
+    def _execute_batch_operation(self, operation: dict[str, Any]) -> dict[str, Any]:
+        method_name = str(operation.get("method") or "")
+        if method_name.startswith("_") or not method_name:
+            raise ValueError(f"Unsupported batch operation method: {method_name!r}")
+        method = getattr(self, method_name)
+        kwargs = operation.get("kwargs") or {}
+        if not isinstance(kwargs, dict):
+            raise ValueError("Batch operation kwargs must be an object.")
+        return method(**kwargs)
+
+    def execute_operation_batch(
+        self,
+        operations: list[dict[str, Any]],
+        *,
+        layer: str = PREVIEW_LAYER,
+        batch_name: str = "",
+    ) -> dict[str, Any]:
+        self._guard_preview_layer_write(layer)
+        self.ensure_layer(layer)
+        operation_results: list[dict[str, Any]] = []
+        created_handles: list[str] = []
+        for index, operation in enumerate(operations):
+            result = self._execute_batch_operation(operation)
+            handles = self._handles_from_result(result)
+            created_handles.extend(handles)
+            operation_results.append(
+                {
+                    "index": index,
+                    "operation": str(operation.get("operation") or operation.get("method") or ""),
+                    "method": str(operation.get("method") or ""),
+                    "handles": handles,
+                    "result": result,
+                }
+            )
+        return {
+            "status": "pass",
+            "batch_name": batch_name,
+            "layer": layer,
+            "operation_count": len(operations),
+            "created_handles": list(dict.fromkeys(created_handles)),
+            "operation_results": operation_results,
+            "submit_unit": "foundation_item",
+        }
 
     def draw_line(
         self,

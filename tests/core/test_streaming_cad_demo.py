@@ -47,6 +47,62 @@ class FakeClock:
         self.now += float(seconds)
 
 
+class BatchCountingDriver(FakeCadDriver):
+    def __init__(self) -> None:
+        super().__init__()
+        self.batch_calls = 0
+        self.primitive_calls_outside_batch = 0
+        self._inside_batch = False
+
+    def execute_operation_batch(self, operations, *, layer=PREVIEW_LAYER, batch_name=""):
+        self.batch_calls += 1
+        self._inside_batch = True
+        try:
+            return super().execute_operation_batch(
+                operations,
+                layer=layer,
+                batch_name=batch_name,
+            )
+        finally:
+            self._inside_batch = False
+
+    def _count_outside_batch(self) -> None:
+        if not self._inside_batch:
+            self.primitive_calls_outside_batch += 1
+
+    def draw_line(self, **kwargs):
+        self._count_outside_batch()
+        return super().draw_line(**kwargs)
+
+    def draw_rectangle(self, **kwargs):
+        self._count_outside_batch()
+        return super().draw_rectangle(**kwargs)
+
+    def draw_circle(self, **kwargs):
+        self._count_outside_batch()
+        return super().draw_circle(**kwargs)
+
+    def draw_arc(self, **kwargs):
+        self._count_outside_batch()
+        return super().draw_arc(**kwargs)
+
+    def draw_polyline(self, **kwargs):
+        self._count_outside_batch()
+        return super().draw_polyline(**kwargs)
+
+    def draw_text(self, **kwargs):
+        self._count_outside_batch()
+        return super().draw_text(**kwargs)
+
+    def add_dimension(self, **kwargs):
+        self._count_outside_batch()
+        return super().add_dimension(**kwargs)
+
+    def draw_hatch(self, **kwargs):
+        self._count_outside_batch()
+        return super().draw_hatch(**kwargs)
+
+
 class StreamingCadDemoTests(unittest.TestCase):
     def test_fake_cad_driver_exposes_streaming_view_hooks(self) -> None:
         driver = FakeCadDriver()
@@ -103,6 +159,25 @@ class StreamingCadDemoTests(unittest.TestCase):
         self.assertGreaterEqual(len(operation_events), 5)
         self.assertEqual(len(delayed_events), 3)
         self.assertEqual(delayed_events[0]["operation"], "rect")
+
+    def test_foundation_panel_uses_one_batch_submission_per_item(self) -> None:
+        driver = BatchCountingDriver()
+        program = {
+            "capabilityId": "cad-array-copy-pattern",
+            "name": "阵列复制",
+            "focus": "array",
+        }
+
+        handles = draw_foundation_item(
+            driver,
+            program,
+            3,
+            [0.0, 0.0, 0.0],
+        )
+
+        self.assertGreater(len(handles), 3)
+        self.assertEqual(driver.batch_calls, 1)
+        self.assertEqual(driver.primitive_calls_outside_batch, 0)
 
     def test_disabled_config_records_no_sleep_zoom_or_refresh(self) -> None:
         sleeps: list[float] = []

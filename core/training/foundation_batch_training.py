@@ -21,6 +21,7 @@ from core.training.foundation_panel_drawings import (
     PANEL_GAP,
     PANEL_HEIGHT,
     PANEL_WIDTH,
+    driver_declares_operation_batch,
     draw_foundation_item,
 )
 from core.training.streaming_demo import ClockFn, SleepFn, StreamingCadDemoConfig, StreamingCadDemoRecorder
@@ -390,6 +391,30 @@ def _check(name: str, status: bool, message: str) -> dict[str, str]:
     return {"name": name, "status": "pass" if status else "fail", "message": message}
 
 
+def _tool_call_granularity_report(
+    *,
+    requested_item_count: int,
+    driver: Any,
+    batch_log: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    batch_method_available = driver_declares_operation_batch(driver)
+    observed_batch_calls = len(batch_log or [])
+    return {
+        "policy": "unified_quality_chain_latency_optimized",
+        "minimumExternalSubmitUnit": "foundation_item",
+        "preferredExternalSubmitUnit": "foundation_batch",
+        "maxExternalSubmitCalls": max(1, int(requested_item_count)),
+        "primitiveExternalCallsAllowed": False,
+        "driverBatchMethodAvailable": batch_method_available,
+        "actualSubmitUnit": "foundation_item" if batch_method_available else "primitive_fallback_internal_debug",
+        "observedBatchSubmitCalls": observed_batch_calls,
+        "reason": (
+            "Training and formal drawing use the same quality chain; CAD calls are grouped at item/batch "
+            "granularity so titles, frames, text, and sample geometry are not submitted as separate MCP units."
+        ),
+    }
+
+
 def _lineweight_linetype_evidence(readback: list[dict[str, Any]]) -> dict[str, Any]:
     expected_lineweights = sorted(int(sample["lineweight"]) for sample in LINEWEIGHT_STANDARD_SAMPLES)
     expected_linetypes = sorted(str(sample["linetype"]).upper() for sample in LINEWEIGHT_STANDARD_SAMPLES)
@@ -684,7 +709,7 @@ def run_foundation_remaining_training_batch(
 
     existing_entities = []
     if hasattr(driver, "snapshot_modelspace"):
-        existing_entities = driver.snapshot_modelspace(layer=PREVIEW_LAYER)
+        existing_entities = driver.snapshot_modelspace(layer=None)
     existing_bbox = _bbox_from_entities(existing_entities)
     parking_anchor = _parking_anchor(
         driver,
@@ -827,6 +852,9 @@ def run_foundation_remaining_training_batch(
             zoom_result = {"status": "failed", "error": str(exc)}
 
     timed_out = [step for step in watchdog if step["status"] == "timeout"]
+    if parking_anchor.get("source") == "global_preview_bbox":
+        parking_anchor["source"] = "global_modelspace_bbox"
+        parking_anchor["rule"] = "没有可回读的上一轮句柄时，退回到全模型空间 bbox 右侧空白区，避让旧训练层和正式画布内容。"
     non_overlap_reference_bbox = parking_anchor.get("bbox") if parking_anchor.get("source") == "previous_handles" else existing_bbox
     streaming_summary = streaming_recorder.summary()
     lineweight_style_reports = [
@@ -910,6 +938,12 @@ def run_foundation_remaining_training_batch(
         )
     )
     status = "pass" if dry_run["status"] == "pass" and all(check["status"] == "pass" for check in checks) else "blocked"
+    driver_batch_log = getattr(driver, "batch_execution_log", [])
+    tool_call_granularity = _tool_call_granularity_report(
+        requested_item_count=len(requested_ids),
+        driver=driver,
+        batch_log=driver_batch_log if isinstance(driver_batch_log, list) else [],
+    )
 
     plan_path = output_dir / f"{artifact_prefix}_training_plan.json"
     dry_run_path = output_dir / f"{artifact_prefix}_dry_run.json"
@@ -942,6 +976,7 @@ def run_foundation_remaining_training_batch(
         "batch_bbox": batch_bbox,
         "zoom": zoom_result,
         "streamingMode": streaming_summary,
+        "toolCallGranularity": tool_call_granularity,
         "watchdog": watchdog,
         "output_dir": str(output_dir),
     }
@@ -1018,6 +1053,7 @@ def run_foundation_remaining_training_batch(
         "circuitBreakerTriggered": bool(blocked_reason or len(timed_out) >= 2),
         "blockedReason": blocked_reason,
         "existing_preview_bbox_before": existing_bbox,
+        "existing_context_bbox_before": existing_bbox,
         "parking_anchor": parking_anchor,
         "batch_bbox": batch_bbox,
         "created_handle_count": len(all_handles),
@@ -1026,6 +1062,7 @@ def run_foundation_remaining_training_batch(
         "actual_layer_counts": layer_counts,
         "missing_handles": missing_handles,
         "streamingMode": streaming_summary,
+        "toolCallGranularity": tool_call_granularity,
         "items": item_reports,
         "checks": checks,
         "watchdog": watchdog,

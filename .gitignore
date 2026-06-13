@@ -34,6 +34,10 @@ output/**/*.log
 
 # Local tool logs
 cad_mcp.log
+*.out.log
+*.err.log
+tmp-*.log
+tmp-*.txt
 
 # Python/runtime caches
 __pycache__/
@@ -56,5 +60,12 @@ tmp-worker-*.txt
 *.dwl
 *.dwl2
 *.bak
+*.ac$
+*.sv$
+*.tmp.dwg
+
+# Local scratch files
+tmp/
+temp/
 
 # User-approved CAD references are portable development inputs and may be committed.

@@ -65,6 +65,10 @@ LINEWEIGHT_STANDARD_SAMPLES = [
 ]
 
 
+def driver_declares_operation_batch(driver: Any) -> bool:
+    return any("execute_operation_batch" in cls.__dict__ for cls in type(driver).__mro__)
+
+
 def _handles_from_result(result: Any) -> list[str]:
     if not isinstance(result, dict):
         return []
@@ -88,6 +92,7 @@ class PanelDrawer:
         self.driver = driver
         self.streaming_recorder = streaming_recorder
         self.handles: list[str] = []
+        self.operations: list[dict[str, Any]] = []
 
     def add(self, result: Any, *, operation: str) -> Any:
         before = set(self.handles)
@@ -101,79 +106,115 @@ class PanelDrawer:
             )
         return result
 
+    def queue(self, method: str, operation: str, kwargs: dict[str, Any]) -> dict[str, Any]:
+        self.operations.append({"method": method, "operation": operation, "kwargs": kwargs})
+        return {"queued": True, "operation": operation}
+
+    def flush(self, *, batch_name: str) -> list[str]:
+        if not self.operations:
+            return list(self.handles)
+
+        execute_batch = getattr(self.driver, "execute_operation_batch", None)
+        if driver_declares_operation_batch(self.driver) and callable(execute_batch):
+            batch_result = execute_batch(
+                list(self.operations),
+                layer=PREVIEW_LAYER,
+                batch_name=batch_name,
+            )
+            operation_results = []
+            if isinstance(batch_result, dict):
+                operation_results = list(batch_result.get("operation_results") or [])
+            for queued, operation_result in zip(self.operations, operation_results):
+                result = operation_result.get("result") if isinstance(operation_result, dict) else operation_result
+                self.add(result, operation=str(queued["operation"]))
+        else:
+            for queued in self.operations:
+                method = getattr(self.driver, str(queued["method"]))
+                self.add(method(**queued["kwargs"]), operation=str(queued["operation"]))
+        self.operations = []
+        return list(self.handles)
+
     def line(self, start: list[float], end: list[float], **kwargs: Any) -> Any:
-        return self.add(
-            self.driver.draw_line(start_point=start, end_point=end, layer=PREVIEW_LAYER, **kwargs),
-            operation="line",
+        return self.queue(
+            "draw_line",
+            "line",
+            {"start_point": start, "end_point": end, "layer": PREVIEW_LAYER, **kwargs},
         )
 
     def rect(self, p1: list[float], p2: list[float], **kwargs: Any) -> Any:
-        return self.add(
-            self.driver.draw_rectangle(corner1=p1, corner2=p2, layer=PREVIEW_LAYER, **kwargs),
-            operation="rect",
+        return self.queue(
+            "draw_rectangle",
+            "rect",
+            {"corner1": p1, "corner2": p2, "layer": PREVIEW_LAYER, **kwargs},
         )
 
     def circle(self, center: list[float], radius: float, **kwargs: Any) -> Any:
-        return self.add(
-            self.driver.draw_circle(center=center, radius=radius, layer=PREVIEW_LAYER, **kwargs),
-            operation="circle",
+        return self.queue(
+            "draw_circle",
+            "circle",
+            {"center": center, "radius": radius, "layer": PREVIEW_LAYER, **kwargs},
         )
 
     def arc(self, center: list[float], radius: float, start: float, end: float, **kwargs: Any) -> Any:
-        return self.add(
-            self.driver.draw_arc(
-                center=center,
-                radius=radius,
-                start_angle=start,
-                end_angle=end,
-                layer=PREVIEW_LAYER,
+        return self.queue(
+            "draw_arc",
+            "arc",
+            {
+                "center": center,
+                "radius": radius,
+                "start_angle": start,
+                "end_angle": end,
+                "layer": PREVIEW_LAYER,
                 **kwargs,
-            ),
-            operation="arc",
+            },
         )
 
     def polyline(self, points: list[list[float]], *, closed: bool = False, **kwargs: Any) -> Any:
-        return self.add(
-            self.driver.draw_polyline(points=points, closed=closed, layer=PREVIEW_LAYER, **kwargs),
-            operation="polyline",
+        return self.queue(
+            "draw_polyline",
+            "polyline",
+            {"points": points, "closed": closed, "layer": PREVIEW_LAYER, **kwargs},
         )
 
     def text(self, text: str, position: list[float], *, height: float = 90.0, **kwargs: Any) -> Any:
-        return self.add(
-            self.driver.draw_text(text=text, position=position, height=height, layer=PREVIEW_LAYER, **kwargs),
-            operation="text",
+        return self.queue(
+            "draw_text",
+            "text",
+            {"text": text, "position": position, "height": height, "layer": PREVIEW_LAYER, **kwargs},
         )
 
     def dimension(self, start: list[float], end: list[float], text_position: list[float], **kwargs: Any) -> Any:
-        return self.add(
-            self.driver.add_dimension(
-                start_point=start,
-                end_point=end,
-                text_position=text_position,
-                layer=PREVIEW_LAYER,
+        return self.queue(
+            "add_dimension",
+            "dimension",
+            {
+                "start_point": start,
+                "end_point": end,
+                "text_position": text_position,
+                "layer": PREVIEW_LAYER,
                 **kwargs,
-            ),
-            operation="dimension",
+            },
         )
 
     def hatch(self, boundary: list[list[float]], *, pattern: str = "ANSI31", scale: float = 1.0) -> Any:
-        result = self.driver.draw_hatch(boundary_points=boundary, pattern=pattern, scale=scale, layer=PREVIEW_LAYER)
-        self.add(result, operation="hatch")
-        if not _handles_from_result(result):
-            self.polyline(boundary, closed=True)
-        return result
+        return self.queue(
+            "draw_hatch",
+            "hatch",
+            {"boundary_points": boundary, "pattern": pattern, "scale": scale, "layer": PREVIEW_LAYER},
+        )
 
     def block(self, base_point: list[float], *, rotation: float = 0, scale: list[float] | None = None) -> Any:
-        return self.add(
-            self.driver.insert_block_alpha(
-                block_id=CONTROLLED_BLOCK_ID,
-                block_name=CONTROLLED_BLOCK_NAME,
-                base_point=base_point,
-                rotation=rotation,
-                scale=scale or [0.42, 0.42, 0.42],
-                layer=PREVIEW_LAYER,
-            ),
-            operation="block",
+        return self.queue(
+            "insert_block_alpha",
+            "block",
+            {
+                "block_id": CONTROLLED_BLOCK_ID,
+                "block_name": CONTROLLED_BLOCK_NAME,
+                "base_point": base_point,
+                "rotation": rotation,
+                "scale": scale or [0.42, 0.42, 0.42],
+                "layer": PREVIEW_LAYER,
+            },
         )
 
 
@@ -375,4 +416,4 @@ def draw_foundation_item(
     else:
         drawer.circle([left + 260, top - 260, z], 180)
         drawer.text("基础操作训练面板", [left + 560, top - 260, z], height=70)
-    return list(drawer.handles)
+    return drawer.flush(batch_name=cid)

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "validation_errors": [],
+  "queueId": "cad-foundation-remaining-21",
+  "itemCount": 1,
+  "entities": [
+    {
+      "capabilityId": "cad-layer-lineweight-standard",
+      "expectedLayer": "CODEX_PREVIEW",
+      "expectedPanelBBox": {
+        "min": [
+          55370.0,
+          1433.0971209884156
+        ],
+        "max": [
+          57570.0,
+          2613.0971209884156
+        ]
+      },
+      "expectedEvidence": [
+        "仅写 CODEX_PREVIEW 图层",
+        "创建句柄回读",
+        "可见标注必须为中文",
+        "已检查 / 未检查边界",
+        "三档线宽与连续线 / 中心线 / 虚线必须回读"
+      ],
+      "z": 0.0
+    }
+  ],
+  "human_summary": "1 项 CAD 基础操作训练面板 dry-run"
+}
