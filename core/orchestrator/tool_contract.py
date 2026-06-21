@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -94,6 +95,8 @@ CLOSEOUT_DECISION_PATH = "closeout_decision.json"
 PASS_STATUSES = {"pass", "ok", "ready", "valid", "executed"}
 FAKE_DRIVER_MODES = {"fake", "fake_driver", "fake_preview", "fake_driver_preflight"}
 AUTOCAD_EXISTING_DRIVER_MODES = {"autocad_existing", "active_autocad", "autocad_com_existing"}
+CAD_SESSION_HOST_DRIVER_MODES = {"cad_session_host", "cad-session-host", "session_host"}
+DEFAULT_CONTROLLED_CAD_DRIVER_MODE = "cad_session_host"
 
 
 def _utc_now() -> str:
@@ -540,7 +543,9 @@ def _execute_controlled_cad_tool(run_root: Path, tool_name: str, intent: dict[st
     if prereq_issue:
         return _write_controlled_cad_blocked_report(run_root, intent, plan_rel=plan_rel, driver_mode="", reason=prereq_issue)
 
-    raw_driver_mode = str(inputs.get("driverMode") or inputs.get("executionMode") or "autocad_existing").strip().casefold()
+    raw_driver_mode = str(
+        inputs.get("driverMode") or inputs.get("executionMode") or DEFAULT_CONTROLLED_CAD_DRIVER_MODE
+    ).strip().casefold()
     try:
         driver, driver_mode, cad_geometry_verified = _build_controlled_cad_driver(raw_driver_mode)
         from core.execution.execute_plan import execute_plan_file
@@ -655,11 +660,30 @@ def _build_controlled_cad_driver(driver_mode: str) -> tuple[Any, str, bool]:
         from core.verification.fake_cad_driver import FakeCadDriver
 
         return FakeCadDriver(), "fake_driver_preflight", False
+    if driver_mode in CAD_SESSION_HOST_DRIVER_MODES:
+        host_url = str(os.environ.get("CAD_SESSION_HOST_URL") or "").strip()
+        token = str(os.environ.get("CAD_SESSION_TOKEN") or "").strip()
+        if not host_url or not token:
+            raise ValueError(
+                "CAD_SESSION_HOST_URL and CAD_SESSION_TOKEN are required for cad_session_host driverMode"
+            )
+        timeout_seconds = float(os.environ.get("CAD_SESSION_HOST_TIMEOUT_SECONDS", "30"))
+        from core.cad_io.cad_session_host import CadSessionHostClient
+
+        return (
+            CadSessionHostClient(
+                base_url=host_url,
+                token=token,
+                timeout_seconds=timeout_seconds,
+            ),
+            "cad_session_host",
+            True,
+        )
     if driver_mode in AUTOCAD_EXISTING_DRIVER_MODES:
         from core.cad_io.autocad_com import AutoCADComDriver
 
         return AutoCADComDriver(connect_existing_only=True), "autocad_existing", True
-    raise ValueError("driverMode must be autocad_existing or fake_driver_preflight")
+    raise ValueError("driverMode must be cad_session_host, autocad_existing, or fake_driver_preflight")
 
 
 def _controlled_cad_readback(

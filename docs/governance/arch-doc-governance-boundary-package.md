@@ -1,12 +1,12 @@
 # 架构治理小包：永生文档瘦身与事实源边界
 
-状态：`DRAFT / ROOT-SIDECAR-PACKAGE`
+状态：`DRAFT / GOVERNANCE-SIDECAR-PACKAGE`
 
 创建日期：2026-06-07
 
 本文只承接“永生文档审查：内容扩散与边界侵蚀”这一类长期治理问题。它不是新的 `PlanMD`，不承载全仓 next，不替代 `CORE_RESTRUCTURE_PLAN.md`，本轮也不要求同步其它根目录文档。后续若执行本包，应先由用户确认切入点，再按最小修改拆包推进。
 
-根目录位置说明：本文按用户要求临时放在根目录，方便和其它根级永生文档并排审查。它不应成为根目录长期常驻计划；执行或收口后，应由后续治理包决定迁入 `docs/planning/`、`docs/governance/`、`docs/history/`，或删除根目录副本并保留引用。
+位置说明：本文已在 vNext Migration Phase 3 迁入 `docs/governance/`，作为文档治理 / 反膨胀侧包。它仍不是 PlanMD，也不承载全仓 next；执行或收口后，应继续由后续治理包决定归档、吸收或保留引用。
 
 ## 0. 为什么单开这个小包
 
@@ -91,7 +91,7 @@
 | `docs/training/README.md` | 训练控制入口 | 训练流程入口，不能替代训练事实源 |
 | `docs/training/training-sources.json` | 训练事实源 | 长期训练事实源，不能被工作台派生快照反向覆盖 |
 | `capability-map-data.js` | 派生工作台快照 | 只能由同步脚本生成，不能作为事实源 |
-| `ARCH_DOC_GOVERNANCE_BOUNDARY_PACKAGE.md` | 临时根侧包 | 本文本身也必须有退出路径，不能变成新的永生文档 |
+| `docs/governance/arch-doc-governance-boundary-package.md` | 治理侧包 | 本文本身也必须有退出路径，不能变成新的永生文档 |
 
 ## 2. 根因诊断
 
@@ -241,7 +241,7 @@ PlanMD 只保留必要引用。
 | `docs/status/issues.md` | 风险、失败教训、长期隐患 | 普通完成记录、状态快照 |
 | `docs/training/training-sources.json` | 训练事实源 | 派生快照、普通状态摘要、诊断报告 |
 | `docs/training/README.md` | 训练流程入口和边界 | 训练事实源正文、工作台快照事实 |
-| `ARCH_DOC_GOVERNANCE_BOUNDARY_PACKAGE.md` | 临时审查包、后续治理草案 | 永久规则源、执行台账、长期根目录常驻文件 |
+| `docs/governance/arch-doc-governance-boundary-package.md` | 临时审查包、后续治理草案 | 永久规则源、执行台账、长期根目录常驻文件 |
 
 后续改文档时，先判断新增内容属于哪一列，再决定写入位置。
 

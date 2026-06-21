@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "native-thin-autocad-plugin-result/p13f/v1",
+  "status": "geometry_verified",
+  "verificationStatus": "verified",
+  "backend": "autocad_plugin",
+  "targetLayer": "CODEX_PREVIEW",
+  "transactionId": "tx-p13f-native-live-spike-001",
+  "nativePluginInvoked": true,
+  "cadWritesAttempted": true,
+  "savedCurrentDwg": false,
+  "committedPreview": true,
+  "createdHandles": [
+    "2CF"
+  ],
+  "createdHandlesReadback": {
+    "status": "verified",
+    "readbackStatus": "verified",
+    "createdHandles": [
+      "2CF"
+    ],
+    "entities": [
+      {
+        "handle": "2CF",
+        "type": "LWPOLYLINE",
+        "layer": "CODEX_PREVIEW",
+        "bbox": {
+          "min": [
+            100,
+            200,
+            0
+          ],
+          "max": [
+            1300,
+            800,
+            0
+          ]
+        }
+      }
+    ]
+  },
+  "bboxLayerEntityAudit": {
+    "status": "verified",
+    "bboxChecked": true,
+    "layerChecked": true,
+    "entityAuditChecked": true,
+    "targetLayer": "CODEX_PREVIEW"
+  },
+  "rollbackRequired": true,
+  "rollbackStatus": "rolled_back",
+  "rollbackProof": {
+    "status": "verified",
+    "rollbackRequired": true,
+    "rollbackStatus": "rolled_back",
+    "verified": true,
+    "rolledBackHandles": [
+      "2CF"
+    ]
+  },
+  "noSaveAudit": {
+    "status": "verified",
+    "saveAttempted": false,
+    "saveAllowed": false,
+    "savedCurrentDwg": false
+  },
+  "documentStateBefore": "C:\\Users\\User\\AppData\\Local\\Autodesk\\AutoCAD 2026\\R25.1\\chs\\Template\\acadiso.dwt|tilemode=True",
+  "documentState": "rolled_back_no_save",
+  "documentStateAfter": "C:\\Users\\User\\AppData\\Local\\Autodesk\\AutoCAD 2026\\R25.1\\chs\\Template\\acadiso.dwt|tilemode=True",
+  "blockingReasons": [],
+  "missingEvidence": [],
+  "artifacts": {}
+}

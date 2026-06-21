@@ -1,140 +1,136 @@
-# CAD Agent Core PlanMD（唯一主线）
-最后更新：2026-06-07
-状态：系统宪章 / 架构路由器版。Core 底座施工已收口；当前保持 **ARCH-CONVERGENCE-01 架构归并画布工程**，把底座、训练、资产、多 Agent、模型桥、adaptive growth、主 Agent 认知证明和旧指标挂到统一任务生命周期；下一步可进入测试性链 / 家具 focused rehearsal，但不默认恢复整批训练。**认知提升硬口径**：任何声称主 Agent 变聪明的改动，都必须证明它改变了主 Agent 在真实任务中的判断；否则只能叫机制建设，不能叫认知提升。
-## 0. 本文职责
-- 本文是唯一 `PlanMD`。用户说 `plan.md`、主计划、主 PlanMD、开发主线，默认指这里。
-- 本文决定“下一类工作该走哪条架构路线”，不记录每个已完成包的长证据、单次训练流水、OpenSpec completed 任务列表或表 C 历史数字。
-- 近期执行计数和用户口令镜像写入 `docs/planning/任务清单.md`；训练细节写入 `docs/training/**`；状态和风险写入 `docs/status/**`；机器证据在 `output/validation_runs/**`、`output/runs/**`。
-- 改优先级或新增未来包时，先更新本文的路由 / 门槛，再更新对应台账；不得让辅助 MD 形成第二套 `next`、backlog 或退出标准。
-## 0.1 主架构链路
-```text
-User Request / DWG / screenshot / feedback
-  -> request context / run package
-  -> semantic route
-  -> Orchestrator Host / A-to-A contract
-  -> required agents + hard gates
-  -> CAD_PLAN / asset workflow / training route
-  -> validate / dry-run / tool contract
-  -> CODEX_PREVIEW or authorized system asset DWG
-  -> created handles readback / audit / visual aid
-  -> Reviewer Host / delivery claims
-  -> learning promotion / sync / archive
-```
-长期主方向：以 `CAD Designer Agent` 为训练主体，以 Core + A-to-A + `CAD_PLAN` + 真实 CAD readback 为硬底座，把白话设计任务收束为可验证、可复训、可沉淀的 CAD 执行链路。当前短周期先暂停新的正式对象训练，做架构归并；训练恢复后继续保留 `Visual-First` / `visual_parts` / `reference_match` 边界。训练内容只在 `docs/training/**` 和 `docs/planning/任务清单.md` 展开；本文只保留训练边界、架构路由和退出标准。
+# CAD Agent vNext Migration PlanMD（唯一主线）
 
-## 0.2 ARCH-CONVERGENCE-01：架构归并画布工程
-本工程是当前最高优先级。它不是改汇报措辞，而是把表 A/B/C、V-PROOF、RCAD、训练地图、资产、多 Agent、模型桥、Worker、截图和工作台归入统一任务生命周期。
-总设计文档：`docs/architecture/system-architecture-convergence.md`。OpenSpec 契约：`openspec/changes/unify-system-architecture-canvas/`。七层画布为：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。
-旧表 C 历史旧称“真实 CAD 实力”，现统一降级为 `Core Proof Coverage`：只说明底座证据覆盖，不代表 `Agent Task Maturity` 或 `Project Delivery Readiness`。
-当前执行：先同步主控文档、规则、状态、训练入口和 OpenSpec；后续新对话按 OpenSpec `tasks.md` 审计 coverage / workbench / doc governance / A-to-A gate 等脚本。归并完成前，不默认新开正式训练、表 C 推进或系统资产大沉淀；用户明确覆盖时仍走 quick / focused / formal 边界。
-架构归并完成后的下一步不是直接恢复大训练，而是先进入**测试性链环节**：从无 CAD 仓库治理链、模型型 Agent no-CAD 链、单项真实 CAD preview 链三者中选一条最小闭环。判断标准见 `docs/architecture/system-architecture-convergence.md` §8；只有测试链证明任务对象、A-to-A gate、执行证据、closeout 和沉淀边界能闭合后，才恢复 focused training 或更重链路。
-## 1. 不可破坏边界
+最后更新：2026-06-21
+
+状态：vNext migration router。用户说 `plan.md`、主计划、主 PlanMD、开发主线，默认指这里。本文只保留当前与后续可施工路线；已完成阶段和证据流水只看 `docs/migration/execution-ledger.md`。
+
+## 0. 本文职责
+
+- 定义当前 active gate、后续 gate 顺序、进入条件、退出标准和禁止项。
+- 保持 `README.md`、`CORE_CONTEXT_BRIEF.md`、`docs/planning/任务清单.md`、`docs/migration/execution-ledger.md` 主线一致。
+- 把 CLI-Anything / agent-native CLI harness 吸收为 Tool Layer 实现规范，不替代既有 Agent Runtime / Tool Gateway / Evidence Ledger / Workbench。
+- 保护旧仓库真实 CAD 证据链，防止文档治理、harness 包装、fake backend 或截图被说成 CAD 能力提升。
+- 任何新增待办、优先级调整或阶段切换，先改本文，再同步辅助文档。
+
+## 1. 当前定位
+
+| 项 | 当前口径 |
+| --- | --- |
+| 当前主线 | CAD Agent vNext Migration |
+| 当前 active gate | P14 Engineering Kernel / BIM minimal DiffPackage 已 closed；PlanMD 暂未定义 P15（P13 Native Thin Backend minimal scoped spike 已 closed；P12/P11/P10 均已完成） |
+| 当前 blocked reason | 无 active blocker；生产级 IFC / DXF / cloud backend、多真实 live backend 同一 CAD_PLAN 对比、训练恢复、表 C 推进和正式图层 / 业务 DWG 写入仍为 not_run。 |
+| 最新有效证据 | P14 no-CAD Engineering Kernel DiffPackage closeout：`output/validation_runs/phase14-engineering-kernel-diff-package-20260621-162452/`；P14 adapter / harness tests；P13F minimal native thin live spike verified：`output/validation_runs/phase13f-native-thin-live-spike-20260621-160230/`；P13F adapter / harness tests；P13E/P13D/P13C/P13B/P13A 单测；P12 mock plugin transaction 单测；P11 registry / CLI 越权拦截单测；P10B verified closeout：`output/validation_runs/phase10-fast-closeout-live-rehearsal-20260620-0422/` |
+| 当前未满足 | P14 closeout 只证明 no-CAD graph / DiffPackage 合同、registered adapter、harness route 和候选 backend docs；真实 P14 evidence 只消费 P13F native-thin source，`cad_session_host` / DXF / geometry kernel / IFC 在该 closeout 中为 candidate / not_run。P13F 只证明最小 scoped native thin create/readback/rollback/no-save 闭环，不证明生产级 native plugin、训练恢复、表 C 推进、正式图层写入或业务 DWG 保存能力。 |
+| 当前禁止 | 默认不恢复训练、不推进表 C、不保存业务 DWG、不写正式图层；不得把 P14 no-CAD DiffPackage 解释为新的 `geometry_verified`、生产级 BIM / DXF export、cloud backend 或扩大 native spike scope 的放行。 |
+
+## 2. 已完成基线
+
+已完成内容只作为基线，不再承载施工待办：Baseline / 主线改旗 / RFC 归位 / 根目录治理 / 规则压缩 / vNext Contracts / Legacy Gateway / Evidence Ledger skeleton / Workbench 只读化 / Phase 9 单项 CAD Preview / Phase 10 Focused Harness Rehearsal / Phase 11 ToolCard Adapter Registry / Phase 12 Mock Plugin Transaction / Phase 13A Native Thin Backend Skeleton / Phase 13B preflight launch packet / Phase 13C authorization gate and execution receipt / Phase 13D readiness and operator authorization request / Phase 13E minimal live spike execution gate / Phase 13F minimal real native thin live spike，均以 `docs/migration/execution-ledger.md` 为执行事实源。
+
+可复用成果：`TaskObject`、`ToolContract`、`ToolCard`、`EvidencePackage`、`CompletionJudge` skeleton；validate / dry-run / `CODEX_PREVIEW` / readback legacy adapter；ledger-aware fail-closed；Workbench 只读投影；`cad-session-host` 作为 Phase 9/10 的默认真实 CAD bridge；P11 `AdapterRegistry` 能注册 adapter、消费 harness result，并在后端前拦截 forbidden effects；P12 `mock-plugin.transaction` 验证 transaction / rollback / committed_preview 语义和 mock / real proof 分离；P13A-P13E `native-thin.backend` 记录 native skeleton transaction、no-save audit、rollback proof、scope/preflight/launch packet、authorization gate、execution receipt、readiness packet、operator authorization request、live spike execution gate 与 external_blocker closeout；P13F `native-thin.live-spike` 已通过 AutoCAD Core Console + native DLL 完成一个 `CODEX_PREVIEW` polyline 的 created handles readback、bbox/layer/entity audit、rollback proof 和 no-save audit；P14 `engineering-kernel.diff-package` 已能生成 task / geometry / semantic / version / evidence graphs 和 DiffPackage，比较 P13F source 与 COM / DXF / geometry kernel / IFC candidates。不可夸大：P13F / P14 仍不证明训练恢复、表 C 推进、生产级 native plugin、生产级 BIM / DXF、正式图层写入或业务 DWG 保存能力。
+
+## 3. 不可破坏边界
 
 | 边界 | 固定要求 |
 | --- | --- |
-| Core 边界 | 本仓库是通用 CAD Agent Core Lab。可复用能力进 `core/`，共享资源进 `libraries/`，项目资料进 `projects/`，场景差异只放 `agents/<scenario>/`。 |
-| CAD 执行 | 白话不得直接落 CAD；正式链路必须先有结构化意图或 `CAD_PLAN`，再走 validate、dry-run、`CODEX_PREVIEW`、created handles readback。 |
-| 写入安全 | 默认不保存当前业务 DWG、不覆盖原图、不删未证据锁定对象、不改正式图层；局部错误优先原位 `repair_plan`。 |
-| 模型型 Agent | 模型只做判断、复审、建议和工具请求；不能替代 CAD readback、sourceSpec、reuseReplay、表 C、删除范围门禁或用户验收。 |
-| A-to-A | 高风险任务必须生成 `a_to_a_task_contract`，列出 required agents 和 hard gates；缺输出、缺字段或 gate fail 时只能 blocked。 |
-| 系统资产 | reference/raw 只能作输入；`verified` 必须有 registry、native visible evidence、reuseWorkflowProbe 或 reuseReplay，不得用截图或 metadata-only 冒充。 |
-| 训练 | `quick_trial` 不沉淀；`focused_retraining` 不扩大范围；`formal_acceptance` 才允许完整验收、promotion 和工作台同步。 |
-| 能力成长复训 | `growth_replay` 只能由 focused / formal 路由触发，且只能读取仓库内 active / protected 事实源；不得把 debug、派生快照、诊断报告、截图、模型 pass 或外部路径当作 hard baseline。 |
-| 证据 / 表 C | 截图、dry-run、fake driver、no-CAD draft、模型 pass、工作台页面都不能冒充真实 CAD 几何证明；表 A/B/C 三套口径不得互相替代。 |
-| OpenSpec | 只作为单个复杂变更契约层，不承载第二套主计划、全局 backlog 或根级 `openspec/tasks.md`。 |
-| 数据治理 | 训练收尾、系统资产、仓库级清理或正式工作台同步前后，必须保护 active fact source，先做 evidence-closure / retention dry-run。 |
+| 事实源保护 | 不删除、不移动、不改写 `output/**`、`projects/**`、`libraries/**`、registry、training-sources、OpenSpec active changes 和历史失败教训，除非有 ledger、引用闭合和用户授权。 |
+| CAD 执行 | 白话不得直接落 CAD；必须先有结构化意图或 `CAD_PLAN`，再走 validate、dry-run、`CODEX_PREVIEW`、created handles readback。 |
+| 写入安全 | 默认不保存业务 DWG、不覆盖原图、不删未证据锁定对象、不改正式图层；局部错误优先 `repair_plan`。 |
+| CLI Harness | 只能位于 Tool Gateway 后、具体后端前；CLI 输出只是 EvidencePackage 输入，不能绕过 ToolContract / EvidenceLedger / CompletionJudge。 |
+| 状态口径 | install / probe / dry-run / fake / screenshot / model pass / CLI return code 均不能证明 `geometry_verified`。 |
+| 训练 / 表 C / 插件 | 只能按后续 gate 进入；P9 期间默认暂停。 |
 
-## 2. 事实源地图
+## 4. CLI-Anything 吸收决策
+
+参考 [HKUDS/CLI-Anything](https://github.com/HKUDS/CLI-Anything)、[HARNESS.md](https://github.com/HKUDS/CLI-Anything/blob/main/cli-anything-plugin/HARNESS.md) 和 [Preview Protocol](https://github.com/HKUDS/CLI-Anything/blob/main/docs/PREVIEW_PROTOCOL.md)，本仓库只吸收工具层习惯：
+
+- 后端能力包装成 agent-native CLI：稳定子命令、默认 `--json`、可安装、可测试、可发现。
+- 真实软件后端留在闭环里：final proof 必须来自真实 CAD backend 或明确 native backend。
+- producer / consumer 分离：CAD adapter 只发布 preview / readback 证据；Workbench / viewer 只读消费。
+- preview bundle / session / trajectory：逐步输出 `manifest.json`、`summary.json`、`artifacts/`、`session.json`、`trajectory.json`，但完成声明仍只看 CompletionJudge。
+
+不吸收：CLI 不解析自然语言、不编排任务、不决定保存 / 删除 / 正式图层写入、不以安装成功证明能力、不把 FreeCAD 的 file-backed 状态假设直接套到 AutoCAD 活动 DWG。
+
+## 5. 可施工 Gate 路线
+
+| Gate | 名称 | 目标 | 主要产物 | 退出条件 |
+| --- | --- | --- | --- | --- |
+| P9A | Live CAD 接管与 blocker 解除 | 复用单项 `CODEX_PREVIEW` CAD_PLAN，只接管既有 AutoCAD 活动对象 | readiness probe、preview report、blocked / verified EvidencePackage、CAD Session Host | completed；`cad-session-host` 单线程 bridge 完成 preview write + created handles readback，P9 Exit `phase10Allowed=true` |
+| P9B | Harness Result Contract | 在不扩大 CAD scope 的前提下，把现有 runner 输出收成 CLI-harness-compatible JSON | `cad-agent-harness-result/v1` schema、thin CLI facade、unit tests | completed；validate / dry-run / probe / preview / readback / evidence 命令可 JSON 输出，fake backend 永远 `not_verified` |
+| P9C | Preview Bundle Pilot | 将 P9 run dir 同步写成轻量 preview bundle，供人和 Agent 只读检查 | `manifest.json`、`summary.json`、`artifacts/`、`session.json`、`trajectory.json` | completed；bundle 路径稳定、artifact 相对路径有效，EvidencePackage ref 可追溯；不可追踪 artifact 必须显式 warning；不替代 readback |
+| P9 Exit | 单项 CAD Preview 完成门 | 合并 P9A/B/C，完成一次真实单项 preview | `phase9_exit_gate.py`、harness `exit-gate`、ledger entry、judge decision、task list sync | gate evaluator completed；仍 blocked until `geometry_verified=true`、`savedCurrentDwg=false`、`missingEvidence=[]`、CompletionJudge `checked_evidence` 覆盖 `real_cad_readback` / `no_save_guard` 且 `can_claim_complete=true` |
+| P10 | Focused Harness Rehearsal | 用同一 ToolContract / harness 入口重复跑一个家具族或点名能力，验证稳定性 | `phase10_rehearsal.py`、harness `rehearsal-scope-proposal` / `rehearsal-plan` / `rehearsal-scope-receipt` / `rehearsal-preflight` / `rehearsal-run` / `rehearsal-result` / `rehearsal-closeout`、多 run EvidencePackage、diff summary、failure ledger | completed；`output/validation_runs/phase10-fast-closeout-live-rehearsal-20260620-0422/` 通过 2-run live rehearsal：run_01 / run_02 均 `geometry_verified`、`savedCurrentDwg=false`、created/readback count 均为 4、diffCount=0、failureCount=0、`phase10CloseoutAllowed=true`、`phase11Allowed=true`；不是整批训练 |
+| P11 | ToolCard / Adapter Registry | 把 harness 作为 Tool Gateway 后的 registered adapter，而不是散脚本 | ToolCard、allowed / forbidden effects、adapter registry tests | completed；`core/contracts/adapter_registry.py` 注册 harness / `cad-session-host` / legacy adapter，harness result 可经 registry 消费，CLI `--requested-effect` 越权在后端执行前 fail-closed |
+| P12 | Mock Plugin Transaction | 用 mock plugin-like backend 验证事务字段和 rollback / committed_preview 语义 | mock backend、transaction tests、ledger refs | completed；`mock-plugin.transaction` 已接入 Adapter Registry / harness，success / failure / rollback success / rollback failure / blocked 均有 proof status，mock 不满足 `real_cad_readback` |
+| P13 | Native Thin Backend | 将原生插件 thin backend 包在 harness 后，只做确定性 preview create / readback / rollback | thin backend adapter、rollback proof、no-save audit、preflight launch packet、authorization gate、execution receipt、readiness authorization request、minimal live spike execution gate、minimal real live spike evidence | completed；P13A-E 合同链已完成，P13F 已通过 `native-thin.live-spike` 在 AutoCAD Core Console 中完成一个 `CODEX_PREVIEW` scoped object 的 created handle readback、bbox/layer/entity audit、rollback 和 no-save closeout |
+| P14 | Engineering Kernel / BIM | 扩展任务图、几何图、语义图、版本图和证据图，多后端共享合同 | DiffPackage、kernel adapter、IFC / DXF / cloud candidate docs | completed（minimal）；`engineering-kernel.diff-package` 已注册为 no-CAD adapter，harness `engineering-kernel-diff` 走 registry，单测覆盖同一 CAD_PLAN 的 COM / plugin / DXF / kernel / IFC candidate diff；真实 closeout 只消费 P13F source，COM / DXF / geometry kernel / IFC 在本轮为 candidate / not_run |
+
+## 6. P9 细化施工包
+
+P9A 已完成：旧的直接 COM 入口在用户确认 CAD 已打开后仍出现“进程可见但活动 COM / ROT 不可接管”，因此补入 `CAD Session Host` 作为长期真实 CAD bridge。Host 默认只绑定 `127.0.0.1`、必须 `CAD_SESSION_TOKEN`、单线程处理 AutoCAD COM STA 请求、只允许 `CODEX_PREVIEW` 写入。最新真实证据为 `output/validation_runs/phase9-session-host-live-verify-20260619-235547/`：`cadGeometryVerified=true`、created/readback handles 均为 4、`savedCurrentDwg=false`，P9 Exit `phase10Allowed=true`。
+
+P9B 已完成：入口为 `scripts/cad_agent_harness.py`，核心实现为 `core/contracts/cad_agent_harness.py`；命令限定 `validate`、`dry-run`、`probe`、`preview`、`readback`、`evidence`；默认 `saveAllowed=false`、`deleteAllowed=false`、`formalLayersAllowed=false`、`connectExistingOnly=true`。`preview` 默认 backend 已切换为 `cad-session-host`；旧 `autocad-com-existing` 仅保留为显式诊断 / 兼容路径。
+
+P9C 已完成：入口为 `build_phase9_preview_bundle()` 与 harness `bundle` 命令；默认在 run dir 下写 `preview_bundle/manifest.json`、`summary.json`、`artifacts/`、`session.json`、`trajectory.json`。bundle producer 只整理既有 P9 run artifacts，consumer 是 Workbench / viewer；consumer 不渲染、不写事实源、不补造证据；若 report artifact 不在 source run dir 或不存在，bundle 必须输出 `artifact_source_not_traceable:*` warning。P9 Exit gate 也已固化并通过：入口为 `evaluate_phase9_exit_gate()` 与 harness `exit-gate` 命令；最新 run 的 `cadGeometryVerified=true`、`savedCurrentDwg=false`、`missingEvidence=[]`、created handles / readback entities 均存在，且 CompletionJudge `checked_evidence` 覆盖 `real_cad_readback` / `no_save_guard`、`missing_evidence=[]`、`can_claim_complete=true`，因此 `phase10Allowed=true`。
+
+P10B scope proposal contract 已完成：入口为 `build_phase10_rehearsal_scope_proposal()` 与 harness `rehearsal-scope-proposal` 命令；只读取 ready P9 Exit run、`phase9_preview_report.json` 与 source CAD_PLAN，输出 `phase10_rehearsal_scope_proposal.json` 和未确认的 `candidateScope`。proposal 固定 `scopeConfirmed=false` / `liveRunsConfirmed=false` / `cadWritesAttempted=false`，只能作为 operator scope review 入口；它不生成 receipt、不连接 AutoCAD、不执行 preview、不写实体，也不能替代用户点名确认。
+
+P10A 已完成：入口为 `prepare_phase10_rehearsal_plan()` 与 harness `rehearsal-plan` 命令；只生成 `phase10_rehearsal_scope.json` / `phase10_rehearsal_plan.json`，不连接 CAD、不执行 preview、不写实体。P10A 强制 `scopeConfirmed=true`、引用 ready 的 P9 Exit run、`runCount>=2`、全部 CAD_PLAN 只写 `CODEX_PREVIEW`，且 backend 必须是 `cad-session-host` / `cad_session_host`。
+
+P10B result aggregate contract 已完成：入口为 `evaluate_phase10_rehearsal_runs()` 与 harness `rehearsal-result` 命令；只读取已有 run dir 的 `phase9_preview_report.json`，生成 `phase10_rehearsal_result.json`、`phase10_rehearsal_diff_summary.json` 与 `phase10_rehearsal_failure_ledger.json`。它要求至少 2 个 run、全部 `verified` / `geometry_verified`、`savedCurrentDwg=false`、created/readback count 大于 0、backend 为 `cad_session_host`、全部 readback 在 `CODEX_PREVIEW`，且几何签名稳定；任一 run 保存 DWG、缺 readback、非 preview 图层、fake backend 或几何漂移均 blocked。最新 P10B live rehearsal 已由 `rehearsal-result` 收口稳定性 diff / failure ledger：`diffCount=0`、`failureCount=0`。
+
+P10B scope receipt contract 已完成：入口为 `build_phase10_rehearsal_scope_receipt()` 与 harness `rehearsal-scope-receipt` 命令；只消费 ready 的 `phase10_rehearsal_plan.json`，生成 `phase10_rehearsal_scope_receipt.json`，记录用户已点名的 scope、plan hash、runSpecs、`CODEX_PREVIEW` / no-save / repeated live run 确认声明。receipt 本身不连接 CAD、不执行 preview、不写实体；缺确认声明、未 `--confirm-live-runs`、plan 非 ready 或后续 plan hash / runSpecs 漂移时，preflight / run / closeout 均 fail-closed。
+
+P10B live-run gate contract 已完成：入口为 `execute_phase10_rehearsal_plan()` 与 harness `rehearsal-run` 命令；只消费 ready 的 `phase10_rehearsal_plan.json` 和匹配的 `phase10_rehearsal_scope_receipt.json`，默认缺 receipt、缺 `--confirm-live-runs`、缺 `CAD_SESSION_HOST_URL` / `CAD_SESSION_TOKEN` 时 blocked，runSpec 非 preview / 非真实 backend / 非 `CODEX_PREVIEW` 时 blocked。它本身不替用户选择 scope；真实 live runs 仍必须由用户点名 scope 后，通过 `cad-session-host` 写 `CODEX_PREVIEW` 并 readback。
+
+P10B launch preflight contract 已完成：入口为 `build_phase10_rehearsal_launch_packet()` 与 harness `rehearsal-preflight` 命令；只读取 ready 的 `phase10_rehearsal_plan.json`、匹配的 scope receipt 和 session-host env 状态，生成 `phase10_rehearsal_launch_packet.json` 与可审计 `rehearsal-run --scope-receipt ... --confirm-live-runs` argv。preflight 即使 ready 也保持 `cadWritesAttempted=false`，不调用 preview executor、不创建 run dir、不连接 AutoCAD；它只说明“如果用户点名 scope、receipt 匹配且 host env 齐备，下一步可启动 live rehearsal”。
+
+P10B closeout gate contract 已完成并加固：入口为 `evaluate_phase10_rehearsal_closeout()` 与 harness `rehearsal-closeout` 命令；只消费既有 `phase10_rehearsal_scope_receipt.json`、`phase10_rehearsal_launch_packet.json`、`phase10_rehearsal_execution.json` 与 `phase10_rehearsal_result.json`。closeout 只有在 scope receipt ready、launch ready、execution 为 production harness preview executor、`cadWritesAttempted=true`、result verified / stable geometry、无 blockers / missing evidence，且 `scopeReceiptPath`、`planHash`、`planPath`、`outputDir`、`runSpecs`、`runDirs`、run count、`resultPath` 与 aggregate result 彼此一致时才允许 `phase10CloseoutAllowed=true` / `phase11Allowed=true`。closeout 本身不连接 AutoCAD、不执行 preview、不写实体；缺 receipt、stale receipt、injected executor artifact、foreign / mixed artifact 和非 object JSON artifact 不能作为生产 closeout proof。
+
+P10B live rehearsal 首次真实校验已收口为 external blocker：用户明确 CAD 已打开并要求真实校验后，本轮按 P9 ready evidence 收束出的默认候选 `table / single_table_preview_repeatability` 尝试启动 2-run live rehearsal。`cad-session-host` 在 `output/validation_runs/phase10-scope-confirmed-live-rehearsal-20260620-015727/` 成功启动并响应 `/rpc status`，但返回 `ready=false`，blocker 为无可接管活动 `AutoCAD.Application` / ROT 对象；status 同时确认 `acadProcessRunning=true` 且 `Dispatch fallback skipped because connect_existing_only=True`。该轮 `cadWritesAttempted=false`，未生成 preview write、created handles、readback、bbox / layer / entity audit、result aggregate 或 closeout proof，因此该轮 P10B blocked、Phase 11 不放行；后续 fast closeout live rehearsal 已解除该 blocker 并完成 P10B closeout。
+
+P10B COM attach deep fix 已完成代码侧加固；该包当时的真实环境仍 blocked：`AutoCADComDriver(connect_existing_only=True)` 现在先尝试 versioned `GetActiveObject`，再尝试 `GetObject(Class=...)`，最后枚举 Running Object Table，并支持从 document-like ROT 对象回溯 `.Application`；session host status 会返回 `attachDiagnostics` 与稳定 `blockerCode`，且仍禁止在 existing-only 模式下 `Dispatch` 新 AutoCAD。该包 no-write readiness probe 为 `output/validation_runs/phase10-com-attach-hardened-readiness-20260620-021746/cad_session_host_readiness_summary.json`：host 可启动并响应，`hostReady=false`，`acadProcessRunning=true`，`ROT inspected=0`，`blockerCode=acad_process_running_without_visible_rot_object`，`cadWritesAttempted=false`。同目录 `independent_getactiveobject_probe.txt` 也显示 PowerShell `Marshal.GetActiveObject("AutoCAD.Application.25/25.1")` 返回 `MK_E_UNAVAILABLE`；该 blocker 已在后续 fast closeout live rehearsal 中解除并完成 P10B closeout。
+
+P10B CAD reopened readiness retry 已完成 no-write 复验：用户再次说明 CAD 已打开后，本轮新建 `output/validation_runs/phase10-cad-reopened-readiness-20260620-023225/` 并只轮询 `cad-session-host` `/rpc status` 与独立 PowerShell `GetActiveObject` 探针。Host 成功启动并响应，`hostReady=false`、`acadProcessRunning=true`、`ROT inspected=0`、`blockerCode=acad_process_running_without_visible_rot_object`、`cadWritesAttempted=false`；独立探针对 `AutoCAD.Application.25.1` / `.25` 仍返回 `MK_E_UNAVAILABLE`，裸 `AutoCAD.Application` 仍为 `CO_E_CLASSSTRING`。该轮证明当时 Windows / AutoCAD COM 可见性、注册或同权限会话仍 blocked；后续 fast closeout live rehearsal 已重新接管活动 AutoCAD 对象并完成 P10B closeout。
+
+P10B fast closeout live rehearsal 已完成 verified 收口：在用户授权 AutoCAD / registry / `D:\Design\CAD` 全权限操作后，本轮先从桌面配置包恢复 AutoCAD profile registry + AppData 文件，再修复 CAD-MCP stale COM reference 自愈，随后用 `cad-session-host` 接管当前 AutoCAD 活动对象。预备 run `output/validation_runs/phase10-fast-closeout-host-preview-20260620-0418/` 通过 P9 exit gate：`phase10Allowed=true`。正式 P10B run 目录为 `output/validation_runs/phase10-fast-closeout-live-rehearsal-20260620-0422/`：scope `phase10.table.rehearsal` / `table` / `single_table_preview_repeatability` / `runCount=2` / backend `cad-session-host`；`rehearsal-plan`、`rehearsal-scope-receipt`、`rehearsal-preflight`、`rehearsal-run`、`rehearsal-result`、`rehearsal-closeout` 均已生成对应 artifact。run_01 与 run_02 均为 `geometry_verified` / `verified`，`driverBackend=cad_session_host`，`savedCurrentDwg=false`，created/readback count 均为 4，全部 readback 在 `CODEX_PREVIEW`，bbox size 均为 `900.0 x 450.0`；aggregate `stableGeometry=true`、`diffCount=0`、`failureCount=0`、`blockingReasons=[]`、`missingEvidence=[]`；closeout `phase10CloseoutAllowed=true`、`phase11Allowed=true`、`sourceCadWritesAttempted=true`。收尾时本轮 `cad-session-host` 已停止，AutoCAD 程序保留运行，未保存任何当前 DWG；该结论仍不恢复训练、不推进表 C、不证明 native plugin 可用。
+
+P11 ToolCard / Adapter Registry intake 已完成最小闭环：新增 `core/contracts/adapter_registry.py`，将 harness commands、`cad-session-host.preview/readback`、legacy preview/readback 等路径登记为 `RegisteredAdapter`，每个 adapter 都有 `ToolCard`、`ToolContract`、allowed / forbidden effects、entrypoint、backend、evidence boundary 与是否执行 CAD 的显式字段。`cad_agent_harness` CLI 现在在加载 plan / run dir 或调用任何后端前先走 registry authorization；新增 `--requested-effect` / `--adapter-id` 供审计和负向测试使用，越权 effect（如 `dwg_save`、`save_current_dwg`、`formal_layer_write`、训练 / 表 C / plugin mutation）会返回 blocked JSON，不写 result artifact。P11 还提供 harness result consumption：`rehearsal-result` / `rehearsal-closeout` 只能作为既有 readback proof 消费，不触发新 CAD、不保存 DWG、不推进训练、表 C 或 native plugin。
+
+P12 Mock Plugin Transaction 已完成最小闭环：新增 `core/contracts/mock_plugin_transaction.py`，以 `mock-plugin.transaction` adapter 验证 plugin-like transaction 合同字段：`transactionId`、`rollbackRequired`、`rollbackStatus`、`committedPreview`、`createdHandles` / `createdHandlesRef`、`blockedReason`、`retryable`、`documentState` 与 `ledgerRefs`。harness 新增 `mock-plugin-transaction` 命令，仍先走 P11 registry authorization；`plugin_execute`、`cad_execute`、`real_cad_readback`、`dwg_save` 等 effect 会在后端前 blocked。P12 只产出 mock evidence：success / failure / rollback_success / rollback_failed / blocked 均有 `proofStatus`，但 `cadGeometryVerified=false`，EvidencePackage 不满足 `real_cad_readback`，不连接 AutoCAD、不调用 native plugin、不写真实 CAD。
+
+P13A Native Thin Backend skeleton 已完成最小合同层：新增 `core/contracts/native_thin_backend.py` 与 `native-thin.backend` adapter，复用 P12 transaction 字段并补 `noSaveAudit`、`rollbackProof`、`nativePluginInvoked=false`、`previewStrategy=memory_transaction`。harness 新增 `native-thin-backend` 命令，仍先走 registry authorization；`native_plugin_execute`、`plugin_execute`、`cad_execute`、`real_cad_readback`、`dwg_save` 等 effect 在 backend 前 blocked。P13A 只证明合同、ToolCard、EvidencePackage 和 CompletionJudge 后的 skeleton 路径，不连接 AutoCAD、不调用真实 native plugin、不生成 real CAD readback、不 claim `geometry_verified`。
+
+P13B Native Thin Backend preflight / launch packet 已完成 no-CAD / no-plugin 合同层：`build_native_thin_backend_scope_receipt()` 要求 scope confirmation、CAD_PLAN、`CODEX_PREVIEW`、readback plan、rollback plan、no-save guard 和 backend identity；`build_native_thin_backend_launch_packet()` 只生成 ready / blocked JSON packet，`cadWritesAttempted=false`、`nativePluginInvoked=false`、`liveExecutionAuthorized=false`。真实 native backend live spike 仍需用户单独授权。
+P13C Native Thin Backend authorization gate / execution receipt 已完成 no-CAD / no-plugin 合同层：`build_native_thin_backend_authorization_gate()` 消费 P13B ready launch packet，要求用户显式确认 scope、CAD_PLAN、`CODEX_PREVIEW`、readback、rollback、no-save guard、backend identity 与 launch packet hash；缺授权、scope/hash 漂移或越权 effect 均 fail-closed。`build_native_thin_backend_execution_receipt()` 只消费 ready authorization gate，记录 scoped execution receipt，仍固定 `cadWritesAttempted=false`、`nativePluginInvoked=false`、`executionStarted=false`、`cadGeometryVerified=false`。该 P13C closeout 当时未启动真实 live spike；该历史风险已由 P13F minimal real live spike closeout 覆盖。
+P13D Native Thin Backend readiness / operator authorization request 已完成 no-CAD / no-plugin 合同层：`build_native_thin_backend_readiness_packet()` 消费 P13C ready execution receipt，校验 scope、CAD_PLAN、`CODEX_PREVIEW`、readback plan、rollback plan、no-save guard、backend identity、launch packet hash 与 authorization receipt hash；输出只能是 `blocked` 或 `ready_for_user_authorization`，并固定 `cadWritesAttempted=false`、`nativePluginInvoked=false`、`executionStarted=false`、`cadGeometryVerified=false`。`native-thin-backend --native-backend-mode readiness` 仍先走 registry authorization；`native_plugin_execute`、`cad_execute`、`real_cad_readback`、`dwg_save`、`formal_layer_write` 等 effect 在后端前 blocked。P13D readiness 不是 real CAD verified；真实 native backend live spike 仍必须停下来等待用户单独授权。
+
+P13E Native Thin Backend minimal live spike execution gate 已完成 gate / blocker closeout 合同层：`build_native_thin_backend_live_spike_execution_gate()` 消费 P13D readiness packet / `operatorAuthorizationRequest`，要求 operator 单独确认 scope、CAD_PLAN、`CODEX_PREVIEW`、readback、rollback、no-save guard、backend identity、launch packet hash 与 authorization receipt hash。缺授权或 hash 漂移返回 `blocked / missing_authorization`；授权完整但缺真实环境返回 `external_blocker`；`native-thin-backend --native-backend-mode live_spike_gate --readiness-packet ...` 仍先走 registry authorization。该 gate 固定 `cadWritesAttempted=false`、`nativePluginInvoked=false`、`executionStarted=false`、`cadGeometryVerified=false`，并记录 created handles readback / bbox / layer / entity audit、rollback proof、no-save audit 的 `not_run_no_execution` / `not_run_no_cad` 边界。P13E gate / blocker closeout 不是插件可用证明，也不是 real CAD verified；其当时的真实 live spike 未启动风险已由 P13F minimal real live spike closeout 在最小 scoped 范围内覆盖。
+
+P13F Native Thin Backend minimal real live spike 已完成：新增 `native-thin.live-spike` adapter 与 `native-thin-live-spike` harness command，allowed effects 仅限 `native_thin_scoped_live_spike_execute`、created handles readback、bbox/layer/entity audit、created-handles rollback 与 no-save audit；泛化 `native_plugin_execute`、`plugin_execute`、`cad_execute`、`real_cad_readback`、`dwg_save`、`save_current_dwg`、`formal_layer_write` 仍在 ToolCard / ToolContract 前置授权中 blocked。真实证据位于 `output/validation_runs/phase13f-native-thin-live-spike-20260621-160230/`：AutoCAD Core Console 加载 `native_plugins/native_thin_backend/bin/Release/net8.0-windows/NativeThinBackend.dll`，只写一个 `CODEX_PREVIEW` `LWPOLYLINE`，created handle `2CF` readback 通过，bbox 为 `[100,200,0] -> [1300,800,0]`，rollback `rolled_back`，`noSaveAudit.savedCurrentDwg=false`，harness result 为 `geometry_verified` / `verified`。该包不保存业务 DWG、不写正式图层、不恢复训练、不推进表 C；只证明最小 scoped native thin backend 闭环，不等于生产级插件体系完成。
+P14 Engineering Kernel / BIM minimal DiffPackage 已完成：新增 `core/contracts/engineering_kernel.py`，注册 `engineering-kernel.diff-package` adapter，并新增 harness `engineering-kernel-diff` 命令。合同生成 `taskGraph`、`geometryGraph`、`semanticGraph`、`versionGraph`、`evidenceGraph` 与 `engineering-kernel-diff-package/p14/v1`，ToolCard 只允许 `engineering_kernel_graph_build`、`engineering_kernel_diff_package_write`、`backend_candidate_profile_write`；`cad_execute`、`native_plugin_execute`、`real_cad_readback`、`dwg_save`、`formal_layer_write`、训练 / 表 C mutation 仍在 backend 前 blocked。机器证据位于 `output/validation_runs/phase14-engineering-kernel-diff-package-20260621-162452/`：closeout 为 `ready` / `not_verified`，`cadWritesAttempted=false`，`nativePluginInvoked=false`，`savedCurrentDwg=false`，`cadGeometryVerified=false`，只消费 P13F native-thin live source；`cad_session_host`、`dxf_file`、`geometry_kernel`、`ifc_bim` 在该 closeout 中为 candidate / not_run。P14 不是新的 CAD readback，也不 claim `geometry_verified`、生产级 BIM / DXF export、训练恢复或表 C 推进。
+
+## 7. 每包施工规则
+
+- 每个包必须先明确写集、禁止触碰路径、验证命令和可回滚范围。
+- 代码包必须有单测；CAD 链路包还要有真实链路或 `external_blocker` 证据。
+- 文档包必须跑 doc governance audit、PlanMD / doc governance tests、OpenSpec validate 和 `git diff --check`。
+- 修改当前 next 时，同步 `CORE_CONTEXT_BRIEF.md` 与 `docs/planning/任务清单.md`；执行事实写 `docs/migration/execution-ledger.md`。
+- 不把 helper note、临时 MD、OpenSpec change 或 handoff 写成第二套主计划。
+
+## 8. 完成声明标准
+
+- 普通治理：说明改动范围、验证命令和未验证项；没跑就标 `not_run`。
+- CAD 输出：必须有 `CAD_PLAN`、validate、dry-run、`CODEX_PREVIEW`、created handles、readback、layer / bbox / entity audit。
+- Harness 输出：只证明工具层可解析；完成仍由 EvidenceLedger + CompletionJudge 裁决。
+- 训练、表 C、资产沉淀、插件：必须等对应 gate 和用户 scope；不得由 P9 文档或 CLI 产物暗示完成。
+
+## 9. 事实源地图
 
 | 事实类型 | 主入口 |
 | --- | --- |
-| 全局规则 | `AGENTS.md`、`docs/governance/cad-agent-rules.md` |
-| 短上下文 | `CORE_CONTEXT_BRIEF.md` |
-| 唯一主计划 | `CORE_RESTRUCTURE_PLAN.md` |
-| 执行台账 / 用户口令 | `docs/planning/任务清单.md` |
-| 架构治理硬化小任务 | `docs/planning/architecture-governance-hardening-mini-task.md`（active sidecar，不是 PlanMD） |
-| 训练路线 | `docs/training/README.md`、`docs/training/cad-designer-growth-path.md`、`docs/training/training-sources.json` |
-| Agent / 模型桥 | `agents/pipeline/pipeline_manifest.json`、`agents/pipeline/README.md`、`core/model_review/prompt_packs/**`、`core/model_review/**`、`core/orchestrator/local_live_model_bridge*.py` |
-| 系统资产 | `libraries/system_library/registry.json`、`libraries/system_library/**/assets.json`、`*_assets.dwg` |
-| 当前状态 / 风险 | `CORE_STATUS.md`、`docs/status/current.md`、`docs/status/issues.md` |
-| 历史流水 / 交接 | `docs/status/changelog.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md`、`docs/handoffs/archive/**` |
-| 机器证据 | `output/validation_runs/**`、`output/runs/**`、coverage JSON、model trace JSON |
-| 复杂变更契约 | `openspec/changes/<change>/**` |
-
-## 3. 未来开发路由
-
-| 路由 | 触发条件 | 退出标准 |
-| --- | --- | --- |
-| 架构归并画布 | 当前仓库级主工程；旧表格、训练、资产、多 Agent、模型桥和工作台已分片生长，需要统一主构图 | `docs/architecture/system-architecture-convergence.md`、`CORE_RESTRUCTURE_PLAN.md`、状态 / 规则 / 训练入口同步；OpenSpec `unify-system-architecture-canvas` valid；关键脚本审计完成并阻止旧“真实 CAD 实力”作为端到端能力主叙事 |
-| 入口收编、权限安全与训练回归保管账 | 架构约束已多，但旧 `scripts/`、诊断、训练、资产、工作台、历史专项入口和训练 replay 默认路径仍可能绕过中枢、误读或退回烟测 | 临时方案已收口删除；事实源改为 `config/entrypoint_custody_manifest.json`、`core/entrypoint_custody/**`、`scripts/run_entrypoint_custody_audit.py`、`scripts/run_training_report_claim_audit.py`、`scripts/run_model_trace_claim_audit.py` 和 `tests/core/test_legacy_entrypoint_custody_closure.py`。当前全仓 repo script 已完成 manifest 分类且 audit 无 warning；后续只把最高风险真实写入入口逐步接入 runtime guard，并在 sidecar 中继续处理 Python 身份、repo inventory 和 schema 单源 |
-| 架构治理硬化小任务（sidecar） | 用户要求把 Python 项目身份、schema 双源、根目录产物污染、repo inventory、文档控制面和入口 custody 的后续轻量治理沉淀为独立小任务 | 只维护 `docs/planning/architecture-governance-hardening-mini-task.md`，并最小同步状态 / 规则入口；目标是在既有 `config/entrypoint_custody_manifest.json` 上补分类，并新增 `config/repo_inventory_manifest.json` 与 checker 闭环，不新增第二套 PlanMD、不证明 CAD 能力、不恢复整批训练 |
-| 主 Agent 认知证明测试链 | 用户担心规则、Prompt、memory 和测试变厚，但主 Agent 未必真的在后续任务中改变判断 | 已拆入 OpenSpec `prove-main-agent-cognition-loop` 并完成 no-CAD 机器闭环：`evidence_portfolio`、`cognitiveLoopSummary`、before / after 行为改变证明、`selfUncertainty`、route budget 和 Agent Task Maturity 指标边界。后续真实任务 / 家具 rehearsal 仍需证明历史经验改变 route / dispatch / tool choice / blocking / requiredAgents / replay；无行为改变时仍只能称机制建设。 |
-| 模型型 Agent 本地硬化（网络外） | 网络 / OpenAI provider 暂不可用，但需要先加固模型桥数据边界、可审计决策链、Agent 连续性、ToolIntent fixture 和 closeout 状态机 | 按 `docs/architecture/model-agent-local-hardening-plan.md` 完成本地 no-network proof：`export_manifest` 阻断未授权上下文、repo-external cwd / context leak audit 可测、`handoff_packet` 全链路可引用、错误 taxonomy 清晰、closeout state machine 不越权放行；不要求真实模型或真实 CAD。 |
-| Worker 编排 + 本地活体模型桥 MVP | 需要先打好长期远程触发、多状态机、队列、retry、heartbeat 和多 Agent 依赖编排框架，再证明至少一个模型型 Agent 真正调用 `gpt-5.5`，并把 prompt / context / schema 输出接回系统 decision | 架构记录已从独立 MD 收口到本文和 `core/orchestrator/local_live_model_bridge*.py`；Cloudflare Worker 已按平台命名规则部署为 `cadagent`（用户原始名 `CADAgent` 因 Wrangler 只能小写而规范化），URL `https://cadagent.cmw1196466375.workers.dev`，最新远程 smoke 通过 `run_20260606151438_worker_orchestration_ready_f6260886`，Worker version `21fc6755-27d0-4e97-b13a-ef1e660c8401`。本机 quick CAD preview 已用 fixture agent 链写入并回读 7 个 `CODEX_PREVIEW` handles，`savedCurrentDwg=false`；当前不声明 Queue / Workflows、长期真实 local bridge runner、真实 `gpt-5.5` provider 或正式训练集成；后续仍按 `local_bridge_connected -> single_agent_live -> multi_agent_live -> cad_mcp_preview_live` 分层证明。 |
-| 模型型 Agent 活体协作证明 | 设计判断、主观复审、复杂分流或多 Agent 依赖链 | 下游 `agent_outputs/*.json` 显式引用上游输出；schema、trace、blocked 原因和 closeout gate 可审计；模型不越权执行 CAD；活体调用证明按 `single_agent_live` / `multi_agent_live` / `cad_mcp_preview_live` 分层声明。 |
-| 资产智能 verified reuse | 用户要求调用 / 复用 / 沉淀系统资产，或语义强匹配系统库 | 有 sourceSpec、native evidence、reuseWorkflowProbe 或 reuseReplay、created handles readback；`savedCurrentDwg=false`；候选不能冒充 verified。 |
-| 高风险 A-to-A hard gate 实战化 | 资产沉淀、资产 DWG 仓库布局、删除 / 局部修复、视觉验收、正式工作台收尾 | `a_to_a_task_contract` 覆盖 required agents；缺任一 hard gate 输出即阻断；视觉截图不能替代非截图证据。 |
-| 证据与数据治理 | 文档 / output 膨胀、路径断链、派生快照堆积、资产或训练收尾 | retention / evidence-closure dry-run 分类 `protected/candidate/blocked/derived`；不删除 active fact source，不让 `report_path_missing` 变差。 |
-| 真实案例 / 复合任务小闭环 | 用户给 DWG、截图、对象组合、修改 / 标注 / 尺度推断类任务 | 声明 evidence_source；走结构化意图或 `CAD_PLAN`、validate、dry-run、`CODEX_PREVIEW`、readback、audit、必要局部修复和反馈闭合。 |
-| 家具 focused rehearsal | 用户准备做家具测试，或要验证基础能力复测后是否能进入对象训练 | 只选一个家具族或点名能力；先证明主 Agent route / scope / evidence boundary 正确，再按 focused / `growth_replay` 需要读取历史 profile；真实 CAD 可用时只写 `CODEX_PREVIEW` 并回读 handles，默认不整批、不表 C、不沉淀系统资产 |
-| 自适应能力成长复训 | 用户要求“训练某项 / 加深 / 别再只做烟测 / 按历史经验提高表达”，或 formal acceptance 需要验证训练经验是否影响下一次表达 | 使用 `core.training.capability_growth_profile` 生成 repo-local inventory / profile，`adaptive_replay_planner` 选择 `growth_replay`，`expression_regression_gate` 比对上一轮 required / observed features；缺事实源、debug 派生源、外部路径、缺少正反例或缺原任务回测时只能 blocked / not_verified。 |
-| 表 C / 真实 CAD 回归 | 改 capability registry、showcase、验证证据、真实 CAD 能力口径 | 复跑 coverage；真实 CAD 能力只按 registry + evidence + coverage JSON；`刷新表 C` 只跑 coverage，不新开包。 |
-| 文档治理 | 活跃控制文档超预算、入口漂移、历史包回流到主计划 | `scripts/run_doc_governance_audit.py --fail-on-findings` 通过；完成细节迁往 changelog / handoff / history / output。 |
-
-`docs/planning/post-backlog.md` 只保留旧后置包和历史索引语义；新的未来路线以本文 §3 和 `docs/planning/任务清单.md` 为准。
-
-### 3.1 Worker 编排 + 本地活体模型桥剩余执行清单
-
-原独立本地活体模型桥架构 MD 已删除，剩余路线只在本文维护：
-
-- **Cloudflare Worker 初始远程部署（已落地，非 CAD）**：`workers/orchestrator/**` 已部署为 `cadagent`，远程 smoke 证明 Worker API + Durable Object run state、bridge 注册 / lease / heartbeat / submit、heartbeat token、idempotency、dangerous result block 和 diagnostics redaction 可远程运行；`WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md` 继续作为生产、真实 bridge、Queue / Workflows 和 CAD-MCP 前的停闸清单。
-- **Bridge 安全配置**：建立 bridge-owned `CODEX_HOME` / Codex config，避免 `--ignore-user-config` 连带丢 MCP 配置；Worker 永远只传 task envelope，不传 shell 命令。
-- **真实活体复验**：每次声明 `single_agent_live` / `multi_agent_live` 都必须有 `traceRef` 指向完整 trace 包，且 diagnostics 能验证 `trace_review.json`、`trace_manifest.json`、sanitized `codex.cmd exec --model gpt-5.5`、`normalized_output.json.modelProviderStatus.route=codex_cli_local`。
-- **CAD preview 证明分层**：`fake_driver_preflight` 只能给 `runtimeStatus=completed`、`proofStatus=not_verified`；只有真实 CAD / CAD-MCP created handles readback 通过，才能把 `cad_mcp_preview_live` 的几何证明说成 verified。
-- **生产保护**：DLQ / backpressure / kill switch / 日志脱敏 / bridge token / replay 防护已有本地实现和测试覆盖；Cloudflare 版本上线前仍需用真实环境、真实 secret、真实观测和回滚流程复验，这些保护不被本地 fixture pass 替代。
-
-## 4. Decision Gates
-
-| Gate | 默认判定 |
-| --- | --- |
-| 保存 / 覆盖当前业务 DWG | 默认禁止；只有用户明确授权且证据链通过才允许。 |
-| 删除 / 修改实体 | 只限 `CODEX_PREVIEW` 中被 handles、bbox、图层和错误原因锁定的对象；不得扩大到全模型空间。 |
-| 正式图层 / 原图 | 默认不改；需要单独授权和回读证据。 |
-| 自动读图 / 截图推断 | 只能作为视觉定位或推断；不能替代 DWG handles、CAD_PLAN 或真实尺寸 readback。 |
-| 公司块库 / 系统资产库 | 必须先过 sourceSpec、encodingPreflight 和资产边界；来源不清只能 candidate / metadata-only。 |
-| 方案自动落 CAD | 先生成结构化方案和 `CAD_PLAN`；validate / dry-run / hard gate 失败不得执行。 |
-| 真实项目样本 | 优先只写 `CODEX_PREVIEW`；用户业务 DWG 不保存、不覆盖。 |
-| 模型调用 | 只读判断 / 建议 / 工具请求；工具执行仍受确定性 gate 控制。 |
-| 系统资产 DWG 写入 | 只对授权的 `libraries/system_library/**/**/*_assets.dwg` 生效，不扩展到当前业务 DWG。 |
-
-## 5. 执行入口
-
-固定 `$py="$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe"` 后按需运行：
-
-- 文档治理：`& $py scripts\run_doc_governance_audit.py --fail-on-findings`
-- 入口 / 训练 claim 审计：`& $py scripts\run_entrypoint_custody_audit.py --fail-on-blocked`、`& $py scripts\run_training_report_claim_audit.py --reports <report_root> --fail-on-blocked`
-- 自检：`& $py scripts\self_check.py`
-- 表 C：`& $py scripts\run_capability_coverage.py --output output\validation_runs\capability-lab\cad_capability_coverage.json`
-- A-to-A gate：`& $py scripts\run_a_to_a_orchestration_gate_check.py`
-- 截图 / CAD / 模型桥预检：`& $py scripts\render_preview.py --check`、`& $py scripts\diagnose_local_live_model_bridge.py --run-dir <run_dir>`
-- OpenSpec：`openspec.cmd list --json`、`openspec.cmd validate --all --strict --json --no-interactive`
-
-## 6. 完成声明标准
-
-- 普通文档 / 代码治理：说明改动范围，跑对应审计 / 测试；没跑就标 `not_run`。
-- 可见 CAD 输出：必须有 `CAD_PLAN` 或结构化意图、validate、dry-run、`CODEX_PREVIEW`、handles readback、截图辅助和差异说明。
-- 模型型 Agent：必须有 trace、schema、provider status、tool contract 和 closeout gate；活体调用还必须证明 `modelInvoked=true`、`modelUnavailable=false`、`schemaValid=true`，模型 pass 不能替代确定性证据。若声称认知提升，还必须有 `cognitiveLoopSummary` 或等价 before / after 行为改变证明；`confidence`、`selfUncertainty`、prediction accuracy 和 no-CAD fixture 不能替代 CAD hard gate。
-- 系统资产：必须说明 lifecycle、sourceSpec、native evidence、reuse probe / replay、保存边界和当前 DWG `savedCurrentDwg=false`。
-- 训练：只按 `docs/training/**` 的 quick / focused / formal 路由收尾；本文不展开训练项。
-- 表 C：只引用 coverage JSON 机器值，不用工程进度、截图或 no-CAD benchmark 暗示真实 CAD 能力。
-- 架构归并：必须说明七层画布、旧模块归位、三类成熟度口径、训练暂停 / 恢复条件和脚本审计结果；文档清晰不等于 Agent 能力提升。
-
-## 7. 历史归档
-
-| 历史内容 | 存放处 |
-| --- | --- |
-| 旧 Lab 施工包 / Phase 明细 | `docs/planning/archive/**`、`docs/status/changelog.md`、`docs/handoffs/archive/**` |
-| 旧主计划瘦身快照 | `docs/history/snapshots/**` |
-| OpenSpec completed 任务 | `openspec/changes/<change>/**` 或归档后的 OpenSpec history |
-| 单次运行证据 | `output/validation_runs/**`、`output/runs/**` |
-| 最近接手窗口 | `docs/handoffs/current.md` |
+| 短上下文 / 当前 next | `CORE_CONTEXT_BRIEF.md`、`docs/planning/任务清单.md` |
+| 唯一主计划 / 执行 ledger | `CORE_RESTRUCTURE_PLAN.md`、`docs/migration/execution-ledger.md` |
+| 长期治理 / Target RFC | `docs/governance/cad-agent-rules.md`、`docs/rfcs/vnext-super-cad-agent-architecture.md`、`docs/rfcs/vnext-tool-layer-native-plugin-roadmap.md` |
+| 旧架构归并 / 历史包 | `docs/architecture/system-architecture-convergence.md`、`docs/planning/archive/**`、`docs/status/changelog.md` |
+| 机器证据 / protected evidence | `output/validation_runs/**`、`output/runs/**`、`projects/**`、`libraries/**`、`docs/training/training-sources.json`、`libraries/system_library/registry.json` |

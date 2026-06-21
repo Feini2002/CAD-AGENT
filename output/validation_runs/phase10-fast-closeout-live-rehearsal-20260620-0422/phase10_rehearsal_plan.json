@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "phase10-rehearsal-plan/v1",
+  "phase": "Phase 10",
+  "packageId": "phase10.focused-harness-rehearsal",
+  "taskId": "phase10.focused-harness-rehearsal.plan",
+  "status": "ready",
+  "scopeId": "phase10.table.rehearsal",
+  "backend": "cad-session-host",
+  "runCount": 2,
+  "phase9ExitRunDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-host-preview-20260620-0418",
+  "cadWritesAttempted": false,
+  "runSpecs": [
+    {
+      "runId": "phase10-rehearsal-run-01",
+      "command": "preview",
+      "backend": "cad-session-host",
+      "targetLayer": "CODEX_PREVIEW",
+      "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_01",
+      "cadPlan": {
+        "version": "0.1",
+        "domain": "generic",
+        "intent": "draw_object",
+        "object": {
+          "type": "table",
+          "name": "Phase 10 rehearsal table",
+          "width": 900,
+          "depth": 450
+        },
+        "placement": {
+          "mode": "absolute",
+          "base_point": [
+            76000,
+            42000,
+            0
+          ]
+        },
+        "drawing": {
+          "layer": "CODEX_PREVIEW",
+          "include_label": false,
+          "include_dimensions": false
+        },
+        "confidence": 0.91,
+        "needs_confirmation": false
+      },
+      "requiredEvidence": [
+        "real_cad_readback",
+        "no_save_guard"
+      ],
+      "safety": {
+        "saveAllowed": false,
+        "deleteAllowed": false,
+        "formalLayersAllowed": false,
+        "targetLayer": "CODEX_PREVIEW",
+        "backendMustBeExplicit": true
+      }
+    },
+    {
+      "runId": "phase10-rehearsal-run-02",
+      "command": "preview",
+      "backend": "cad-session-host",
+      "targetLayer": "CODEX_PREVIEW",
+      "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_02",
+      "cadPlan": {
+        "version": "0.1",
+        "domain": "generic",
+        "intent": "draw_object",
+        "object": {
+          "type": "table",
+          "name": "Phase 10 rehearsal table",
+          "width": 900,
+          "depth": 450
+        },
+        "placement": {
+          "mode": "absolute",
+          "base_point": [
+            76000,
+            42000,
+            0
+          ]
+        },
+        "drawing": {
+          "layer": "CODEX_PREVIEW",
+          "include_label": false,
+          "include_dimensions": false
+        },
+        "confidence": 0.91,
+        "needs_confirmation": false
+      },
+      "requiredEvidence": [
+        "real_cad_readback",
+        "no_save_guard"
+      ],
+      "safety": {
+        "saveAllowed": false,
+        "deleteAllowed": false,
+        "formalLayersAllowed": false,
+        "targetLayer": "CODEX_PREVIEW",
+        "backendMustBeExplicit": true
+      }
+    }
+  ],
+  "blockingReasons": [],
+  "allowedEffects": [
+    "phase10_rehearsal_plan_write"
+  ],
+  "plannedRunAllowedEffects": [
+    "cad_plan_validate",
+    "cad_plan_dry_run",
+    "cad_preview_write",
+    "created_handles_readback",
+    "evidence_package_write"
+  ],
+  "forbiddenEffects": [
+    "dwg_save",
+    "save_current_dwg",
+    "formal_layer_write",
+    "delete_entities",
+    "delete_non_created_entities",
+    "registry_mutation",
+    "table_c_mutation",
+    "training_source_mutation",
+    "protected_evidence_mutation",
+    "plugin_call",
+    "plugin_execute"
+  ],
+  "safety": {
+    "saveAllowed": false,
+    "deleteAllowed": false,
+    "formalLayersAllowed": false,
+    "targetLayer": "CODEX_PREVIEW",
+    "backendMustBeExplicit": true
+  },
+  "completionBoundary": "rehearsal_plan_is_not_cad_execution_or_training_resume",
+  "notEvidenceFor": [
+    "training_resume",
+    "table_c_progress",
+    "plugin_readiness"
+  ]
+}

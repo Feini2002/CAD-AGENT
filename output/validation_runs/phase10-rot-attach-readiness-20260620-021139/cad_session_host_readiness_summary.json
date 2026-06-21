@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "cad-session-host-readiness-probe/v1",
+  "status": "blocked",
+  "runDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-rot-attach-readiness-20260620-021139",
+  "hostUrl": "http://127.0.0.1:39021",
+  "hostStarted": true,
+  "hostReady": false,
+  "cadWritesAttempted": false,
+  "artifacts": {
+    "cadSessionHostStdout": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-rot-attach-readiness-20260620-021139\\cad_session_host.out.log",
+    "cadSessionHostStderr": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-rot-attach-readiness-20260620-021139\\cad_session_host.err.log"
+  },
+  "hostPid": 8440,
+  "hostStatus": {
+    "schemaVersion": "cad-session-host-response/v1",
+    "status": "ok",
+    "ready": false,
+    "activeDocument": {},
+    "blocker": "AutoCADAttachError: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: com_error: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: com_error: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: com_error: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: com_error: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: com_error: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: com_error: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: com_error: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: com_error: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: com_error: (-2147221005, '无效的类字符串', None, None) | ROT inspected=0; no attachable AutoCAD application found || acadProcessRunning=True; Dispatch fallback skipped because connect_existing_only=True; ROT fallback attempted=True",
+    "attachDiagnostics": {
+      "method": "none",
+      "acadProcessRunning": true,
+      "attempts": [
+        "AutoCAD.Application: com_error: (-2147221005, '无效的类字符串', None, None)",
+        "AutoCAD.Application.25.1: com_error: (-2147221021, '操作无法使用', None, None)",
+        "AutoCAD.Application.25: com_error: (-2147221021, '操作无法使用', None, None)",
+        "AutoCAD.Application.24.3: com_error: (-2147221005, '无效的类字符串', None, None)",
+        "AutoCAD.Application.24.2: com_error: (-2147221005, '无效的类字符串', None, None)",
+        "AutoCAD.Application.24.1: com_error: (-2147221005, '无效的类字符串', None, None)",
+        "AutoCAD.Application.24: com_error: (-2147221005, '无效的类字符串', None, None)",
+        "AutoCAD.Application.23.1: com_error: (-2147221005, '无效的类字符串', None, None)",
+        "AutoCAD.Application.23: com_error: (-2147221005, '无效的类字符串', None, None)",
+        "ROT inspected=0; no attachable AutoCAD application found"
+      ]
+    }
+  },
+  "blockingReasons": [
+    "cad_session_host_not_ready"
+  ],
+  "hostReturnCode": 1
+}

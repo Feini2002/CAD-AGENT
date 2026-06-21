@@ -1,24 +1,45 @@
 ﻿# 交接包索引
 
-当前索引只保留活跃窗口和月归档入口；包内 9 项交接、证据路径和风险说明保留在目标文件中。
+当前索引只保留活跃窗口、近期流水和月归档入口；包内 9 项交接、证据路径和风险说明保留在目标文件中。
 
 ## 当前窗口
 
 | 序号 | 开发包 | 位置 |
 | --- | --- | --- |
-| current | ENTRYPOINT-CUSTODY-PERMISSION-SELFTRAINING-01：旧入口收编、权限安全与训练回归加固 | `current.md` |
-| current | 自适应能力成长训练包 | `current.md` |
-| current | WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01：Cloudflare Worker 初始远程部署与 smoke | `current.md` |
-| current | WORKER-ORCHESTRATOR-PREDEPLOY-HARDENING-01：Cloudflare Worker 预部署编排层与临时 playMD 删除 | `current.md` |
-| current | 架构归并画布、三成熟度口径与工作台表 C 收口 | `current.md` |
-| current | 模型桥安全加固与独立 MD 收口 | `current.md` |
-| current | LOCAL-LIVE-MODEL-BRIDGE-RUNTIME-GATES-01：Worker-first 运行骨架、分层 feature gate 与诊断脚本 | `current.md` |
-| current | LOCAL-LIVE-MODEL-BRIDGE-ARCHITECTURE-01：Worker 编排 + 本地活体 GPT-5.5 模型桥路线 | `current.md` |
-| current | CORE-PLANMD-ARCH-ROUTER-01：唯一主 PlanMD 系统宪章 / 架构路由器改写 | `current.md` |
-| current | OBJECT-FAMILY-SOFA-REPLAY-RCAD-01：sofa 对象族真实 CAD replay 能力证明 | `current.md` |
-| current | ASSET-PROMOTION-CANDIDATES-MVP-01：资产智能自动晋升候选 | `current.md` |
-| current | OBJECT-FAMILY-SOFA-TRIAL-MVP-01：sofa 对象族 no-CAD 试点 | `current.md` |
-| current | ASSET-LOCAL-RAG-MVP-01：资产智能小型本地 RAG | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE14-ENGINEERING-KERNEL-DIFF-01：P14 Engineering Kernel / BIM minimal DiffPackage closeout | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE13F-NATIVE-THIN-LIVE-SPIKE-01：P13F minimal real native thin live spike closeout | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE13E-NATIVE-THIN-LIVE-SPIKE-GATE-01：P13E minimal live spike execution gate / external_blocker closeout 合同 | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE13D-NATIVE-THIN-READINESS-01：P13D readiness / operator authorization request 合同 | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE13C-NATIVE-THIN-AUTHORIZATION-01：P13C live spike authorization gate / execution receipt 合同 | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE13B-NATIVE-THIN-PREFLIGHT-01：P13B Native Thin Backend preflight / launch packet 合同 | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE13-NATIVE-THIN-SKELETON-01：P13 Native Thin Backend skeleton 合同层与 registry 接入 | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE12-MOCK-PLUGIN-TRANSACTION-01：P12 Mock Plugin Transaction 最小闭环 | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE11-ADAPTER-REGISTRY-01：P11 ToolCard / Adapter Registry intake 最小闭环 | `current.md` |
+| current | CAD-AGENT-VNEXT-PHASE10-FOCUSED-LIVE-CLOSEOUT-12：P10B focused live rehearsal verified closeout | `current.md` |
+
+## 近期流水
+
+| 序号 | 开发包 | 位置 |
+| --- | --- | --- |
+| history | CAD-AGENT-VNEXT-PHASE10-CAD-REOPENED-READINESS-11：历史 blocker，已由 P10 focused live closeout 解除 | `../status/changelog.md` |
+| history | CAD-AGENT-VNEXT-PHASE10-COM-ATTACH-HARDENED-10：历史 blocker 深修，已由 P10 focused live closeout 解除 | `../status/changelog.md` |
+| history | CAD-AGENT-VNEXT-PHASE10-LIVE-ATTACH-BLOCKED-09：历史真实启动 blocker，已由 P10 focused live closeout 解除 | `../status/changelog.md` |
+| history | CAD-AGENT-VNEXT-PHASE10-SCOPE-PROPOSAL-08：P10B scope proposal contract | `../status/changelog.md` |
+| history | CAD-AGENT-VNEXT-PHASE10-SCOPE-RECEIPT-07：P10B scope confirmation receipt 与 closeout receipt 链条加固 | `../status/changelog.md` |
+| history | CAD-AGENT-VNEXT-PHASE10-CLOSEOUT-HARDENING-06：P10B closeout artifact integrity 加固 | `../status/changelog.md` |
+| history | CAD-AGENT-VNEXT-PHASE9-SESSION-HOST-CLOSEOUT-05：CAD Session Host 根因修复与 P9 Exit closeout | `../status/changelog.md` |
+| history | ENTRYPOINT-CUSTODY-PERMISSION-SELFTRAINING-01：旧入口收编、权限安全与训练回归加固 | `../status/changelog.md` |
+| history | WORKER-ORCHESTRATOR-CLOUDFLARE-DEPLOY-01：Cloudflare Worker 初始远程部署与 smoke | `../status/changelog.md` |
+| history | WORKER-ORCHESTRATOR-PREDEPLOY-HARDENING-01：Cloudflare Worker 预部署编排层与临时 playMD 删除 | `../status/changelog.md` |
+| history | 架构归并画布、三成熟度口径与工作台表 C 收口 | `../status/changelog.md` |
+| history | 模型桥安全加固与独立 MD 收口 | `../status/changelog.md` |
+| history | LOCAL-LIVE-MODEL-BRIDGE-RUNTIME-GATES-01：Worker-first 运行骨架、分层 feature gate 与诊断脚本 | `../status/changelog.md` |
+| history | LOCAL-LIVE-MODEL-BRIDGE-ARCHITECTURE-01：Worker 编排 + 本地活体 GPT-5.5 模型桥路线 | `../status/changelog.md` |
+| history | CORE-PLANMD-ARCH-ROUTER-01：唯一主 PlanMD 系统宪章 / 架构路由器改写 | `../status/changelog.md` |
+| history | OBJECT-FAMILY-SOFA-REPLAY-RCAD-01：sofa 对象族真实 CAD replay 能力证明 | `../status/changelog.md` |
+| history | ASSET-PROMOTION-CANDIDATES-MVP-01：资产智能自动晋升候选 | `../status/changelog.md` |
+| history | OBJECT-FAMILY-SOFA-TRIAL-MVP-01：sofa 对象族 no-CAD 试点 | `../status/changelog.md` |
+| history | ASSET-LOCAL-RAG-MVP-01：资产智能小型本地 RAG | `../status/changelog.md` |
 
 ## 2026-06 归档
 

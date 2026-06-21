@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "native-thin-readiness/p13d/v1",
+  "kind": "operator_authorization_request",
+  "status": "ready_for_user_authorization",
+  "requiresSeparateUserAuthorization": true,
+  "requestedConfirmations": [
+    "scope",
+    "CAD_PLAN",
+    "CODEX_PREVIEW",
+    "readback_plan",
+    "rollback_plan",
+    "no_save_guard",
+    "backend_identity",
+    "launch_packet_hash",
+    "authorization_receipt_hash"
+  ],
+  "adapterId": "native-thin.backend",
+  "backendIdentity": {
+    "backend": "native-thin-skeleton",
+    "adapterId": "native-thin.backend",
+    "pluginVersion": "not_invoked",
+    "nativePluginInvoked": false
+  },
+  "targetLayer": "CODEX_PREVIEW",
+  "cadPlan": {
+    "version": "0.1",
+    "domain": "generic",
+    "intent": "draw_object",
+    "object": {
+      "type": "table",
+      "name": "P13F native thin scoped preview",
+      "width": 1200,
+      "depth": 600
+    },
+    "placement": {
+      "mode": "absolute",
+      "base_point": [
+        100,
+        200,
+        0
+      ]
+    },
+    "drawing": {
+      "layer": "CODEX_PREVIEW",
+      "include_label": false,
+      "include_dimensions": false
+    },
+    "confidence": 0.91,
+    "needs_confirmation": false
+  },
+  "readbackPlan": {
+    "required": true,
+    "strategy": "created_handles_bbox_props"
+  },
+  "rollbackPlan": {
+    "required": true,
+    "strategy": "rollback_batch"
+  },
+  "noSaveGuard": {
+    "required": true,
+    "saveAllowed": false
+  },
+  "launchPacketHash": "9f53eef2c239da4b89429b3ef0358a02bc2457193f1bd444fd303d8a5923383f",
+  "authorizationReceiptHash": "282203e396831189c7cd230714befdfbce29a9a8c3b3f2f8adbe7e33f578c34d",
+  "executionReceiptHash": "282203e396831189c7cd230714befdfbce29a9a8c3b3f2f8adbe7e33f578c34d",
+  "cadWritesAttempted": false,
+  "nativePluginInvoked": false,
+  "executionStarted": false,
+  "cadGeometryVerified": false,
+  "savedCurrentDwg": false,
+  "authorizationBoundary": "This request is not authorization by itself. The operator must separately confirm scope, CODEX_PREVIEW, readback, rollback, no-save guard, backend identity, launch packet hash, and authorization receipt hash before any real live spike.",
+  "notEvidenceFor": [
+    "native_plugin_execution",
+    "real_cad_readback",
+    "geometry_verified",
+    "cad_geometry_verified",
+    "training_resume",
+    "table_c_progress",
+    "current_dwg_save",
+    "formal_layer_write"
+  ]
+}

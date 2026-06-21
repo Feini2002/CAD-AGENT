@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "phase14-engineering-kernel-closeout/v1",
+  "phase": "Phase 14",
+  "packageId": "phase14.engineering-kernel-bim.minimal-diff-package",
+  "status": "ready",
+  "verificationStatus": "not_verified",
+  "cadWritesAttempted": false,
+  "nativePluginInvoked": false,
+  "savedCurrentDwg": false,
+  "cadGeometryVerified": false,
+  "sourceCadGeometryVerified": true,
+  "sourceCadWritesAttempted": true,
+  "registryRouteStatus": "allowed",
+  "registryAdapterId": "engineering-kernel.diff-package",
+  "verifiedBackends": [
+    "native_thin_live_backend"
+  ],
+  "notRunBackends": [
+    "cad_session_host",
+    "dxf_file",
+    "geometry_kernel",
+    "ifc_bim"
+  ],
+  "evidenceCompleteness": "partial",
+  "comparisonStatus": "complete",
+  "sameCadPlanMultiBackendContractCoverage": "unit_tests_only",
+  "liveEvidenceBoundary": "P14 closeout consumed P13F native-thin live evidence for the current CAD_PLAN; cad_session_host, dxf_file, geometry_kernel, and ifc_bim remain candidate/not_run here.",
+  "artifacts": {
+    "engineeringKernelGraphs": "output\\validation_runs\\phase14-engineering-kernel-diff-package-20260621-162452\\p13f-source-diff\\engineering_kernel_graphs.json",
+    "engineeringKernelDiffPackage": "output\\validation_runs\\phase14-engineering-kernel-diff-package-20260621-162452\\p13f-source-diff\\engineering_kernel_diff_package.json",
+    "harnessRouteDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase14-engineering-kernel-diff-package-20260621-162452\\harness-registry-route",
+    "harnessResult": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase14-engineering-kernel-diff-package-20260621-162452\\engineering_kernel_harness_result.json",
+    "sourceP13FLiveSpike": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-160230\\native_thin_live_spike_harness_result.json"
+  },
+  "notEvidenceFor": [
+    "new_cad_execution",
+    "new_real_cad_readback",
+    "geometry_verified_by_p14",
+    "training_resume",
+    "table_c_progress",
+    "production_bim_export",
+    "formal_layer_write",
+    "current_dwg_save"
+  ]
+}

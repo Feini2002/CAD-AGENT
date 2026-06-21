@@ -1,0 +1,51 @@
+{
+  "status": "executed",
+  "plan": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_02\\phase9_single_preview_cad_plan.json",
+  "intent": "draw_object",
+  "object_type": "table",
+  "object_name": "Phase 10 rehearsal table",
+  "object_size": [
+    900,
+    450
+  ],
+  "base_point": [
+    76000,
+    42000,
+    0
+  ],
+  "layer": "CODEX_PREVIEW",
+  "semantic_layer": null,
+  "preview_only": true,
+  "entities": {
+    "rectangle": 1,
+    "text": 0,
+    "dimensions": 0
+  },
+  "created_handles": [
+    "88",
+    "89",
+    "8A",
+    "8B"
+  ],
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "allowed_layers": [
+      "CODEX_DIAGNOSTIC",
+      "CODEX_PREVIEW"
+    ],
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false,
+    "writes_only_preview_layer": true,
+    "writes_only_allowed_layers": true,
+    "saves_dwg": false,
+    "deletes_entities": false,
+    "modifies_formal_layers": false
+  },
+  "activeDocument": {
+    "name": "Drawing2.dwg",
+    "fullName": ""
+  },
+  "driverBackend": "cad_session_host",
+  "savedCurrentDwg": false
+}

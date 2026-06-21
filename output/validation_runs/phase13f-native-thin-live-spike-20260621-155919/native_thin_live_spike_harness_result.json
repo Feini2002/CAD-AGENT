@@ -1,0 +1,633 @@
+{
+  "schemaVersion": "cad-agent-harness-result/v1",
+  "command": "native-thin-live-spike",
+  "status": "external_blocker",
+  "verificationStatus": "not_verified",
+  "taskId": "phase13f.native-thin-live-spike",
+  "toolCallId": "cad-agent-harness.native-thin-live-spike",
+  "backend": "native_thin_live_backend",
+  "targetLayer": "CODEX_PREVIEW",
+  "savedCurrentDwg": false,
+  "cadGeometryVerified": false,
+  "createdHandles": [],
+  "readbackEntities": [],
+  "evidencePackageRef": "native-ledger://tx-p13f-native-live-spike-001/tool.requested",
+  "blockingReasons": [
+    "native_thin_plugin_report_missing",
+    "native_plugin_invocation_not_proven",
+    "cad_write_attempt_not_proven",
+    "created_handles_required",
+    "created_handles_readback_not_verified",
+    "readback_entities_required",
+    "bbox_layer_entity_audit_not_verified",
+    "bbox_audit_required",
+    "layer_audit_required",
+    "entity_audit_required",
+    "rollback_proof_not_verified",
+    "rollback_status_not_verified"
+  ],
+  "missingEvidence": [
+    "real_cad_readback",
+    "native_thin_rollback_proof",
+    "no_save_guard",
+    "native_thin_plugin_report_missing",
+    "native_plugin_invocation_not_proven",
+    "cad_write_attempt_not_proven",
+    "created_handles_required",
+    "created_handles_readback_not_verified",
+    "readback_entities_required",
+    "bbox_layer_entity_audit_not_verified",
+    "bbox_audit_required",
+    "layer_audit_required",
+    "entity_audit_required",
+    "rollback_proof_not_verified",
+    "rollback_status_not_verified"
+  ],
+  "validationErrors": [],
+  "safety": {
+    "saveAllowed": false,
+    "deleteAllowed": false,
+    "formalLayersAllowed": false,
+    "connectExistingOnly": true
+  },
+  "allowedEffects": [
+    "native_thin_scoped_live_spike_execute",
+    "native_thin_created_handles_readback",
+    "native_thin_bbox_layer_entity_audit",
+    "native_thin_rollback_created_handles",
+    "native_thin_no_save_audit"
+  ],
+  "forbiddenEffects": [
+    "native_plugin_execute",
+    "plugin_execute",
+    "plugin_call",
+    "cad_execute",
+    "cad_preview_write",
+    "apply_preview_batch",
+    "real_cad_readback",
+    "dwg_save",
+    "save_current_dwg",
+    "commit_save",
+    "save_copy",
+    "formal_layer_write",
+    "delete_entities",
+    "delete_non_created_entities",
+    "registry_mutation",
+    "table_c_mutation",
+    "training_source_mutation",
+    "protected_evidence_mutation"
+  ],
+  "artifacts": {
+    "createdHandlesRef": "native-ledger://tx-p13f-native-live-spike-001/created-handles",
+    "nativeThinLiveSpikeGate": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_live_spike_execution_gate.json",
+    "nativeThinLiveSpikeResult": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_live_spike_result.json",
+    "nativePluginReport": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_plugin_result.json",
+    "coreConsoleLog": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_core_console.log"
+  },
+  "cadWritesAttempted": false,
+  "nativePluginInvoked": false,
+  "executionStarted": true,
+  "proofStatus": "native_live_spike_external_blocker",
+  "closeoutStatus": "external_blocker",
+  "rollbackRequired": true,
+  "rollbackStatus": "not_started",
+  "committedPreview": false,
+  "documentState": "",
+  "noSaveAudit": {
+    "status": "not_run",
+    "saveAttempted": false,
+    "saveAllowed": false,
+    "savedCurrentDwg": false
+  },
+  "rollbackProof": {
+    "status": "not_run",
+    "verified": false,
+    "rollbackStatus": "not_started"
+  },
+  "bboxLayerEntityAudit": {
+    "status": "not_run"
+  },
+  "createdHandlesReadback": {
+    "status": "not_run",
+    "entities": []
+  },
+  "readinessPacketHash": "1608cce062fc95499cd8c7b7cd195ca9e7a21dfb3d9753bdc73168b91e514757",
+  "launchPacketHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+  "authorizationReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+  "executionReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+  "operatorAuthorization": {
+    "explicit": true,
+    "scopeConfirmed": true,
+    "cadPlanConfirmed": true,
+    "codexPreviewConfirmed": true,
+    "readbackConfirmed": true,
+    "rollbackConfirmed": true,
+    "noSaveConfirmed": true,
+    "backendIdentityConfirmed": true,
+    "launchPacketHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+    "authorizationReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+    "environmentReady": true,
+    "statement": "User authorized P13F minimal live spike: scope, CAD_PLAN, CODEX_PREVIEW-only, readback, rollback, no-save, backend identity, launch hash, authorization receipt hash, and environment readiness confirmed."
+  },
+  "environmentReadiness": {
+    "nativeThinBackendAvailable": true,
+    "autocadConnectionAvailable": true,
+    "readbackRunnerAvailable": true,
+    "rollbackRunnerAvailable": true,
+    "noSaveGuardActive": true,
+    "backendIdentity": {
+      "backend": "native-thin-skeleton"
+    },
+    "targetLayer": "CODEX_PREVIEW",
+    "dwgSaveAllowed": false,
+    "formalLayerWriteAllowed": false,
+    "accoreConsolePath": "D:\\Design\\CAD\\AutoCAD 2026\\accoreconsole.exe",
+    "pluginDllPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\native_plugins\\native_thin_backend\\bin\\Release\\net8.0-windows\\NativeThinBackend.dll"
+  },
+  "nativeThinBackend": {
+    "schemaVersion": "native-thin-live-spike/p13f/v1",
+    "phase": "Phase 13F",
+    "packageId": "phase13f.native-thin-live-spike",
+    "taskId": "phase13f.native-thin-live-spike",
+    "kind": "minimal_native_thin_live_spike",
+    "transactionId": "tx-p13f-native-live-spike-001",
+    "adapterId": "native-thin.live-spike",
+    "backend": "native_thin_live_backend",
+    "backendIdentity": {
+      "backend": "native-thin-skeleton",
+      "adapterId": "native-thin.backend",
+      "pluginVersion": "not_invoked",
+      "nativePluginInvoked": false
+    },
+    "status": "external_blocker",
+    "closeoutStatus": "external_blocker",
+    "verificationStatus": "not_verified",
+    "proofStatus": "native_live_spike_external_blocker",
+    "operatorAuthorizationStatus": "authorized",
+    "realLiveSpikeAuthorizationRequired": false,
+    "operatorLiveSpikeAuthorized": true,
+    "liveExecutionAuthorized": true,
+    "executionStarted": true,
+    "cadWritesAttempted": false,
+    "nativePluginInvoked": false,
+    "cadGeometryVerified": false,
+    "savedCurrentDwg": false,
+    "targetLayer": "CODEX_PREVIEW",
+    "cadPlan": {
+      "version": "0.1",
+      "domain": "generic",
+      "intent": "draw_object",
+      "object": {
+        "type": "table",
+        "name": "P13F native thin scoped preview",
+        "width": 1200,
+        "depth": 600
+      },
+      "placement": {
+        "mode": "absolute",
+        "base_point": [
+          100,
+          200,
+          0
+        ]
+      },
+      "drawing": {
+        "layer": "CODEX_PREVIEW",
+        "include_label": false,
+        "include_dimensions": false
+      },
+      "confidence": 0.91,
+      "needs_confirmation": false
+    },
+    "readbackPlan": {
+      "required": true,
+      "strategy": "created_handles_bbox_props"
+    },
+    "rollbackPlan": {
+      "required": true,
+      "strategy": "rollback_batch"
+    },
+    "noSaveGuard": {
+      "required": true,
+      "saveAllowed": false
+    },
+    "readinessPacketHash": "1608cce062fc95499cd8c7b7cd195ca9e7a21dfb3d9753bdc73168b91e514757",
+    "launchPacketHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+    "authorizationReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+    "executionReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+    "operatorAuthorizationRequest": {
+      "schemaVersion": "native-thin-readiness/p13d/v1",
+      "kind": "operator_authorization_request",
+      "status": "ready_for_user_authorization",
+      "requiresSeparateUserAuthorization": true,
+      "requestedConfirmations": [
+        "scope",
+        "CAD_PLAN",
+        "CODEX_PREVIEW",
+        "readback_plan",
+        "rollback_plan",
+        "no_save_guard",
+        "backend_identity",
+        "launch_packet_hash",
+        "authorization_receipt_hash"
+      ],
+      "adapterId": "native-thin.backend",
+      "backendIdentity": {
+        "backend": "native-thin-skeleton",
+        "adapterId": "native-thin.backend",
+        "pluginVersion": "not_invoked",
+        "nativePluginInvoked": false
+      },
+      "targetLayer": "CODEX_PREVIEW",
+      "cadPlan": {
+        "version": "0.1",
+        "domain": "generic",
+        "intent": "draw_object",
+        "object": {
+          "type": "table",
+          "name": "P13F native thin scoped preview",
+          "width": 1200,
+          "depth": 600
+        },
+        "placement": {
+          "mode": "absolute",
+          "base_point": [
+            100,
+            200,
+            0
+          ]
+        },
+        "drawing": {
+          "layer": "CODEX_PREVIEW",
+          "include_label": false,
+          "include_dimensions": false
+        },
+        "confidence": 0.91,
+        "needs_confirmation": false
+      },
+      "readbackPlan": {
+        "required": true,
+        "strategy": "created_handles_bbox_props"
+      },
+      "rollbackPlan": {
+        "required": true,
+        "strategy": "rollback_batch"
+      },
+      "noSaveGuard": {
+        "required": true,
+        "saveAllowed": false
+      },
+      "launchPacketHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+      "authorizationReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+      "executionReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+      "cadWritesAttempted": false,
+      "nativePluginInvoked": false,
+      "executionStarted": false,
+      "cadGeometryVerified": false,
+      "savedCurrentDwg": false,
+      "authorizationBoundary": "This request is not authorization by itself. The operator must separately confirm scope, CODEX_PREVIEW, readback, rollback, no-save guard, backend identity, launch packet hash, and authorization receipt hash before any real live spike.",
+      "notEvidenceFor": [
+        "native_plugin_execution",
+        "real_cad_readback",
+        "geometry_verified",
+        "cad_geometry_verified",
+        "training_resume",
+        "table_c_progress",
+        "current_dwg_save",
+        "formal_layer_write"
+      ]
+    },
+    "operatorAuthorization": {
+      "explicit": true,
+      "scopeConfirmed": true,
+      "cadPlanConfirmed": true,
+      "codexPreviewConfirmed": true,
+      "readbackConfirmed": true,
+      "rollbackConfirmed": true,
+      "noSaveConfirmed": true,
+      "backendIdentityConfirmed": true,
+      "launchPacketHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+      "authorizationReceiptHash": "67eb2c6ffdaa93c56055266681b22b30c632d350b61b5e1518f0d754e6fac7d3",
+      "environmentReady": true,
+      "statement": "User authorized P13F minimal live spike: scope, CAD_PLAN, CODEX_PREVIEW-only, readback, rollback, no-save, backend identity, launch hash, authorization receipt hash, and environment readiness confirmed."
+    },
+    "environmentReadiness": {
+      "nativeThinBackendAvailable": true,
+      "autocadConnectionAvailable": true,
+      "readbackRunnerAvailable": true,
+      "rollbackRunnerAvailable": true,
+      "noSaveGuardActive": true,
+      "backendIdentity": {
+        "backend": "native-thin-skeleton"
+      },
+      "targetLayer": "CODEX_PREVIEW",
+      "dwgSaveAllowed": false,
+      "formalLayerWriteAllowed": false,
+      "accoreConsolePath": "D:\\Design\\CAD\\AutoCAD 2026\\accoreconsole.exe",
+      "pluginDllPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\native_plugins\\native_thin_backend\\bin\\Release\\net8.0-windows\\NativeThinBackend.dll"
+    },
+    "rollbackRequired": true,
+    "rollbackStatus": "not_started",
+    "rollbackProof": {
+      "status": "not_run",
+      "verified": false,
+      "rollbackStatus": "not_started"
+    },
+    "committedPreview": false,
+    "createdHandles": [],
+    "createdHandlesRef": "native-ledger://tx-p13f-native-live-spike-001/created-handles",
+    "createdHandlesReadback": {
+      "status": "not_run",
+      "entities": []
+    },
+    "bboxLayerEntityAudit": {
+      "status": "not_run"
+    },
+    "blockedReason": "native_thin_plugin_report_missing;native_plugin_invocation_not_proven;cad_write_attempt_not_proven;created_handles_required;created_handles_readback_not_verified;readback_entities_required;bbox_layer_entity_audit_not_verified;bbox_audit_required;layer_audit_required;entity_audit_required;rollback_proof_not_verified;rollback_status_not_verified",
+    "blockingReasons": [
+      "native_thin_plugin_report_missing",
+      "native_plugin_invocation_not_proven",
+      "cad_write_attempt_not_proven",
+      "created_handles_required",
+      "created_handles_readback_not_verified",
+      "readback_entities_required",
+      "bbox_layer_entity_audit_not_verified",
+      "bbox_audit_required",
+      "layer_audit_required",
+      "entity_audit_required",
+      "rollback_proof_not_verified",
+      "rollback_status_not_verified"
+    ],
+    "missingEvidence": [
+      "real_cad_readback",
+      "native_thin_rollback_proof",
+      "no_save_guard",
+      "native_thin_plugin_report_missing",
+      "native_plugin_invocation_not_proven",
+      "cad_write_attempt_not_proven",
+      "created_handles_required",
+      "created_handles_readback_not_verified",
+      "readback_entities_required",
+      "bbox_layer_entity_audit_not_verified",
+      "bbox_audit_required",
+      "layer_audit_required",
+      "entity_audit_required",
+      "rollback_proof_not_verified",
+      "rollback_status_not_verified"
+    ],
+    "retryable": true,
+    "documentState": "",
+    "documentStateBefore": "",
+    "documentStateAfter": "",
+    "previewStrategy": "native_thin_scoped_preview_rollback",
+    "noSaveAudit": {
+      "status": "not_run",
+      "saveAttempted": false,
+      "saveAllowed": false,
+      "savedCurrentDwg": false
+    },
+    "ledgerRefs": {
+      "tool.requested": "native-ledger://tx-p13f-native-live-spike-001/tool.requested",
+      "tool.authorized": "native-ledger://tx-p13f-native-live-spike-001/tool.authorized",
+      "adapter.started": "native-ledger://tx-p13f-native-live-spike-001/adapter.started",
+      "adapter.completed": "native-ledger://tx-p13f-native-live-spike-001/adapter.completed",
+      "readback.recorded": "native-ledger://tx-p13f-native-live-spike-001/readback.not-run",
+      "audit.completed": "native-ledger://tx-p13f-native-live-spike-001/audit.completed",
+      "rollback.applied": "native-ledger://tx-p13f-native-live-spike-001/rollback.applied",
+      "no_save.audit": "native-ledger://tx-p13f-native-live-spike-001/no-save.audit"
+    },
+    "allowedEffects": [
+      "native_thin_scoped_live_spike_execute",
+      "native_thin_created_handles_readback",
+      "native_thin_bbox_layer_entity_audit",
+      "native_thin_rollback_created_handles",
+      "native_thin_no_save_audit"
+    ],
+    "forbiddenEffects": [
+      "native_plugin_execute",
+      "plugin_execute",
+      "plugin_call",
+      "cad_execute",
+      "cad_preview_write",
+      "apply_preview_batch",
+      "real_cad_readback",
+      "dwg_save",
+      "save_current_dwg",
+      "commit_save",
+      "save_copy",
+      "formal_layer_write",
+      "delete_entities",
+      "delete_non_created_entities",
+      "registry_mutation",
+      "table_c_mutation",
+      "training_source_mutation",
+      "protected_evidence_mutation"
+    ],
+    "completionBoundary": "P13F minimal native thin live spike is claimable only when AutoCAD/plugin created handles readback, bbox/layer/entity audit, rollback proof, and no-save audit all pass",
+    "artifacts": {
+      "nativeThinLiveSpikeExecutionGate": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_live_spike_execution_gate.json",
+      "accoreConsolePath": "D:\\Design\\CAD\\AutoCAD 2026\\accoreconsole.exe",
+      "pluginDllPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\native_plugins\\native_thin_backend\\bin\\Release\\net8.0-windows\\NativeThinBackend.dll",
+      "nativePluginReport": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_plugin_result.json",
+      "coreConsoleLog": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_core_console.log",
+      "coreConsoleExitCode": 0,
+      "nativeThinLiveSpikeResult": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_live_spike_result.json"
+    },
+    "pluginResult": {
+      "schemaVersion": "native-thin-autocad-plugin-result/p13f/v1",
+      "status": "external_blocker",
+      "verificationStatus": "not_verified",
+      "backend": "autocad_plugin",
+      "targetLayer": "CODEX_PREVIEW",
+      "transactionId": "tx-p13f-native-live-spike-001",
+      "nativePluginInvoked": false,
+      "cadWritesAttempted": false,
+      "savedCurrentDwg": false,
+      "committedPreview": false,
+      "createdHandles": [],
+      "createdHandlesReadback": {
+        "status": "not_run",
+        "entities": []
+      },
+      "bboxLayerEntityAudit": {
+        "status": "not_run"
+      },
+      "rollbackRequired": true,
+      "rollbackStatus": "not_started",
+      "rollbackProof": {
+        "status": "not_run",
+        "verified": false,
+        "rollbackStatus": "not_started"
+      },
+      "noSaveAudit": {
+        "status": "not_run",
+        "saveAttempted": false,
+        "saveAllowed": false,
+        "savedCurrentDwg": false
+      },
+      "blockingReasons": [
+        "native_thin_plugin_report_missing"
+      ],
+      "missingEvidence": [
+        "real_cad_readback",
+        "native_thin_rollback_proof",
+        "no_save_guard"
+      ],
+      "artifacts": {
+        "accoreConsolePath": "D:\\Design\\CAD\\AutoCAD 2026\\accoreconsole.exe",
+        "pluginDllPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\native_plugins\\native_thin_backend\\bin\\Release\\net8.0-windows\\NativeThinBackend.dll",
+        "nativePluginReport": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_plugin_result.json",
+        "coreConsoleLog": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-155919\\native_thin_core_console.log",
+        "coreConsoleExitCode": 0
+      }
+    },
+    "notEvidenceFor": [
+      "native_plugin_execution",
+      "real_cad_readback",
+      "geometry_verified",
+      "cad_geometry_verified",
+      "training_resume",
+      "table_c_progress",
+      "current_dwg_save",
+      "formal_layer_write"
+    ]
+  },
+  "ledgerRefs": {
+    "tool.requested": "native-ledger://tx-p13f-native-live-spike-001/tool.requested",
+    "tool.authorized": "native-ledger://tx-p13f-native-live-spike-001/tool.authorized",
+    "adapter.started": "native-ledger://tx-p13f-native-live-spike-001/adapter.started",
+    "adapter.completed": "native-ledger://tx-p13f-native-live-spike-001/adapter.completed",
+    "readback.recorded": "native-ledger://tx-p13f-native-live-spike-001/readback.not-run",
+    "audit.completed": "native-ledger://tx-p13f-native-live-spike-001/audit.completed",
+    "rollback.applied": "native-ledger://tx-p13f-native-live-spike-001/rollback.applied",
+    "no_save.audit": "native-ledger://tx-p13f-native-live-spike-001/no-save.audit"
+  },
+  "completionBoundary": "P13F minimal native thin live spike is claimable only when AutoCAD/plugin created handles readback, bbox/layer/entity audit, rollback proof, and no-save audit all pass",
+  "notEvidenceFor": [
+    "native_plugin_execution",
+    "real_cad_readback",
+    "geometry_verified",
+    "cad_geometry_verified",
+    "training_resume",
+    "table_c_progress",
+    "current_dwg_save",
+    "formal_layer_write"
+  ],
+  "adapterId": "native-thin.live-spike",
+  "registeredAdapter": {
+    "schemaVersion": "tool-adapter-registry/p11/v1",
+    "adapterId": "native-thin.live-spike",
+    "operation": "native_thin_scoped_live_spike",
+    "command": "native-thin-live-spike",
+    "backend": "native-thin-live-backend",
+    "entrypoint": "core.contracts.native_thin_backend.execute_native_thin_live_spike",
+    "boundary": "P13F scoped native thin live spike only: CODEX_PREVIEW write, created handles readback, bbox/layer/entity audit, rollback proof, and no-save audit. Generic native_plugin_execute, cad_execute, dwg_save, and formal_layer_write effects remain blocked.",
+    "allowedEvidence": [
+      "native_thin_live_spike_result",
+      "real_cad_readback",
+      "native_thin_rollback_proof",
+      "native_thin_no_save_audit",
+      "no_save_guard"
+    ],
+    "consumesHarnessResult": false,
+    "executesCad": true,
+    "readsDwg": true,
+    "writesDwg": true,
+    "savesDwg": false,
+    "mutatesRegistry": false,
+    "advancesTableC": false,
+    "callsPlugin": true
+  },
+  "registryAdapter": {
+    "schemaVersion": "tool-adapter-registry/p11/v1",
+    "adapterId": "native-thin.live-spike",
+    "operation": "native_thin_scoped_live_spike",
+    "command": "native-thin-live-spike",
+    "backend": "native-thin-live-backend",
+    "entrypoint": "core.contracts.native_thin_backend.execute_native_thin_live_spike",
+    "boundary": "P13F scoped native thin live spike only: CODEX_PREVIEW write, created handles readback, bbox/layer/entity audit, rollback proof, and no-save audit. Generic native_plugin_execute, cad_execute, dwg_save, and formal_layer_write effects remain blocked.",
+    "allowedEvidence": [
+      "native_thin_live_spike_result",
+      "real_cad_readback",
+      "native_thin_rollback_proof",
+      "native_thin_no_save_audit",
+      "no_save_guard"
+    ],
+    "consumesHarnessResult": false,
+    "executesCad": true,
+    "readsDwg": true,
+    "writesDwg": true,
+    "savesDwg": false,
+    "mutatesRegistry": false,
+    "advancesTableC": false,
+    "callsPlugin": true
+  },
+  "toolCard": {
+    "schemaVersion": "tool-card/vnext-skeleton/v1",
+    "toolId": "native-thin.live-spike",
+    "permissionClass": "cad_preview",
+    "allowedEffects": [
+      "native_thin_scoped_live_spike_execute",
+      "native_thin_created_handles_readback",
+      "native_thin_bbox_layer_entity_audit",
+      "native_thin_rollback_created_handles",
+      "native_thin_no_save_audit"
+    ],
+    "forbiddenEffects": [
+      "native_plugin_execute",
+      "plugin_execute",
+      "plugin_call",
+      "cad_execute",
+      "cad_preview_write",
+      "apply_preview_batch",
+      "real_cad_readback",
+      "dwg_save",
+      "save_current_dwg",
+      "commit_save",
+      "save_copy",
+      "formal_layer_write",
+      "delete_entities",
+      "delete_non_created_entities",
+      "registry_mutation",
+      "table_c_mutation",
+      "training_source_mutation",
+      "protected_evidence_mutation"
+    ]
+  },
+  "toolContract": {
+    "schemaVersion": "tool-contract/vnext-skeleton/v1",
+    "toolCallId": "phase11.tool-gateway.adapter-request.native-thin.live-spike",
+    "taskId": "phase11.tool-gateway.adapter-request",
+    "toolId": "native-thin.live-spike",
+    "operation": "native_thin_scoped_live_spike",
+    "permissionClass": "cad_preview",
+    "requestedEffects": [
+      "native_thin_scoped_live_spike_execute",
+      "native_thin_created_handles_readback",
+      "native_thin_bbox_layer_entity_audit",
+      "native_thin_rollback_created_handles",
+      "native_thin_no_save_audit"
+    ],
+    "evidenceRequired": [
+      "native_thin_live_spike_result",
+      "real_cad_readback",
+      "native_thin_rollback_proof",
+      "native_thin_no_save_audit",
+      "no_save_guard"
+    ],
+    "targetScope": {},
+    "dryRunRequired": false,
+    "readbackRequired": true,
+    "saveAllowed": false,
+    "descriptiveOnly": false
+  },
+  "registryAuthorization": {
+    "status": "allowed",
+    "reasons": [],
+    "checked": [
+      "tool_id=native-thin.live-spike",
+      "permission_class=cad_preview"
+    ]
+  },
+  "gatewayBoundary": "P13F scoped native thin live spike only: CODEX_PREVIEW write, created handles readback, bbox/layer/entity audit, rollback proof, and no-save audit. Generic native_plugin_execute, cad_execute, dwg_save, and formal_layer_write effects remain blocked."
+}

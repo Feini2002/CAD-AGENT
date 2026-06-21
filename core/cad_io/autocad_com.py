@@ -80,6 +80,16 @@ AUTOCAD_PROG_IDS = (
     "AutoCAD.Application.23",
 )
 
+AUTOCAD_ROT_MARKERS = ("autocad", "acad", ".dwg")
+
+
+class AutoCADAttachError(RuntimeError):
+    """Raised when an existing AutoCAD instance cannot be attached safely."""
+
+    def __init__(self, message: str, *, diagnostics: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.diagnostics = diagnostics
+
 
 def _autocad_process_running() -> bool:
     try:
@@ -91,12 +101,204 @@ def _autocad_process_running() -> bool:
             check=False,
         )
     except Exception:
+        result = None
+    if result is not None and "acad.exe" in result.stdout.lower():
+        return True
+    try:
+        fallback = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                "Get-Process -Name acad -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty ProcessName",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except Exception:
         return False
-    return "acad.exe" in result.stdout.lower()
+    return "acad" in fallback.stdout.lower()
 
 
 def driver_status() -> str:
     return "autocad_com driver ready"
+
+
+def _stringify_error(exc: Exception) -> str:
+    return f"{type(exc).__name__}: {exc}"
+
+
+def _com_text(value: Any) -> str:
+    try:
+        return str(value or "")
+    except Exception:
+        return ""
+
+
+def _get_attr(value: Any, attr: str) -> Any:
+    try:
+        return getattr(value, attr)
+    except Exception:
+        return None
+
+
+def _object_identity_text(*, display_name: str, candidate: Any, app: Any | None, doc: Any | None) -> str:
+    parts = [display_name]
+    for obj in (candidate, app, doc):
+        if obj is None:
+            continue
+        for attr in ("Name", "name", "FullName", "fullName", "Caption", "caption"):
+            parts.append(_com_text(_get_attr(obj, attr)))
+    return " ".join(part for part in parts if part)
+
+
+def _looks_autocad_identity(text: str) -> bool:
+    lowered = text.lower()
+    return any(marker in lowered for marker in AUTOCAD_ROT_MARKERS)
+
+
+def _coerce_autocad_application(candidate: Any, *, display_name: str = "") -> tuple[Any | None, str]:
+    doc = _get_attr(candidate, "ActiveDocument")
+    if doc is not None:
+        identity = _object_identity_text(display_name=display_name, candidate=candidate, app=candidate, doc=doc)
+        if _looks_autocad_identity(identity) or display_name in {"__get_active_object__", "__get_object__"}:
+            return candidate, "application"
+        return None, f"application_like_candidate_identity_not_autocad:{identity[:180]}"
+
+    app = _get_attr(candidate, "Application")
+    if app is not None:
+        app_doc = _get_attr(app, "ActiveDocument")
+        identity = _object_identity_text(display_name=display_name, candidate=candidate, app=app, doc=app_doc)
+        if app_doc is not None and _looks_autocad_identity(identity):
+            return app, "document_application"
+        return None, f"document_like_candidate_identity_not_autocad:{identity[:180]}"
+
+    identity = _object_identity_text(display_name=display_name, candidate=candidate, app=None, doc=None)
+    return None, f"candidate_lacks_autocad_application_shape:{identity[:180]}"
+
+
+def _dispatch_rot_object(win32com_client: Any, pythoncom: Any, raw_object: Any) -> tuple[Any, str]:
+    dispatch = _get_attr(win32com_client, "Dispatch")
+    if callable(dispatch):
+        try:
+            return dispatch(raw_object), "Dispatch(raw_rot_object)"
+        except Exception:
+            pass
+    query_interface = _get_attr(raw_object, "QueryInterface")
+    iid_dispatch = _get_attr(pythoncom, "IID_IDispatch")
+    if callable(query_interface) and iid_dispatch is not None and callable(dispatch):
+        return dispatch(query_interface(iid_dispatch)), "Dispatch(QueryInterface(IID_IDispatch))"
+    return raw_object, "raw_rot_object"
+
+
+def _attach_via_running_object_table(
+    *,
+    win32com_client: Any,
+    pythoncom: Any,
+    attempts: list[str],
+) -> tuple[Any | None, str | None]:
+    get_rot = _get_attr(pythoncom, "GetRunningObjectTable")
+    create_bind_ctx = _get_attr(pythoncom, "CreateBindCtx")
+    if not callable(get_rot) or not callable(create_bind_ctx):
+        attempts.append("ROT: pythoncom Running Object Table APIs unavailable")
+        return None, None
+    try:
+        rot = get_rot()
+        enum = rot.EnumRunning()
+        bind_ctx = create_bind_ctx(0)
+    except Exception as exc:
+        attempts.append(f"ROT init: {_stringify_error(exc)}")
+        return None, None
+
+    inspected = 0
+    while True:
+        try:
+            monikers = enum.Next(1)
+        except Exception as exc:
+            attempts.append(f"ROT enum: {_stringify_error(exc)}")
+            break
+        if not monikers:
+            break
+        moniker = monikers[0]
+        inspected += 1
+        try:
+            display_name = str(moniker.GetDisplayName(bind_ctx, None) or "")
+        except Exception as exc:
+            display_name = ""
+            attempts.append(f"ROT[{inspected}] display_name: {_stringify_error(exc)}")
+        try:
+            raw_object = rot.GetObject(moniker)
+            candidate, dispatch_method = _dispatch_rot_object(win32com_client, pythoncom, raw_object)
+            app, role = _coerce_autocad_application(candidate, display_name=display_name)
+            if app is not None:
+                attempts.append(f"ROT[{inspected}] {display_name or '<unnamed>'}: attached via {dispatch_method}/{role}")
+                return app, display_name
+            attempts.append(f"ROT[{inspected}] {display_name or '<unnamed>'}: {role}")
+        except Exception as exc:
+            attempts.append(f"ROT[{inspected}] {display_name or '<unnamed>'}: {_stringify_error(exc)}")
+    attempts.append(f"ROT inspected={inspected}; no attachable AutoCAD application found")
+    return None, None
+
+
+def _classify_attach_failure(diagnostics: dict[str, Any]) -> str:
+    process_running = bool(diagnostics.get("acadProcessRunning", False))
+    attempts = " | ".join(str(item) for item in diagnostics.get("attempts", []))
+    if not process_running:
+        return "acad_process_not_running"
+    if "ROT inspected=0" in attempts:
+        return "acad_process_running_without_visible_rot_object"
+    if "document_like_candidate_identity_not_autocad" in attempts or "application_like_candidate_identity_not_autocad" in attempts:
+        return "acad_rot_candidates_rejected"
+    return "autocad_active_object_unavailable"
+
+
+def _attach_existing_autocad(
+    *,
+    win32com_client: Any,
+    pythoncom: Any,
+) -> tuple[Any | None, dict[str, Any]]:
+    attempts: list[str] = []
+    for prog_id in AUTOCAD_PROG_IDS:
+        try:
+            candidate = win32com_client.GetActiveObject(prog_id)
+            app, role = _coerce_autocad_application(candidate, display_name="__get_active_object__")
+            if app is not None:
+                return app, {"method": "GetActiveObject", "progId": prog_id, "role": role, "attempts": attempts}
+            attempts.append(f"{prog_id}: {role}")
+        except Exception as exc:
+            attempts.append(f"{prog_id}: {_stringify_error(exc)}")
+
+    get_object = _get_attr(win32com_client, "GetObject")
+    if callable(get_object):
+        for prog_id in AUTOCAD_PROG_IDS:
+            try:
+                try:
+                    candidate = get_object(Class=prog_id)
+                except TypeError:
+                    candidate = get_object(None, prog_id)
+                app, role = _coerce_autocad_application(candidate, display_name="__get_object__")
+                if app is not None:
+                    return app, {"method": "GetObject", "progId": prog_id, "role": role, "attempts": attempts}
+                attempts.append(f"GetObject {prog_id}: {role}")
+            except Exception as exc:
+                attempts.append(f"GetObject {prog_id}: {_stringify_error(exc)}")
+    else:
+        attempts.append("GetObject: win32com.client.GetObject unavailable")
+
+    app, display_name = _attach_via_running_object_table(
+        win32com_client=win32com_client,
+        pythoncom=pythoncom,
+        attempts=attempts,
+    )
+    if app is not None:
+        return app, {"method": "RunningObjectTable", "displayName": display_name or "", "attempts": attempts}
+
+    process_running = _autocad_process_running()
+    diagnostics = {"method": "none", "acadProcessRunning": process_running, "attempts": attempts}
+    diagnostics["blockerCode"] = _classify_attach_failure(diagnostics)
+    return None, diagnostics
 
 
 class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
@@ -114,30 +316,25 @@ class AutoCADComDriver(AutoCADBlockAlphaMixin, PreviewWriteGuardMixin):
         except Exception:
             pass
         self.app = None
-        active_errors: list[str] = []
-        for prog_id in AUTOCAD_PROG_IDS:
-            try:
-                self.app = win32com.client.GetActiveObject(prog_id)
-                break
-            except Exception as exc:
-                active_errors.append(f"{prog_id}: {exc}")
+        self.attach_diagnostics: dict[str, Any] = {}
+        self.app, self.attach_diagnostics = _attach_existing_autocad(
+            win32com_client=win32com.client,
+            pythoncom=pythoncom,
+        )
         if self.app is None:
             if connect_existing_only:
-                dispatch_errors: list[str] = []
-                if _autocad_process_running():
-                    for prog_id in AUTOCAD_PROG_IDS:
-                        try:
-                            self.app = win32com.client.Dispatch(prog_id)
-                            break
-                        except Exception as exc:
-                            dispatch_errors.append(f"{prog_id}: {exc}")
-                if self.app is not None:
-                    pass
-                else:
-                    detail = " | ".join(active_errors)
-                    if dispatch_errors:
-                        detail = f"{detail} || Dispatch fallback: " + " | ".join(dispatch_errors)
-                    raise RuntimeError(f"No active AutoCAD.Application instance is available. COM detail: {detail}")
+                process_running = bool(self.attach_diagnostics.get("acadProcessRunning", False))
+                attempts = [str(item) for item in self.attach_diagnostics.get("attempts", [])]
+                detail = " | ".join(attempts)
+                detail = (
+                    f"{detail} || acadProcessRunning={process_running}; "
+                    "Dispatch fallback skipped because connect_existing_only=True; "
+                    "ROT fallback attempted=True"
+                )
+                raise AutoCADAttachError(
+                    f"No active AutoCAD.Application instance is available. COM detail: {detail}",
+                    diagnostics=self.attach_diagnostics,
+                )
             else:
                 dispatch_errors: list[str] = []
                 for prog_id in AUTOCAD_PROG_IDS:

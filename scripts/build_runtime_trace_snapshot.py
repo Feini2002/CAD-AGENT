@@ -21,7 +21,7 @@ from core.runtime.encoding_guard import configure_utf8_process
 
 
 DEFAULT_OUTPUT = Path("output/runtime_traces/latest.json")
-WORKER_CHECKLIST = Path("WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md")
+WORKER_CHECKLIST = Path("docs/deploy/worker-orchestrator-deploy-checklist.md")
 
 
 def _utc_now() -> str:

@@ -276,7 +276,7 @@ class DocGovernanceTests(unittest.TestCase):
         codes = {finding["code"] for finding in report["findings"]}
         paths = {finding["path"] for finding in report["findings"]}
         self.assertIn("architecture_hardening_missing_token", codes)
-        self.assertIn("README.md", paths)
+        self.assertNotIn("README.md", paths)
         self.assertIn("docs/architecture/README.md", paths)
         self.assertIn("docs/architecture/current-module-boundaries.md", paths)
 
@@ -865,7 +865,12 @@ class DocGovernanceTests(unittest.TestCase):
         report = check_training_context_alignment(root)
 
         codes = {finding["code"] for finding in report["findings"]}
+        paths = {finding["path"] for finding in report["findings"]}
         self.assertIn("training_context_missing_token", codes)
+        self.assertIn("docs/training/README.md", paths)
+        self.assertNotIn("CORE_CONTEXT_BRIEF.md", paths)
+        self.assertNotIn("CORE_RESTRUCTURE_PLAN.md", paths)
+        self.assertNotIn("docs/planning/任务清单.md", paths)
         self.assertIn("history_readme_missing_history_only_marker", codes)
 
     def test_training_context_alignment_checks_pipeline_manifest_gate(self) -> None:
@@ -874,14 +879,14 @@ class DocGovernanceTests(unittest.TestCase):
         (root / "docs" / "planning").mkdir(parents=True, exist_ok=True)
         (root / "docs" / "history").mkdir(parents=True, exist_ok=True)
         (root / "agents" / "pipeline").mkdir(parents=True, exist_ok=True)
-        (root / "CORE_CONTEXT_BRIEF.md").write_text("Visual-First visual_parts\n", encoding="utf-8")
-        (root / "CORE_RESTRUCTURE_PLAN.md").write_text("Visual-First visual_parts\n", encoding="utf-8")
+        (root / "CORE_CONTEXT_BRIEF.md").write_text("vNext migration active control\n", encoding="utf-8")
+        (root / "CORE_RESTRUCTURE_PLAN.md").write_text("vNext migration PlanMD\n", encoding="utf-8")
         (root / "docs" / "training" / "README.md").write_text(
             "pipeline_visual_intent visual_parts reference_match\n",
             encoding="utf-8",
         )
         (root / "docs" / "planning" / "任务清单.md").write_text(
-            "Visual-First visual_parts\n",
+            "vNext migration task router\n",
             encoding="utf-8",
         )
         (root / "docs" / "history" / "README.md").write_text("HISTORY-ONLY\n", encoding="utf-8")

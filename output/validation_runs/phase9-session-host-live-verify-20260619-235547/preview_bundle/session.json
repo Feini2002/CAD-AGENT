@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "phase9-preview-session/v1",
+  "generatedAt": "2026-06-19T15:56:05Z",
+  "taskId": "phase9.single-preview.task",
+  "status": "geometry_verified",
+  "verificationStatus": "verified",
+  "cadGeometryVerified": true,
+  "events": [
+    {
+      "name": "phase9_report_loaded",
+      "status": "geometry_verified",
+      "sourceSchemaVersion": "phase9-single-preview-report/v1"
+    },
+    {
+      "name": "preview_bundle_materialized",
+      "status": "read_only",
+      "boundary": "preview_bundle_is_read_only_not_readback_evidence"
+    }
+  ]
+}

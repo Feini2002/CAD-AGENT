@@ -2,6 +2,118 @@
 
 这个文件记录 CAD Agent 测试工作区的结构、规则、Schema、脚本和重要决策变化。
 
+## 2026-06-20
+
+### CAD-AGENT-VNEXT-PHASE10-CAD-REOPENED-READINESS-11：P10B CAD reopened no-write readiness retry
+
+- **触发**：用户说明 CAD 已打开并要求继续校验；本轮不扩大 CAD 写入，只复验 `cad-session-host` readiness。
+- **真实 no-write probe**：生成 `output/validation_runs/phase10-cad-reopened-readiness-20260620-023225/cad_session_host_readiness_summary.json`；host 成功启动并响应 `/rpc status`，但 `hostReady=false`、`acadProcessRunning=true`、`ROT inspected=0`、`blockerCode=acad_process_running_without_visible_rot_object`、`cadWritesAttempted=false`。
+- **独立探针**：`independent_getactiveobject_probe.txt` 显示 PowerShell `Marshal.GetActiveObject("AutoCAD.Application.25.1")` 与 `.25` 均返回 `MK_E_UNAVAILABLE`，裸 `AutoCAD.Application` 返回 `CO_E_CLASSSTRING`；这与 host attach diagnostics 一致。
+- **边界**：未执行 preview write、未创建 handles、未 readback、未保存 DWG、不恢复训练、不推进表 C、不放行 Phase 11。当前 blocker 仍是 Windows / AutoCAD COM 可见性、注册或同权限会话问题，Host `ready=true` 前不得继续 P10B live run。
+
+### CAD-AGENT-VNEXT-PHASE10-COM-ATTACH-HARDENED-10：P10B AutoCAD COM attach 深修与 blocker 分类
+
+- **推进**：在不写 CAD 的前提下深修 `cad-session-host` / `AutoCADComDriver` attach path；existing-only 模式现在依次尝试 versioned `GetActiveObject`、`GetObject(Class=...)`、Running Object Table 枚举，并支持从 document-like ROT 对象回溯 `.Application`。
+- **诊断**：新增 `AutoCADAttachError.diagnostics`、`attachDiagnostics` status payload 和稳定 `blockerCode`。当前真实 blocker 被分类为 `acad_process_running_without_visible_rot_object`；Host 仍禁止在 `connect_existing_only=True` 时 `Dispatch` 新 AutoCAD。
+- **真实 no-write probe**：生成 `output/validation_runs/phase10-com-attach-hardened-readiness-20260620-021746/cad_session_host_readiness_summary.json`；host 已启动并响应 `/rpc status`，但 `hostReady=false`、`acadProcessRunning=true`、`ROT inspected=0`、`cadWritesAttempted=false`。同目录 `independent_getactiveobject_probe.txt` 显示 PowerShell `Marshal.GetActiveObject("AutoCAD.Application.25/25.1")` 也返回 `MK_E_UNAVAILABLE`。
+- **边界**：代码侧接管路径已加固，但当前 Windows / AutoCAD 会话仍未暴露可接管活动对象；本包未执行 preview write、未创建 handles、未 readback、未保存 DWG、不恢复训练、不推进表 C、不放行 Phase 11。
+
+### CAD-AGENT-VNEXT-PHASE10-LIVE-ATTACH-BLOCKED-09：P10B live rehearsal 真实启动尝试与 CAD blocker 收口
+
+- **触发**：用户说明 CAD 已打开并要求真实校验；本轮按 P9 ready evidence 收束出的默认候选 `table / single_table_preview_repeatability` 尝试 P10B 2-run live rehearsal。
+- **真实 CAD 尝试**：生成 `output/validation_runs/phase10-scope-confirmed-live-rehearsal-20260620-015727/phase10_live_rehearsal_orchestrator_summary.json`；`cad-session-host` 已启动并响应 `/rpc status`，但 `hostReady=false` / `ready=false`。
+- **blocker**：Host status 显示当前自动化会话无可接管活动 `AutoCAD.Application` / ROT 对象，同时 `acadProcessRunning=true` 且 `Dispatch fallback skipped because connect_existing_only=True`。
+- **边界**：`cadWritesAttempted=false`；未执行 preview write、未创建 handles、未 readback、未生成 bbox / layer / entity audit、未聚合 result、未 closeout，不恢复训练、不推进表 C、不证明插件可用，也不放行 Phase 11。
+
+### CAD-AGENT-VNEXT-PHASE10-SCOPE-PROPOSAL-08：P10B scope proposal contract
+
+- **推进**：继续推进 P10B，但不把“继续推进”解释为真实 CAD scope；新增 `build_phase10_rehearsal_scope_proposal()` 与 harness `rehearsal-scope-proposal` 命令，把 ready P9 Exit run、`phase9_preview_report.json` 和 source CAD_PLAN 收束为 `phase10_rehearsal_scope_proposal.json`。
+- **边界**：proposal 固定 `scopeConfirmed=false`、`liveRunsConfirmed=false`、`cadWritesAttempted=false`，只输出 `candidateScope` 和 operator confirmation actions；它不生成 receipt、不连接 AutoCAD、不执行 preview、不创建 run dir、不写实体，也不能替代用户点名确认。
+- **硬门**：缺 ready P9 Exit evidence、缺 source CAD_PLAN、run count 低于 2、backend 非 `cad-session-host` / `cad_session_host`、CAD_PLAN 非 `CODEX_PREVIEW` 或 validate 失败时 proposal blocked。
+- **验证**：`tests.core.test_phase10_rehearsal -v` 运行 38 项，全部 OK；P10/P9/Host 相邻回归 110 项 OK；Phase 5-8 合同回归 53 项 OK；doc governance audit pass；PlanMD / doc governance tests 45 项 OK；OpenSpec strict validate 20/20 passed；`git diff --check` 退出码 0，仅 CRLF warning；protected evidence diff / status check 无输出。新增正测覆盖 proposal builder / harness / CLI，负测覆盖缺 P9 evidence fail-closed。
+
+### CAD-AGENT-VNEXT-PHASE10-SCOPE-RECEIPT-07：P10B scope confirmation receipt 加固
+
+- **推进**：继续推进 P10B，但不执行真实 CAD run；新增 `build_phase10_rehearsal_scope_receipt()` 与 harness `rehearsal-scope-receipt` 命令，把用户确认的 rehearsal scope、plan hash、runSpecs、`CODEX_PREVIEW` / no-save / repeated live run 声明写成 `phase10_rehearsal_scope_receipt.json`。
+- **硬门**：`rehearsal-preflight` 与 `rehearsal-run` 现在都必须消费匹配的 scope receipt；缺 receipt、receipt 未 ready、未确认 live runs、确认声明为空、receipt `planPath` / `planHash` / `scopeId` / backend / runSpecs 与 plan 不一致时全部 blocked，且 `cadWritesAttempted=false`。
+- **closeout**：`evaluate_phase10_rehearsal_closeout()` 现在把 `phase10_rehearsal_scope_receipt.json` 纳入最终四件套完整性校验；缺 receipt、stale receipt、`scopeReceiptPath` / `planHash` / `runSpecs` 与 launch / execution / result 不一致时不能 `phase10CloseoutAllowed=true`。
+- **验证**：`tests.core.test_phase10_rehearsal -v` 运行 34 项，全部 OK；P10/P9/Host 相邻回归 106 项 OK；Phase 5-8 合同回归 53 项 OK；doc governance audit pass；PlanMD / doc governance tests 45 项 OK；OpenSpec strict validate 20/20 passed；新增正测覆盖 receipt builder / harness / CLI，负测覆盖 stale receipt 和 closeout 缺 receipt。
+- **边界**：本包不连接 AutoCAD、不执行 preview、不写实体、不恢复训练、不推进表 C、不证明 P10B live rehearsal 已完成，也不放行 Phase 11。
+
+### CAD-AGENT-VNEXT-PHASE10-CLOSEOUT-HARDENING-06：P10B closeout artifact integrity 加固
+
+- **推进**：review 后继续推进 P10B closeout gate，加固 `evaluate_phase10_rehearsal_closeout()` 的 artifact 完整性校验；当前 next 仍是 P10B Scope-confirmed live rehearsal，不进入真实 CAD run。
+- **硬门**：closeout 现在除原有 launch / execution / result 单 artifact ready 条件外，还校验 `planPath`、`outputDir`、launch / execution `runSpecs`、execution `runResults`、result `runDirs` / `runSummaries`、run count、`resultPath` 与 execution `aggregateResult` 彼此一致。foreign / mixed result artifact 会 blocked，不能拼接旧结果误放行。
+- **fail-closed**：JSON artifact 顶层必须是 object；合法 JSON 但顶层为数组 / 字符串 / 数字时，closeout 返回对应 invalid blocker，而不是异常退出或误判 ready。
+- **验证**：`tests.core.test_phase10_rehearsal -v` 运行 29 项，全部 OK；新增负测覆盖 mixed foreign result artifact 和 non-object JSON artifact。
+- **边界**：本包不连接 AutoCAD、不执行 preview、不写实体、不恢复训练、不推进表 C、不证明 P10B live rehearsal 已完成，也不放行 Phase 11。
+
+### CAD-AGENT-VNEXT-PHASE10-CLOSEOUT-GATE-05：P10B closeout gate contract
+
+- **推进**：Phase 10 在 launch preflight 后补齐 closeout 裁判。`core/contracts/phase10_rehearsal.py` 新增 `evaluate_phase10_rehearsal_closeout()`，harness 新增 `rehearsal-closeout` 命令，输出 `phase10_rehearsal_closeout.json`。
+- **硬门**：只消费既有 `phase10_rehearsal_launch_packet.json`、`phase10_rehearsal_execution.json` 与 `phase10_rehearsal_result.json`；launch 必须 ready，execution 必须是 production harness preview executor 且 source `cadWritesAttempted=true`，result 必须 verified / stable geometry、run 数与 verified run 数达标、无 blockers / missing evidence。
+- **边界**：closeout 本身 `cadWritesAttempted=false`，不连接 AutoCAD、不执行 preview、不写实体；injected executor artifact 不能作为生产 closeout proof，不恢复训练、不推进表 C。
+
+### CAD-AGENT-VNEXT-PHASE10-LAUNCH-PREFLIGHT-04：P10B launch preflight contract
+
+- **推进**：Phase 10 在 live-run gate 后补齐 operator launch packet。`core/contracts/phase10_rehearsal.py` 新增 `build_phase10_rehearsal_launch_packet()`，harness 新增 `rehearsal-preflight` 命令，输出 `phase10_rehearsal_launch_packet.json`。
+- **硬门**：只消费 ready 的 `phase10_rehearsal_plan.json`；默认未确认 live runs 时 blocked；缺 `CAD_SESSION_HOST_URL` / `CAD_SESSION_TOKEN` 时 blocked；plan / runSpec 非 ready、非 `preview`、非真实 backend 或非 `CODEX_PREVIEW` 均 blocked。ready 时只生成可审计 `rehearsal-run --confirm-live-runs` argv。
+- **边界**：本包只证明发车前条件可被机器审计；`cadWritesAttempted=false`，没有连接 AutoCAD、没有执行 preview、没有创建 run dir、没有写实体、没有恢复训练、没有推进表 C。
+
+### CAD-AGENT-VNEXT-PHASE10-LIVE-RUN-GATE-03：P10B live-run gate contract
+
+- **推进**：Phase 10 在 plan 与 aggregate 后补齐 fail-closed 执行入口。`core/contracts/phase10_rehearsal.py` 新增 `execute_phase10_rehearsal_plan()`，harness 新增 `rehearsal-run` 命令和 `--confirm-live-runs` flag。
+- **硬门**：默认未确认 live runs 时 blocked；缺 `CAD_SESSION_HOST_URL` / `CAD_SESSION_TOKEN` 时 blocked；`phase10_rehearsal_plan.json` 非 ready、runSpec 非 `preview`、backend 非 `cad-session-host` / `cad_session_host`、target layer 或 CAD_PLAN layer 非 `CODEX_PREVIEW` 均 blocked。
+- **边界**：本包只证明 live-run 入口会 fail-closed；没有确认 rehearsal scope、没有连接 AutoCAD、没有执行真实 preview、没有写实体、没有恢复训练、没有推进表 C。
+
+### CAD-AGENT-VNEXT-PHASE10-REHEARSAL-AGGREGATE-02：P10B result aggregate / diff / failure ledger contract
+
+- **推进**：Phase 10 在 P10A run plan 后补齐 P10B 只读收口合同。`core/contracts/phase10_rehearsal.py` 新增 `evaluate_phase10_rehearsal_runs()`，harness 新增 `rehearsal-result` 命令，输出 `phase10_rehearsal_result.json`、`phase10_rehearsal_diff_summary.json` 与 `phase10_rehearsal_failure_ledger.json`。
+- **硬门**：至少 2 个 run dir；每个 run 必须 `verified` / `geometry_verified`、`savedCurrentDwg=false`、created/readback count 大于 0、backend 为 `cad_session_host`、全部 readback 在 `CODEX_PREVIEW`，且几何签名稳定。保存 DWG、缺 readback、fake backend、非 preview 图层、上游 missing evidence 或几何漂移均 blocked。
+- **边界**：本包只聚合已有 run，不执行 preview、不连接 CAD、不写实体、未确认 live rehearsal scope、不恢复训练、不推进表 C、不证明插件可用。
+
+### CAD-AGENT-VNEXT-PHASE10-REHEARSAL-PLAN-01：P10A rehearsal-plan contract
+
+- **推进**：Phase 10 从“等待 scope”推进到 P10A planning contract。新增 `core/contracts/phase10_rehearsal.py`，harness 新增 `rehearsal-plan` 命令，输出 `phase10_rehearsal_scope.json` 与 `phase10_rehearsal_plan.json`。
+- **硬门**：计划必须 `scopeConfirmed=true`，引用 ready 的 P9 Exit run，`runCount>=2`，所有 CAD_PLAN 只能写 `CODEX_PREVIEW`，backend 只能是 `cad-session-host` / `cad_session_host`；`fake-driver`、未确认 scope、非 preview 图层和缺 P9 Exit reference 均 blocked。
+- **边界**：本包只生成可审计 run plan，`cadWritesAttempted=false`；未连接 CAD、未执行 preview、未写实体、未保存 DWG、未恢复训练、未推进表 C、不证明多项 rehearsal 稳定性。
+
+## 2026-06-19
+
+### CAD-AGENT-VNEXT-PHASE9-SESSION-HOST-CLOSEOUT-05：CAD Session Host 根因修复与 P9 Exit closeout
+
+- **根因**：旧 direct COM 路径在 CAD 已打开时仍可能因为当前进程无法接管活动 `AutoCAD.Application` / ROT 对象而失败；首次 Host 尝试又暴露 AutoCAD COM STA/thread-affine 问题，`ThreadingHTTPServer` 跨线程复用 driver 会导致 `<unknown>.Layers`。
+- **修复**：新增 `core/cad_io/cad_session_host.py` 与 `scripts/cad_session_host.py`；Host 默认只绑定 `127.0.0.1`、必须 `CAD_SESSION_TOKEN`、只允许 `CODEX_PREVIEW` 写入，并改为单线程 `HTTPServer`，确保所有 AutoCAD COM 操作停留在同一 STA 线程。`cad-session-host` 已成为 harness / orchestrator 默认真实 CAD backend，旧 `autocad-com-existing` 保留为显式诊断路径。
+- **真实 CAD 结果**：`output/validation_runs/phase9-session-host-live-verify-20260619-235547/phase9_preview_report.json` 为 `geometry_verified`；`driverBackend=cad_session_host`、created/readback handles 均为 4、全部在 `CODEX_PREVIEW`、`savedCurrentDwg=false`、`missingEvidence=[]`。同一 run 已生成 preview bundle，P9 Exit gate 返回 `ready`、`phase10Allowed=true`、`completionCanClaimComplete=true`。
+- **边界**：本包只证明 Phase 9 单项真实 preview/readback 与 Host 接管路径通过；不恢复训练、不推进表 C、不证明插件可用、不证明 Phase 10 rehearsal 已完成，也未保存当前 DWG 或改正式图层。
+
+### CAD-AGENT-VNEXT-PHASE9-LIVE-VERIFY-04：CAD-open live verify / COM 接管安全加固
+
+- **重试**：用户确认 CAD 已打开后，复用 Phase 9 第一包单项 `CODEX_PREVIEW` CAD_PLAN，再次调用 `autocad_com_existing` live verify；最新有效证据为 `output/validation_runs/phase9-single-preview-live-verify-20260619-225504/phase9_preview_report.json`。
+- **结论**：本机 `acad.exe` 进程可见，但当前会话没有可接管的活动 `AutoCAD.Application` / ROT 对象；结果仍为 `external_blocker`，`applicationAvailable=false`、`previewAttempted=false`、`createdHandleCount=0`、`readbackEntityCount=0`、`cadGeometryVerified=false`。
+- **加固**：`AutoCADComDriver(connect_existing_only=True)` 现在只接管既有活动对象；当 `GetActiveObject` 失败时不再走 `Dispatch` fallback，避免为了验证而启动新 CAD 或挂起验证。`tasklist` 被拒绝时，进程探测会回退到 PowerShell `Get-Process`。
+- **边界**：未执行 preview write、未保存 DWG、未改正式图层、未恢复训练、未推进表 C、未进入 Phase 10；一次 `Dispatch` fallback 旧路径产生的 `phase9-single-preview-live-verify-20260619-224946/` 仅有 preflight 文件，因验证超时不作为有效 Phase 9 CAD evidence。
+
+### CAD-AGENT-VNEXT-PHASE9-SINGLE-PREVIEW-03：AutoCAD-ready live retry / external blocker closeout
+
+- **重试**：继续复用 Phase 9 第一包单项 `CODEX_PREVIEW` CAD_PLAN，生成 `output/validation_runs/phase9-single-preview-live-or-blocker-20260619-224058/`，只连接既有 AutoCAD COM 实例。
+- **结果**：本机仍无活动 `AutoCAD.Application`，输出 `external_blocker`；`applicationAvailable=false`、`previewAttempted=false`、`createdHandleCount=0`、`readbackEntityCount=0`、`cadGeometryVerified=false`。
+- **边界**：未启动 AutoCAD、未写 preview 实体、未保存 DWG、未改正式图层、未恢复训练、未推进表 C、未进入 Phase 10；解除条件是用户打开 AutoCAD、打开目标 DWG，并保持活动文档可访问后再重试 Phase 9。
+
+### CAD-AGENT-VNEXT-PHASE9-SINGLE-PREVIEW-02：AutoCAD 可连接重试与 readiness probe
+
+- **重试**：复用 Phase 9 第一包单项 `CODEX_PREVIEW` CAD_PLAN，新增 AutoCAD readiness probe artifact，并再次只连接既有 AutoCAD COM 实例。
+- **结果**：本机仍无活动 `AutoCAD.Application`，输出 `external_blocker`；`applicationAvailable=false`、`previewAttempted=false`、`createdHandleCount=0`、`readbackEntityCount=0`、`cadGeometryVerified=false`。
+- **边界**：未启动 AutoCAD、未写 preview 实体、未保存 DWG、未改正式图层、未恢复训练、未推进表 C、未进入 Phase 10。
+
+## 2026-06-15
+
+### CAD-AGENT-VNEXT-PHASE8-WORKBENCH-CLOSEOUT-03：Workbench 只读化 closeout 与 Phase 9 handoff
+
+- **收口**：Phase 8 projection skeleton 与 readonly adapter 接入层已通过 closeout，现有 flightdeck / trace viewer 只消费派生视图，不反向写 ledger、EvidencePackage、训练事实源、registry、`output/**`、`projects/**` 或 `libraries/**`。
+- **主线切换**：`README.md`、`AGENTS.md`、`CORE_CONTEXT_BRIEF.md`、`CORE_RESTRUCTURE_PLAN.md`、`docs/planning/任务清单.md`、`docs/status/current.md` 和 `docs/handoffs/current.md` 已同步为当前 next：Phase 9 单项 CAD Preview；Phase 9 尚未执行，后续必须另行声明 scope。
+- **验证边界**：本包复核 Phase 8 workbench 单测、Phase 5/6/7/8 回归、文档治理、OpenSpec、diff 和 protected evidence 检查；未运行 AutoCAD / CAD-MCP、未写真实 DWG、未恢复训练、未推进表 C、未改 registry、未执行 Phase 9 preview。
+
 ## 2026-06-07
 
 ### MAIN-AGENT-COGNITION-LOOP-PROOF-01：主 Agent 认知优化 no-CAD 机器闭环
@@ -15,7 +127,7 @@
 ### DOC-GOVERNANCE-BOUNDARY-PACKAGE-01：永生文档瘦身与事实源边界
 
 - **触发**：用户转交 CC 对系统文档治理的审查，指出同一事实散落在多份永生文档、Brief 过长、rules / AGENTS 重复、changelog 膨胀以及融合动作只有追加缺少替代。
-- **文档**：新增根目录 `ARCH_DOC_GOVERNANCE_BOUNDARY_PACKAGE.md`，定义永生 / 半永生文档清单、当前基线快照、权威源 / 引用源规则、四动作模板、P0-P4 完成定义、多 Agent 分工和退出路径；同步临时 CC 评审稿的退出路径。
+- **文档**：新增文档治理侧包，现位于 `docs/governance/arch-doc-governance-boundary-package.md`，定义永生 / 半永生文档清单、当前基线快照、权威源 / 引用源规则、四动作模板、P0-P4 完成定义、多 Agent 分工和退出路径；同步临时 CC 评审稿的退出路径。
 - **实现**：`core/maintenance/doc_governance.py` 新增 `immortal_doc_bloat` 审计，`scripts/run_doc_governance_audit.py` 作为薄 CLI 输出；测试覆盖 Brief 膨胀、重复事实、启动规则重复、root sidecar 退出路径和 CLI 输出。
 - **瘦身**：`CORE_CONTEXT_BRIEF.md` 从 119 行压到 70 行；`docs/governance/cad-agent-rules.md` 从 487 行压到 152 行，改为长期治理规则索引，不再复写启动卡片细则；handoff 索引与 current 窗口重新对齐。
 - **验证**：`tests.core.test_doc_governance` 35 项通过；`scripts/run_doc_governance_audit.py` 总体 `pass`、`immortal_doc_bloat.finding_count=0`、`handoff.finding_count=0`。本包不运行 CAD、不训练、不提升表 C。
@@ -101,7 +213,7 @@
 
 - **实现**：新增 `workers/orchestrator/**`、根级 `wrangler.jsonc`、`package.json` / `package-lock.json` worker 脚本和 `.gitignore` 规则，形成 Cloudflare Worker + Durable Object run state 的预部署编排层。当前覆盖 run / task graph、bridge 注册 / lease / heartbeat / submit、heartbeat token、bridge token、idempotency、timeout / retry / DLQ、bridge stale / offline、backpressure、circuit breaker、kill switch、redaction 和严格 JSON API 边界。
 - **加固**：submit 必须绑定 lease identity、attempt、result hash 和 `heartbeatToken`；revoked bridge 的 lease / heartbeat / submit replay 会在 idempotency 之前被阻断；task graph 写入前拒绝重复 `taskId`、缺失依赖和循环依赖；wrapper 只允许本地 `dev --local`、`types` 和 `deploy --dry-run`，阻断真实 deploy、`secret put` 和 `dev --remote`；secret scan 覆盖 `.dev.vars*`。
-- **文档收尾**：删除本轮临时 Worker 执行 playMD；保留 `WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md` 作为远程部署前停闸清单；同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md` 和 `CORE_STATUS.md`。
+- **文档收尾**：删除本轮临时 Worker 执行 playMD；保留 `docs/deploy/worker-orchestrator-deploy-checklist.md` 作为远程部署前停闸清单；同步 `CORE_RESTRUCTURE_PLAN.md`、`CORE_CONTEXT_BRIEF.md`、`docs/status/current.md`、`docs/status/changelog.md`、`docs/handoffs/current.md`、`docs/handoffs/package-index.md` 和 `CORE_STATUS.md`。
 - **验证**：`npm.cmd run worker:check` 通过，其中 runtime tests 14 pass，TypeScript `--noEmit`、secret scan、wrangler types 和 `wrangler deploy --dry-run` 均通过；本地 `wrangler dev --local` HTTP smoke 通过，包含 wrong submit `heartbeatToken`、idempotency conflict、dangerous CAD intent、backpressure 和 cleanup；wrapper 负向验证确认真实 deploy、`secret put`、`dev --remote` 被阻断。
 - **边界**：本包只到 local / dry-run 预部署骨架；未执行 Cloudflare remote deploy，未写真实 Cloudflare secret，未接 Queue / Workflows，未运行 bridge-owned Codex config，未触发真实 `gpt-5.5` runner，未连接 AutoCAD / CAD-MCP，未写 / 保存 DWG，不提升表 C。
 

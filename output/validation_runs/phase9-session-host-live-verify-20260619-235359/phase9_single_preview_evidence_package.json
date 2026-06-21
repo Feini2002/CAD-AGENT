@@ -1,0 +1,123 @@
+{
+  "task_id": "phase9.single-preview.task",
+  "items": [
+    {
+      "kind": "phase9_scope_lock",
+      "status": "pass",
+      "backend": "phase9_contract",
+      "readback_status": "",
+      "cad_geometry_verified": false,
+      "metadata": {
+        "scopeId": "phase9.single-preview.scope",
+        "targetLayer": "CODEX_PREVIEW",
+        "maxPreviewTaskCount": 1,
+        "forbiddenEffects": [
+          "dwg_save",
+          "save_current_dwg",
+          "formal_layer_write",
+          "delete_entities",
+          "delete_non_created_entities",
+          "registry_mutation",
+          "table_c_mutation",
+          "training_source_mutation",
+          "protected_evidence_mutation",
+          "plugin_call",
+          "plugin_execute",
+          "phase10_rehearsal"
+        ]
+      }
+    },
+    {
+      "kind": "cad_plan_validate",
+      "status": "pass",
+      "backend": "phase9_preflight",
+      "readback_status": "",
+      "cad_geometry_verified": false,
+      "metadata": {
+        "validationErrors": []
+      }
+    },
+    {
+      "kind": "cad_plan_dry_run",
+      "status": "pass",
+      "backend": "phase9_preflight",
+      "readback_status": "",
+      "cad_geometry_verified": false,
+      "metadata": {
+        "dryRunStatus": "valid",
+        "layer": "CODEX_PREVIEW"
+      }
+    },
+    {
+      "kind": "autocad_readiness_probe",
+      "status": "pass",
+      "backend": "cad_session_host",
+      "readback_status": "",
+      "cad_geometry_verified": false,
+      "metadata": {
+        "schemaVersion": "phase9-autocad-readiness-probe/v1",
+        "status": "ready",
+        "driverBackend": "cad_session_host",
+        "connectExistingOnly": true,
+        "applicationAvailable": true,
+        "activeDocumentAvailable": true,
+        "activeDocumentAccessible": true,
+        "activeDocument": {
+          "name": "测试文件.dwg",
+          "fullName": "C:\\Users\\User\\Desktop\\CAD-AGENT\\projects\\测试文件.dwg"
+        },
+        "previewAttempted": false,
+        "notRunReason": "",
+        "blocker": ""
+      }
+    },
+    {
+      "kind": "no_save_guard",
+      "status": "pass",
+      "backend": "phase9_preview",
+      "readback_status": "",
+      "cad_geometry_verified": false,
+      "metadata": {
+        "savedCurrentDwg": false,
+        "saved_current_dwg": false,
+        "saved_dwg": false,
+        "expected": {
+          "layer": "CODEX_PREVIEW",
+          "saved_dwg": false,
+          "deleted_entities": false,
+          "modified_formal_layers": false
+        }
+      }
+    },
+    {
+      "kind": "cad_readback",
+      "status": "fail",
+      "backend": "cad_session_host",
+      "readback_status": "not_run",
+      "cad_geometry_verified": false,
+      "metadata": {
+        "backend": "cad_session_host",
+        "driverMode": "cad_session_host",
+        "createdHandles": [],
+        "createdHandleCount": 0,
+        "readbackEntityCount": 0,
+        "readbackHandles": [],
+        "missingCreatedHandles": [],
+        "unexpectedLayers": [],
+        "savedCurrentDwg": false,
+        "previewOnlyAudit": {
+          "name": "preview_only_audit",
+          "status": "pass",
+          "message": "Preview-only safety audit fields are present and valid."
+        },
+        "bbox": null,
+        "layerCounts": {},
+        "typeCounts": {},
+        "blockingReasons": [
+          "external CAD preview blocker: RuntimeError: AttributeError: <unknown>.Layers"
+        ]
+      }
+    }
+  ],
+  "schema_version": "evidence-package/vnext-skeleton/v1"
+}

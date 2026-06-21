@@ -2,7 +2,7 @@
 
 最后更新：2026-06-10
 
-配套主文档：[超级CADAgent系统架构参考文档.md](超级CADAgent系统架构参考文档.md)
+配套主文档：[vnext-super-cad-agent-architecture.md](vnext-super-cad-agent-architecture.md)
 
 本文是 **超级 CAD Agent 工具调用层** 的阶段开发说明。它不绑定任何现有仓库、单一 CAD 软件或某一种调用方式，目标是说明：系统如何从早期 CAD 自动化，演进到受工具网关治理的多后端 CAD / BIM 工具体系，并在合适阶段引入 AutoCAD 原生插件。
 

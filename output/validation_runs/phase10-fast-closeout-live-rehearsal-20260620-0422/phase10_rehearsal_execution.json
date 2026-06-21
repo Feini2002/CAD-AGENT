@@ -1,0 +1,231 @@
+{
+  "schemaVersion": "phase10-rehearsal-execution/v1",
+  "phase": "Phase 10",
+  "packageId": "phase10.focused-harness-rehearsal",
+  "taskId": "phase10.focused-harness-rehearsal.execute",
+  "status": "ready",
+  "verificationStatus": "verified",
+  "cadGeometryVerified": true,
+  "cadWritesAttempted": true,
+  "liveRunsConfirmed": true,
+  "executorMode": "cad_agent_harness_preview",
+  "plannedRunCount": 2,
+  "executedRunCount": 2,
+  "planPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\phase10_rehearsal_plan.json",
+  "scopeReceiptPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\phase10_rehearsal_scope_receipt.json",
+  "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422",
+  "executionPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\phase10_rehearsal_execution.json",
+  "runSpecs": [
+    {
+      "runId": "phase10-rehearsal-run-01",
+      "command": "preview",
+      "backend": "cad-session-host",
+      "targetLayer": "CODEX_PREVIEW",
+      "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_01",
+      "cadPlan": {
+        "version": "0.1",
+        "domain": "generic",
+        "intent": "draw_object",
+        "object": {
+          "type": "table",
+          "name": "Phase 10 rehearsal table",
+          "width": 900,
+          "depth": 450
+        },
+        "placement": {
+          "mode": "absolute",
+          "base_point": [
+            76000,
+            42000,
+            0
+          ]
+        },
+        "drawing": {
+          "layer": "CODEX_PREVIEW",
+          "include_label": false,
+          "include_dimensions": false
+        },
+        "confidence": 0.91,
+        "needs_confirmation": false
+      }
+    },
+    {
+      "runId": "phase10-rehearsal-run-02",
+      "command": "preview",
+      "backend": "cad-session-host",
+      "targetLayer": "CODEX_PREVIEW",
+      "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_02",
+      "cadPlan": {
+        "version": "0.1",
+        "domain": "generic",
+        "intent": "draw_object",
+        "object": {
+          "type": "table",
+          "name": "Phase 10 rehearsal table",
+          "width": 900,
+          "depth": 450
+        },
+        "placement": {
+          "mode": "absolute",
+          "base_point": [
+            76000,
+            42000,
+            0
+          ]
+        },
+        "drawing": {
+          "layer": "CODEX_PREVIEW",
+          "include_label": false,
+          "include_dimensions": false
+        },
+        "confidence": 0.91,
+        "needs_confirmation": false
+      }
+    }
+  ],
+  "runResults": [
+    {
+      "runId": "phase10-rehearsal-run-01",
+      "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_01",
+      "status": "geometry_verified",
+      "verificationStatus": "verified"
+    },
+    {
+      "runId": "phase10-rehearsal-run-02",
+      "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_02",
+      "status": "geometry_verified",
+      "verificationStatus": "verified"
+    }
+  ],
+  "aggregateResult": {
+    "schemaVersion": "phase10-rehearsal-result/v1",
+    "phase": "Phase 10",
+    "packageId": "phase10.focused-harness-rehearsal",
+    "taskId": "phase10.focused-harness-rehearsal.result",
+    "status": "ready",
+    "verificationStatus": "verified",
+    "cadGeometryVerified": true,
+    "cadWritesAttempted": false,
+    "runCount": 2,
+    "verifiedRunCount": 2,
+    "comparableRunCount": 2,
+    "stableGeometry": true,
+    "runDirs": [
+      "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_01",
+      "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_02"
+    ],
+    "runSummaries": [
+      {
+        "runId": "run_01",
+        "runDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_01",
+        "reportPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_01\\phase9_preview_report.json",
+        "status": "geometry_verified",
+        "verificationStatus": "verified",
+        "driverBackend": "cad_session_host",
+        "targetLayer": "CODEX_PREVIEW",
+        "savedCurrentDwg": false,
+        "cadGeometryVerified": true,
+        "createdHandleCount": 4,
+        "readbackEntityCount": 4,
+        "geometrySignature": {
+          "bboxSize": [
+            900.0,
+            450.0
+          ],
+          "readbackEntityCount": 4,
+          "layerCounts": {
+            "CODEX_PREVIEW": 4
+          },
+          "typeCounts": {
+            "line": 4
+          }
+        },
+        "missingEvidence": [],
+        "upstreamBlockingReasons": [],
+        "blockingReasons": []
+      },
+      {
+        "runId": "run_02",
+        "runDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_02",
+        "reportPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\run_02\\phase9_preview_report.json",
+        "status": "geometry_verified",
+        "verificationStatus": "verified",
+        "driverBackend": "cad_session_host",
+        "targetLayer": "CODEX_PREVIEW",
+        "savedCurrentDwg": false,
+        "cadGeometryVerified": true,
+        "createdHandleCount": 4,
+        "readbackEntityCount": 4,
+        "geometrySignature": {
+          "bboxSize": [
+            900.0,
+            450.0
+          ],
+          "readbackEntityCount": 4,
+          "layerCounts": {
+            "CODEX_PREVIEW": 4
+          },
+          "typeCounts": {
+            "line": 4
+          }
+        },
+        "missingEvidence": [],
+        "upstreamBlockingReasons": [],
+        "blockingReasons": []
+      }
+    ],
+    "blockingReasons": [],
+    "missingEvidence": [],
+    "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422",
+    "diffSummaryPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\phase10_rehearsal_diff_summary.json",
+    "failureLedgerPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\phase10_rehearsal_failure_ledger.json",
+    "resultPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase10-fast-closeout-live-rehearsal-20260620-0422\\phase10_rehearsal_result.json",
+    "allowedEffects": [
+      "phase10_rehearsal_result_write"
+    ],
+    "forbiddenEffects": [
+      "dwg_save",
+      "save_current_dwg",
+      "formal_layer_write",
+      "delete_entities",
+      "delete_non_created_entities",
+      "registry_mutation",
+      "table_c_mutation",
+      "training_source_mutation",
+      "protected_evidence_mutation",
+      "plugin_call",
+      "plugin_execute"
+    ],
+    "completionBoundary": "rehearsal_result_is_read_only_aggregation_not_cad_execution",
+    "notEvidenceFor": [
+      "phase10_live_preview_not_executed_by_aggregator",
+      "training_resume",
+      "table_c_progress",
+      "plugin_readiness"
+    ]
+  },
+  "blockingReasons": [],
+  "missingEvidence": [],
+  "allowedEffects": [
+    "phase10_rehearsal_live_preview_runs"
+  ],
+  "forbiddenEffects": [
+    "dwg_save",
+    "save_current_dwg",
+    "formal_layer_write",
+    "delete_entities",
+    "delete_non_created_entities",
+    "registry_mutation",
+    "table_c_mutation",
+    "training_source_mutation",
+    "protected_evidence_mutation",
+    "plugin_call",
+    "plugin_execute"
+  ],
+  "completionBoundary": "rehearsal_execution_requires_confirmed_scope_and_session_host_readback",
+  "notEvidenceFor": [
+    "training_resume",
+    "table_c_progress",
+    "plugin_readiness"
+  ]
+}

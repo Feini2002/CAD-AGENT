@@ -1,0 +1,24 @@
+{
+  "status": "not_run",
+  "intent": "draw_object",
+  "layer": "CODEX_PREVIEW",
+  "preview_only": true,
+  "created_handles": [],
+  "savedCurrentDwg": false,
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "allowed_layers": [
+      "CODEX_DIAGNOSTIC",
+      "CODEX_PREVIEW"
+    ],
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false,
+    "writes_only_preview_layer": true,
+    "writes_only_allowed_layers": true,
+    "saves_dwg": false,
+    "deletes_entities": false,
+    "modifies_formal_layers": false
+  },
+  "externalBlocker": "RuntimeError: AttributeError: <unknown>.Layers"
+}

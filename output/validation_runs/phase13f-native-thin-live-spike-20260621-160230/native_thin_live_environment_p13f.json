@@ -1,0 +1,15 @@
+{
+  "nativeThinBackendAvailable": true,
+  "autocadConnectionAvailable": true,
+  "readbackRunnerAvailable": true,
+  "rollbackRunnerAvailable": true,
+  "noSaveGuardActive": true,
+  "backendIdentity": {
+    "backend": "native-thin-skeleton"
+  },
+  "targetLayer": "CODEX_PREVIEW",
+  "dwgSaveAllowed": false,
+  "formalLayerWriteAllowed": false,
+  "accoreConsolePath": "D:\\Design\\CAD\\AutoCAD 2026\\accoreconsole.exe",
+  "pluginDllPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\native_plugins\\native_thin_backend\\bin\\Release\\net8.0-windows\\NativeThinBackend.dll"
+}

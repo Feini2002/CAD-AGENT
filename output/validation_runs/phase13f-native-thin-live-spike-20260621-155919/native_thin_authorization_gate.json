@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "native-thin-authorization/p13c/v1",
+  "phase": "Phase 13C",
+  "packageId": "phase13c.native-thin-authorization",
+  "taskId": "phase13c.native-thin-authorization",
+  "kind": "authorization_gate",
+  "transactionId": "tx-p13c-native-authorization-001",
+  "adapterId": "native-thin.backend",
+  "backend": "native_thin_skeleton",
+  "backendIdentity": {
+    "backend": "native-thin-skeleton",
+    "adapterId": "native-thin.backend",
+    "pluginVersion": "not_invoked",
+    "nativePluginInvoked": false
+  },
+  "status": "ready",
+  "authorizationStatus": "authorized",
+  "verificationStatus": "not_verified",
+  "proofStatus": "native_live_authorization_ready_no_execution",
+  "launchPacketReady": true,
+  "launchPacketHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+  "scopeHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+  "scopeMatch": true,
+  "scopeConfirmed": true,
+  "targetLayer": "CODEX_PREVIEW",
+  "cadPlan": {
+    "version": "0.1",
+    "domain": "generic",
+    "intent": "draw_object",
+    "object": {
+      "type": "table",
+      "name": "P13F native thin scoped preview",
+      "width": 1200,
+      "depth": 600
+    },
+    "placement": {
+      "mode": "absolute",
+      "base_point": [
+        100,
+        200,
+        0
+      ]
+    },
+    "drawing": {
+      "layer": "CODEX_PREVIEW",
+      "include_label": false,
+      "include_dimensions": false
+    },
+    "confidence": 0.91,
+    "needs_confirmation": false
+  },
+  "readbackPlan": {
+    "required": true,
+    "strategy": "created_handles_bbox_props"
+  },
+  "rollbackPlan": {
+    "required": true,
+    "strategy": "rollback_batch"
+  },
+  "noSaveGuard": {
+    "required": true,
+    "saveAllowed": false
+  },
+  "userAuthorization": {
+    "explicit": true,
+    "scopeConfirmed": true,
+    "cadPlanConfirmed": true,
+    "codexPreviewConfirmed": true,
+    "readbackConfirmed": true,
+    "rollbackConfirmed": true,
+    "noSaveConfirmed": true,
+    "backendIdentityConfirmed": true,
+    "launchPacketHash": "aa780db2afd595a9aeddc15089f7c8a2c723537423e6ce373b561be03819e551",
+    "statement": "P13F live spike authorization: CODEX_PREVIEW only, readback, rollback, no-save, native-thin backend identity confirmed."
+  },
+  "liveExecutionAuthorized": true,
+  "executionStarted": false,
+  "rollbackRequired": true,
+  "rollbackStatus": "not_started",
+  "committedPreview": false,
+  "createdHandles": [],
+  "createdHandlesRef": "native-ledger://tx-p13c-native-authorization-001/created-handles",
+  "blockedReason": "",
+  "blockingReasons": [],
+  "missingEvidence": [],
+  "retryable": false,
+  "documentState": "not_connected",
+  "cadGeometryVerified": false,
+  "cadWritesAttempted": false,
+  "nativePluginInvoked": false,
+  "savedCurrentDwg": false,
+  "previewStrategy": "memory_transaction",
+  "ledgerRefs": {
+    "tool.requested": "native-ledger://tx-p13c-native-authorization-001/tool.requested",
+    "tool.authorized": "native-ledger://tx-p13c-native-authorization-001/tool.authorized",
+    "adapter.started": "native-ledger://tx-p13c-native-authorization-001/adapter.started",
+    "adapter.completed": "native-ledger://tx-p13c-native-authorization-001/adapter.completed",
+    "readback.recorded": "native-ledger://tx-p13c-native-authorization-001/readback.not-run",
+    "audit.completed": "native-ledger://tx-p13c-native-authorization-001/audit.completed",
+    "rollback.applied": "native-ledger://tx-p13c-native-authorization-001/rollback.applied",
+    "no_save.audit": "native-ledger://tx-p13c-native-authorization-001/no-save.audit"
+  },
+  "allowedEffects": [
+    "native_thin_live_authorization_gate_write"
+  ],
+  "nextAllowedEffects": [
+    "native_thin_execution_receipt_write"
+  ],
+  "forbiddenEffects": [
+    "native_plugin_execute",
+    "plugin_execute",
+    "plugin_call",
+    "cad_execute",
+    "cad_preview_write",
+    "apply_preview_batch",
+    "real_cad_readback",
+    "dwg_save",
+    "save_current_dwg",
+    "commit_save",
+    "save_copy",
+    "formal_layer_write",
+    "delete_entities",
+    "delete_non_created_entities",
+    "registry_mutation",
+    "table_c_mutation",
+    "training_source_mutation",
+    "protected_evidence_mutation"
+  ],
+  "completionBoundary": "P13C authorization gate only; it records explicit scope authorization and stops before AutoCAD or native plugin execution",
+  "nextStep": "build_native_thin_execution_receipt",
+  "artifacts": {},
+  "notEvidenceFor": [
+    "native_plugin_execution",
+    "real_cad_readback",
+    "geometry_verified",
+    "cad_geometry_verified",
+    "training_resume",
+    "table_c_progress",
+    "current_dwg_save",
+    "formal_layer_write"
+  ]
+}

@@ -37,13 +37,13 @@
 
 场景能力不得绕开 Core 直接执行 CAD。新增场景能力必须说明它复用哪个 Core 能力、需要哪些场景词汇 / 偏好 / 对象表，以及验证证据在哪里。
 
-## 2. 主计划与架构归并
+## 2. 主计划与 vNext Migration
 
 `CORE_RESTRUCTURE_PLAN.md` 是唯一主计划。任何新增待办、优先级调整、退出门槛变化或复杂治理包，都先回写主计划，再更新辅助文档的引用。
 
-当前仓库级主线是架构归并画布工程；权威执行入口见 `CORE_RESTRUCTURE_PLAN.md` §0.2，架构解释见 `docs/architecture/system-architecture-convergence.md`。归并期内，正式对象训练、整批训练、表 C 推进和系统资产大沉淀处于暂停或显式授权状态。
+当前仓库级主线是 CAD Agent vNext Migration；权威执行入口见 `CORE_RESTRUCTURE_PLAN.md`，阶段执行事实见 `docs/migration/execution-ledger.md`。迁移前段内，正式对象训练、整批训练、表 C 推进、插件 thin spike、真实 CAD 写入和系统资产大沉淀默认暂停，除非用户明确切换到对应阶段并给出范围。
 
-旧表 A/B/C、V-PROOF、RCAD、训练地图、资产库、多 Agent、Worker / bridge、模型桥、截图和工作台都必须能映射到统一任务生命周期：系统入口、任务对象、决策编排、能力与证据、执行工具、审计修复、沉淀成长。
+旧架构归并成果作为 legacy mapping / evidence baseline 保留：旧表 A/B/C、V-PROOF、RCAD、训练地图、资产库、多 Agent、Worker / bridge、模型桥、截图和工作台都必须能映射到统一任务生命周期，但它们不再定义当前主线或 current next。
 
 ## 3. 绘图链路
 

@@ -6,12 +6,14 @@ import unittest
 from math import pi
 from unittest.mock import patch
 
+from core.cad_io import autocad_com
 from core.cad_io.autocad_com import (
     CONTROLLED_BLOCK_DEFINITION_LAYER,
     CONTROLLED_BLOCK_MIN_SIZE,
     CONTROLLED_BLOCK_NAME,
     PREVIEW_LAYER,
     SECOND_CONTROLLED_BLOCK_NAME,
+    AutoCADAttachError,
     AutoCADComDriver,
     BlockAlphaInsertionError,
     block_definition_failure,
@@ -19,6 +21,21 @@ from core.cad_io.autocad_com import (
 
 
 class AutoCADComDriverConnectionTests(unittest.TestCase):
+    def test_process_probe_falls_back_to_powershell_when_tasklist_is_denied(self) -> None:
+        calls: list[list[str]] = []
+
+        def fake_run(command: list[str], **_kwargs: object) -> object:
+            calls.append(command)
+            if command[0] == "tasklist":
+                return types.SimpleNamespace(stdout="ERROR: Access denied\r\n")
+            return types.SimpleNamespace(stdout="acad\r\n")
+
+        with patch.object(autocad_com.subprocess, "run", side_effect=fake_run):
+            self.assertTrue(autocad_com._autocad_process_running())
+
+        self.assertEqual(calls[0][0], "tasklist")
+        self.assertEqual(calls[1][0], "powershell")
+
     def test_existing_only_connection_error_preserves_com_detail(self) -> None:
         fake_win32com = types.ModuleType("win32com")
         fake_client = types.ModuleType("win32com.client")
@@ -35,6 +52,41 @@ class AutoCADComDriverConnectionTests(unittest.TestCase):
                 "No active AutoCAD\\.Application instance is available.*COM detail: invalid class string",
             ):
                 AutoCADComDriver(connect_existing_only=True)
+
+    def test_existing_only_connection_never_dispatches_when_active_object_is_missing(self) -> None:
+        fake_win32com = types.ModuleType("win32com")
+        fake_client = types.ModuleType("win32com.client")
+        dispatch_calls: list[str] = []
+
+        def get_active_object(_prog_id: str) -> object:
+            raise RuntimeError("operation unavailable")
+
+        def dispatch(prog_id: str) -> object:
+            dispatch_calls.append(prog_id)
+            raise AssertionError("connect_existing_only must not dispatch a new AutoCAD process")
+
+        fake_client.GetActiveObject = get_active_object  # type: ignore[attr-defined]
+        fake_client.Dispatch = dispatch  # type: ignore[attr-defined]
+        fake_win32com.client = fake_client  # type: ignore[attr-defined]
+
+        def no_visible_rot(**kwargs: object) -> tuple[None, None]:
+            attempts = kwargs["attempts"]
+            attempts.append("ROT inspected=0; no attachable AutoCAD application found")
+            return None, None
+
+        with patch.dict(sys.modules, {"win32com": fake_win32com, "win32com.client": fake_client}):
+            with (
+                patch.object(autocad_com, "_autocad_process_running", return_value=True),
+                patch.object(autocad_com, "_attach_via_running_object_table", side_effect=no_visible_rot),
+            ):
+                with self.assertRaisesRegex(AutoCADAttachError, "Dispatch fallback skipped") as caught:
+                    AutoCADComDriver(connect_existing_only=True)
+
+        self.assertEqual(dispatch_calls, [])
+        self.assertEqual(
+            caught.exception.diagnostics["blockerCode"],
+            "acad_process_running_without_visible_rot_object",
+        )
 
     def test_existing_only_connection_tries_versioned_autocad_progids(self) -> None:
         fake_win32com = types.ModuleType("win32com")
@@ -62,6 +114,150 @@ class AutoCADComDriverConnectionTests(unittest.TestCase):
         self.assertIsInstance(driver.app, FakeApp)
         self.assertIn("AutoCAD.Application", calls)
         self.assertIn("AutoCAD.Application.25", calls)
+
+    def test_existing_only_connection_can_attach_with_get_object_fallback(self) -> None:
+        fake_win32com = types.ModuleType("win32com")
+        fake_client = types.ModuleType("win32com.client")
+
+        class FakeDocument:
+            ModelSpace = object()
+
+        class FakeApp:
+            ActiveDocument = FakeDocument()
+
+        get_object_calls: list[str] = []
+
+        def get_active_object(_prog_id: str) -> object:
+            raise RuntimeError("operation unavailable")
+
+        def get_object(*_args: object, **kwargs: object) -> object:
+            prog_id = str(kwargs.get("Class") or "")
+            get_object_calls.append(prog_id)
+            if prog_id == "AutoCAD.Application.25":
+                return FakeApp()
+            raise RuntimeError(f"{prog_id} unavailable")
+
+        fake_client.GetActiveObject = get_active_object  # type: ignore[attr-defined]
+        fake_client.GetObject = get_object  # type: ignore[attr-defined]
+        fake_win32com.client = fake_client  # type: ignore[attr-defined]
+
+        with patch.dict(sys.modules, {"win32com": fake_win32com, "win32com.client": fake_client}):
+            driver = AutoCADComDriver(connect_existing_only=True)
+
+        self.assertIsInstance(driver.app, FakeApp)
+        self.assertEqual(driver.attach_diagnostics["method"], "GetObject")
+        self.assertIn("AutoCAD.Application.25", get_object_calls)
+
+    def test_existing_only_connection_can_attach_application_from_rot(self) -> None:
+        fake_win32com = types.ModuleType("win32com")
+        fake_client = types.ModuleType("win32com.client")
+        fake_pythoncom = types.ModuleType("pythoncom")
+
+        class FakeDocument:
+            Name = "hosted.dwg"
+            FullName = r"C:\cad\hosted.dwg"
+            ModelSpace = object()
+
+        class FakeApp:
+            Name = "AutoCAD.Application"
+            ActiveDocument = FakeDocument()
+
+        class FakeMoniker:
+            def GetDisplayName(self, _bind_ctx: object, _reserved: object) -> str:
+                return "!AutoCAD.Application.25"
+
+        class FakeEnum:
+            def __init__(self) -> None:
+                self._done = False
+
+            def Next(self, _count: int) -> list[FakeMoniker]:
+                if self._done:
+                    return []
+                self._done = True
+                return [FakeMoniker()]
+
+        class FakeRot:
+            def EnumRunning(self) -> FakeEnum:
+                return FakeEnum()
+
+            def GetObject(self, _moniker: object) -> FakeApp:
+                return FakeApp()
+
+        def get_active_object(_prog_id: str) -> object:
+            raise RuntimeError("operation unavailable")
+
+        fake_client.GetActiveObject = get_active_object  # type: ignore[attr-defined]
+        fake_client.Dispatch = lambda obj: obj  # type: ignore[attr-defined]
+        fake_win32com.client = fake_client  # type: ignore[attr-defined]
+        fake_pythoncom.CoInitialize = lambda: None  # type: ignore[attr-defined]
+        fake_pythoncom.GetRunningObjectTable = lambda: FakeRot()  # type: ignore[attr-defined]
+        fake_pythoncom.CreateBindCtx = lambda _reserved: object()  # type: ignore[attr-defined]
+
+        with patch.dict(
+            sys.modules,
+            {"win32com": fake_win32com, "win32com.client": fake_client, "pythoncom": fake_pythoncom},
+        ):
+            driver = AutoCADComDriver(connect_existing_only=True)
+
+        self.assertIsInstance(driver.app, FakeApp)
+        self.assertEqual(driver.attach_diagnostics["method"], "RunningObjectTable")
+        self.assertEqual(driver.attach_diagnostics["displayName"], "!AutoCAD.Application.25")
+
+    def test_existing_only_connection_can_attach_document_application_from_rot(self) -> None:
+        fake_win32com = types.ModuleType("win32com")
+        fake_client = types.ModuleType("win32com.client")
+        fake_pythoncom = types.ModuleType("pythoncom")
+
+        class FakeApp:
+            Name = "AutoCAD.Application"
+
+        class FakeDocument:
+            Name = "hosted.dwg"
+            FullName = r"C:\cad\hosted.dwg"
+            ModelSpace = object()
+
+        fake_app = FakeApp()
+        fake_doc = FakeDocument()
+        fake_app.ActiveDocument = fake_doc
+        fake_doc.Application = fake_app
+
+        class FakeMoniker:
+            def GetDisplayName(self, _bind_ctx: object, _reserved: object) -> str:
+                return r"C:\cad\hosted.dwg"
+
+        class FakeEnum:
+            def __init__(self) -> None:
+                self._done = False
+
+            def Next(self, _count: int) -> list[FakeMoniker]:
+                if self._done:
+                    return []
+                self._done = True
+                return [FakeMoniker()]
+
+        class FakeRot:
+            def EnumRunning(self) -> FakeEnum:
+                return FakeEnum()
+
+            def GetObject(self, _moniker: object) -> FakeDocument:
+                return fake_doc
+
+        fake_client.GetActiveObject = lambda _prog_id: (_ for _ in ()).throw(RuntimeError("operation unavailable"))  # type: ignore[attr-defined]
+        fake_client.Dispatch = lambda obj: obj  # type: ignore[attr-defined]
+        fake_win32com.client = fake_client  # type: ignore[attr-defined]
+        fake_pythoncom.CoInitialize = lambda: None  # type: ignore[attr-defined]
+        fake_pythoncom.GetRunningObjectTable = lambda: FakeRot()  # type: ignore[attr-defined]
+        fake_pythoncom.CreateBindCtx = lambda _reserved: object()  # type: ignore[attr-defined]
+
+        with patch.dict(
+            sys.modules,
+            {"win32com": fake_win32com, "win32com.client": fake_client, "pythoncom": fake_pythoncom},
+        ):
+            driver = AutoCADComDriver(connect_existing_only=True)
+
+        self.assertIs(driver.app, fake_app)
+        self.assertEqual(driver.doc, fake_doc)
+        self.assertEqual(driver.attach_diagnostics["method"], "RunningObjectTable")
 
     def test_point_values_are_converted_to_autocad_float_array_variants(self) -> None:
         class FakeClient:

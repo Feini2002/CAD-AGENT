@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "phase9-preview-bundle/v1",
+  "phase": "Phase 9",
+  "packageId": "phase9.package1.single-cad-preview",
+  "taskId": "phase9.single-preview.task",
+  "sourceRunDir": ".",
+  "summary": "summary.json",
+  "session": "session.json",
+  "trajectory": "trajectory.json",
+  "artifactsDir": "artifacts",
+  "artifacts": {
+    "phase9_autocad_readiness_probe": {
+      "path": "artifacts/phase9_autocad_readiness_probe.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_autocad_readiness_probe.json",
+      "mediaType": "application/json",
+      "role": "supporting"
+    },
+    "phase9_preview_report": {
+      "path": "artifacts/phase9_preview_report.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_preview_report.json",
+      "mediaType": "application/json",
+      "role": "report"
+    },
+    "phase9_single_preview_cad_plan": {
+      "path": "artifacts/phase9_single_preview_cad_plan.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_single_preview_cad_plan.json",
+      "mediaType": "application/json",
+      "role": "input"
+    },
+    "phase9_single_preview_dry_run": {
+      "path": "artifacts/phase9_single_preview_dry_run.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_single_preview_dry_run.json",
+      "mediaType": "application/json",
+      "role": "supporting"
+    },
+    "phase9_single_preview_evidence_package": {
+      "path": "artifacts/phase9_single_preview_evidence_package.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_single_preview_evidence_package.json",
+      "mediaType": "application/json",
+      "role": "evidence_ref"
+    },
+    "phase9_single_preview_execution_summary": {
+      "path": "artifacts/phase9_single_preview_execution_summary.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_single_preview_execution_summary.json",
+      "mediaType": "application/json",
+      "role": "supporting"
+    },
+    "phase9_single_preview_ledger_records": {
+      "path": "artifacts/phase9_single_preview_ledger_records.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_single_preview_ledger_records.json",
+      "mediaType": "application/json",
+      "role": "evidence_ref"
+    },
+    "phase9_single_preview_readback_entities": {
+      "path": "artifacts/phase9_single_preview_readback_entities.json",
+      "sourceRef": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_single_preview_readback_entities.json",
+      "mediaType": "application/json",
+      "role": "supporting"
+    }
+  },
+  "warnings": [],
+  "completionBoundary": "preview_bundle_is_read_only_not_readback_evidence"
+}

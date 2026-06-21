@@ -7,7 +7,7 @@ const root = process.cwd();
 const scanRoots = [
   "package.json",
   "wrangler.jsonc",
-  "WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md",
+  path.join("docs", "deploy", "worker-orchestrator-deploy-checklist.md"),
   path.join("workers", "orchestrator"),
 ];
 

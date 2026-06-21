@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import unittest
+from unittest import mock
 
 from tests.bootstrap import PROJECT_ROOT
 from tests.helpers import temporary_artifact_dir
@@ -356,6 +357,43 @@ class ToolContractReactTests(unittest.TestCase):
             self.assertEqual(readback_summary["rawReadbackStatus"], "ok")
             self.assertGreater(readback_summary["readbackEntityCount"], 0)
             self.assertIsNotNone(readback_summary["bbox"])
+
+    def test_controlled_cad_preview_defaults_to_session_host_live_driver(self) -> None:
+        from core.orchestrator.tool_contract import run_tool_intent
+        from core.verification.fake_cad_driver import FakeCadDriver
+
+        class FakeSessionHostClient(FakeCadDriver):
+            def __init__(self, *, base_url: str, token: str, timeout_seconds: float = 30.0) -> None:
+                super().__init__()
+
+        with temporary_artifact_dir("tool_contract_cad_preview_session_host") as root:
+            plan_path = root / "candidate_outputs" / "cad_plan.candidate.json"
+            plan_path.parent.mkdir(parents=True, exist_ok=True)
+            plan_path.write_text(json.dumps(_valid_cad_plan(), ensure_ascii=False), encoding="utf-8")
+
+            run_tool_intent(root, _verification_intent("validate_plan"), run_id="run-1")
+            run_tool_intent(root, _verification_intent("dry_run_plan"), run_id="run-1")
+            intent = _cad_preview_intent()
+            intent["inputs"] = dict(intent["inputs"])
+            intent["inputs"].pop("driverMode", None)
+            with mock.patch.dict(
+                "os.environ",
+                {
+                    "CAD_SESSION_HOST_URL": "http://127.0.0.1:8765",
+                    "CAD_SESSION_TOKEN": "secret",
+                },
+            ):
+                with mock.patch("core.cad_io.cad_session_host.CadSessionHostClient", FakeSessionHostClient):
+                    trace = run_tool_intent(root, intent, run_id="run-1")
+
+            readback_summary = json.loads((root / "cad_reports" / "readback_summary.json").read_text(encoding="utf-8"))
+
+            self.assertEqual(trace["orchestratorDecision"], "allowed")
+            self.assertEqual(trace["executionStatus"], "executed")
+            self.assertEqual(trace["resultStatus"], "ok")
+            self.assertEqual(trace["result"]["driverMode"], "cad_session_host")
+            self.assertTrue(trace["result"]["cadGeometryVerified"])
+            self.assertEqual(readback_summary["readbackStatus"], "ok")
 
     def test_controlled_cad_preview_blocks_formal_layer_even_with_passed_stage3_reports(self) -> None:
         from core.orchestrator.tool_contract import run_tool_intent

@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "engineering-kernel-graphs/p14/v1",
+  "phase": "Phase 14",
+  "packageId": "phase14.engineering-kernel-graphs",
+  "taskId": "phase14.engineering-kernel.diff-package",
+  "kind": "engineering_kernel_graph_projection",
+  "status": "ready",
+  "verificationStatus": "not_verified",
+  "backend": "engineering_kernel",
+  "adapterId": "engineering-kernel.diff-package",
+  "targetLayer": "CODEX_PREVIEW",
+  "cadWritesAttempted": false,
+  "sourceCadWritesAttempted": false,
+  "cadGeometryVerified": false,
+  "sourceCadGeometryVerified": false,
+  "nativePluginInvoked": false,
+  "savedCurrentDwg": false,
+  "taskGraph": {
+    "nodes": [
+      {
+        "id": "task.cad_plan",
+        "kind": "cad_plan",
+        "intent": "draw_object",
+        "domain": "generic",
+        "targetLayer": "CODEX_PREVIEW"
+      },
+      {
+        "id": "task.compare_backends",
+        "kind": "backend_diff",
+        "backendCandidates": [
+          "cad_session_host",
+          "native_thin_live_backend",
+          "dxf_file",
+          "geometry_kernel",
+          "ifc_bim"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "task.cad_plan",
+        "to": "task.compare_backends",
+        "kind": "projects_to"
+      }
+    ]
+  },
+  "geometryGraph": {
+    "nodes": [
+      {
+        "id": "geometry.primary_object",
+        "kind": "bbox_footprint",
+        "bbox": {
+          "min": [
+            100,
+            200,
+            0
+          ],
+          "max": [
+            1300,
+            800,
+            0
+          ]
+        },
+        "targetLayer": "CODEX_PREVIEW",
+        "source": "cad_plan"
+      }
+    ],
+    "edges": []
+  },
+  "semanticGraph": {
+    "nodes": [
+      {
+        "id": "semantic.primary_object",
+        "kind": "semantic_object",
+        "semanticType": "table",
+        "name": "P13F native thin scoped preview"
+      }
+    ],
+    "edges": [
+      {
+        "from": "semantic.primary_object",
+        "to": "geometry.primary_object",
+        "kind": "describes"
+      }
+    ]
+  },
+  "versionGraph": {
+    "cadPlanHash": "d28a70f94a3ab91da746b5aadb82c21a5089b84533980d9d0083a746924d0505",
+    "sourceHashes": {
+      "cadPlan": "d28a70f94a3ab91da746b5aadb82c21a5089b84533980d9d0083a746924d0505"
+    },
+    "backendEvidenceOrder": []
+  },
+  "evidenceGraph": {
+    "backendEvidence": {},
+    "backendCandidateDocs": {
+      "cad_session_host": {
+        "backend": "cad_session_host",
+        "status": "candidate_not_run",
+        "hasEvidence": false,
+        "requiresCad": true,
+        "requiresNativePlugin": false,
+        "proofBoundary": "existing cad-session-host preview/readback evidence profile; no new CAD execution by P14"
+      },
+      "native_thin_live_backend": {
+        "backend": "native_thin_live_backend",
+        "status": "candidate_not_run",
+        "hasEvidence": false,
+        "requiresCad": true,
+        "requiresNativePlugin": true,
+        "proofBoundary": "existing scoped native thin live spike evidence profile; no new plugin execution by P14"
+      },
+      "dxf_file": {
+        "backend": "dxf_file",
+        "status": "candidate_not_run",
+        "hasEvidence": false,
+        "requiresCad": false,
+        "requiresNativePlugin": false,
+        "proofBoundary": "declared future DXF artifact comparison slot; not run in P14A",
+        "candidateArtifact": "future_dxf_diff_export"
+      },
+      "geometry_kernel": {
+        "backend": "geometry_kernel",
+        "status": "candidate_not_run",
+        "hasEvidence": false,
+        "requiresCad": false,
+        "requiresNativePlugin": false,
+        "proofBoundary": "declared no-CAD geometry kernel candidate slots; no dependency import required",
+        "declaredGeometryBackends": [
+          {
+            "backend_id": "build123d",
+            "title": "build123d optional solid modeling slot",
+            "available": false,
+            "requires_dependency": true,
+            "requires_cad": false,
+            "supported_models": [
+              "parametric_solid",
+              "step"
+            ],
+            "notes": "Declared as a future adapter slot; not imported or required by Core."
+          },
+          {
+            "backend_id": "cad_plan_rect2d",
+            "title": "CAD_PLAN 2D rectangle checks",
+            "available": true,
+            "requires_dependency": false,
+            "requires_cad": false,
+            "supported_models": [
+              "cad_plan",
+              "layout_bbox"
+            ],
+            "notes": "Built-in bbox, boundary and overlap checks for non-CAD verification."
+          },
+          {
+            "backend_id": "cadquery",
+            "title": "CadQuery optional solid modeling slot",
+            "available": false,
+            "requires_dependency": true,
+            "requires_cad": false,
+            "supported_models": [
+              "parametric_solid",
+              "step"
+            ],
+            "notes": "Declared as a future adapter slot; not imported or required by Core."
+          },
+          {
+            "backend_id": "ifcopenshell",
+            "title": "IfcOpenShell optional BIM geometry slot",
+            "available": false,
+            "requires_dependency": true,
+            "requires_cad": false,
+            "supported_models": [
+              "ifc",
+              "bim_element"
+            ],
+            "notes": "Declared as a future adapter slot for BIM exchange; not imported by Core."
+          },
+          {
+            "backend_id": "orthogonal_polygon",
+            "title": "Built-in orthogonal polygon checks",
+            "available": true,
+            "requires_dependency": false,
+            "requires_cad": false,
+            "supported_models": [
+              "shell_model.boundary",
+              "orthogonal_polygon"
+            ],
+            "notes": "Validates closed orthogonal polygons, bbox, area and simple self-intersection; not a replacement for a full computational geometry kernel."
+          },
+          {
+            "backend_id": "rect2d",
+            "title": "Built-in 2D rectangle helpers",
+            "available": true,
+            "requires_dependency": false,
+            "requires_cad": false,
+            "supported_models": [
+              "rect",
+              "bbox_shell",
+              "path_strip",
+              "no_place_zone"
+            ],
+            "notes": "Default no-dependency helper set for bbox area, containment, intersection, path strips and conservative no-place-zone subtraction."
+          }
+        ]
+      },
+      "ifc_bim": {
+        "backend": "ifc_bim",
+        "status": "candidate_not_run",
+        "hasEvidence": false,
+        "requiresCad": false,
+        "requiresNativePlugin": false,
+        "proofBoundary": "declared future IFC/BIM backend slot; not a production BIM export",
+        "declaredBimBackends": [
+          {
+            "backend_id": "ifcopenshell",
+            "title": "IfcOpenShell optional BIM geometry slot",
+            "available": false,
+            "requires_dependency": true,
+            "requires_cad": false,
+            "supported_models": [
+              "ifc",
+              "bim_element"
+            ],
+            "notes": "Declared as a future adapter slot for BIM exchange; not imported by Core."
+          }
+        ]
+      }
+    }
+  },
+  "blockingReasons": [],
+  "missingEvidence": [],
+  "allowedEffects": [
+    "engineering_kernel_graph_build",
+    "engineering_kernel_diff_package_write",
+    "backend_candidate_profile_write"
+  ],
+  "forbiddenEffects": [
+    "cad_execute",
+    "native_plugin_execute",
+    "plugin_execute",
+    "real_cad_readback",
+    "cad_preview_write",
+    "created_handles_readback",
+    "dwg_save",
+    "save_current_dwg",
+    "formal_layer_write",
+    "training_source_mutation",
+    "table_c_mutation"
+  ],
+  "completionBoundary": "P14 graph projection compares CAD_PLAN and supplied backend evidence only; it is not new CAD execution, real readback, training, Table C, or BIM export proof.",
+  "notEvidenceFor": [
+    "real_cad_readback",
+    "geometry_verified",
+    "cad_geometry_verified",
+    "new_cad_execution",
+    "native_plugin_execution",
+    "current_dwg_save",
+    "formal_layer_write",
+    "training_resume",
+    "table_c_progress",
+    "production_bim_export"
+  ],
+  "artifacts": {}
+}

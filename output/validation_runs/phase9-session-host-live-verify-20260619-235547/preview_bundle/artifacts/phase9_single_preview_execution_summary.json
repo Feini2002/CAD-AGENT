@@ -1,0 +1,51 @@
+{
+  "status": "executed",
+  "plan": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-session-host-live-verify-20260619-235547\\phase9_single_preview_cad_plan.json",
+  "intent": "draw_object",
+  "object_type": "table",
+  "object_name": "phase9_preview_table",
+  "object_size": [
+    900,
+    450
+  ],
+  "base_point": [
+    72000,
+    42000,
+    0
+  ],
+  "layer": "CODEX_PREVIEW",
+  "semantic_layer": null,
+  "preview_only": true,
+  "entities": {
+    "rectangle": 1,
+    "text": 0,
+    "dimensions": 0
+  },
+  "created_handles": [
+    "DABA",
+    "DABB",
+    "DABC",
+    "DABD"
+  ],
+  "safety": {
+    "layer": "CODEX_PREVIEW",
+    "allowed_layers": [
+      "CODEX_DIAGNOSTIC",
+      "CODEX_PREVIEW"
+    ],
+    "saved_dwg": false,
+    "deleted_entities": false,
+    "modified_formal_layers": false,
+    "writes_only_preview_layer": true,
+    "writes_only_allowed_layers": true,
+    "saves_dwg": false,
+    "deletes_entities": false,
+    "modifies_formal_layers": false
+  },
+  "activeDocument": {
+    "name": "测试文件.dwg",
+    "fullName": "C:\\Users\\User\\Desktop\\CAD-AGENT\\projects\\测试文件.dwg"
+  },
+  "driverBackend": "cad_session_host",
+  "savedCurrentDwg": false
+}

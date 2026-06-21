@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "phase9-single-preview-report/v1",
+  "phase": "Phase 9",
+  "packageId": "phase9.package1.single-cad-preview",
+  "taskId": "phase9.single-preview.task",
+  "status": "external_blocker",
+  "verificationStatus": "not_verified",
+  "targetLayer": "CODEX_PREVIEW",
+  "requiredTargetLayer": "CODEX_PREVIEW",
+  "driverBackend": "autocad_com_existing",
+  "savedCurrentDwg": false,
+  "cadGeometryVerified": false,
+  "validationStatus": "valid",
+  "validationErrors": [],
+  "dryRunStatus": "valid",
+  "preflight": {
+    "status": "ready",
+    "targetLayer": "CODEX_PREVIEW",
+    "requiredTargetLayer": "CODEX_PREVIEW",
+    "validationStatus": "valid",
+    "dryRunStatus": "valid",
+    "blockingReasons": []
+  },
+  "autoCADReadinessProbe": {
+    "schemaVersion": "phase9-autocad-readiness-probe/v1",
+    "status": "external_blocker",
+    "driverBackend": "autocad_com_existing",
+    "connectExistingOnly": true,
+    "applicationAvailable": false,
+    "activeDocumentAvailable": false,
+    "activeDocumentAccessible": false,
+    "activeDocument": {},
+    "previewAttempted": false,
+    "notRunReason": "",
+    "blocker": "RuntimeError: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None) || acadProcessRunning=True; Dispatch fallback skipped because connect_existing_only=True"
+  },
+  "createdHandles": [],
+  "createdHandleCount": 0,
+  "readbackHandles": [],
+  "readbackEntityCount": 0,
+  "activeDocument": {},
+  "geometryAudit": {
+    "bbox": null,
+    "layerCounts": {},
+    "typeCounts": {},
+    "allReadbackOnPreviewLayer": false
+  },
+  "checks": [
+    {
+      "name": "preview_only_audit",
+      "status": "pass",
+      "message": "Preview-only safety audit fields are present and valid."
+    },
+    {
+      "name": "created_handles_readback",
+      "status": "fail",
+      "message": "Created handles are missing from readback or were not created."
+    },
+    {
+      "name": "real_cad_readback",
+      "status": "fail",
+      "message": "Real CAD readback evidence is missing or not verified."
+    }
+  ],
+  "evidencePackageId": "phase9-single-preview-evidence",
+  "evidenceContentHash": "68032ccc7f7affba7455dc4aac9a80574dd58dded12e3cbac7b29113f0cbb422",
+  "completion": {
+    "status": "blocked",
+    "verification_status": "not_verified",
+    "missing_evidence": [
+      "real_cad_readback"
+    ],
+    "checked_evidence": [
+      "no_save_guard"
+    ],
+    "can_claim_complete": false
+  },
+  "missingEvidence": [
+    "real_cad_readback"
+  ],
+  "blockingReasons": [
+    "external CAD preview blocker: RuntimeError: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None) || acadProcessRunning=True; Dispatch fallback skipped because connect_existing_only=True"
+  ],
+  "externalBlocker": "RuntimeError: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None) || acadProcessRunning=True; Dispatch fallback skipped because connect_existing_only=True",
+  "evidenceBoundary": {
+    "checked": [
+      "cad_plan_validate",
+      "cad_plan_dry_run",
+      "created_handles_readback",
+      "no_save_guard"
+    ],
+    "notChecked": [
+      "user_visual_acceptance",
+      "phase10_rehearsal"
+    ],
+    "screenshotUse": "visual_aid_only_not_completion_evidence"
+  },
+  "artifacts": {
+    "outputDir": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504",
+    "cadPlan": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_cad_plan.json",
+    "dryRun": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_dry_run.json",
+    "autoCADReadinessProbe": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_autocad_readiness_probe.json",
+    "executionSummary": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_execution_summary.json",
+    "readbackEntities": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_readback_entities.json",
+    "evidencePackage": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_evidence_package.json",
+    "ledgerRecords": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_ledger_records.json"
+  }
+}

@@ -70,12 +70,12 @@ IMMORTAL_DOC_ACTIVE_IGNORED_PARTS = {
 
 IMMORTAL_FACT_SCAN_DOCS = {
     "AGENTS.md",
-    "ARCH_DOC_GOVERNANCE_BOUNDARY_PACKAGE.md",
     "CORE_CONTEXT_BRIEF.md",
     "CORE_RESTRUCTURE_PLAN.md",
     "CORE_STATUS.md",
     "README.md",
     "docs/architecture/system-architecture-convergence.md",
+    "docs/governance/arch-doc-governance-boundary-package.md",
     "docs/governance/cad-agent-rules.md",
     "docs/handoffs/current.md",
     "docs/handoffs/package-index.md",
@@ -91,7 +91,6 @@ PERMANENT_ROOT_MARKDOWN = {
     "CORE_STATUS.md",
     "MODEL_DATA_EXPORT_AUTHORIZATION.md",
     "README.md",
-    "WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md",
 }
 
 FACT_OR_CHANGE_ID_RE = re.compile(r"\b[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){1,}-[0-9]{2,}\b")
@@ -159,10 +158,7 @@ HISTORICAL_TABLE_C_LINE_MARKERS = (
 )
 
 TRAINING_CONTEXT_REQUIREMENTS = {
-    "CORE_CONTEXT_BRIEF.md": ("Visual-First", "visual_parts"),
-    "CORE_RESTRUCTURE_PLAN.md": ("Visual-First", "visual_parts"),
     "docs/training/README.md": ("pipeline_visual_intent", "visual_parts", "reference_match"),
-    "docs/planning/任务清单.md": ("Visual-First", "visual_parts"),
 }
 
 OUTPUT_REPLY_POLICY_FORBIDDEN = (
@@ -304,19 +300,6 @@ ARCHITECTURE_REQUEST_CHAIN_LEGACY = (
 )
 
 ARCHITECTURE_HARDENING_REQUIREMENTS = {
-    "README.md": (
-        "request context / run package",
-        "Orchestrator Host / A-to-A contract",
-        "required agents + hard gates",
-        "semantic route",
-        "a_to_a_task_contract",
-        "CAD_PLAN",
-        "asset workflow",
-        "training route",
-        "verification / closeout",
-        "Reviewer Host / delivery claims",
-        "promotion / sync",
-    ),
     "docs/architecture/README.md": (
         "request context / run package",
         "Orchestrator Host / A-to-A contract",

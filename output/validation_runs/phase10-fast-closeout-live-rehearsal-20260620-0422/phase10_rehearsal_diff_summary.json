@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "phase10-rehearsal-diff-summary/v1",
+  "phase": "Phase 10",
+  "packageId": "phase10.focused-harness-rehearsal",
+  "stableGeometry": true,
+  "baselineRunId": "run_01",
+  "baselineGeometrySignature": {
+    "bboxSize": [
+      900.0,
+      450.0
+    ],
+    "readbackEntityCount": 4,
+    "layerCounts": {
+      "CODEX_PREVIEW": 4
+    },
+    "typeCounts": {
+      "line": 4
+    }
+  },
+  "runCount": 2,
+  "comparableRunCount": 2,
+  "diffCount": 0,
+  "diffs": [],
+  "completionBoundary": "diff_summary_compares_existing_readback_reports_only"
+}

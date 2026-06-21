@@ -5,6 +5,7 @@ from typing import Any
 
 
 WORKBENCH_V3_SCHEMA = "workbench-data-contract/v3-draft"
+CONTRACT_WORKBENCH_PANEL_SCHEMA = "workbench-contract-projections/v1"
 
 
 def _as_list(value: Any) -> list[Any]:
@@ -386,12 +387,100 @@ def build_evidence_bundles(data: dict[str, Any]) -> list[dict[str, Any]]:
     return bundles
 
 
+def build_contract_workbench_panel(data: dict[str, Any]) -> dict[str, Any]:
+    rows = _contract_workbench_rows(data)
+    summary = _contract_workbench_summary(rows)
+    return {
+        "schemaVersion": CONTRACT_WORKBENCH_PANEL_SCHEMA,
+        "readOnly": True,
+        "read_only": True,
+        "mutatedTargets": [],
+        "mutated_targets": [],
+        "summary": summary,
+        "items": rows,
+        "sourcePolicy": {
+            "derivedOnly": True,
+            "readOnly": True,
+            "mutatedTargets": [],
+            "truthSources": [
+                "TaskObject",
+                "EvidenceLedgerRecord",
+                "EvidencePackage",
+                "CompletionJudge.judge_with_ledger",
+                "WorkbenchProjection",
+            ],
+            "notProofOf": [
+                "cad_geometry",
+                "training_acceptance",
+                "table_c_promotion",
+                "registry_update",
+            ],
+        },
+    }
+
+
+def _contract_workbench_rows(data: dict[str, Any]) -> list[dict[str, Any]]:
+    direct_rows = _dict_rows(data.get("contractWorkbenchProjections"))
+    if direct_rows:
+        return direct_rows
+
+    adapter = data.get("contractWorkbench")
+    if not isinstance(adapter, dict):
+        adapter = data.get("workbenchReadonlyAdapter")
+    if not isinstance(adapter, dict):
+        return []
+
+    views = adapter.get("views", {}) if isinstance(adapter.get("views"), dict) else {}
+    evidence_center = views.get("evidenceCenter", {}) if isinstance(views.get("evidenceCenter"), dict) else {}
+    return _dict_rows(
+        evidence_center.get("contractWorkbenchProjections")
+        or adapter.get("contractWorkbenchProjections")
+        or []
+    )
+
+
+def _contract_workbench_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    blocked = [row for row in rows if str(row.get("completion_status") or "") == "blocked"]
+    not_verified = [
+        row
+        for row in rows
+        if str(row.get("verification_status") or "") != "verified"
+        or str(row.get("completion_status") or "") == "not_verified"
+    ]
+    return {
+        "projectionCount": len(rows),
+        "readyCount": len([row for row in rows if str(row.get("completion_status") or "") == "ready"]),
+        "blockedCount": len(blocked),
+        "notVerifiedCount": len(not_verified),
+        "canClaimCompleteCount": len([row for row in rows if row.get("can_claim_complete") is True]),
+        "cadGeometryVerifiedCount": len([row for row in rows if row.get("cad_geometry_verified") is True]),
+        "ledgerRecordCount": sum(_int(row.get("ledger_record_count")) for row in rows),
+        "missingEvidenceCount": sum(len(_as_list(row.get("missing_evidence"))) for row in rows),
+        "blockedTaskIds": [str(row.get("task_id") or "") for row in blocked if row.get("task_id")],
+        "notVerifiedTaskIds": [
+            str(row.get("task_id") or "") for row in not_verified if row.get("task_id")
+        ],
+    }
+
+
+def _dict_rows(value: Any) -> list[dict[str, Any]]:
+    return [dict(item) for item in _as_list(value) if isinstance(item, dict)]
+
+
+def _int(value: Any) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
 def build_workbench_v3(root: Path, data: dict[str, Any]) -> dict[str, Any]:
     source_registry = build_source_registry(root, _as_list(data.get("trainingSources")))
     gateboard = build_gateboard(data, source_registry)
     candidates = build_next_training_candidates(data)
     agent_graph = build_agent_graph(data, source_registry, gateboard)
     evidence_bundles = build_evidence_bundles(data)
+    contract_workbench = build_contract_workbench_panel(data)
     command_center = {
         "title": "CAD Agent 训练飞控台",
         "summary": "默认回答今天能不能训、训什么、谁负责、证据缺哪里。",
@@ -409,6 +498,7 @@ def build_workbench_v3(root: Path, data: dict[str, Any]) -> dict[str, Any]:
             "primaryAgentId": (data.get("designerAgent") or {}).get("id", "cad_designer"),
         },
         "latestRunSummary": (data.get("modelTraceViewer") or {}).get("summary", {}),
+        "contractProjectionSummary": contract_workbench["summary"],
         "evidenceBoundary": "表 C、训练进度、Agent 成熟度、Prompt ready、Trace 和截图必须分开；真实 CAD 仍看 created handles / readback / audit。",
         "derivedBoundary": "capability-map-data.js 和 capability-map.html 是派生快照，不是事实源。",
     }
@@ -424,6 +514,7 @@ def build_workbench_v3(root: Path, data: dict[str, Any]) -> dict[str, Any]:
             "trainingProgramCount": len(_as_list(data.get("trainingPrograms"))),
             "agentCount": len(_as_list(data.get("agentProfiles"))),
             "promptContractCount": len(_as_list(data.get("promptContracts"))),
+            "contractWorkbenchProjectionCount": contract_workbench["summary"]["projectionCount"],
         },
         "indices": {
             "programById": {program.get("id"): program.get("capabilityId") for program in _as_list(data.get("trainingPrograms"))},
@@ -436,6 +527,7 @@ def build_workbench_v3(root: Path, data: dict[str, Any]) -> dict[str, Any]:
                 "sourceRegistry": source_registry,
                 "evidenceBundles": evidence_bundles,
                 "coverageBoundary": data.get("tableCBoundary", {}),
+                "contractWorkbench": contract_workbench,
             },
         },
         "syncHealth": {
@@ -444,13 +536,14 @@ def build_workbench_v3(root: Path, data: dict[str, Any]) -> dict[str, Any]:
         },
         "sourcePolicy": {
             "derivedOnly": True,
-            "derivedArtifacts": ["capability-map-data.js", "capability-map.html"],
+            "derivedArtifacts": ["capability-map-data.js", "capability-map.html", "contractWorkbench"],
             "truthSources": [
                 "docs/training/training-sources.json",
                 "output/validation_runs/capability-lab/cad_capability_coverage.json",
                 "agents/**/training_memory.json",
                 "agents/**/prompt_addendum.md",
                 "output/runs/**",
+                "WorkbenchProjection",
             ],
             "notProofOf": [
                 "cad_geometry",

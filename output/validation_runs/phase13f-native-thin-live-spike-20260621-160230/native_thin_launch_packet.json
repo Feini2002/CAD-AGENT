@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "native-thin-preflight/p13b/v1",
+  "phase": "Phase 13B",
+  "packageId": "phase13b.native-thin-preflight",
+  "taskId": "phase13b.native-thin-preflight",
+  "kind": "launch_packet",
+  "transactionId": "tx-p13b-native-launch-001",
+  "adapterId": "native-thin.backend",
+  "backend": "native_thin_skeleton",
+  "backendIdentity": {
+    "backend": "native-thin-skeleton",
+    "adapterId": "native-thin.backend",
+    "pluginVersion": "not_invoked",
+    "nativePluginInvoked": false
+  },
+  "status": "ready",
+  "verificationStatus": "not_verified",
+  "proofStatus": "native_preflight_ready",
+  "targetLayer": "CODEX_PREVIEW",
+  "cadPlan": {
+    "version": "0.1",
+    "domain": "generic",
+    "intent": "draw_object",
+    "object": {
+      "type": "table",
+      "name": "P13F native thin scoped preview",
+      "width": 1200,
+      "depth": 600
+    },
+    "placement": {
+      "mode": "absolute",
+      "base_point": [
+        100,
+        200,
+        0
+      ]
+    },
+    "drawing": {
+      "layer": "CODEX_PREVIEW",
+      "include_label": false,
+      "include_dimensions": false
+    },
+    "confidence": 0.91,
+    "needs_confirmation": false
+  },
+  "readbackPlan": {
+    "required": true,
+    "strategy": "created_handles_bbox_props"
+  },
+  "rollbackPlan": {
+    "required": true,
+    "strategy": "rollback_batch"
+  },
+  "noSaveGuard": {
+    "required": true,
+    "saveAllowed": false
+  },
+  "rollbackRequired": true,
+  "rollbackStatus": "not_started",
+  "committedPreview": false,
+  "createdHandles": [],
+  "createdHandlesRef": "native-ledger://tx-p13b-native-launch-001/created-handles",
+  "blockedReason": "",
+  "blockingReasons": [],
+  "missingEvidence": [],
+  "retryable": false,
+  "documentState": "not_connected",
+  "cadGeometryVerified": false,
+  "cadWritesAttempted": false,
+  "nativePluginInvoked": false,
+  "savedCurrentDwg": false,
+  "previewStrategy": "memory_transaction",
+  "ledgerRefs": {
+    "tool.requested": "native-ledger://tx-p13b-native-launch-001/tool.requested",
+    "tool.authorized": "native-ledger://tx-p13b-native-launch-001/tool.authorized",
+    "adapter.started": "native-ledger://tx-p13b-native-launch-001/adapter.started",
+    "adapter.completed": "native-ledger://tx-p13b-native-launch-001/adapter.completed",
+    "readback.recorded": "native-ledger://tx-p13b-native-launch-001/readback.not-run",
+    "audit.completed": "native-ledger://tx-p13b-native-launch-001/audit.completed",
+    "rollback.applied": "native-ledger://tx-p13b-native-launch-001/rollback.applied",
+    "no_save.audit": "native-ledger://tx-p13b-native-launch-001/no-save.audit"
+  },
+  "allowedEffects": [
+    "native_thin_preflight_packet_write",
+    "native_thin_launch_packet_write"
+  ],
+  "nextAllowedEffects": [],
+  "forbiddenEffects": [
+    "native_plugin_execute",
+    "plugin_execute",
+    "plugin_call",
+    "cad_execute",
+    "cad_preview_write",
+    "apply_preview_batch",
+    "real_cad_readback",
+    "dwg_save",
+    "save_current_dwg",
+    "commit_save",
+    "save_copy",
+    "formal_layer_write",
+    "delete_entities",
+    "delete_non_created_entities",
+    "registry_mutation",
+    "table_c_mutation",
+    "training_source_mutation",
+    "protected_evidence_mutation"
+  ],
+  "completionBoundary": "P13B preflight packet only; real native execution requires separate user authorization",
+  "artifacts": {},
+  "notEvidenceFor": [
+    "native_plugin_execution",
+    "real_cad_readback",
+    "cad_geometry_verified",
+    "training_resume",
+    "table_c_progress",
+    "current_dwg_save",
+    "formal_layer_write"
+  ],
+  "scopeReceiptReady": true,
+  "scopeReceiptPath": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase13f-native-thin-live-spike-20260621-160230\\native_thin_scope_receipt.json",
+  "launchPacketReady": true,
+  "launchAllowed": false,
+  "liveExecutionAuthorized": false,
+  "nextStep": "request_user_authorization_for_native_live_spike"
+}

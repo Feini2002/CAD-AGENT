@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "kind": "phase10CadMcpControllerProbe",
+  "timestampLocal": "20260620-024423",
+  "cadWritesAttempted": false,
+  "cadWritesLayer": "CODEX_PREVIEW",
+  "saveInvoked": false,
+  "status": "blocked",
+  "acadProcessesBefore": [
+    {
+      "Id": 42896,
+      "ProcessName": "acad",
+      "MainWindowTitle": "",
+      "StartTime": "/Date(1781893710094)/",
+      "Path": "D:\\Design\\CAD\\AutoCAD 2026\\acad.exe"
+    }
+  ],
+  "startCadReturned": false,
+  "comConnectCalls": [
+    {
+      "method": "GetActiveObject",
+      "args": [
+        "AutoCAD.Application"
+      ],
+      "status": "error",
+      "error": "com_error(-2147221005, '无效的类字符串', None, None)"
+    },
+    {
+      "method": "Dispatch",
+      "args": [
+        "AutoCAD.Application"
+      ],
+      "status": "error",
+      "error": "com_error(-2147221005, '无效的类字符串', None, None)"
+    }
+  ],
+  "blockerCode": "cad_mcp_controller_start_failed",
+  "acadProcessesAfter": [
+    {
+      "Id": 42896,
+      "ProcessName": "acad",
+      "MainWindowTitle": "",
+      "StartTime": "/Date(1781893710094)/",
+      "Path": "D:\\Design\\CAD\\AutoCAD 2026\\acad.exe"
+    }
+  ],
+  "dispatchWasUsed": false,
+  "getActiveObjectSucceeded": false
+}

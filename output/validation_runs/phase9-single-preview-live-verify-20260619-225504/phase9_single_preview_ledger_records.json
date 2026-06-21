@@ -1,0 +1,40 @@
+[
+  {
+    "ledger_id": "phase9.single-preview.task.real_cad_readback",
+    "task_id": "phase9.single-preview.task",
+    "contract_id": "phase9.package1.single-cad-preview",
+    "evidence_package_id": "phase9-single-preview-evidence",
+    "evidence_type": "real_cad_readback",
+    "producer": "phase9_single_preview",
+    "tool_card_id": "phase9_single_preview_runner",
+    "verification_status": "not_verified",
+    "blocked_reason": "external CAD preview blocker: RuntimeError: No active AutoCAD.Application instance is available. COM detail: AutoCAD.Application: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.25.1: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.25: (-2147221021, '操作无法使用', None, None) | AutoCAD.Application.24.3: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.2: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.24: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23.1: (-2147221005, '无效的类字符串', None, None) | AutoCAD.Application.23: (-2147221005, '无效的类字符串', None, None) || acadProcessRunning=True; Dispatch fallback skipped because connect_existing_only=True",
+    "not_verified_reason": "missing verified real_cad_readback",
+    "source_ref": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_execution_summary.json",
+    "content_hash": "68032ccc7f7affba7455dc4aac9a80574dd58dded12e3cbac7b29113f0cbb422",
+    "metadata": {
+      "phase": "Phase 9",
+      "packageId": "phase9.package1.single-cad-preview"
+    },
+    "schema_version": "evidence-ledger-record/v1"
+  },
+  {
+    "ledger_id": "phase9.single-preview.task.no_save_guard",
+    "task_id": "phase9.single-preview.task",
+    "contract_id": "phase9.package1.single-cad-preview",
+    "evidence_package_id": "phase9-single-preview-evidence",
+    "evidence_type": "no_save_guard",
+    "producer": "phase9_single_preview",
+    "tool_card_id": "phase9_single_preview_runner",
+    "verification_status": "pass",
+    "blocked_reason": "",
+    "not_verified_reason": "",
+    "source_ref": "C:\\Users\\User\\Desktop\\CAD Agent WorkTree\\output\\validation_runs\\phase9-single-preview-live-verify-20260619-225504\\phase9_single_preview_execution_summary.json",
+    "content_hash": "68032ccc7f7affba7455dc4aac9a80574dd58dded12e3cbac7b29113f0cbb422",
+    "metadata": {
+      "phase": "Phase 9",
+      "packageId": "phase9.package1.single-cad-preview"
+    },
+    "schema_version": "evidence-ledger-record/v1"
+  }
+]

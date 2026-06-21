@@ -211,11 +211,68 @@ def _run_summary(root: Path, run_dir: Path) -> dict[str, Any]:
     }
 
 
+def _contract_workbench_context(contract_workbench: dict[str, Any] | None) -> dict[str, Any]:
+    rows = _contract_projection_rows(contract_workbench)
+    summary = {}
+    if isinstance(contract_workbench, dict) and isinstance(contract_workbench.get("summary"), dict):
+        summary = dict(contract_workbench["summary"])
+    if not summary:
+        summary = _contract_projection_summary(rows)
+    return {
+        "readOnly": True,
+        "mutatedTargets": [],
+        "summary": summary,
+        "blockedTaskIds": [str(row.get("task_id") or "") for row in rows if row.get("completion_status") == "blocked"],
+        "notVerifiedTaskIds": [
+            str(row.get("task_id") or "")
+            for row in rows
+            if row.get("verification_status") != "verified" or row.get("completion_status") == "not_verified"
+        ],
+    }
+
+
+def _contract_projection_rows(contract_workbench: dict[str, Any] | None) -> list[dict[str, Any]]:
+    if not isinstance(contract_workbench, dict):
+        return []
+    views = contract_workbench.get("views", {}) if isinstance(contract_workbench.get("views"), dict) else {}
+    evidence_center = views.get("evidenceCenter", {}) if isinstance(views.get("evidenceCenter"), dict) else {}
+    candidates = (
+        evidence_center.get("contractWorkbenchProjections")
+        or contract_workbench.get("contractWorkbenchProjections")
+        or []
+    )
+    return [dict(row) for row in _as_list(candidates) if isinstance(row, dict)]
+
+
+def _contract_projection_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    blocked = [row for row in rows if row.get("completion_status") == "blocked"]
+    not_verified = [
+        row
+        for row in rows
+        if row.get("verification_status") != "verified" or row.get("completion_status") == "not_verified"
+    ]
+    return {
+        "projectionCount": len(rows),
+        "readyCount": len([row for row in rows if row.get("completion_status") == "ready"]),
+        "blockedCount": len(blocked),
+        "notVerifiedCount": len(not_verified),
+        "ledgerRecordCount": sum(_safe_int(row.get("ledger_record_count")) for row in rows),
+    }
+
+
+def _safe_int(value: Any) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
 def build_workbench_trace_viewer_data(
     root: str | Path = PROJECT_ROOT,
     *,
     max_runs: int = DEFAULT_MAX_RUNS,
     max_traces: int = DEFAULT_MAX_TRACES,
+    contract_workbench: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a derived, read-only trace snapshot for the training workbench."""
 
@@ -246,6 +303,7 @@ def build_workbench_trace_viewer_data(
             "agentCount": len(agent_ids),
             "externalTraceCount": len(external_traces),
         },
+        "contractWorkbench": _contract_workbench_context(contract_workbench),
         "agentIds": agent_ids,
         "runs": runs,
         "externalTraces": external_traces,
@@ -258,8 +316,14 @@ def write_workbench_trace_viewer_data(
     *,
     max_runs: int = DEFAULT_MAX_RUNS,
     max_traces: int = DEFAULT_MAX_TRACES,
+    contract_workbench: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    data = build_workbench_trace_viewer_data(root, max_runs=max_runs, max_traces=max_traces)
+    data = build_workbench_trace_viewer_data(
+        root,
+        max_runs=max_runs,
+        max_traces=max_traces,
+        contract_workbench=contract_workbench,
+    )
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

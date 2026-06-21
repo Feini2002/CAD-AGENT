@@ -1,0 +1,26 @@
+{
+  "version": "0.1",
+  "domain": "generic",
+  "intent": "draw_object",
+  "object": {
+    "type": "table",
+    "name": "P13F native thin scoped preview",
+    "width": 1200,
+    "depth": 600
+  },
+  "placement": {
+    "mode": "absolute",
+    "base_point": [
+      100,
+      200,
+      0
+    ]
+  },
+  "drawing": {
+    "layer": "CODEX_PREVIEW",
+    "include_label": false,
+    "include_dimensions": false
+  },
+  "confidence": 0.91,
+  "needs_confirmation": false
+}

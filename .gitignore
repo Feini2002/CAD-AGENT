@@ -23,6 +23,12 @@ output/**/*.py[cod]
 output/**/*.tmp
 output/**/*.log
 
+# Local AutoCAD profile/config snapshots captured during live debugging.
+# Keep referenced summaries in docs, but do not publish machine AppData copies.
+output/validation_runs/phase10-acad-isolate-userdata*/
+output/validation_runs/phase10-autocad-profile-registry-backup-*/
+output/validation_runs/phase10-cad-config-restore-backup-*/
+
 # Local CodeGraph index/cache. Rebuild per machine with `codegraph init -i`.
 .codegraph/
 
@@ -34,6 +40,7 @@ output/**/*.log
 
 # Local tool logs
 cad_mcp.log
+acad.err
 *.out.log
 *.err.log
 tmp-*.log
@@ -43,6 +50,10 @@ tmp-*.txt
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Native plugin build outputs
+native_plugins/**/bin/
+native_plugins/**/obj/
 
 # Local environment files
 .env
@@ -57,6 +68,8 @@ tmp-worker-*.log
 tmp-worker-*.txt
 
 # CAD lock/temp files
+.cadrestore/
+.cadrollback-before-desktop-restore*/
 *.dwl
 *.dwl2
 *.bak

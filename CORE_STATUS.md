@@ -1,5 +1,5 @@
 # Core Status
-最后更新：2026-06-07（架构归并画布工程仍是当前主线；旧表 C / 90% 口径降级为 `Core Proof Coverage`；adaptive growth、入口 custody 和主 Agent 认知证明已纳入架构边界，但都不代表正式训练恢复、表 C 提升或端到端真实 CAD 成熟）
+最后更新：2026-06-14（当前主线为 CAD Agent vNext Migration；旧架构归并成果降级为 legacy mapping / evidence baseline；旧表 C / 90% 口径仍只表示 `Core Proof Coverage`，不代表正式训练恢复、表 C 提升或端到端真实 CAD 成熟）
 
 本文只回答“当前能力成熟到哪里、证据是什么、风险边界是什么”。历史长流水已归档到 `docs/history/snapshots/finished-architecture-2026-05-28/CORE_STATUS.md`，近期流水看 `docs/status/current.md`，唯一 PlanMD 看 `CORE_RESTRUCTURE_PLAN.md`。
 
@@ -14,7 +14,7 @@
 | `scaffold` | 目录、文档或数据壳已建立，核心能力尚未形成 |
 | `blocked` | 缺依赖、缺证据或有已知失败，不能继续声称可用 |
 
-## 成熟度口径（架构归并期）
+## 成熟度口径（vNext migration 期）
 
 当前不再把旧表 A / B / C 作为系统主叙事。后续状态优先拆成三层：
 
@@ -82,7 +82,7 @@ RCAD 烟囱: 29/29 verified；≠ 真实 CAD 实力
 | Adaptive capability growth / `growth_replay` | `alpha_ready_non_cad` | `core/training/capability_growth_profile.py`、`core/training/adaptive_replay_planner.py`、`core/training/expression_regression_gate.py`、`core/training/adaptive_growth_closeout.py`、`scripts/run_cad_foundation_remaining_training.py --replay-mode growth_replay`、相关 tests、OpenSpec `adaptive-capability-growth-training` | 只证明能力画像、路由、回归门禁和完成声明边界；不证明真实 CAD 几何、用户验收、Worker 部署、系统资产 verified、正式训练集成或表 C 提升 |
 | Entrypoint custody / replay claim audit | `alpha_ready_mixed` | `core.entrypoint_custody`、`config/entrypoint_custody_manifest.json`、`config/entrypoint_denylist.json`、`config/entrypoint_kill_switch.json`、`scripts/run_entrypoint_custody_audit.py`、`core.training.report_claim_audit`、`scripts/run_training_report_claim_audit.py`、`core.model_review.trace_claim_audit`、`scripts/run_model_trace_claim_audit.py`、`tests/core/test_entrypoint_custody.py`、`tests/core/test_legacy_entrypoint_custody_closure.py`、`output/validation_runs/legacy-entrypoint-closeout-cad-preview/` | 证明入口保管账、runtime guard / lease 权限位判定、workflow route custody 摘要、全仓 repo script manifest 分类、all-31 replay fail-closed、training/model 声明审计和一条真实 `CODEX_PREVIEW` smoke readback 已闭合；不证明全仓脚本已强制接 guard、不证明表 C 提升或正式训练恢复 |
 | 主 Agent 认知证明 | `alpha_ready_non_cad` | `openspec/changes/prove-main-agent-cognition-loop/`、`core/model_review/evidence_portfolio.py`、`core/orchestrator/agent_cognition.py`、`core/orchestrator/model_agent_chain_runtime.py`、`core/orchestrator/orchestrator_host_runtime.py`、相关 tests | 已证明 no-CAD 工具结果可回喂同一 Agent 并写 `cognitiveLoopSummary`，行为改变 proof 能区分机制建设和认知证据，soft gate / route budget / Agent Task Maturity 指标有边界；仍不证明真实 CAD 几何、真实任务稳定变聪明、用户验收、表 C 或项目交付准备 |
-| 模型型 Agent trace / run package / Host runtime / Reviewer closeout / Workbench Trace Viewer / Worker orchestrator remote | `alpha_ready_mixed` | `core/model_review/`、`core/orchestrator/run_package_state.py`、`core/orchestrator/closeout_gate.py`、`core/orchestrator/delete_neighbor_gates.py`、`core/orchestrator/orchestrator_host_runtime.py`、`core/orchestrator/reviewer_host_runtime.py`、`core/orchestrator/workbench_trace_viewer.py`、`core/orchestrator/local_live_model_bridge*.py`、`workers/orchestrator/**`、`WORKER_ORCHESTRATOR_DEPLOY_CHECKLIST.md`、相关 tests、`capability-map.html`、`CORE_RESTRUCTURE_PLAN.md` | 只证明模型调用证据、任务状态、分发计划、closeout 决策、删除范围 / 邻区保护、delivery 口径、派生 trace 视图和 `cadagent` 远程 Worker / Durable Object 编排可复盘；最新远程 smoke 为 `run_20260606151438_worker_orchestration_ready_f6260886`。本机 quick CAD preview 已在真实 AutoCAD 中只写 `CODEX_PREVIEW` 并回读 7 个 handles，`savedCurrentDwg=false`；但仍未接 Queue / Workflows、长期真实 bridge runner、真实 `gpt-5.5` provider 或正式训练集成，不替代 A-to-A hard gate、用户验收或表 C |
+| 模型型 Agent trace / run package / Host runtime / Reviewer closeout / Workbench Trace Viewer / Worker orchestrator remote | `alpha_ready_mixed` | `core/model_review/`、`core/orchestrator/run_package_state.py`、`core/orchestrator/closeout_gate.py`、`core/orchestrator/delete_neighbor_gates.py`、`core/orchestrator/orchestrator_host_runtime.py`、`core/orchestrator/reviewer_host_runtime.py`、`core/orchestrator/workbench_trace_viewer.py`、`core/orchestrator/local_live_model_bridge*.py`、`workers/orchestrator/**`、`docs/deploy/worker-orchestrator-deploy-checklist.md`、相关 tests、`capability-map.html`、`CORE_RESTRUCTURE_PLAN.md` | 只证明模型调用证据、任务状态、分发计划、closeout 决策、删除范围 / 邻区保护、delivery 口径、派生 trace 视图和 `cadagent` 远程 Worker / Durable Object 编排可复盘；最新远程 smoke 为 `run_20260606151438_worker_orchestration_ready_f6260886`。本机 quick CAD preview 已在真实 AutoCAD 中只写 `CODEX_PREVIEW` 并回读 7 个 handles，`savedCurrentDwg=false`；但仍未接 Queue / Workflows、长期真实 bridge runner、真实 `gpt-5.5` provider 或正式训练集成，不替代 A-to-A hard gate、用户验收或表 C |
 
 ## 当前关键风险
 

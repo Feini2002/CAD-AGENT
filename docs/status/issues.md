@@ -1,3 +1,15 @@
+## 2026-06-20 P10B live rehearsal 不能在 AutoCAD 进程可见时越过 COM / ROT blocker
+
+现象：用户已打开 CAD 并要求真实校验后，P10B live rehearsal 按默认候选 `table / single_table_preview_repeatability` 尝试启动。`cad-session-host` 成功启动并响应 `/rpc status`，但返回 `ready=false`；blocker 为当前自动化会话无可接管的活动 `AutoCAD.Application` / ROT 对象，状态同时显示 `acadProcessRunning=true` 且 `Dispatch fallback skipped because connect_existing_only=True`。本轮已加固代码侧 attach path：versioned `GetActiveObject`、`GetObject(Class=...)`、ROT 枚举和 document-like `.Application` 回溯均已尝试；用户重新打开 CAD 后的最新 no-write probe 仍显示 `ROT inspected=0`、`blockerCode=acad_process_running_without_visible_rot_object`。
+
+影响：这说明 AutoCAD 进程可见不等于 CAD COM bridge 可用。当前无法安全执行 `CODEX_PREVIEW` preview write、created handles readback、bbox / layer / entity audit、P10B result aggregate 或 closeout。若绕过该 blocker 使用 `Dispatch` fallback，可能启动新 CAD 实例或脱离用户当前 DWG，破坏“只接管既有活动对象”的安全边界。
+
+修复 / 计划：保留 P10B live rehearsal 为当前 next，但先解除 AutoCAD COM / ROT attach blocker。代码侧已完成 safe attach hardening，并保存最新 reopened readiness evidence `output/validation_runs/phase10-cad-reopened-readiness-20260620-023225/`；下一步优先处理 Windows / AutoCAD COM 可见性、注册或同权限会话问题，而不是继续改 preview 逻辑。下一次重试必须继续走 `cad-session-host`、`connect_existing_only=true`、只写 `CODEX_PREVIEW`、不保存当前 DWG；Host readiness 为 `ready=true` 前不得执行 preview。解除动作优先检查 AutoCAD 是否为完整可自动化版本、是否在同一用户与同一权限级别运行、是否已有活动 DWG 文档并完成加载。
+
+以后规则：`acad.exe` 进程存在、CAD 窗口打开、Host 已启动或 CLI return code 成功，都不能替代 active `AutoCAD.Application` attach proof。P10B 完成声明必须有多 run preview / readback、`cadWritesAttempted=true`、`geometry_verified=true`、`savedCurrentDwg=false` 和 closeout 四件套一致性证据。
+
+相关文件：`CORE_RESTRUCTURE_PLAN.md`、`docs/migration/execution-ledger.md`、`core/cad_io/autocad_com.py`、`core/cad_io/cad_session_host.py`、`output/validation_runs/phase10-cad-reopened-readiness-20260620-023225/cad_session_host_readiness_summary.json`
+
 ## 2026-06-07 架构治理小任务不能膨胀成第二套 PlanMD
 
 现象：`docs/planning/architecture-governance-hardening-mini-task.md` 已进入 active sidecar，用于继续治理 Python 项目身份、schema 单源、repo inventory、产物分类和文档控制面。它位于 `docs/planning/`，如果后续不断追加 next、退出标准和长期 backlog，容易与唯一 PlanMD `CORE_RESTRUCTURE_PLAN.md` 形成第二套控制面。
