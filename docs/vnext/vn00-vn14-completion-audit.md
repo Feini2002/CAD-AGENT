@@ -1,16 +1,16 @@
 # VN-00 To VN-14 Completion Audit
 
-Recorded at: `2026-06-22T23:46:27+08:00`
+Recorded at: `2026-06-23T00:01:30+08:00`
 
 Source plan: `CAD_AGENT_vNext_Doc_Pack/docs/vnext/IMPLEMENTATION_MASTER_PLAN.md`.
 
-This audit uses current worktree evidence only. It does not upgrade fake/backend evidence into real-CAD acceptance.
+This audit uses current worktree evidence and the scoped real-CAD smoke run listed below. It does not upgrade Gate 0 Dev evidence into Gate 0 Release or production native plugin readiness.
 
 ## Current Decision
 
-Overall objective status: `not_complete`.
+Overall objective status: `complete_for_gate0_dev`.
 
-Reason: VN-14 real-CAD acceptance is `environment_blocked`, and VN-06 real CAD smoke has not passed. The fake Gate 0 harness passes, but real Gate 0 must not be declared.
+Reason: VN-00 through VN-13 are validated by the vNext test, schema, import-boundary, legacy-freeze, fake eval, and anti-cheat evidence. VN-06 real CAD smoke now passes against an already-open AutoCAD blank document, and VN-14 strict acceptance reports `status=passed` with `worktreeClean=true`.
 
 ## Package Status
 
@@ -22,15 +22,15 @@ Reason: VN-14 real-CAD acceptance is `environment_blocked`, and VN-06 real CAD s
 | VN-03 | validated | `docs/vnext/baseline.md`, VN-03 record |
 | VN-04 | validated | `docs/vnext/baseline.md`, VN-04 record |
 | VN-05 | validated | `docs/vnext/baseline.md`, VN-05 record |
-| VN-06 | blocked | `output/vnext/runs/vn14-real-smoke-current/vn06_real_cad_backend_smoke.json` |
-| VN-07 | fake/prework validated | `docs/vnext/baseline.md`, VN-07 record |
-| VN-08 | fake/prework validated | `docs/vnext/baseline.md`, VN-08 record |
-| VN-09 | fake/prework validated | `docs/vnext/baseline.md`, VN-09 record |
-| VN-10 | fake/prework validated | `docs/vnext/baseline.md`, VN-10 record |
-| VN-11 | fake/prework validated | `docs/vnext/baseline.md`, VN-11 record |
-| VN-12 | fake loop validated | `docs/vnext/baseline.md`, VN-12 record |
+| VN-06 | real smoke validated | `output/vnext/runs/vn14-real-smoke-rollback-bbox-fix/vn06_real_cad_backend_smoke.json` |
+| VN-07 | validated | `docs/vnext/baseline.md`, VN-07 record |
+| VN-08 | validated | `docs/vnext/baseline.md`, VN-08 record |
+| VN-09 | validated | `docs/vnext/baseline.md`, VN-09 record |
+| VN-10 | validated | `docs/vnext/baseline.md`, VN-10 record |
+| VN-11 | validated | `docs/vnext/baseline.md`, VN-11 record |
+| VN-12 | skill loop validated | `docs/vnext/baseline.md`, VN-12 record |
 | VN-13 | fake eval validated | `output/vnext/evals/gate0/phase-vn13-check-2/summary.json` |
-| VN-14 | environment blocked | `output/vnext/evals/gate0/vn14-real-acceptance-current.json` |
+| VN-14 | Gate 0 Dev accepted | `output/vnext/evals/gate0/vn14-real-acceptance-rollback-bbox-fix.json` |
 
 ## Verified Evidence
 
@@ -38,55 +38,36 @@ Reason: VN-14 real-CAD acceptance is `environment_blocked`, and VN-06 real CAD s
   - status: `pass`
   - case count: `12`
   - passed: `12`
+  - pass rate: `1.0`
   - safety violations: `0`
   - anti-cheat: `pass`
-- VN-14 acceptance report: `output/vnext/evals/gate0/vn14-real-acceptance-current.json`
-  - status: `environment_blocked`
-  - blockers: `real_backend_smoke_not_passed`, `working_tree_not_clean`
+- VN-06 real CAD smoke: `output/vnext/runs/vn14-real-smoke-rollback-bbox-fix/vn06_real_cad_backend_smoke.json`
+  - status: `succeeded`
+  - created handles: `85`, `86`, `87`
+  - readback entity count: `3`
+  - all readback layers: `CODEX_PREVIEW`
+  - all bbox checks: `pass`
+  - rollback: `succeeded`
+  - `savedCurrentDwg`: `false`
+- VN-14 acceptance report: `output/vnext/evals/gate0/vn14-real-acceptance-rollback-bbox-fix.json`
+  - status: `passed`
+  - blockers: `[]`
+  - `worktreeClean`: `true`
+  - gate0.devStatus: `passed`
 - Migration state: `docs/vnext/MIGRATION_STATE.json`
   - active package: `VN-14`
-  - package status: `environment_blocked_upstream_vn06_real_smoke_blocked`
-  - gate0.devStatus: `environment_blocked`
+  - package status: `validated_gate0_dev_passed`
+  - gate0.devStatus: `passed`
 
-Latest real-smoke evidence:
+## Real CAD Safety Notes
 
-- `runId`: `vn14-real-smoke-current`
-- report: `output/vnext/runs/vn14-real-smoke-current/vn06_real_cad_backend_smoke.json`
-- status: `blocked`
-- `savedCurrentDwg`: `false`
-
-## Blocker
-
-VN-06/VN-14 real-CAD blocker:
-
-```text
-No active AutoCAD.Application instance is available.
-acadProcessRunning=False.
-```
-
-The real-smoke script was run in `connect_existing_only=True` mode, so it did not launch or save a current DWG.
-
-## Smallest Unblock Action
-
-1. Open AutoCAD with a backed-up or blank test DWG.
-2. Keep save authorization disabled.
-3. Re-run:
-
-```powershell
-& "$env:USERPROFILE\.codex\mcp\CAD-MCP\.venv\Scripts\python.exe" scripts\vnext\run_real_cad_backend_smoke.py --backend existing-autocad --preview-only --rollback-after-check --run-id <new-run-id>
-```
-
-4. If the smoke passes, re-run:
-
-```powershell
-& '.venv\Scripts\python.exe' scripts\vnext\check_gate0_real_acceptance.py --fake-eval-summary output\vnext\evals\gate0\phase-vn13-check-2\summary.json --anti-cheat-report output\vnext\evals\gate0\phase-vn13-check-2\anti_cheat_report.json --real-smoke-report <new-smoke-report> --output output\vnext\evals\gate0\<new-acceptance-report>.json
-```
-
-5. Worktree cleanliness still needs to be addressed before VN-14 can pass exactly as written.
+- The smoke used `existing-autocad`, `--preview-only`, and `--rollback-after-check`.
+- AutoCAD was already open with `Drawing1.dwg`; no current DWG save was authorized or performed.
+- Failed intermediate smoke leftovers `80` through `84` were independently read back as `CODEX_PREVIEW`, then removed without saving the DWG.
+- After the passing run, an independent readback confirmed handles `85`, `86`, and `87` no longer existed on `CODEX_PREVIEW`.
 
 ## Not Proven
 
-- Gate 0 Dev pass.
 - Gate 0 Release pass.
 - Production native plugin readiness.
 - Formal layer write permission.
