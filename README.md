@@ -2,6 +2,17 @@
 
 当前主线：**CAD Agent vNext Migration**。
 
+## vNext Gate 0 入口
+
+2026-06-22 起，新的 vNext 迁移执行文档位于 `docs/vnext/`：
+
+- `docs/vnext/ARCHITECTURE_DECISION.md`
+- `docs/vnext/IMPLEMENTATION_MASTER_PLAN.md`
+- `docs/vnext/MIGRATION_STATE.json`
+- `docs/vnext/baseline.md`
+
+Gate 0 前，旧 orchestrator / training / workbench / coverage 只作为 frozen legacy evidence 使用；新增行为必须从实施主计划的 active Work Package 进入。真实 CAD 默认仍只允许 `CODEX_PREVIEW`、created-handle readback 和 `savedCurrentDwg=false`，不得保存当前业务 DWG 或写正式图层。
+
 本仓库现在定位为 **Legacy Core + Evidence Harness**：旧系统里已经沉淀的 `CAD_PLAN`、validate / dry-run、`CODEX_PREVIEW`、created handles readback、A-to-A gate、训练事实源、资产 registry、coverage JSON 和失败教训都继续作为迁移底座，不能被重启式新架构抹掉。
 
 迁移期外部母标准是用户提供的 `CAD_AGENT_vNext_v2_2_FINAL.docx`。它决定 vNext 迁移的阶段顺序、文件边界、禁止事项和验收口径；仓库内仍以 `CORE_RESTRUCTURE_PLAN.md` 作为唯一 PlanMD。

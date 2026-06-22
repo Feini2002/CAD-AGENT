@@ -14,6 +14,14 @@
     "worker:boundary-check": "node workers/orchestrator/scripts/boundary-check.mjs",
     "worker:check": "npm run worker:boundary-check && npm run worker:test && npm run worker:typecheck && npm run worker:secret-scan && npm run worker:types && npm run worker:dry-run"
   },
+  "cadAgentVNext": {
+    "coreLanguage": "python",
+    "workerRole": "optional-infrastructure",
+    "authorityDocs": [
+      "docs/vnext/ARCHITECTURE_DECISION.md",
+      "docs/vnext/IMPLEMENTATION_MASTER_PLAN.md"
+    ]
+  },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.16.13",
     "@types/node": "^22.15.30",

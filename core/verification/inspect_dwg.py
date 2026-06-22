@@ -101,7 +101,21 @@ def normalize_com_entity(entity: Any) -> dict[str, Any]:
     elif "text" in lowered:
         result["type"] = "text"
         result["text"] = str(getattr(entity, "TextString", getattr(entity, "text", "")))
-        result["position"] = _point(getattr(entity, "InsertionPoint", getattr(entity, "position", [])))
+        position = _point(getattr(entity, "InsertionPoint", getattr(entity, "position", [])))
+        result["position"] = position
+        height = _float(getattr(entity, "Height", getattr(entity, "TextHeight", getattr(entity, "height", None))))
+        if height is not None:
+            result["text_height"] = height
+        bbox = _bounding_box_from_com_entity(entity)
+        if bbox is None and len(position) >= 2:
+            fallback_height = height if height is not None and height > 0 else 1.0
+            text_width = max(fallback_height, len(result["text"]) * fallback_height * 0.6)
+            bbox = {
+                "min": [position[0], position[1]],
+                "max": [position[0] + text_width, position[1] + fallback_height],
+            }
+        if bbox is not None:
+            result["bbox"] = bbox
     elif "hatch" in lowered:
         result["type"] = "hatch"
         result["pattern"] = str(getattr(entity, "PatternName", getattr(entity, "pattern", "")))

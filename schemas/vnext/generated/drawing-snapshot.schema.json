@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "DrawingEntitySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bbox"
+        },
+        "entity_type": {
+          "title": "Entity Type",
+          "type": "string"
+        },
+        "handle": {
+          "title": "Handle",
+          "type": "string"
+        },
+        "layer": {
+          "title": "Layer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "handle",
+        "entity_type",
+        "layer",
+        "bbox"
+      ],
+      "title": "DrawingEntitySnapshot",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "active_layer": {
+      "title": "Active Layer",
+      "type": "string"
+    },
+    "current_space": {
+      "title": "Current Space",
+      "type": "string"
+    },
+    "document_id": {
+      "title": "Document Id",
+      "type": "string"
+    },
+    "nearby_entities": {
+      "items": {
+        "$ref": "#/$defs/DrawingEntitySnapshot"
+      },
+      "title": "Nearby Entities",
+      "type": "array"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "saved": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Saved"
+    },
+    "schema_version": {
+      "const": "drawing-snapshot/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_hash": {
+      "title": "Snapshot Hash",
+      "type": "string"
+    },
+    "target_region": {
+      "anyOf": [
+        {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Target Region"
+    },
+    "units": {
+      "const": "mm",
+      "title": "Units",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "document_id",
+    "units",
+    "current_space",
+    "active_layer",
+    "saved",
+    "target_region",
+    "snapshot_hash"
+  ],
+  "title": "DrawingSnapshot",
+  "type": "object"
+}

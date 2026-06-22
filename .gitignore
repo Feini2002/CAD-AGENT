@@ -18,6 +18,7 @@ projects/*/expected/style_target_2seat.png
 # Ignore only short-lived debug/test output below.
 output/debug/
 output/test_artifacts/
+output/vnext/runs/
 output/**/__pycache__/
 output/**/*.py[cod]
 output/**/*.tmp

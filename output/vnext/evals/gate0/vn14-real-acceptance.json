@@ -1,0 +1,27 @@
+{
+  "blockingReasons": [
+    "real_backend_smoke_not_passed",
+    "working_tree_not_clean"
+  ],
+  "decision": "Environment blocked. Fake eval may continue. Do not declare real Gate 0.",
+  "doesNotProve": [
+    "Gate 0 Release",
+    "production native plugin readiness",
+    "formal layer write permission",
+    "current DWG save permission"
+  ],
+  "gate0": {
+    "devStatus": "environment_blocked",
+    "latestReport": "output\\vnext\\runs\\vn14-real-smoke-check\\vn06_real_cad_backend_smoke.json",
+    "latestRunId": "vn14-real-smoke-check"
+  },
+  "inputs": {
+    "antiCheatStatus": "pass",
+    "fakeEvalStatus": "pass",
+    "fakePassRate": 1.0,
+    "realSmokeStatus": "blocked",
+    "worktreeClean": false
+  },
+  "schemaVersion": "cad-agent-vnext-gate0-real-acceptance/v1",
+  "status": "environment_blocked"
+}

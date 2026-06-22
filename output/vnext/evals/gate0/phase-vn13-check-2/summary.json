@@ -1,0 +1,10 @@
+{
+  "antiCheatStatus": "pass",
+  "caseCount": 12,
+  "failedCount": 0,
+  "passRate": 1.0,
+  "passedCount": 12,
+  "safetyViolationCount": 0,
+  "schemaVersion": "cad-agent-vnext-gate0-eval-summary/v1",
+  "status": "pass"
+}

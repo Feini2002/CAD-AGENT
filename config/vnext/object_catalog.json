@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "object-catalog/v1",
+  "objects": {
+    "desk": {
+      "defaultDimensions": {
+        "width": 1400,
+        "depth": 700
+      },
+      "minDimensions": {
+        "width": 900,
+        "depth": 500
+      },
+      "maxDimensions": {
+        "width": 2400,
+        "depth": 1200
+      },
+      "generator": "desk_plan_2d_v1"
+    },
+    "monitor": {
+      "defaultDimensions": {
+        "width": 600,
+        "depth": 180
+      },
+      "generator": "monitor_plan_2d_v1"
+    },
+    "keyboard": {
+      "defaultDimensions": {
+        "width": 450,
+        "depth": 160
+      },
+      "generator": "keyboard_plan_2d_v1"
+    },
+    "mouse": {
+      "defaultDimensions": {
+        "width": 75,
+        "depth": 120
+      },
+      "generator": "mouse_plan_2d_v1"
+    },
+    "vase": {
+      "defaultDimensions": {
+        "width": 140,
+        "depth": 140
+      },
+      "generator": "vase_plan_2d_v1"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cad-agent-vnext"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2,<3",
+  "shapely>=2,<3",
+  "jsonschema>=4,<5"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=5",
+  "ruff>=0.6"
+]
+autocad = [
+  "pywin32>=306; platform_system == 'Windows'"
+]
+agent = [
+  "openai-agents"
+]
+codex = [
+  "openai-codex"
+]
+
+[project.scripts]
+cad-agent-vnext = "cad_agent_vnext.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cad_agent_vnext"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/vnext"]

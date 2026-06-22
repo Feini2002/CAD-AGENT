@@ -20,6 +20,8 @@
 
 vNext Migration 前段默认不恢复正式训练、不推进表 C、不做插件、不写真实 CAD、不沉淀系统资产大包。只有进入对应阶段且用户明确给出范围时，才允许打开这些链路。
 
+新增 vNext 迁移执行以 `docs/vnext/IMPLEMENTATION_MASTER_PLAN.md` 为 active package 入口；同一工作区一次只能有一个 active Work Package。Gate 0 前禁止扩大 legacy agents / training / workbench / coverage，新 vNext 代码不得 import legacy orchestrator、training、workbench 或 status 控制面。所有 CAD 写入仍必须只走 `CODEX_PREVIEW`、created handles readback、`savedCurrentDwg=false`，完成声明必须列出自动测试和真实 CAD 证据边界。
+
 文档治理、主线改旗、README 变清楚、审计通过或 no-CAD 测试通过，都不能说成 CAD 能力提升。
 
 Protected evidence 默认不移动、不删除、不改写，除非有明确 ledger、引用闭合、用户授权和对应阶段：
