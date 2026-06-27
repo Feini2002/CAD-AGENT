@@ -1,8 +1,0 @@
-{
-  "version": "0.1",
-  "snippet_id": "office_desk_combo",
-  "capability_id": "composition.office_desk_combo",
-  "ladder_level": "L3",
-  "domain": "office",
-  "verification_report_path": "output/validation_runs/capability-lab-vproof-20260527/composition_cad_registry/composition_cad/office_planner_desk_combo/verification_reports/verification_report_001.json"
-}

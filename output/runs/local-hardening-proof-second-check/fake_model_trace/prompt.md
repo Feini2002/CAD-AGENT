@@ -1,1 +1,0 @@
-return local fixture JSON

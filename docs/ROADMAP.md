@@ -1,13 +1,20 @@
-# CAD Agent Roadmap
+# Roadmap
 
-根目录中文路线 stub 已按文档治理删除；当前路线入口是 `docs/roadmap/current.md`，当前唯一 `PlanMD` / 主计划是根目录 `CORE_RESTRUCTURE_PLAN.md`。
+## Stage 1: Cleanroom Cut
 
-本文只保留为兼容跳转入口，避免旧引用失效。不要把本文当作当前路线或计划来源。当前路线应以：
+- Keep only the minimal active package, tests, evals, tools, skill, and docs.
+- Verify old content is recoverable from archive source.
+- Block old-system imports and old repository roots.
 
-```text
-CORE_RESTRUCTURE_PLAN.md
-CORE_STATUS.md
-docs/roadmap/current.md
-```
+## Stage 2: Gate 0 Acceptance
 
-为准。
+- Run compiler fixture eval.
+- Run anti-cheat checks.
+- Run preview-only real AutoCAD smoke where AutoCAD is available.
+- Add a separate natural-language Gate 0 attempt summary before declaring acceptance.
+
+## Stage 3: Broaden Carefully
+
+- Add object kinds only through catalog, generator, compiler, verification, and eval updates together.
+- Keep formal layer writes and DWG save blocked until a later explicit gate.
+- Do not restore training or old workbench as part of normal development.

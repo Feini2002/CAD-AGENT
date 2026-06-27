@@ -1,3 +1,0 @@
-﻿AutoCAD.Application.25.1 FAIL 使用“1”个参数调用“GetActiveObject”时发生异常:“操作无法使用 (异常来自 HRESULT:0x800401E3 (MK_E_UNAVAILABLE))”
-AutoCAD.Application.25 FAIL 使用“1”个参数调用“GetActiveObject”时发生异常:“操作无法使用 (异常来自 HRESULT:0x800401E3 (MK_E_UNAVAILABLE))”
-AutoCAD.Application FAIL 使用“1”个参数调用“GetActiveObject”时发生异常:“无效的类字符串 (异常来自 HRESULT:0x800401F3 (CO_E_CLASSSTRING))”

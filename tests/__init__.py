@@ -1,1 +1,1 @@
-"""CAD Agent test package."""
+"""cleanroom migration tests."""

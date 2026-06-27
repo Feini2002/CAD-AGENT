@@ -1,9 +1,0 @@
-{
-  "case_id": "residential_sofa_2seat_20260528",
-  "round": "round12",
-  "ready_to_draw": true,
-  "execution_route": "visual_parts_renderer",
-  "audit_checklist": "expected\\audit_checklist.json",
-  "visual_parts": "round12_visual_parts.json",
-  "target_width_mm": 1870.0
-}

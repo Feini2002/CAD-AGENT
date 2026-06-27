@@ -1,8 +1,0 @@
-{
-  "version": "0.1",
-  "snippet_id": "bedroom_bed_rug",
-  "capability_id": "composition.bedroom_bed_rug",
-  "ladder_level": "L3",
-  "domain": "residential",
-  "verification_report_path": "output/validation_runs/capability-lab-vproof-20260527/composition_cad_registry/composition_cad/interior_designer_bedroom_bed_rug/verification_reports/verification_report_001.json"
-}

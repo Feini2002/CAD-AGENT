@@ -1,45 +1,20 @@
-# Local CAD/project history that should not ship with the portable kit
-docs/archive/
+# Local generated outputs
+.cad_agent_runs/
+.cad_agent_schemas/
 
-# Training case round memory is portable evidence and should be trackable.
-# Ignore only caches/temp files inside runs/.
-projects/*/runs/__pycache__/
-projects/*/runs/*.py[cod]
-projects/*/runs/*.tmp
-projects/*/runs/*.log
+# Python/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Obsolete generated style targets are not valid Visual-First evidence.
-projects/*/expected/style_target_2seat.png
+# Local environments
+.env
+.venv/
+venv/
 
-# Generated output artifacts
-#
-# Keep durable CAD / training evidence portable by default, so another
-# computer can restore the workbench without retraining.
-# Ignore only short-lived debug/test output below.
-output/debug/
-output/test_artifacts/
-output/vnext/runs/
-output/**/__pycache__/
-output/**/*.py[cod]
-output/**/*.tmp
-output/**/*.log
-
-# Local AutoCAD profile/config snapshots captured during live debugging.
-# Keep referenced summaries in docs, but do not publish machine AppData copies.
-output/validation_runs/phase10-acad-isolate-userdata*/
-output/validation_runs/phase10-autocad-profile-registry-backup-*/
-output/validation_runs/phase10-cad-config-restore-backup-*/
-
-# Local CodeGraph index/cache. Rebuild per machine with `codegraph init -i`.
-.codegraph/
-
-# Understand Anything local/generated files.
-# Keep config files trackable, but do not commit generated graph snapshots by default.
-.understand-anything/*
-!.understand-anything/.understandignore
-!.understand-anything/config.json
-
-# Local tool logs
+# Local CAD/tool logs
 cad_mcp.log
 acad.err
 *.out.log
@@ -47,30 +22,8 @@ acad.err
 tmp-*.log
 tmp-*.txt
 
-# Python/runtime caches
-__pycache__/
-*.py[cod]
-.pytest_cache/
-
-# Native plugin build outputs
-native_plugins/**/bin/
-native_plugins/**/obj/
-
-# Local environment files
-.env
-**/.dev.vars
-.venv/
-venv/
-node_modules/
-.wrangler/
-.wrangler-config/
-.wrangler-*/
-tmp-worker-*.log
-tmp-worker-*.txt
-
 # CAD lock/temp files
 .cadrestore/
-.cadrollback-before-desktop-restore*/
 *.dwl
 *.dwl2
 *.bak
@@ -78,8 +31,16 @@ tmp-worker-*.txt
 *.sv$
 *.tmp.dwg
 
-# Local scratch files
+# Local tool indexes/caches
+.codegraph/
+.understand-anything/
+
+# Node/Cloudflare caches if optional tooling is used
+node_modules/
+.wrangler/
+.wrangler-config/
+.wrangler-*/
+
+# Local scratch
 tmp/
 temp/
-
-# User-approved CAD references are portable development inputs and may be committed.

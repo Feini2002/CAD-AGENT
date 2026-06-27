@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "cad-agent-vnext"
+name = "cad-agent"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
@@ -29,10 +29,11 @@ codex = [
 ]
 
 [project.scripts]
-cad-agent-vnext = "cad_agent_vnext.cli:main"
+cad-agent = "cad_agent.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/cad_agent_vnext"]
+packages = ["src/cad_agent"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests/vnext"]
+testpaths = ["tests"]
+pythonpath = ["src"]

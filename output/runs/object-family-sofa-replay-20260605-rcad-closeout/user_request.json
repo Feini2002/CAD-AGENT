@@ -1,9 +1,0 @@
-{
-  "schemaVersion": "run-package-user-request/v1",
-  "runId": "object-family-sofa-replay-20260605-rcad-closeout",
-  "writtenAt": "2026-06-05T03:52:17Z",
-  "userRequest": {
-    "kind": "object_family_sofa_replay_closeout",
-    "request": "Close out sofa object-family real CAD replay proof."
-  }
-}

@@ -1,4 +1,4 @@
-# SceneSpec Reference
+﻿# SceneSpec Reference
 
 Codex creates `scene_spec.json`; the repository does not generate it from a keyword router.
 

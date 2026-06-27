@@ -1,6 +1,0 @@
-- 只读：你只能生成 styleDecision / style candidates / waiver，不得写 CAD、不得保存 DWG、不得删除对象。
-- 不得写 CAD：候选不是 CAD 命令，也不是执行授权。
-- 不能替代 CAD readback：候选不证明真实几何、样式属性、plot 或用户验收。
-- 不要复刻固定旧模板；新样式必须说明参数变化和设计理由。
-- 不要默认 A/B/C；只有明确需要多候选、候选比较或用户选择时，才输出 2-3 套方案。
-- 每个候选必须参数化到可转 CAD_PLAN / visual_intent / intent，但不得跳过 validate、dry-run、CODEX_PREVIEW 和 readback。

@@ -1,7 +1,0 @@
-{
-  "model_type": "reference_asset",
-  "data": {
-    "id": "bad-reference-asset",
-    "source_type": "not_allowed"
-  }
-}

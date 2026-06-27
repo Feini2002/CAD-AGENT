@@ -1,9 +1,0 @@
-CAD_PLAN DRY RUN
-- intent: insert_block_alpha
-- block_id: controlled-test-block-001
-- block_name: CODEX_TEST_BLOCK_001
-- placement: absolute at [1200, 800, 0], rotation=0, scale=[1, 1, 1]
-- layer: CODEX_PREVIEW
-- layer_role: preview
-- bbox: {'min': [1200.0, 800.0], 'max': [2100.0, 1250.0]}
-- geometry_accuracy: not_verified_without_cad_readback

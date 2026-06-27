@@ -1,4 +1,4 @@
-# Gate 0 Checklist
+﻿# Gate 0 Checklist
 
 - Use `CODEX_PREVIEW` only.
 - Do not save the current DWG.

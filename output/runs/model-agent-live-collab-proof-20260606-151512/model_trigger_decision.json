@@ -1,8 +1,0 @@
-{
-  "schemaVersion": "model-trigger-decision/v1",
-  "status": "deterministic_only",
-  "modelRequired": false,
-  "triggerSignals": [],
-  "reason": "no model trigger signals detected",
-  "deterministicRoute": true
-}

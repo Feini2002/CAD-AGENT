@@ -1,6 +1,0 @@
-{
-  "blocking": false,
-  "schemaVersion": "model-context-leak-audit/v1",
-  "unexpectedProjectContextLoaded": false,
-  "warnings": []
-}

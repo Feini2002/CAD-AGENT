@@ -1,7 +1,0 @@
-{
-  "status": "pass",
-  "checkedTextCount": 3,
-  "issueCount": 0,
-  "issues": [],
-  "policy": "fail_before_cad_write_or_asset_contract_write"
-}

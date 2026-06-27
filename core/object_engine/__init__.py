@@ -1,1 +1,0 @@
-"""Parametric object engine placeholder."""

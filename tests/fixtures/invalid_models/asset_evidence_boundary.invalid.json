@@ -1,7 +1,0 @@
-{
-  "model_type": "asset_evidence_boundary",
-  "data": {
-    "boundary_id": "bad-boundary",
-    "checked": "not-an-array"
-  }
-}

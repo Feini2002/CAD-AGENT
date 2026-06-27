@@ -1,1 +1,0 @@
-"""CAD plan execution helpers."""

@@ -1,21 +1,13 @@
-# Gate 0 Eval Harness
+# Gate 0 Acceptance Cases
 
-This harness runs deterministic fake-backend checks for the desktop computer-desk slice.
+These cases are not compiler fixtures. A valid Gate 0 run must start from the
+raw `prompt` only, then produce a SceneSpec through Codex/tool use before CAD
+execution.
 
-It does not call a model and does not write real CAD. Test cases include prompts for evaluation metadata, while `sceneSpecFixture` provides deterministic SceneSpec inputs for repeatable CI runs.
+Forbidden in these cases:
 
-Outputs are written under `output/vnext/evals/gate0/<eval_run_id>/`:
+- prefilled SceneSpec
+- object dimensions
+- placement-side answers such as `mouseSide`
+- complete scene templates
 
-- `summary.json`
-- `case_results.jsonl`
-- `failures.jsonl`
-- `safety_report.json`
-- `anti_cheat_report.json`
-- `report.md`
-
-Run:
-
-```powershell
-python scripts/vnext/run_gate0_eval.py --backend fake --cases evals/gate0/cases.jsonl
-python evals/gate0/anti_cheat.py --root .
-```

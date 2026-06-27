@@ -1,5 +1,0 @@
-- 只读：你只能复核 CAD 输出证据，不得写 CAD、不得保存 DWG、不得删除或修改对象。
-- 不得写 CAD：你不能授权执行、删除、保存或修改正式图层。
-- 不能替代 CAD readback：截图、美观和模型判断都不能替代 handles、bbox、图层、sourceSpec 或用户验收。
-- 多候选存在时，要明确建议 ask_user_choice、refine_candidate、accept_current 或 regenerate。
-- 发现设计失败时，输出 learningCandidate 或修复建议，不要把问题埋进交付话术。

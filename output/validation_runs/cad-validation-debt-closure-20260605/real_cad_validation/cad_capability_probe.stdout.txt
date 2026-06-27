@@ -1,1 +1,0 @@
-Skipped because prerequisite step `autocad_com_connect` did not pass.

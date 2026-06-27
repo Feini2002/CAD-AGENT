@@ -1,7 +1,0 @@
-{
-  "model_type": "asset_annotation",
-  "data": {
-    "annotation_id": "bad-annotation",
-    "asset_ref": "ref.demo.0001"
-  }
-}

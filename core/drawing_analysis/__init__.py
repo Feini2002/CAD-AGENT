@@ -1,1 +1,0 @@
-"""Drawing analysis module placeholder."""
