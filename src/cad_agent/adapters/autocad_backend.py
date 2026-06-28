@@ -234,6 +234,12 @@ class AutoCadBackend:
         status: Literal["succeeded", "blocked", "failed"] = "failed" if errors else "succeeded"
         if status == "succeeded":
             self._transactions.pop(state.transaction_id, None)
+        entities: list[EntityReadback] = []
+        warnings: list[str] = []
+        try:
+            entities = _readback_handles(driver, state.created_handles)
+        except Exception as exc:  # pragma: no cover - depends on live AutoCAD enumeration after delete
+            warnings.append(f"post_delete_readback_failed:{type(exc).__name__}:{exc}")
         return ExecutionReceipt(
             schema_version="execution-receipt/v1",
             run_id=state.run_id,
@@ -241,14 +247,14 @@ class AutoCadBackend:
             backend=self.backend_name,
             status=status,
             semantic_to_handles={key: list(value) for key, value in state.semantic_to_handles.items()},
-            entities=_readback_handles(driver, state.created_handles),
+            entities=entities,
             created_handles=[],
             updated_handles=[],
             deleted_handles=deleted,
             saved_current_dwg=False,
             rollback_token=rollback_token,
             errors=errors,
-            warnings=[],
+            warnings=warnings,
         )
 
     def _driver_instance(self) -> Any:
@@ -387,15 +393,14 @@ class _ExistingAutoCadDriver:
         return snapshots
 
     def delete_entity_by_handle(self, handle: str) -> None:
-        matches = self.snapshot_handles(handles=[handle])
-        if not matches:
-            raise ValueError(f"created_handle_not_found:{handle}")
-        wanted = str(handle).upper()
-        for entity in self.modelspace:
-            if str(getattr(entity, "Handle", "")).upper() == wanted:
-                entity.Delete()
-                return
-        raise ValueError(f"created_handle_not_found:{handle}")
+        try:
+            entity = self.doc.HandleToObject(str(handle))
+        except Exception as exc:
+            raise ValueError(f"created_handle_not_found:{handle}") from exc
+        layer = str(getattr(entity, "Layer", ""))
+        if layer != PREVIEW_LAYER:
+            raise ValueError(f"delete_blocked_wrong_layer:{handle}:{layer}")
+        entity.Delete()
 
     def zoom_to_handles(self, *, handles: list[str], layer: str | None = None, padding_ratio: float = 0.15) -> dict[str, Any]:
         return {"status": "not_required", "handles": list(handles), "layer": layer, "paddingRatio": padding_ratio}
@@ -590,15 +595,17 @@ def _call_optional(driver: Any, method_name: str, **kwargs: Any) -> dict[str, An
 
 def _variant_point(values: list[float]) -> Any:
     import pythoncom  # type: ignore
+    import win32com.client  # type: ignore
 
-    point = [float(values[0]), float(values[1]), float(values[2] if len(values) > 2 else 0.0)]
-    return pythoncom.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, point)
+    point = (float(values[0]), float(values[1]), float(values[2] if len(values) > 2 else 0.0))
+    return win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, point)
 
 
 def _variant_double_array(values: list[float]) -> Any:
     import pythoncom  # type: ignore
+    import win32com.client  # type: ignore
 
-    return pythoncom.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, [float(value) for value in values])
+    return win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, tuple(float(value) for value in values))
 
 
 def _flatten_xy(points: list[list[float]]) -> list[float]:

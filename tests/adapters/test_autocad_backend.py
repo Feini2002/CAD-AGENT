@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
 from cad_agent.adapters.autocad_backend import AutoCadBackend
+from cad_agent.adapters.autocad_backend import _ExistingAutoCadDriver
+from cad_agent.adapters.autocad_backend import _variant_double_array, _variant_point
 from cad_agent.adapters.autocad_primitives import AUTOCAD_PRIMITIVE_MAP, primitive_to_autocad_call
 from cad_agent.domain.patch import CadPatch, PatchOperation
 from cad_agent.domain.primitives import Primitive
@@ -229,6 +232,23 @@ def test_primitive_to_autocad_call_maps_geometry_and_preview_layer():
             assert call.kwargs[key] == value
 
 
+def test_variant_helpers_use_win32com_variant_constructor(monkeypatch):
+    fake_pythoncom = SimpleNamespace(VT_ARRAY=0x2000, VT_R8=5)
+
+    class FakeClient:
+        def VARIANT(self, variant_type: int, value: list[float]) -> tuple[str, int, tuple[float, ...]]:
+            return ("variant", variant_type, tuple(value))
+
+    fake_client = FakeClient()
+    fake_win32com = SimpleNamespace(client=fake_client)
+    monkeypatch.setitem(sys.modules, "pythoncom", fake_pythoncom)
+    monkeypatch.setitem(sys.modules, "win32com", fake_win32com)
+    monkeypatch.setitem(sys.modules, "win32com.client", fake_client)
+
+    assert _variant_point([1, 2.5]) == ("variant", 0x2000 | 5, (1.0, 2.5, 0.0))
+    assert _variant_double_array([0, 1.5, 2]) == ("variant", 0x2000 | 5, (0.0, 1.5, 2.0))
+
+
 def test_autocad_backend_applies_patch_and_readbacks_created_handles():
     driver = RecordingAutoCadDriver()
     backend = AutoCadBackend(driver=driver)
@@ -309,6 +329,53 @@ def test_autocad_backend_rollback_temporarily_allows_preview_delete():
     assert rollback.deleted_handles == ["L0001"]
     assert driver.delete_allow_values == [True]
     assert driver.write_guard.allow_delete is False
+
+
+def test_autocad_backend_rollback_succeeds_when_post_delete_readback_fails():
+    class PostDeleteReadbackFailureDriver(RecordingAutoCadDriver):
+        def snapshot_handles(self, *, handles: list[str], layer: str | None = None) -> list[dict[str, Any]]:
+            if self.deleted_handles:
+                raise RuntimeError("modelspace enumeration failed after delete")
+            return super().snapshot_handles(handles=handles, layer=layer)
+
+    driver = PostDeleteReadbackFailureDriver()
+    backend = AutoCadBackend(driver=driver)
+    receipt = backend.apply_patch(
+        create_patch(
+            primitive("circle", {"center": [0, 0], "radius": 5}, semantic_object_id="probe", expected_entity_type="CIRCLE")
+        )
+    )
+
+    rollback = backend.rollback(rollback_token=receipt.rollback_token or "")
+
+    assert rollback.status == "succeeded"
+    assert rollback.deleted_handles == ["L0001"]
+    assert rollback.entities == []
+    assert rollback.warnings == ["post_delete_readback_failed:RuntimeError:modelspace enumeration failed after delete"]
+
+
+def test_existing_autocad_driver_delete_uses_handle_to_object_without_modelspace_enumeration():
+    class FakeEntity:
+        def __init__(self) -> None:
+            self.Layer = "CODEX_PREVIEW"
+            self.deleted = False
+
+        def Delete(self) -> None:
+            self.deleted = True
+
+    class BrokenModelSpace:
+        def __iter__(self):
+            raise RuntimeError("modelspace enumeration unavailable")
+
+    entity = FakeEntity()
+    doc = SimpleNamespace(HandleToObject=lambda handle: entity)
+    driver = object.__new__(_ExistingAutoCadDriver)
+    driver.doc = doc
+    driver.modelspace = BrokenModelSpace()
+
+    driver.delete_entity_by_handle("A1")
+
+    assert entity.deleted is True
 
 
 def test_autocad_backend_does_not_import_old_system_modules():

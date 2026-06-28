@@ -33,6 +33,7 @@ tmp-*.txt
 
 # Local tool indexes/caches
 .codegraph/
+.cursor/
 .understand-anything/
 
 # Node/Cloudflare caches if optional tooling is used

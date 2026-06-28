@@ -1,8 +1,8 @@
 # Status
 
-Date: 2026-06-27
+Date: 2026-06-28
 
-Current branch: `codex/cleanroom-final-cut`
+Current branch: `main`
 
 Archive source for deleted old content:
 
@@ -22,7 +22,10 @@ Current main repository keeps:
 
 Acceptance boundary:
 
-- Compiler fixture eval can be run locally and in CI.
-- Natural-language Gate 0 cases are present but are not yet a model-backed release proof.
-- Real AutoCAD smoke is environment-gated and must be run separately.
+- Stage 2 Gate 0 acceptance passed for the cleanroom desktop scene scope.
+- Compiler fixture eval passes locally with fake backend.
+- Natural-language Gate 0 attempt passes from raw prompts without SceneSpec fixtures.
+- Real AutoCAD smoke passed with preview-only writes, created-handle readback, rollback, and `savedCurrentDwg=false`.
 - Production native plugin, formal layer writes, training, and old evidence warehouse restoration are out of scope.
+
+See `docs/GATE0_ACCEPTANCE.md` for evidence paths, checks, and not-proven boundaries.
