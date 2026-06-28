@@ -36,6 +36,16 @@ def test_grader_passes_standard_fake_case():
     assert result.failure_category is None
 
 
+def test_stage3_lamp_compiler_case_passes_without_affecting_gate0_defaults():
+    case = next(item for item in load_cases(CASES) if item.case_id == "stage3-lamp-001")
+
+    result = run_case(case, backend="fake")
+
+    assert result.status == "passed"
+    assert result.object_completeness == 1.0
+    assert result.safety_pass is True
+
+
 def test_failure_classifier_uses_gate0_categories():
     assert classify_failure(["readback_missing:monitor"]) == "readback_failure"
     assert classify_failure(["outside_surface:mouse:desk"]) == "relation_solver_failure"

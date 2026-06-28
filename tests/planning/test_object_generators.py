@@ -27,7 +27,7 @@ def object_spec(kind: str, *, object_id: str | None = None, dimensions: Dimensio
     )
 
 
-@pytest.mark.parametrize("kind", ["desk", "monitor", "keyboard", "mouse", "vase"])
+@pytest.mark.parametrize("kind", ["desk", "monitor", "keyboard", "mouse", "vase", "lamp"])
 def test_each_gate0_generator_propagates_semantic_id_layer_and_budget(kind: str):
     catalog = load_object_catalog()
     spec = object_spec(kind, object_id=f"{kind}-01")
@@ -42,7 +42,7 @@ def test_each_gate0_generator_propagates_semantic_id_layer_and_budget(kind: str)
     assert all(primitive.expected_entity_type for primitive in primitives)
 
 
-@pytest.mark.parametrize("kind", ["desk", "monitor", "keyboard", "mouse", "vase"])
+@pytest.mark.parametrize("kind", ["desk", "monitor", "keyboard", "mouse", "vase", "lamp"])
 def test_footprint_and_primitives_bbox_match_for_default_specs(kind: str):
     catalog = load_object_catalog()
     spec = object_spec(kind)
@@ -64,6 +64,19 @@ def test_rotation_is_supported_without_object_specific_coordinates():
 
     assert footprint.bbox == (-250.0, -500.0, 250.0, 500.0)
     assert bbox_for_points(first_primitive.geometry["points"]) == footprint.bbox
+
+
+def test_lamp_generator_emits_base_and_shade_semantics_without_backend_access():
+    catalog = load_object_catalog()
+    spec = object_spec("lamp", object_id="lamp-01")
+    pose = ResolvedPose(center=(700, 420), rotation_deg=0)
+
+    primitives = generate_object_primitives(spec, pose, catalog=catalog)
+
+    assert [primitive.primitive_id for primitive in primitives] == ["lamp-01:base", "lamp-01:shade"]
+    assert [primitive.primitive_type for primitive in primitives] == ["circle", "polyline"]
+    assert {primitive.expected_entity_type for primitive in primitives} == {"CIRCLE", "LWPOLYLINE"}
+    assert all(primitive.layer == "CODEX_PREVIEW" for primitive in primitives)
 
 
 def test_catalog_unknown_object_returns_structured_unsupported_from_generator():

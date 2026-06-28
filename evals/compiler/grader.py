@@ -132,6 +132,7 @@ def scene_from_case(case: Gate0Case) -> SceneSpec:
     desk_width = float(fixture.get("deskWidth", 1400))
     mouse_side = str(fixture.get("mouseSide", "right"))
     include_vase = bool(fixture.get("includeVase", True))
+    include_lamp = bool(fixture.get("includeLamp", False))
     monitor_count = int(fixture.get("monitorCount", 1))
 
     objects = [
@@ -174,6 +175,8 @@ def scene_from_case(case: Gate0Case) -> SceneSpec:
     )
     if include_vase:
         objects.append(SceneObjectSpec(id="vase", kind="vase", placement=PlacementIntent(mode="relative", on="desk", anchor="rear_right")))
+    if include_lamp:
+        objects.append(SceneObjectSpec(id="lamp", kind="lamp", placement=PlacementIntent(mode="relative", on="desk", anchor="front_left")))
     return SceneSpec(schema_version="scene-spec/v1", run_id=run_id, scene_id=case.case_id, units="mm", view="plan_2d", objects=objects)
 
 

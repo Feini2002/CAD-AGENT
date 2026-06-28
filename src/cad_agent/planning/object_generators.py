@@ -83,6 +83,21 @@ class _Generator:
                     expected_entity_type="CIRCLE",
                 )
             ]
+        if self.kind == "lamp":
+            radius = min(dimensions.width, dimensions.depth) * 0.18
+            base_center = offset_point(pose, 0, -dimensions.depth * 0.25)
+            return [
+                Primitive(
+                    primitive_id=f"{spec.id}:base",
+                    semantic_object_id=spec.id,
+                    primitive_type="circle",
+                    geometry={"center": [base_center[0], base_center[1], 0.0], "radius": radius},
+                    layer="CODEX_PREVIEW",
+                    style_token="preview.default",
+                    expected_entity_type="CIRCLE",
+                ),
+                _polyline(spec, "shade", _outer_points(kind=self.kind, pose=pose, dimensions=dimensions)),
+            ]
         raise UnsupportedObjectError(kind=self.kind, reason="unsupported_object_kind")
 
 
@@ -92,6 +107,7 @@ GENERATORS: dict[str, _Generator] = {
     "keyboard_plan_2d_v1": _Generator(kind="keyboard"),
     "mouse_plan_2d_v1": _Generator(kind="mouse"),
     "vase_plan_2d_v1": _Generator(kind="vase"),
+    "lamp_plan_2d_v1": _Generator(kind="lamp"),
 }
 
 

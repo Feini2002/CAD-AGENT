@@ -43,6 +43,21 @@
         "depth": 140
       },
       "generator": "vase_plan_2d_v1"
+    },
+    "lamp": {
+      "defaultDimensions": {
+        "width": 180,
+        "depth": 180
+      },
+      "minDimensions": {
+        "width": 120,
+        "depth": 120
+      },
+      "maxDimensions": {
+        "width": 260,
+        "depth": 260
+      },
+      "generator": "lamp_plan_2d_v1"
     }
   }
 }

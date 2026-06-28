@@ -20,11 +20,13 @@ def test_object_catalog_loads_gate0_atomic_objects():
 
     assert DEFAULT_OBJECT_CATALOG_PATH == ROOT / "src" / "cad_agent" / "resources" / "object_catalog.json"
     assert catalog.schema_version == "object-catalog/v1"
-    assert set(catalog.objects) == {"desk", "monitor", "keyboard", "mouse", "vase"}
+    assert set(catalog.objects) == {"desk", "monitor", "keyboard", "mouse", "vase", "lamp"}
     assert catalog.objects["desk"].default_dimensions == Dimensions2D(width=1400, depth=700)
     assert catalog.objects["desk"].min_dimensions == Dimensions2D(width=900, depth=500)
     assert catalog.objects["desk"].max_dimensions == Dimensions2D(width=2400, depth=1200)
     assert catalog.objects["mouse"].generator == "mouse_plan_2d_v1"
+    assert catalog.objects["lamp"].default_dimensions == Dimensions2D(width=180, depth=180)
+    assert catalog.objects["lamp"].generator == "lamp_plan_2d_v1"
 
 
 def test_catalog_resolves_default_and_explicit_dimensions_with_min_max():

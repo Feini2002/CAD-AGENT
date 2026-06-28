@@ -119,6 +119,28 @@ def test_left_mouse_and_double_monitor_compile_without_prompt_routes():
     assert [operation.semantic_object_id for operation in dual.patch.operations] == ["desk", "monitor-a", "monitor-b"]
 
 
+def test_stage3_lamp_compiles_through_catalog_generator_pipeline():
+    result = compile_scene(
+        scene(
+            [
+                obj("desk", "desk", placement=PlacementIntent(mode="absolute", base_point=(0, 0))),
+                obj("monitor", "monitor", placement=PlacementIntent(mode="relative", on="desk", anchor="rear_center")),
+                obj("lamp", "lamp", placement=PlacementIntent(mode="relative", on="desk", anchor="front_left")),
+            ],
+            scene_id="stage3-lamp",
+        ),
+        snapshot(),
+    )
+
+    assert result.status == "succeeded"
+    assert result.patch is not None
+    assert [operation.semantic_object_id for operation in result.patch.operations] == ["desk", "monitor", "lamp"]
+    lamp = next(operation for operation in result.patch.operations if operation.semantic_object_id == "lamp")
+    assert [primitive.primitive_id for primitive in lamp.primitives] == ["lamp:base", "lamp:shade"]
+    assert all(primitive.layer == "CODEX_PREVIEW" for primitive in lamp.primitives)
+    assert result.patch.save_current_dwg is False
+
+
 def test_rotation_is_preserved_in_generated_primitives():
     result = compile_scene(standard_scene(rotation_deg=90), snapshot())
 
