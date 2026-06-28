@@ -9,7 +9,9 @@ This repository is the new mainline after the 2026-06-27 cleanroom cut. The prev
 
 ## Current Scope
 
-Gate 0 is intentionally small: a natural-language desktop scene with `desk`, `monitor`, `keyboard`, `mouse`, and `vase`, compiled into deterministic `SceneSpec` / `CadPatch` artifacts and executed only on `CODEX_PREVIEW`.
+Gate 0 remains intentionally small: a natural-language desktop scene with `desk`, `monitor`, `keyboard`, `mouse`, and `vase`, compiled into deterministic `SceneSpec` / `CadPatch` artifacts and executed only on `CODEX_PREVIEW`.
+
+The current mainline has begun Stage 3 broadening with one additional desktop object kind, `lamp`. New object kinds must enter through the object catalog, generator, compiler, verification/eval coverage, and the same preview-only safety boundary.
 
 The repository does not contain the old orchestrator, training workbench, project evidence warehouse, capability map, or protected evidence tree. Those remain in the archive source above.
 
@@ -18,7 +20,7 @@ The repository does not contain the old orchestrator, training workbench, projec
 | Path | Purpose |
 | --- | --- |
 | `src/cad_agent/` | Python package: domain contracts, planning, policies, adapters, verification, CLI |
-| `src/cad_agent/resources/object_catalog.json` | Minimal Gate 0 object catalog |
+| `src/cad_agent/resources/object_catalog.json` | Cleanroom object catalog for Gate 0 plus staged additions |
 | `tests/` | Unit and contract tests for the cleanroom package |
 | `evals/compiler/` | Deterministic compiler fixture evals for CI |
 | `evals/gate0/` | Public natural-language Gate 0 acceptance cases without SceneSpec fixtures |
@@ -56,4 +58,4 @@ Real AutoCAD smoke is optional and environment-gated:
 python tools/run_real_cad_backend_smoke.py --preview-only --rollback-after-check
 ```
 
-See `docs/STATUS.md` for the current acceptance boundary and `docs/ROADMAP.md` for the next staged work.
+See `docs/STATUS.md` for the current acceptance boundary and `docs/ROADMAP.md` for staged work.

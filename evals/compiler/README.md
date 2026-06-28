@@ -1,6 +1,7 @@
 # Gate 0 Eval Harness
 
 This harness runs deterministic fake-backend checks for the desktop computer-desk slice.
+It includes Gate 0 fixture cases and staged object-expansion cases such as the Stage 3 `lamp` case.
 
 It does not call a model and does not write real CAD. Test cases include prompts for evaluation metadata, while `sceneSpecFixture` provides deterministic SceneSpec inputs for repeatable CI runs.
 

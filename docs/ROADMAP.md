@@ -18,3 +18,9 @@
 - Add object kinds only through catalog, generator, compiler, verification, and eval updates together.
 - Keep formal layer writes and DWG save blocked until a later explicit gate.
 - Do not restore training or old workbench as part of normal development.
+
+Progress:
+
+- `lamp` has been added as the first Stage 3 object kind through catalog, generator, compiler tests, and compiler fixture eval.
+
+Next candidates should repeat the same path, one object kind at a time.
